@@ -15,7 +15,7 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
 import DocumentDetails from "./pages/DocumentDetails";
-import SignUp from "./pages/Signup";
+// import SignUp from "./pages/Signup";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,7 +51,7 @@ function App() {
               />
               <Route path="documents" element={<Documents />} />
 
-              <Route path="signup" element={<SignUp />} />
+              {/* <Route path="signup" element={<SignUp />} /> */}
               <Route path="settings" element={<Settings />} />
               <Route path="account" element={<Account />} />
             </Route>
