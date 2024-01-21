@@ -12,6 +12,8 @@ import {
   HiPlus,
 } from "react-icons/hi2";
 import Button from "./Button";
+import Modal from "./Modal";
+import AllDocs from "./AllDocs";
 const NavList = styled.ul`
   display: flex;
   flex-direction: column;
@@ -70,9 +72,16 @@ function MainNav() {
           </StyledNavLink>
         </li>
         <li>
-          <StyledNavLink to="/settings">
-            <HiDocument /> <span>Tüm belgeler</span>
-          </StyledNavLink>
+          <Modal>
+            <Modal.Open opens="allDocs">
+              <StyledNavLink to="/dashboard">
+                <HiDocument /> <span>Tüm belgeler</span>
+              </StyledNavLink>
+            </Modal.Open>
+            <Modal.Window name="allDocs">
+              <AllDocs />
+            </Modal.Window>
+          </Modal>
         </li>
       </NavList>
     </nav>

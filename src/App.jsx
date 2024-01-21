@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
@@ -15,6 +15,7 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
 import DocumentDetails from "./pages/DocumentDetails";
+
 // import SignUp from "./pages/Signup";
 
 const queryClient = new QueryClient({
@@ -42,7 +43,7 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Navigate replace to="wellcome" />} />
+              <Route index element={<Dashboard />} />
               <Route path="wellcome" element={<Wellcome />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route
