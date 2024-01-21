@@ -15,6 +15,11 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
 import DocumentDetails from "./pages/DocumentDetails";
+import QuestionsLayout from "./ui/QuesitonsLayout";
+import Wellcome1 from "./features/wellcome/wellcome1";
+import Wellcome2 from "./features/wellcome/wellcome2";
+import Wellcome3 from "./features/wellcome/wellcome3";
+import Wellcome4 from "./features/wellcome/wellcome4";
 
 // import SignUp from "./pages/Signup";
 
@@ -44,7 +49,7 @@ function App() {
               }
             >
               <Route index element={<Dashboard />} />
-              <Route path="wellcome" element={<Wellcome />} />
+
               <Route path="dashboard" element={<Dashboard />} />
               <Route
                 path="document/:documentId"
@@ -55,6 +60,20 @@ function App() {
               {/* <Route path="signup" element={<SignUp />} /> */}
               <Route path="settings" element={<Settings />} />
               <Route path="account" element={<Account />} />
+            </Route>
+
+            <Route
+              element={
+                <ProtectedRoute>
+                  <QuestionsLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="wellcome" element={<Wellcome />} />
+              <Route path="wellcome" element={<Wellcome1 />} />
+              <Route path="wellcome" element={<Wellcome2 />} />
+              <Route path="wellcome" element={<Wellcome3 />} />
+              <Route path="wellcome" element={<Wellcome4 />} />
             </Route>
 
             <Route path="login" element={<Login />} />
