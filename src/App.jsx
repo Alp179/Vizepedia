@@ -71,10 +71,10 @@ function App() {
               }
             >
               <Route path="wellcome" element={<Wellcome />} />
-              <Route path="wellcome" element={<WellcomeA />} />
-              <Route path="wellcome" element={<WellcomeB />} />
-              <Route path="wellcome" element={<WellcomeC />} />
-              <Route path="wellcome" element={<WellcomeD />} />
+              <Route path="wellcome-1" element={<WellcomeA />} />
+              <Route path="wellcome-2" element={<WellcomeB />} />
+              <Route path="wellcome-3" element={<WellcomeC />} />
+              <Route path="wellcome-4" element={<WellcomeD />} />
             </Route>
 
             <Route path="login" element={<Login />} />

@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
-import Wellcome from "../pages/Wellcome";
+import { Outlet } from "react-router-dom";
+import Header from "./Header";
+
+import BackButton from "./BackButton";
 
 const LoginLayout = styled.main`
   min-height: 100vh;
@@ -13,9 +16,13 @@ const LoginLayout = styled.main`
 `;
 
 function QuestionsLayout() {
+  // const navigate = useNavigate();
+
   return (
     <LoginLayout>
-      <Wellcome />
+      <BackButton>Geri Dön</BackButton>
+      <Header />
+      <Outlet />
     </LoginLayout>
   );
 }
