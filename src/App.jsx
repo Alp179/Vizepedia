@@ -16,10 +16,11 @@ import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
 import DocumentDetails from "./pages/DocumentDetails";
 import QuestionsLayout from "./ui/QuesitonsLayout";
-import Wellcome1 from "./features/wellcome/wellcome1";
-import Wellcome2 from "./features/wellcome/wellcome2";
-import Wellcome3 from "./features/wellcome/wellcome3";
-import Wellcome4 from "./features/wellcome/wellcome4";
+
+import WellcomeA from "./features/wellcomes/WellcomeA";
+import WellcomeD from "./features/wellcomes/WellcomeD";
+import WellcomeC from "./features/wellcomes/WellcomeC";
+import WellcomeB from "./features/wellcomes/WellcomeB";
 
 // import SignUp from "./pages/Signup";
 
@@ -70,10 +71,10 @@ function App() {
               }
             >
               <Route path="wellcome" element={<Wellcome />} />
-              <Route path="wellcome" element={<Wellcome1 />} />
-              <Route path="wellcome" element={<Wellcome2 />} />
-              <Route path="wellcome" element={<Wellcome3 />} />
-              <Route path="wellcome" element={<Wellcome4 />} />
+              <Route path="wellcome" element={<WellcomeA />} />
+              <Route path="wellcome" element={<WellcomeB />} />
+              <Route path="wellcome" element={<WellcomeC />} />
+              <Route path="wellcome" element={<WellcomeD />} />
             </Route>
 
             <Route path="login" element={<Login />} />

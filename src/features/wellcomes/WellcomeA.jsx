@@ -1,4 +1,4 @@
-function Wellcome1() {
+function WellcomeA() {
   return (
     <div>
       <p>wellcome 1</p>
@@ -6,4 +6,4 @@ function Wellcome1() {
   );
 }
 
-export default Wellcome1;
+export default WellcomeA;
