@@ -21,6 +21,7 @@ import WellcomeA from "./features/wellcomes/WellcomeA";
 import WellcomeD from "./features/wellcomes/WellcomeD";
 import WellcomeC from "./features/wellcomes/WellcomeC";
 import WellcomeB from "./features/wellcomes/WellcomeB";
+import WellcomeE from "./features/wellcomes/WellcomeE";
 
 // import SignUp from "./pages/Signup";
 
@@ -75,6 +76,7 @@ function App() {
               <Route path="wellcome-2" element={<WellcomeB />} />
               <Route path="wellcome-3" element={<WellcomeC />} />
               <Route path="wellcome-4" element={<WellcomeD />} />
+              <Route path="wellcome-5" element={<WellcomeE />} />
             </Route>
 
             <Route path="login" element={<Login />} />

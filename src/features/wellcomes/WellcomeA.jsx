@@ -9,8 +9,10 @@ function WellcomeA() {
     <>
       <Heading as="h1">Vizepedia’ya hoş geldiniz</Heading>
       <h4>
-        Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
-        Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
+        Lütfen seyahat amacınızı, mesleğinizi, konaklama türünüzü ve seyahat
+        aracınızı aşağıdaki alanlarda belirtin. Bu bilgiler doğru belgeleri
+        sunmamız için önemlidir ve size en iyi şekilde rehberlik edebilmemize
+        yardımcı olacaktır.
       </h4>
       <Button onClick={() => navigate("/wellcome-2")}>Devam et</Button>
     </>
