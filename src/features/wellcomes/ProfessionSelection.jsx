@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
-import { useState } from "react";
+
 import Spinner from "../../ui/Spinner";
 
 import { useProfessions } from "./useProfession";
@@ -25,12 +25,10 @@ const Container = styled.div`
   background-color: #fff;
 `;
 
-function ProfessionSelection({ onProfessionChange }) {
+function ProfessionSelection({ onProfessionChange, selectedProfession }) {
   const { isLoading, professionsData } = useProfessions();
-  const [selectedProfession, setSelectedProfession] = useState("");
 
   const handleProfession = (e) => {
-    setSelectedProfession(e.target.value);
     onProfessionChange(e.target.value); // Bu satırı ekleyin
   };
 

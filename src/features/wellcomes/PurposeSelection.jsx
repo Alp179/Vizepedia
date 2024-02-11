@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
-import { useState } from "react";
+
 import Spinner from "../../ui/Spinner";
 import { usePurpose } from "./usePurpose";
 
@@ -33,12 +33,10 @@ const Container = styled.div`
   background-color: #fff;
 `;
 
-function PurposeSelection({ onPurposeChange }) {
+function PurposeSelection({ onPurposeChange, selectedPurpose }) {
   const { isLoading, purposeRegData, purposeEdData } = usePurpose();
-  const [selectedPurpose, setSelectedPurpose] = useState("");
 
   const handlePurposeChange = (e) => {
-    setSelectedPurpose(e.target.value);
     onPurposeChange(e.target.value); // Bu satırı ekleyin
   };
 
@@ -49,6 +47,7 @@ function PurposeSelection({ onPurposeChange }) {
   return (
     <Container>
       <StyledSelect value={selectedPurpose} onChange={handlePurposeChange}>
+        <option value="">Eğitim</option>
         {purposeEdData &&
           purposeEdData.map((purpose) => (
             <option key={purpose.id} value={purpose.purposeEdDescription}>

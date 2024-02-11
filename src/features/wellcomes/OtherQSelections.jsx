@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
-import { useState } from "react";
+
 import Spinner from "../../ui/Spinner";
 
 import { useVehicles } from "./useVehicles";
@@ -28,6 +28,9 @@ const Container = styled.div`
 `;
 
 function OtherQSelections({
+  selectedAccommodation,
+  selectedKid,
+  selectedVehicle,
   onVehicleChange,
   onKidChange,
   onAccommodationChange,
@@ -36,22 +39,15 @@ function OtherQSelections({
   const { isLoadingKids, kidsData } = useKids();
   const { isLoadingAccommodation, accommodationsData } = useAccommodations();
 
-  const [selectedVehicle, setSelectedVehicle] = useState("");
-  const [selectedKid, setSelectedKid] = useState("");
-  const [selectedAccommodation, setSelectedAccommodation] = useState("");
-
   const handleVehicle = (e) => {
-    setSelectedVehicle(e.target.value);
     onVehicleChange(e.target.value); // Bu satırı ekleyin
   };
 
   const handleKid = (e) => {
-    setSelectedKid(e.target.value);
     onKidChange(e.target.value); // Bu satırı ekleyin
   };
 
   const handleAccommodation = (e) => {
-    setSelectedAccommodation(e.target.value);
     onAccommodationChange(e.target.value); // Bu satırı ekleyin
   };
 

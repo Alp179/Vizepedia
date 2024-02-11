@@ -1,24 +1,30 @@
-import { useState } from "react"; // useState import edin
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../../ui/Button";
-import Heading from "../../ui/Heading";
+import { useUserSelections } from "./useUserSelections";
 import PurposeSelection from "./PurposeSelection";
+import Heading from "../../ui/Heading";
+import Button from "../../ui/Button";
 
 function WellcomeC() {
   const navigate = useNavigate();
-  const [selectedPurpose, setSelectedPurpose] = useState(""); // Seçilen ülkeyi takip etmek için durum
+  const { state, dispatch } = useUserSelections(); // dispatch fonksiyonunu kullanmak için hook'u çağırın
+  const [selectedPurpose, setSelectedPurpose] = useState(state.purpose);
 
   const handlePurposeChange = (purpose) => {
     setSelectedPurpose(purpose);
+    dispatch({ type: "SET_PURPOSE", payload: purpose }); // Global state'i güncelleyin
   };
 
   return (
     <>
       <Heading as="h1">Gidiş amacınızı seçiniz</Heading>
-      <PurposeSelection onPurposeChange={handlePurposeChange} />
+      <PurposeSelection
+        selectedPurpose={selectedPurpose}
+        onPurposeChange={handlePurposeChange}
+      />
       <Button
         onClick={() => navigate("/wellcome-4")}
-        disabled={!selectedPurpose} // Seçilen ülke yoksa butonu etkisizleştir
+        disabled={!selectedPurpose}
       >
         Devam et
       </Button>

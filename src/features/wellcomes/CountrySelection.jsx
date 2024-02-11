@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
 import { useCountries } from "./useCountries";
-import { useState } from "react";
+
 import Spinner from "../../ui/Spinner";
 
-// Select kutusu için stil
+/// Stil tanımlamaları
 const StyledSelect = styled.select`
   padding: 8px 12px;
   border-radius: 4px;
@@ -13,7 +13,6 @@ const StyledSelect = styled.select`
   width: 100%;
 `;
 
-// Radyo butonları için etiket stili
 const RadioLabel = styled.label`
   display: flex;
   align-items: center;
@@ -25,7 +24,6 @@ const RadioLabel = styled.label`
   }
 `;
 
-// Üst div için stil
 const Container = styled.div`
   padding: 20px;
   border-radius: 5px;
@@ -33,13 +31,12 @@ const Container = styled.div`
   background-color: #fff;
 `;
 
-function CountrySelection({ onCountryChange }) {
+function CountrySelection({ selectedCountry, onCountryChange }) {
   const { isLoading, schCounData, mainCounData } = useCountries();
-  const [selectedCountry, setSelectedCountry] = useState("");
 
-  const handleCountryChange = (e) => {
-    setSelectedCountry(e.target.value);
-    onCountryChange(e.target.value); // Bu satırı ekleyin
+  // Event handler güncellemesi
+  const handleChange = (e) => {
+    onCountryChange(e.target.value);
   };
 
   if (isLoading) {
@@ -48,30 +45,27 @@ function CountrySelection({ onCountryChange }) {
 
   return (
     <Container>
-      <StyledSelect value={selectedCountry} onChange={handleCountryChange}>
-        {schCounData &&
-          schCounData.map((country) => (
-            <option key={country.id} value={country.schCountryNames}>
-              {country.schCountryNames}
-            </option>
-          ))}
+      <StyledSelect value={selectedCountry} onChange={handleChange}>
+        <option value="">Schengen Ülkeleri</option>
+        {schCounData.map((country) => (
+          <option key={country.id} value={country.schCountryNames}>
+            {country.schCountryNames}
+          </option>
+        ))}
       </StyledSelect>
 
-      <div>
-        {mainCounData &&
-          mainCounData.map((country) => (
-            <RadioLabel key={country.id}>
-              <input
-                type="radio"
-                name={country.mainCountryNames}
-                value={country.mainCountryNames}
-                checked={selectedCountry === country.mainCountryNames}
-                onChange={handleCountryChange}
-              />
-              {country.mainCountryNames}
-            </RadioLabel>
-          ))}
-      </div>
+      {mainCounData.map((country) => (
+        <RadioLabel key={country.id}>
+          <input
+            type="radio"
+            name={country.mainCountryNames}
+            value={country.mainCountryNames}
+            checked={selectedCountry === country.mainCountryNames}
+            onChange={handleChange}
+          />
+          {country.mainCountryNames}
+        </RadioLabel>
+      ))}
     </Container>
   );
 }

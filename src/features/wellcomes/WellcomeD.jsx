@@ -1,25 +1,32 @@
-import { useState } from "react"; // useState import edin
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUserSelections } from "./useUserSelections";
+import ProfessionSelection from "./ProfessionSelection";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 
-import ProfessionSelection from "./ProfessionSelection";
-
 function WellcomeD() {
   const navigate = useNavigate();
-  const [selectedProfession, setSelectedProfession] = useState(""); // Seçilen ülkeyi takip etmek için durum
+  const { state, dispatch } = useUserSelections(); // dispatch fonksiyonunu kullanmak için hook'u çağırın
+  const [selectedProfession, setSelectedProfession] = useState(
+    state.profession
+  );
 
   const handleProfessionChange = (profession) => {
     setSelectedProfession(profession);
+    dispatch({ type: "SET_PROFESSION", payload: profession }); // Global state'i güncelleyin
   };
 
   return (
     <>
       <Heading as="h1">Mesleğinizi seçiniz</Heading>
-      <ProfessionSelection onProfessionChange={handleProfessionChange} />
+      <ProfessionSelection
+        selectedProfession={selectedProfession}
+        onProfessionChange={handleProfessionChange}
+      />
       <Button
         onClick={() => navigate("/wellcome-5")}
-        disabled={!selectedProfession} // Seçilen ülke yoksa butonu etkisizleştir
+        disabled={!selectedProfession}
       >
         Devam et
       </Button>
