@@ -3,7 +3,7 @@ import { getVehicles } from "../../services/apiVehicles";
 
 export function useVehicles() {
   const { isLoading: isLoadingVehicles, data: vehiclesData } = useQuery({
-    queryKey: ["professions"],
+    queryKey: ["vehicles"],
     queryFn: getVehicles,
   });
 
