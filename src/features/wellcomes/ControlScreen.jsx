@@ -1,27 +1,19 @@
 import { useNavigate } from "react-router-dom";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUserSelections } from "./useUserSelections";
 import Button from "../../ui/Button";
 import ControlScreenDropdowns from "./ControlScreenDropdowns";
+import supabase from "../../services/supabase";
+import { useUser } from "../authentication/useUser";
+import Spinner from "../../ui/Spinner";
 
 function ControlScreen() {
   const { state, dispatch } = useUserSelections();
-  const [selectedVehicle, setSelectedVehicle] = useState(state.vehicle);
-  const [selectedKid, setSelectedKid] = useState(state.kid);
-  const [selectedAccommodation, setSelectedAccommodation] = useState(
-    state.accommodation
-  );
-  const [selectedProfession, setSelectedProfession] = useState(
-    state.profession
-  );
-  const [selectedPurpose, setSelectedPurpose] = useState(state.purpose);
-  const [selectedCountry, setSelectedCountry] = useState(state.country);
-
   const navigate = useNavigate();
+  const { user, isUserLoading } = useUser(); // useUser hook'unu kullanarak mevcut kullanıcıyı al
 
   useEffect(() => {
-    // Tüm seçimlerin yapıldığından emin olmak için bir kontrol işlevi
     const allSelectionsMade =
       state.country &&
       state.purpose &&
@@ -30,64 +22,64 @@ function ControlScreen() {
       state.kid &&
       state.accommodation;
     if (!allSelectionsMade) {
-      // Eğer herhangi bir seçim yapılmamışsa, kullanıcıyı '/wellcome' sayfasına yönlendir
       navigate("/wellcome");
     }
-  }, [state, navigate]); // Bağımlılıkları belirtmeyi unutmayın
+  }, [state, navigate]);
 
-  const handleCountryChange = (country) => {
-    setSelectedCountry(country);
-    dispatch({ type: "SET_COUNTRY", payload: country });
+  const handleSubmit = async () => {
+    if (!user) {
+      console.error("Kullanıcı girişi yapılmamış!");
+      return;
+    }
+
+    const { error } = await supabase.from("userAnswers").upsert({
+      userId: user.id, // useUser hook'undan alınan mevcut kullanıcı ID'si
+      ans_country: state.country,
+      ans_purpose: state.purpose,
+      ans_profession: state.profession,
+      ans_vehicle: state.vehicle,
+      ans_kid: state.kid,
+      ans_accommodation: state.accommodation,
+    });
+
+    if (error) {
+      console.error("Seçimler kaydedilirken hata oluştu:", error);
+    } else {
+      console.log("Kullanıcı seçimleri başarıyla kaydedildi.");
+      navigate("/dashboard"); // Seçimler başarıyla kaydedildikten sonra kullanıcıyı yönlendir
+    }
   };
 
-  const handlePurposeChange = (purpose) => {
-    setSelectedPurpose(purpose);
-    dispatch({ type: "SET_PURPOSE", payload: purpose }); // Global state'i güncelleyin
-  };
+  if (isUserLoading) {
+    return <Spinner />;
+  }
 
-  const handleProfessionChange = (profession) => {
-    setSelectedProfession(profession);
-    dispatch({ type: "SET_PROFESSION", payload: profession }); // Global state'i güncelleyin
-  };
-
-  const handleVehicleChange = (vehicle) => {
-    setSelectedVehicle(vehicle);
-    dispatch({ type: "SET_VEHICLE", payload: vehicle });
-  };
-
-  const handleKidChange = (kid) => {
-    setSelectedKid(kid);
-    dispatch({ type: "SET_KID", payload: kid });
-  };
-
-  const handleAccommodationChange = (accommodation) => {
-    setSelectedAccommodation(accommodation);
-    dispatch({ type: "SET_ACCOMMODATION", payload: accommodation });
-  };
-
-  const handleSubmit = () => {
-    // Kullanıcı bilgileri doğrulama işlemi burada yapılabilir.
-    // Sonra kullanıcıyı dashboard'a veya başka bir sayfaya yönlendirebilirsiniz.
-    navigate("/dashboard");
-  };
-
-  // Bilgiler tamamsa, kontrol ekranını render et
   return (
     <div>
       <h1>Bilgi Kontrol Ekranı</h1>
       <ControlScreenDropdowns
-        selectedCountry={selectedCountry}
-        onCountryChange={handleCountryChange}
-        selectedPurpose={selectedPurpose}
-        onPurposeChange={handlePurposeChange}
-        selectedProfession={selectedProfession}
-        onProfessionChange={handleProfessionChange}
-        selectedAccommodation={selectedAccommodation}
-        selectedKid={selectedKid}
-        selectedVehicle={selectedVehicle}
-        onVehicleChange={handleVehicleChange}
-        onKidChange={handleKidChange}
-        onAccommodationChange={handleAccommodationChange}
+        selectedCountry={state.country}
+        onCountryChange={(country) =>
+          dispatch({ type: "SET_COUNTRY", payload: country })
+        }
+        selectedPurpose={state.purpose}
+        onPurposeChange={(purpose) =>
+          dispatch({ type: "SET_PURPOSE", payload: purpose })
+        }
+        selectedProfession={state.profession}
+        onProfessionChange={(profession) =>
+          dispatch({ type: "SET_PROFESSION", payload: profession })
+        }
+        selectedAccommodation={state.accommodation}
+        selectedKid={state.kid}
+        selectedVehicle={state.vehicle}
+        onVehicleChange={(vehicle) =>
+          dispatch({ type: "SET_VEHICLE", payload: vehicle })
+        }
+        onKidChange={(kid) => dispatch({ type: "SET_KID", payload: kid })}
+        onAccommodationChange={(accommodation) =>
+          dispatch({ type: "SET_ACCOMMODATION", payload: accommodation })
+        }
       />
 
       <Button onClick={handleSubmit}>Başlayalım</Button>

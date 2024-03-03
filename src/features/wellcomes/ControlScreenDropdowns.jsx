@@ -79,8 +79,8 @@ function ControlScreenDropdowns({
   const combinedCountries = [
     ...(schCounData || []),
     ...(mainCounData || []),
-  ].map((country) => ({
-    id: country.id,
+  ].map((country, index) => ({
+    id: country.id ? `${country.id}-${index}` : `country-${index}`, // Eğer id varsa kullan, yoksa index kullan
     name: country.schCountryNames || country.mainCountryNames,
   }));
 
@@ -88,8 +88,8 @@ function ControlScreenDropdowns({
   const combinedData = [
     ...(purposeEdData || []),
     ...(purposeRegData || []),
-  ].map((purpose) => ({
-    id: purpose.id,
+  ].map((purpose, index) => ({
+    id: purpose.id ? `${purpose.id}-${index}` : `purpose-${index}`, // Eğer id varsa kullan, yoksa index kullan
     description: purpose.purposeEdDescription || purpose.purposeRegDescription,
   }));
 
@@ -136,8 +136,11 @@ function ControlScreenDropdowns({
         >
           <option value="">{state.profession}</option>
           {professionsData &&
-            professionsData?.map((profession) => (
-              <option key={profession.id} value={profession.professionName}>
+            professionsData.map((profession, index) => (
+              <option
+                key={`profession-${index}`}
+                value={profession.professionName}
+              >
                 {profession.professionName}
               </option>
             ))}
@@ -150,9 +153,9 @@ function ControlScreenDropdowns({
           onChange={handleAccommodationChange}
         >
           <option value="">{state.accommodation}</option>
-          {accommodationsData?.map((accommodation) => (
+          {accommodationsData.map((accommodation, index) => (
             <option
-              key={accommodation.id}
+              key={`accommodation-${index}`}
               value={accommodation.accommodationTypeName}
             >
               {accommodation.accommodationTypeName}
@@ -164,8 +167,8 @@ function ControlScreenDropdowns({
         <Heading as="h2">Seyahat aracınız</Heading>
         <StyledSelect value={selectedVehicle} onChange={handleVehicleChange}>
           <option value="">{state.vehicle}</option>
-          {vehiclesData?.map((vehicle) => (
-            <option key={vehicle.id} value={vehicle.travelVehicleName}>
+          {vehiclesData.map((vehicle, index) => (
+            <option key={`vehicle-${index}`} value={vehicle.travelVehicleName}>
               {vehicle.travelVehicleName}
             </option>
           ))}
@@ -175,8 +178,8 @@ function ControlScreenDropdowns({
         <Heading as="h2">Çocuklu yolculuk</Heading>
         <StyledSelect value={selectedKid} onChange={handleKidChange}>
           <option value="">{state.kid}</option>
-          {kidsData?.map((kid) => (
-            <option key={kid.id} value={kid.kidState}>
+          {kidsData.map((kid, index) => (
+            <option key={`kid-${index}`} value={kid.kidState}>
               {kid.kidState}
             </option>
           ))}
