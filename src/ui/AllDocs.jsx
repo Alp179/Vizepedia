@@ -1,24 +1,64 @@
-import DocRow from "../features/doc-details/DocRow";
-import { useDocNames } from "../features/doc-details/useDocNames";
+import { useEffect, useState } from "react";
+import { getCurrentUser } from "../services/apiAuth";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserSelections } from "../utils/userSelectionsFetch";
+import { getDocumentsForSelections } from "../utils/documentsFilter";
+import { fetchDocumentDetails } from "../utils/documentFetch";
 import Spinner from "./Spinner";
-import Table from "./Table";
 
-function AllDocs() {
-  const { isLoading, docNames } = useDocNames();
+function DocumentsPage() {
+  const [userId, setUserId] = useState(null);
 
-  if (isLoading) return <Spinner />;
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      if (user) {
+        setUserId(user.id);
+      }
+    });
+  }, []);
+
+  const {
+    data: userSelections,
+    isLoading: isLoadingSelections,
+    isError: isErrorSelections,
+  } = useQuery({
+    queryKey: ["userSelections", userId],
+    queryFn: () => fetchUserSelections(userId),
+    enabled: !!userId,
+  });
+
+  const documentNames = userSelections
+    ? getDocumentsForSelections(userSelections)
+    : [];
+
+  const {
+    data: documents,
+    isLoading: isLoadingDocuments,
+    isError: isErrorDocuments,
+  } = useQuery({
+    queryKey: ["documentDetails", documentNames],
+    queryFn: () => fetchDocumentDetails(documentNames),
+    enabled: !!documentNames.length,
+  });
+
+  if (isLoadingSelections || isLoadingDocuments) {
+    return <Spinner />;
+  }
+
+  if (isErrorSelections || isErrorDocuments) {
+    return <div>Error loading data.</div>;
+  }
 
   return (
-    <Table>
-      <Table.Header>
-        <div>Tüm Belgeler</div>
-      </Table.Header>
-      <Table.Body
-        data={docNames}
-        render={(doc) => <DocRow docName={doc.docName} key={doc.id} />}
-      />
-    </Table>
+    <div>
+      <h2>Tüm Belgeler</h2>
+      <ul>
+        {documents?.map((doc, index) => (
+          <li key={index}>{doc.docName}</li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
-export default AllDocs;
+export default DocumentsPage;
