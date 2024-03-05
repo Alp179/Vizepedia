@@ -45,7 +45,7 @@ const selectionDocumentRules = {
     IsVeren: [], // İş verenler için gerekli belgeler
   },
   vehicle: {
-    Ucak: ["Uçak Rezervasyonu"],
+    Uçak: ["Uçak Rezervasyonu"],
     Otobus: ["Otobüs Rezervasyonu"],
     Tren: [],
     Gemi: [],
