@@ -1,36 +1,83 @@
-/* eslint-disable react/prop-types */
-
-import { useUser } from "../features/authentication/useUser";
-
+import { useEffect, useState } from "react";
+import { getCurrentUser } from "../services/apiAuth";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserSelections } from "../utils/userSelectionsFetch";
+import { getDocumentsForSelections } from "../utils/documentsFilter";
+import { fetchDocumentDetails } from "../utils/documentFetch";
+import Spinner from "../ui/Spinner";
 import Heading from "../ui/Heading";
 import Row from "../ui/Row";
-import Spinner from "../ui/Spinner";
-import Wellcome from "./Wellcome";
+import StepIndicator from "../ui/StepIndicator";
+import { useNavigate } from "react-router-dom";
+import { useSelectedDocument } from "../context/SelectedDocumentContext";
 
 function Dashboard() {
-  // Örnek olarak, burada 'userId' değerini elde ediyoruz.
-  // Bu değeri nasıl elde ettiğinize bağlı olarak kodunuzu buraya göre ayarlayın.
-  const { isLoading, answers } = useUser();
+  const [userId, setUserId] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0);
+  const { setSelectedDocument } = useSelectedDocument(); // Context'ten setSelectedDocument fonksiyonunu kullanın
+  const navigate = useNavigate();
 
-  console.log("Answers:", answers);
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      if (user) {
+        setUserId(user.id);
+      }
+    });
+  }, []);
 
-  if (isLoading) {
+  const {
+    data: userSelections,
+    isLoading: isLoadingSelections,
+    isError: isErrorSelections,
+  } = useQuery({
+    queryKey: ["userSelections", userId],
+    queryFn: () => fetchUserSelections(userId),
+    enabled: !!userId,
+  });
+
+  const documentNames = userSelections
+    ? getDocumentsForSelections(userSelections)
+    : [];
+
+  const {
+    data: documents,
+    isLoading: isLoadingDocuments,
+    isError: isErrorDocuments,
+  } = useQuery({
+    queryKey: ["documentDetails", documentNames],
+    queryFn: () => fetchDocumentDetails(documentNames),
+    enabled: !!documentNames.length,
+  });
+
+  if (isLoadingSelections || isLoadingDocuments) {
     return <Spinner />;
   }
 
-  // `answers` içindeki `answer` sütununu kontrol et
-  const isAnswerFilled = answers.length;
-  console.log(answers);
+  if (isErrorSelections || isErrorDocuments) {
+    return <div>Error loading data.</div>;
+  }
+
+  const handleStepClick = (step) => {
+    setCurrentStep(step);
+    const selectedDoc = documents[step];
+    setSelectedDocument(selectedDoc); // Seçilen belgeyi Context üzerinden ayarlayın
+    navigate("/documents"); // Yönlendirmeyi koruyun
+  };
+
+  // StepIndicator için sadece belge adlarını alın
+  const stepLabels = documents?.map((doc) => doc.docName) || [];
+
   return (
     <div>
-      {isAnswerFilled > 0 ? (
-        <Row type="horizontal">
-          <Heading as="h1">Dashboard</Heading>
-          <p>TEST</p>
-        </Row>
-      ) : (
-        <Wellcome />
-      )}
+      <Row type="horizontal">
+        <Heading as="h1">Dashboard</Heading>
+      </Row>
+      <StepIndicator
+        steps={stepLabels}
+        currentStep={currentStep}
+        onStepClick={handleStepClick}
+      />
+      {/* Seçilen belge detayını burada göstermek yerine, /documents yolunda göstereceğiz */}
     </div>
   );
 }
