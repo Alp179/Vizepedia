@@ -1,3 +1,4 @@
+// Dashboard.jsx
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/apiAuth";
 import { useQuery } from "@tanstack/react-query";
@@ -14,7 +15,8 @@ import { useSelectedDocument } from "../context/SelectedDocumentContext";
 function Dashboard() {
   const [userId, setUserId] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
-  const { setSelectedDocument } = useSelectedDocument(); // Context'ten setSelectedDocument fonksiyonunu kullanın
+  const { setSelectedDocument } = useSelectedDocument();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,7 +40,6 @@ function Dashboard() {
   const documentNames = userSelections
     ? getDocumentsForSelections(userSelections)
     : [];
-
   const {
     data: documents,
     isLoading: isLoadingDocuments,
@@ -60,11 +61,10 @@ function Dashboard() {
   const handleStepClick = (step) => {
     setCurrentStep(step);
     const selectedDoc = documents[step];
-    setSelectedDocument(selectedDoc); // Seçilen belgeyi Context üzerinden ayarlayın
-    navigate("/documents"); // Yönlendirmeyi koruyun
+    setSelectedDocument(selectedDoc);
+    navigate("/summary");
   };
 
-  // StepIndicator için sadece belge adlarını alın
   const stepLabels = documents?.map((doc) => doc.docName) || [];
 
   return (
@@ -77,7 +77,7 @@ function Dashboard() {
         currentStep={currentStep}
         onStepClick={handleStepClick}
       />
-      {/* Seçilen belge detayını burada göstermek yerine, /documents yolunda göstereceğiz */}
+      {/* StepIndicator'dan sonra gelen içerikler burada yer alacak. */}
     </div>
   );
 }

@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import Spinner from "../ui/Spinner";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { DocumentsContext } from "../context/DocumentsContext";
 
 const PageContainer = styled.div`
   display: flex;
@@ -35,12 +38,33 @@ const RelatedSteps = styled.div`
   margin-top: 20px;
 `;
 
+const CompleteButton = styled.button`
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+`;
+
 const DocumentDetail = () => {
-  const { selectedDocument } = useSelectedDocument();
+  const navigate = useNavigate(); // Hook for navigating
+  const { selectedDocument, setSelectedDocument } = useSelectedDocument();
+  const { dispatch } = useContext(DocumentsContext); // Assuming you dispatch actions to your context
 
   if (!selectedDocument) {
     return <Spinner />;
   }
+
+  const handleComplete = () => {
+    // Seçili belgeyi tamamlanmış olarak işaretle
+    dispatch({ type: "COMPLETE_DOCUMENT", payload: selectedDocument.docName });
+    // Seçili belgeyi temizle
+    setSelectedDocument(null);
+    // Kullanıcıyı dashboard'a yönlendir
+    navigate("/dashboard");
+  };
 
   const {
     docName,
@@ -52,7 +76,6 @@ const DocumentDetail = () => {
     docImage,
     docSourceLink,
   } = selectedDocument;
-
   return (
     <PageContainer>
       <Header>
@@ -80,6 +103,7 @@ const DocumentDetail = () => {
           ))}
         </ul>
       </RelatedSteps>
+      <CompleteButton onClick={handleComplete}>Tamamla</CompleteButton>
     </PageContainer>
   );
 };
