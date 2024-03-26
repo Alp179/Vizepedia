@@ -42,11 +42,11 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <DocumentsProvider>
-      <SelectedDocumentProvider>
-        <UserSelectionsProvider>
-          <DarkModeProvider>
-            <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <DocumentsProvider>
+        <SelectedDocumentProvider>
+          <UserSelectionsProvider>
+            <DarkModeProvider>
               <ReactQueryDevtools initialIsOpen={false} />
 
               <GlobalStyles />
@@ -117,11 +117,11 @@ function App() {
                   },
                 }}
               />
-            </QueryClientProvider>
-          </DarkModeProvider>
-        </UserSelectionsProvider>
-      </SelectedDocumentProvider>
-    </DocumentsProvider>
+            </DarkModeProvider>
+          </UserSelectionsProvider>
+        </SelectedDocumentProvider>
+      </DocumentsProvider>
+    </QueryClientProvider>
   );
 }
 

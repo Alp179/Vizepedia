@@ -1,40 +1,34 @@
 /* eslint-disable react/prop-types */
+// DocumentsContext.jsx
 import { createContext, useContext, useReducer } from "react";
 
-// Belgelerin tamamlanma durumlarını tutacak context
 export const DocumentsContext = createContext();
 
-// Belgelerin durumlarını güncelleyecek reducer fonksiyonu
 function documentsReducer(state, action) {
   switch (action.type) {
+    case "SET_COMPLETED_DOCUMENTS":
+      return action.payload;
     case "COMPLETE_DOCUMENT":
-      return {
-        ...state,
-        [action.payload]: true,
-      };
+      return { ...state, [action.payload]: true };
     default:
-      throw new Error(`Unhandled action type: ${action.type}`);
+      return state;
   }
 }
 
-// Context provider, uygulamanın herhangi bir yerinden bu duruma erişim sağlanmasını sağlar
-export function DocumentsProvider({ children }) {
+export const DocumentsProvider = ({ children }) => {
   const [state, dispatch] = useReducer(documentsReducer, {});
 
-  // State ve dispatcher'ı sağlayın
-  const value = { state, dispatch };
   return (
-    <DocumentsContext.Provider value={value}>
+    <DocumentsContext.Provider value={{ state, dispatch }}>
       {children}
     </DocumentsContext.Provider>
   );
-}
+};
 
-// Custom hook, bu context'i kullanmak için
-export function useDocuments() {
+export const useDocuments = () => {
   const context = useContext(DocumentsContext);
   if (!context) {
     throw new Error("useDocuments must be used within a DocumentsProvider");
   }
   return context;
-}
+};

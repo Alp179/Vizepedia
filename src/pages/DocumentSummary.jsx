@@ -1,15 +1,16 @@
-// DocumentSummary.jsx
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "../ui/Spinner";
 import { getCurrentUser } from "../services/apiAuth";
-import { fetchUserSelections } from "../utils/userSelectionsFetch";
+
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useSelectedDocument } from "../context/SelectedDocumentContext"; // Import the context
+import { useSelectedDocument } from "../context/SelectedDocumentContext";
+import { DocumentsContext } from "../context/DocumentsContext";
+import { fetchCompletedDocuments } from "../utils/supabaseActions";
+import { fetchUserSelections } from "../utils/userSelectionsFetch";
 
 const ReviewButton = styled.button`
   padding: 10px 15px;
@@ -25,7 +26,7 @@ const ReviewButton = styled.button`
 `;
 
 const DocumentCard = styled.div`
-  background: #f9f9f9;
+  background: ${(props) => (props.isCompleted ? "#e0f2e9" : "#f9f9f9")};
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 10px;
@@ -46,12 +47,23 @@ const DocumentMeta = styled.p`
 const DocumentSummary = () => {
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
-  const { setSelectedDocument } = useSelectedDocument(); // Use the context setter function
+  const { setSelectedDocument } = useSelectedDocument();
+  const { state: completedDocuments, dispatch } = useContext(DocumentsContext);
 
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id);
+        fetchCompletedDocuments(user.id).then((data) => {
+          const completedDocsMap = data.reduce((acc, doc) => {
+            acc[doc.document_name] = true;
+            return acc;
+          }, {});
+          dispatch({
+            type: "SET_COMPLETED_DOCUMENTS",
+            payload: completedDocsMap,
+          });
+        });
       }
     });
   }, []);
@@ -86,21 +98,25 @@ const DocumentSummary = () => {
   }
 
   const handleReview = (document) => {
-    setSelectedDocument(document); // Set the selected document in context
-    navigate("/documents"); // Navigate to the documents route
+    setSelectedDocument(document);
+    navigate("/documents");
   };
 
   return (
     <div>
       {documents?.map((document) => (
-        <DocumentCard key={document.id}>
+        <DocumentCard
+          key={document.id}
+          isCompleted={completedDocuments[document.docName]}
+        >
           <DocumentTitle>{document.docName}</DocumentTitle>
           <DocumentMeta>
             Type: {document.docType || "Not specified"}
           </DocumentMeta>
+
           <DocumentMeta>
             Estimated Completion Time:{" "}
-            {document.estimatedComplationTime || "Unknown"}
+            {document.estimatedCompletionTime || "Unknown"}
           </DocumentMeta>
           <ReviewButton onClick={() => handleReview(document)}>
             İncele
