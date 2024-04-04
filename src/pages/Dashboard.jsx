@@ -75,6 +75,7 @@ function Dashboard() {
         currentStep={currentStep}
         onStepClick={handleStepClick}
         completedDocuments={completedDocuments}
+        documents={documentsQuery.data} // Belge detaylarını StepIndicator'a prop olarak geçir
       />
     </div>
   );

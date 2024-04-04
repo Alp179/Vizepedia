@@ -4,10 +4,28 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelections } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
+import { useNavigate } from "react-router-dom";
+import { useSelectedDocument } from "../context/SelectedDocumentContext";
+
+import styled from "styled-components";
+import { useDocuments } from "../context/DocumentsContext";
 import Spinner from "./Spinner";
+
+const DocumentItem = styled.li`
+  background-color: ${(props) => (props.isCompleted ? "#e0f2e9" : "none")};
+  padding: 8px;
+  margin: 5px;
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => (props.isCompleted ? "#cde0d9" : "#f0f0f0")};
+  }
+`;
 
 function DocumentsPage() {
   const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
+  const { setSelectedDocument } = useSelectedDocument();
+  const { state: completedDocuments } = useDocuments(); // Use the completed documents from context
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -49,12 +67,24 @@ function DocumentsPage() {
     return <div>Error loading data.</div>;
   }
 
+  const handleDocumentClick = (document) => {
+    setSelectedDocument(document);
+    navigate("/documents"); // Assume "/documentDetail" is the route for the document detail page
+  };
+
   return (
     <div>
       <h2>Tüm Belgeler</h2>
+      <h5>Başvurunuzda gerekli olan tüm belgeler</h5>
       <ul>
-        {documents?.map((doc, index) => (
-          <li key={index}>{doc.docName}</li>
+        {documents?.map((document) => (
+          <DocumentItem
+            key={document.id}
+            isCompleted={completedDocuments[document.docName]}
+            onClick={() => handleDocumentClick(document)}
+          >
+            {document.docName}
+          </DocumentItem>
         ))}
       </ul>
     </div>
