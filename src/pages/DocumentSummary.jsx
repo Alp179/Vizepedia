@@ -15,7 +15,7 @@ import { fetchUserSelections } from "../utils/userSelectionsFetch";
 const ReviewButton = styled.button`
   padding: 10px 15px;
   margin-top: 10px;
-  background-color: #3498db;
+  background-color: #004466;
   color: white;
   border: none;
   border-radius: 4px;
@@ -25,13 +25,22 @@ const ReviewButton = styled.button`
   }
 `;
 
+const VerifiedIcon = styled.img`
+  width: 70px; // İkonun genişliği
+  height: 70px; // İkonun yüksekliği
+  position: absolute; // Kartın sağ üst köşesine konumlandırmak için
+  top: 14px; // Üstten boşluk
+  right: 22px; // Sağdan boşluk
+`;
+
 const DocumentCard = styled.div`
-  background: ${(props) => (props.isCompleted ? "#e0f2e9" : "#f9f9f9")};
+  background: ${(props) => (props.isCompleted ? "#87F9CD" : "#fafafa")};
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;
+  position: relative; // İkon pozisyonlandırması için gerekli
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
@@ -109,13 +118,19 @@ const DocumentSummary = () => {
           key={document.id}
           isCompleted={completedDocuments[document.docName]}
         >
+          {/* Eğer belge tamamlanmışsa, doğrulanmış ikonunu göster */}
+          {completedDocuments[document.docName] && (
+            <VerifiedIcon
+              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/patato/Untitled.png"
+              alt="Verified"
+            />
+          )}
           <DocumentTitle>{document.docName}</DocumentTitle>
           <DocumentMeta>
             Type: {document.docType || "Not specified"}
           </DocumentMeta>
-
           <DocumentMeta>
-            Estimated Completion Time:{" "}
+            Estimated Completion Time:
             {document.estimatedCompletionTime || "Unknown"}
           </DocumentMeta>
           <ReviewButton onClick={() => handleReview(document)}>

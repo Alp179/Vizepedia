@@ -33,17 +33,34 @@ const StepCircle = styled.div`
 `;
 
 const Bubble = styled.div`
-  background-color: #2ecc71;
+  background-color: #2ecc71; // Baloncuk rengi yeşil
   padding: 16px;
   border-radius: 10px;
   position: absolute;
-  bottom: -70px;
+  bottom: -70px; // Baloncuk konumu, daireye göre altta olacak şekilde ayarlandı
+  left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); // Gölge efekti
+  z-index: 0;
+  cursor: pointer;
+  &:after {
+    // İlgili adımı gösteren çıkıntı
+    content: "";
+    position: absolute;
+    top: -10px; // Çıkıntının baloncuktan yukarıda olmasını sağlar
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 30px;
+    height: 30px;
+    background-color: #2ecc71;
+    border-radius: 4px;
+
+    z-index: -2;
+  }
 `;
 
 const ContinueButton = styled.button`
