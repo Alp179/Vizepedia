@@ -1,11 +1,12 @@
 import styled from "styled-components";
-import { useSelectedDocument } from "../context/SelectedDocumentContext";
-import { useDocuments } from "../context/DocumentsContext"; // Context'i kullanma
-import Spinner from "../ui/Spinner";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { completeDocument } from "../utils/supabaseActions";
-import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/apiAuth";
+import { useSelectedDocument } from "../context/SelectedDocumentContext";
+import { DocumentsContext } from "../context/DocumentsContext";
+
+import { completeDocument, uncompleteDocument } from "../utils/supabaseActions";
+import Spinner from "../ui/Spinner";
 
 const PageContainer = styled.div`
   display: flex;
@@ -40,7 +41,7 @@ const RelatedSteps = styled.div`
   margin-top: 20px;
 `;
 
-const CompleteButton = styled.button`
+const ActionButton = styled.button`
   padding: 10px 20px;
   background-color: #4caf50;
   color: white;
@@ -48,13 +49,42 @@ const CompleteButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   margin-top: 20px;
+  position: relative;
+  transition: background-color 0.3s ease;
+
+  & span {
+    transition: opacity 0.15s ease;
+  }
+
+  &:hover {
+    background-color: #43a047;
+  }
+
+  &:hover span {
+    opacity: ${(props) => (props.isCompleted ? 0 : 1)};
+  }
+
+  &:hover::after {
+    content: "${(props) => (props.isCompleted ? "Geri al" : "")}";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: ${(props) => (props.isCompleted ? 1 : 0)};
+    transition: opacity 0.3s ease 0.9s;
+  }
 `;
 
 const DocumentDetail = () => {
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
-  const { selectedDocument, setSelectedDocument } = useSelectedDocument();
-  const { dispatch } = useDocuments(); // useContext yerine useDocuments hook'unu kullan
+  const { selectedDocument } = useSelectedDocument();
+  const { state: completedDocuments, dispatch } = useContext(DocumentsContext);
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -64,19 +94,28 @@ const DocumentDetail = () => {
     });
   }, []);
 
-  const handleComplete = async () => {
-    if (userId && selectedDocument) {
-      try {
-        await completeDocument(userId, selectedDocument.docName); // Parametre sırasını doğru kullanın
+  const isCompleted = completedDocuments[selectedDocument?.docName];
+
+  const handleAction = async () => {
+    if (!userId || !selectedDocument) return;
+
+    try {
+      if (isCompleted) {
+        await uncompleteDocument(userId, selectedDocument.docName);
+        dispatch({
+          type: "UNCOMPLETE_DOCUMENT",
+          payload: selectedDocument.docName,
+        });
+      } else {
+        await completeDocument(userId, selectedDocument.docName);
         dispatch({
           type: "COMPLETE_DOCUMENT",
           payload: selectedDocument.docName,
         });
-        setSelectedDocument(null);
-        navigate("/dashboard");
-      } catch (error) {
-        console.error("Error completing document:", error);
       }
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error updating document status:", error);
     }
   };
 
@@ -84,45 +123,36 @@ const DocumentDetail = () => {
     return <Spinner />;
   }
 
-  const {
-    docName,
-    docType,
-    estimatedCompletionTime,
-    docDescription,
-    docSource,
-    relatedSteps,
-    docImage,
-    docSourceLink,
-  } = selectedDocument;
-
   return (
     <PageContainer>
       <Header>
-        <h1>{docName}</h1>
-        <p>{docType}</p>
-        <p>Estimated Completion Time: {estimatedCompletionTime}</p>
+        <h1>{selectedDocument.docName}</h1>
+        <p>{selectedDocument.docType}</p>
+        <p>
+          Estimated Completion Time: {selectedDocument.estimatedCompletionTime}
+        </p>
       </Header>
       <DocumentContainer>
         <DocumentInfo>
-          <p>{docDescription}</p>
-          <p>Source: {docSource}</p>
-          {docSourceLink && (
-            <a href={docSourceLink} target="_blank" rel="noopener noreferrer">
-              Source Link
-            </a>
-          )}
+          <p>{selectedDocument.docDescription}</p>
+          <p>Source: {selectedDocument.docSource}</p>
         </DocumentInfo>
-        <DocumentImage src={docImage} alt={docName} />
+        <DocumentImage
+          src={selectedDocument.docImage}
+          alt={selectedDocument.docName}
+        />
       </DocumentContainer>
       <RelatedSteps>
         <h3>Related Steps</h3>
         <ul>
-          {relatedSteps?.map((step, index) => (
+          {selectedDocument.relatedSteps?.map((step, index) => (
             <li key={index}>{step}</li>
           ))}
         </ul>
       </RelatedSteps>
-      <CompleteButton onClick={handleComplete}>Tamamla</CompleteButton>
+      <ActionButton onClick={handleAction} isCompleted={isCompleted}>
+        <span>{isCompleted ? "Tamamlandı" : "Tamamla"}</span>
+      </ActionButton>
     </PageContainer>
   );
 };

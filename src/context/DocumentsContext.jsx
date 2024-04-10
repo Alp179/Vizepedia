@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-// DocumentsContext.jsx
 import { createContext, useContext, useReducer } from "react";
 
 export const DocumentsContext = createContext();
@@ -10,6 +9,12 @@ function documentsReducer(state, action) {
       return action.payload;
     case "COMPLETE_DOCUMENT":
       return { ...state, [action.payload]: true };
+    case "UNCOMPLETE_DOCUMENT": {
+      // New case block with curly braces for proper scoping
+      const newState = { ...state };
+      delete newState[action.payload]; // Removes the key for the uncompleted document
+      return newState;
+    }
     default:
       return state;
   }

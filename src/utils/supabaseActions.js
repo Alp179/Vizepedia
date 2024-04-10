@@ -6,7 +6,7 @@ export async function completeDocument(userId, documentName) {
       userId: userId,
       document_name: documentName,
       completion_date: new Date(),
-      status: true, // Boolean değer kullan
+      status: true,
     },
   ]);
 
@@ -30,4 +30,19 @@ export async function fetchCompletedDocuments(userId) {
   }
 
   return data;
+}
+
+// Belgeyi tamamlanmamış olarak işaretleme fonksiyonu
+export async function uncompleteDocument(userId, documentName) {
+  const { data, error } = await supabase
+    .from("completed_documents")
+    .delete()
+    .match({ userId, document_name: documentName });
+
+  if (error) {
+    console.error("Error uncompleting document:", error);
+    return { error };
+  }
+
+  return { data };
 }
