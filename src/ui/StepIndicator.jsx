@@ -7,9 +7,9 @@ import styled from "styled-components";
 
 const StepsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly; // Her adımın eşit aralıklı olmasını sağlar
   position: relative;
-  margin-bottom: 100px; // Bubble için yer açıyor
+  margin-bottom: 100px; // Baloncuk için yer açıyor
 `;
 
 const StepCircle = styled.div`
@@ -32,34 +32,45 @@ const StepCircle = styled.div`
     props.isactive ? "blue" : props.isCompleted ? "green" : "#ccc"};
 `;
 
+const StepName = styled.div`
+  font-size: 14px;
+  margin-top: 5px;
+  max-width: 11dvh;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: max-width 0.6s ease;
+
+  &:hover {
+    max-width: 27dvh; /* Hover durumunda max-width değerini arttır */
+  }
+`;
+
 const Bubble = styled.div`
-  background-color: #2ecc71; // Baloncuk rengi yeşil
+  background-color: #2ecc71;
   padding: 16px;
   border-radius: 10px;
   position: absolute;
-  bottom: -70px; // Baloncuk konumu, daireye göre altta olacak şekilde ayarlandı
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: -92px;
+  left: ${(props) => `calc(${props.leftOffset}% - 30px)`};
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); // Gölge efekti
-  z-index: 0;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  z-index: 0;
   &:after {
-    // İlgili adımı gösteren çıkıntı
     content: "";
     position: absolute;
-    top: -10px; // Çıkıntının baloncuktan yukarıda olmasını sağlar
+    top: -10px;
     left: 50%;
     transform: translateX(-50%) rotate(45deg);
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     background-color: #2ecc71;
     border-radius: 4px;
-
-    z-index: -2;
+    z-index: -1;
   }
 `;
 
@@ -78,8 +89,8 @@ const ContinueButton = styled.button`
 
 const StepIndicator = ({ steps, currentStep, onStepClick, documents }) => {
   const { state: completedSteps } = useContext(DocumentsContext);
-  const { setSelectedDocument } = useSelectedDocument();
   const navigate = useNavigate();
+  const { setSelectedDocument } = useSelectedDocument();
 
   const firstIncompleteIndex = steps.findIndex((step) => !completedSteps[step]);
 
@@ -100,8 +111,7 @@ const StepIndicator = ({ steps, currentStep, onStepClick, documents }) => {
       {steps.map((step, index) => {
         const isactive = index === currentStep;
         const isCompleted = completedSteps[step];
-        const bubbleLeftOffset =
-          (firstIncompleteIndex / (steps.length - 1)) * 100 + "%";
+        const bubbleLeftOffset = `${(index / (steps.length - 1)) * 100}%`;
 
         return (
           <div
@@ -119,9 +129,9 @@ const StepIndicator = ({ steps, currentStep, onStepClick, documents }) => {
             >
               {index + 1}
             </StepCircle>
-            <div style={{ fontSize: "14px", marginTop: "5px" }}>{step}</div>
+            <StepName title={step}>{step}</StepName>
             {index === firstIncompleteIndex && (
-              <Bubble style={{ left: bubbleLeftOffset }}>
+              <Bubble leftOffset={bubbleLeftOffset}>
                 <span>{step}</span>
                 <ContinueButton onClick={handleContinue}>
                   Devam et
