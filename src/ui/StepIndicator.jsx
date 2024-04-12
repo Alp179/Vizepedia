@@ -35,7 +35,7 @@ const StepCircle = styled.div`
 const StepName = styled.div`
   font-size: 14px;
   margin-top: 5px;
-  max-width: 11dvh;
+  max-width: 10dvh;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

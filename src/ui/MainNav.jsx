@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import {
   HiDocument,
@@ -14,6 +14,14 @@ import {
 import Button from "./Button";
 import Modal from "./Modal";
 import AllDocs from "./AllDocs";
+import { useContext, useEffect, useState } from "react";
+import { DocumentsContext, useDocuments } from "../context/DocumentsContext";
+import { useSelectedDocument } from "../context/SelectedDocumentContext";
+import { getCurrentUser } from "../services/apiAuth";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserSelections } from "../utils/userSelectionsFetch";
+import { getDocumentsForSelections } from "../utils/documentsFilter";
+import { fetchDocumentDetails } from "../utils/documentFetch";
 const NavList = styled.ul`
   display: flex;
   flex-direction: column;
@@ -60,9 +68,59 @@ const StyledNavLink = styled(NavLink)`
 `;
 
 function MainNav() {
+  const [userId, setUserId] = useState(null);
+  const navigate = useNavigate();
+  const { state: completedDocuments, dispatch } = useDocuments();
+  const { setSelectedDocument } = useSelectedDocument();
+
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      if (user) {
+        setUserId(user.id);
+      }
+    });
+  }, []);
+
+  const userSelectionsQuery = useQuery({
+    queryKey: ["userSelections", userId],
+    queryFn: () => fetchUserSelections(userId),
+    enabled: !!userId,
+  });
+
+  const documentNames = userSelectionsQuery.data
+    ? getDocumentsForSelections(userSelectionsQuery.data)
+    : [];
+
+  const documentsQuery = useQuery({
+    queryKey: ["documentDetails", documentNames],
+    queryFn: () => fetchDocumentDetails(documentNames),
+    enabled: !!documentNames.length,
+  });
+
+  const continueToDocument = () => {
+    if (!documentsQuery.data) return;
+    const firstIncompleteIndex = documentsQuery.data.findIndex(
+      (doc) => !completedDocuments[doc.docName]
+    );
+
+    if (firstIncompleteIndex !== -1) {
+      const selectedDocument = documentsQuery.data[firstIncompleteIndex];
+      setSelectedDocument(selectedDocument);
+      navigate("/documents");
+    }
+  };
+
+  if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (userSelectionsQuery.isError || documentsQuery.isError) {
+    return <div>Error loading data.</div>;
+  }
+
   return (
     <nav>
-      <Button size="large" variation="primary">
+      <Button size="large" variation="primary" onClick={continueToDocument}>
         Devam et
       </Button>
       <NavList>
