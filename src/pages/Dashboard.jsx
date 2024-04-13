@@ -11,24 +11,88 @@ import StepIndicator from "../ui/StepIndicator";
 import { useNavigate } from "react-router-dom";
 import { useDocuments } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
+import styled from "styled-components";
+import "flag-icons/css/flag-icons.min.css"; // CSS importu
+
+// Styled component for the flag
+const FlagContainer = styled.div`
+  position: absolute;
+  top: -28vh;
+  right: -27vh;
+  transform: rotate(31deg);
+  width: 100vh; // Genişlik
+  height: 55vh; // Yükseklik
+  z-index: 1000; // Diğer elementlerin üzerinde olmasını sağlar
+  overflow: hidden; // Bayrağın konteynere taşmasını engeller
+  border-radius: 8%; // Köşeleri yuvarlak yapar
+
+  & > span {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-size: cover; // Bayrağın konteynere sığmasını sağlar
+    background-position: center; // Bayrağın ortalanmasını sağlar
+  }
+`;
+
+// Ülke adlarını ISO kodlarına çeviren harita
+const countryToCode = {
+  Almanya: "de",
+  Avusturya: "at",
+  Belçika: "be",
+  Çekya: "cz",
+  Danimarka: "dk",
+  Estonya: "ee",
+  Finlandiya: "fi",
+  Fransa: "fr",
+  Yunanistan: "gr",
+  Macaristan: "hu",
+  İzlanda: "is",
+  İtalya: "it",
+  Letonya: "lv",
+  Litvanya: "lt",
+  Lüksemburg: "lu",
+  Malta: "mt",
+  Hollanda: "nl",
+  Norveç: "no",
+  Polonya: "pl",
+  Portekiz: "pt",
+  Slovakya: "sk",
+  Slovenya: "si",
+  İspanya: "es",
+  İsveç: "se",
+  İsviçre: "ch",
+  Lihtenştayn: "li",
+  Rusya: "ru",
+  ABD: "us",
+  Çin: "cn",
+  BAE: "ae",
+  Avustralya: "au",
+  Birleşik_Krallık: "gb",
+  Hırvatistan: "hr", // Hırvatistan eklendi.
+};
 
 function Dashboard() {
   const [userId, setUserId] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
   const { state: completedDocuments, dispatch } = useDocuments();
+  const [countryCode, setCountryCode] = useState("");
 
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id);
-        // Fetch completed documents when the user is obtained
         fetchCompletedDocuments(user.id).then((data) => {
           const completedDocs = data.reduce((acc, doc) => {
             acc[doc.document_name] = true;
             return acc;
           }, {});
           dispatch({ type: "SET_COMPLETED_DOCUMENTS", payload: completedDocs });
+          fetchUserSelections(user.id).then((selections) => {
+            const ansCountry = selections?.ans_country; // Doğrudan objeden ans_country çekiliyor
+            setCountryCode(countryToCode[ansCountry] || "");
+          });
         });
       }
     });
@@ -66,7 +130,10 @@ function Dashboard() {
   const stepLabels = documentsQuery.data?.map((doc) => doc.docName) || [];
 
   return (
-    <div>
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      {" "}
+      {/* Relative position for the flag */}{" "}
+      {/* Relative position for the flag */}
       <Row type="horizontal">
         <Heading as="h1">Dashboard</Heading>
       </Row>
@@ -75,8 +142,13 @@ function Dashboard() {
         currentStep={currentStep}
         onStepClick={handleStepClick}
         completedDocuments={completedDocuments}
-        documents={documentsQuery.data} // Belge detaylarını StepIndicator'a prop olarak geçir
+        documents={documentsQuery.data}
       />
+      {countryCode && (
+        <FlagContainer>
+          <span className={`fi fi-${countryCode}`}></span>
+        </FlagContainer>
+      )}
     </div>
   );
 }
