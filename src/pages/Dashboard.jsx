@@ -14,17 +14,16 @@ import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import styled from "styled-components";
 import "flag-icons/css/flag-icons.min.css"; // CSS importu
 
-// Styled component for the flag
 const FlagContainer = styled.div`
   position: absolute;
-  top: -28vh;
-  right: -27vh;
-  transform: rotate(31deg);
-  width: 100vh; // Genişlik
-  height: 55vh; // Yükseklik
+  top: 70%; // Orta yukarıda konumlanacak şekilde ayarla
+  right: 10%; // Sağ üst köşede
+  transform: translateX(50%) translateY(-100%) rotate(31deg); // Bayrağı döndür ve konumlandır
+  width: 35vw; // Genişlik ekran genişliğinin bir yüzdesi olarak
+  height: 20vw; // Yükseklik ekran genişliğinin bir yüzdesi olarak
   z-index: 1000; // Diğer elementlerin üzerinde olmasını sağlar
   overflow: hidden; // Bayrağın konteynere taşmasını engeller
-  border-radius: 8%; // Köşeleri yuvarlak yapar
+  border-radius: 10%; // Köşeleri yuvarlak yapar
 
   & > span {
     width: 100%;
@@ -33,7 +32,23 @@ const FlagContainer = styled.div`
     background-size: cover; // Bayrağın konteynere sığmasını sağlar
     background-position: center; // Bayrağın ortalanmasını sağlar
   }
+
+  // Küçük ekranlar için medya sorguları
+  @media (max-width: 768px) {
+    width: 50vw; // Daha küçük ekranlarda genişliği artır
+    height: 30vw; // Daha küçük ekranlarda yüksekliği artır
+    transform: translateX(20%) translateY(-50%) rotate(31deg); // Konumu ayarla
+  }
+
+  // Daha da küçük ekranlar için medya sorguları
+  @media (max-width: 480px) {
+    width: 60vw;
+    height: 40vw;
+    transform: translateX(10%) translateY(-50%) rotate(31deg); // Daha fazla ayarla
+  }
 `;
+
+// Dashboard bileşeninizi
 
 // Ülke adlarını ISO kodlarına çeviren harita
 const countryToCode = {
