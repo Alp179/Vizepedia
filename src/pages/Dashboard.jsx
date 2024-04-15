@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 import { useDocuments } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import styled from "styled-components";
-import "flag-icons/css/flag-icons.min.css"; // CSS importu
 
 const FlagContainer = styled.div`
   position: absolute;

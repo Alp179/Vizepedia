@@ -8,6 +8,7 @@ const StyledLogo = styled.div`
 const Img = styled.img`
   height: 9rem;
   width: auto;
+  margin-top: 100px;
 `;
 
 function Logo() {
