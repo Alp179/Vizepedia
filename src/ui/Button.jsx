@@ -19,20 +19,6 @@ const sizes = {
     padding: 2.4rem 4.8rem;
     font-weight: 500;
   `,
-  login: css`
-    font-size: 1.6rem;
-    padding: 2.4rem 4.8rem;
-    font-weight: 500;
-    height: 44px;
-    width: 371px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 11px;
-    background-color: #00ffa2!important;
-    color: #004466!important;
-    font-weight: bold;
-    `,
 };
 
 const variations = {

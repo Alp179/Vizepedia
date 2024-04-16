@@ -4,14 +4,13 @@ import Logo from "../ui/Logo";
 import Heading from "../ui/Heading";
 
 const LoginLayout = styled.main`
-  background-color: var(--color-grey-50);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   grid-template-columns: 48rem;
   align-content: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 3.2rem;
+  background-color: var(--color-grey-50);
 `;
 
 function Login() {
