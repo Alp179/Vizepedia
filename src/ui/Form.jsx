@@ -4,10 +4,6 @@ const Form = styled.form`
   ${(props) =>
     props.type === "regular" &&
     css`
-      &.light-mode {
-        filter: drop-shadow(10px 40px 220px #07ff9c);
-        box-shadow: 100px 35px 3000px -100px #004466;
-      }
       padding: 2.4rem 4rem;
       height: 540px;
       width: 420px;
@@ -28,6 +24,13 @@ const Form = styled.form`
     props.type === "modal" &&
     css`
       width: 80rem;
+    `}
+
+  ${(props) =>
+    props.type === "light-mode" &&
+    css`
+      filter: drop-shadow(10px 40px 220px #07ff9c);
+      box-shadow: 100px 35px 3000px -100px #004466;
     `}
     
   overflow: hidden;

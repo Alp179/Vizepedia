@@ -7,6 +7,7 @@ import FormRow from "../../ui/FormRow";
 import { useLogin } from "./useLogin";
 
 import SpinnerMini from "../../ui/SpinnerMini";
+import { useDarkMode } from "./path/to/DarkModeContext";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -29,11 +30,11 @@ function LoginForm() {
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit} theme={darkMode ? "dark-mode" : "light-mode"}>
       <div style={{ fontSize: "24px", fontWeight: "bold" }}>
         Vizepedia ya Hoş Geldiniz
       </div>
-      <div style={{textAlign: "center", fontSize: "16px"}}>
+      <div style={{ textAlign: "center", fontSize: "16px" }}>
         Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
         Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
       </div>
