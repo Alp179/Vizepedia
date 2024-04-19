@@ -22,6 +22,9 @@ const GlobalStyles = createGlobalStyle`/*
 
 &, &.light-mode{
   --color-grey-0: #fff;
+  --color-grey-1: linear-gradient(180deg, #00FFA2 0%, #00B78B 15.10%, #00837A 48.44%, #046 100%);
+  --color-grey-2: linear-gradient(180deg, #00FFA2 0%, #00B78B 15.10%, #00837A 48.44%, #046 100%);
+  --color-grey-3: linear-gradient(180deg, #00FFA2 100%, #00B78B 15.10%, #00837A 48.44%, #046 0%);
   --color-grey-31: #004466;
   --color-grey-61: #00ffa2;
   --color-grey-50: #DDFBEF;
@@ -62,6 +65,9 @@ const GlobalStyles = createGlobalStyle`/*
   &.dark-mode{
     --color-grey-0: #18212f;
 --color-grey-50: #111827;
+--color-grey-1: #111827;
+--color-grey-2: #18212f;
+--color-grey-3: #18212f;
 --color-grey-100: #1f2937;
 --color-grey-200: #374151;
 --color-grey-300: #4b5563;

@@ -4,21 +4,22 @@ import Header from "./Header";
 import { styled } from "styled-components";
 
 const StyledAppLayout = styled.div`
+overflow: clip;
   display: grid;
   grid-template-columns: 26rem 1fr;
   grid-template-rows: auto 1fr;
   height: 100dvh;
+  background: var(--color-grey-1);
 `;
 
 const Main = styled.main`
-  background-color: var(--color-grey-50);
+  backdrop-filter: blur(0px);
   padding: 4rem 4.8rem 6.4rem;
-  overflow: scroll;
 `;
 
 const Container = styled.div`
   max-width: 120rem;
-  margin: 0 auto;
+  margin: 0 100px;
   display: flex;
   flex-direction: column;
   gap: 3.2rem;

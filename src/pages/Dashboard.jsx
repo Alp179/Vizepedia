@@ -16,8 +16,8 @@ import "flag-icons/css/flag-icons.min.css"; // CSS importu
 
 const FlagContainer = styled.div`
   position: absolute;
-  top: 70%; // Orta yukarıda konumlanacak şekilde ayarla
-  right: 10%; // Sağ üst köşede
+  top: 80%; // Orta yukarıda konumlanacak şekilde ayarla
+  right: -10%; // Sağ üst köşede
   transform: translateX(50%) translateY(-100%) rotate(31deg); // Bayrağı döndür ve konumlandır
   width: 35vw; // Genişlik ekran genişliğinin bir yüzdesi olarak
   height: 20vw; // Yükseklik ekran genişliğinin bir yüzdesi olarak
@@ -145,7 +145,7 @@ function Dashboard() {
   const stepLabels = documentsQuery.data?.map((doc) => doc.docName) || [];
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: "relative", width: "100%", height: "100%"}}>
       {" "}
       {/* Relative position for the flag */}{" "}
       {/* Relative position for the flag */}
