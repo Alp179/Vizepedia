@@ -10,6 +10,10 @@ const StyledHeader = styled.header`
   align-items: center;
   justify-content: flex-end;
   z-index: 1;
+  background: rgba(255, 255, 255, 0.2);
+ 
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 `;
 
 function Header() {

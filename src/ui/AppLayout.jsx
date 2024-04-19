@@ -4,7 +4,7 @@ import Header from "./Header";
 import { styled } from "styled-components";
 
 const StyledAppLayout = styled.div`
-overflow: clip;
+  overflow: clip;
   display: grid;
   grid-template-columns: 26rem 1fr;
   grid-template-rows: auto 1fr;
@@ -15,6 +15,9 @@ overflow: clip;
 const Main = styled.main`
   backdrop-filter: blur(0px);
   padding: 4rem 4.8rem 6.4rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 `;
 
 const Container = styled.div`
