@@ -22,7 +22,9 @@ const StyledToggle = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background-color: var(--color-grey-100);
+    backdrop-filter: blur(20px);
+    opacity: 0.5;
+
   }
 
   & svg {
