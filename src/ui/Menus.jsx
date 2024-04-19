@@ -23,8 +23,7 @@ const StyledToggle = styled.button`
 
   &:hover {
     backdrop-filter: blur(40px);
-    opacity: 0.8;
-
+    opacity: 0.5;
   }
 
   & svg {
@@ -36,10 +35,12 @@ const StyledToggle = styled.button`
 
 const StyledList = styled.ul`
   position: fixed;
-
-  backdrop-filer: blur(40px);
-  box-shadow: var(--shadow-md);
-  border-radius: var(--border-radius-md);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 
   right: ${(props) => props.position.x}px;
   top: ${(props) => props.position.y}px;
