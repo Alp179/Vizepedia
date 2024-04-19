@@ -19,6 +19,13 @@ const sizes = {
     padding: 2.4rem 4.8rem;
     font-weight: 500;
   `,
+  login: css`
+    height: 44px;
+    width: 371px;
+    border-radius: 11px !important;
+    border: transparent !important;
+    font-weight: bold !important;
+  `,
 };
 
 const variations = {
@@ -30,6 +37,10 @@ const variations = {
     &:hover {
       background-color: var(--color-brand-700);
     }
+  `,
+  login: css`
+    color: var(--color-grey-31);
+    background-color: var(--color-grey-61);
   `,
   secondary: css`
     color: var(--color-grey-600);

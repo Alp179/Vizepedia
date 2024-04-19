@@ -30,7 +30,18 @@ function LoginForm() {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <FormRow orientation="vertical" label="Email address">
+      <div style={{display: "flex", flexDirection: "column", gap:"12px"}}>
+        <p
+          style={{ textAlign: "center", fontSize: "24px", fontWeight: "bold" }}
+        >
+          Vizepedia`ya Hoş geldiniz
+        </p>
+        <p style={{textAlign: "center", fontSize:"16px"}}>
+          Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
+          Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
+        </p>
+      </div>
+      <FormRow orientation="vertical" label="E-posta Adresi">
         <Input
           type="email"
           id="email"
@@ -42,7 +53,7 @@ function LoginForm() {
         />
       </FormRow>
 
-      <FormRow orientation="vertical" label="Password">
+      <FormRow orientation="vertical" label="Şifre">
         <Input
           type="password"
           id="password"
@@ -53,7 +64,7 @@ function LoginForm() {
         />
       </FormRow>
       <FormRow orientation="vertical">
-        <Button size="large" disabled={isLoading}>
+        <Button size="login" variation="login" disabled={isLoading}>
           {!isLoading ? "Login" : <SpinnerMini />}
         </Button>
       </FormRow>

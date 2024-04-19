@@ -2,8 +2,9 @@
 import styled, { css } from "styled-components";
 
 const StyledFormRow = styled.div`
-  display: grid;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   grid-template-columns: ${(props) =>
     props.orientation === "vertical" ? "1fr" : "24rem 1fr 1.2fr"};
