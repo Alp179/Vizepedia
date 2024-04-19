@@ -8,13 +8,17 @@ const ButtonIcon = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background-color: var(--color-grey-100);
+    backdrop-filter: blur(40px);
+
   }
 
   & svg {
     width: 2.2rem;
     height: 2.2rem;
     color: var(--color-brand-600);
+    &:hover {
+      opacity: 0.5;
+    }
   }
 `;
 

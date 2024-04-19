@@ -22,8 +22,8 @@ const StyledToggle = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    backdrop-filter: blur(20px);
-    opacity: 0.5;
+    backdrop-filter: blur(40px);
+    opacity: 0.8;
 
   }
 
@@ -37,7 +37,7 @@ const StyledToggle = styled.button`
 const StyledList = styled.ul`
   position: fixed;
 
-  background-color: var(--color-grey-0);
+  backdrop-filer: blur(40px);
   box-shadow: var(--shadow-md);
   border-radius: var(--border-radius-md);
 
@@ -59,7 +59,7 @@ const StyledButton = styled.button`
   gap: 1.6rem;
 
   &:hover {
-    background-color: var(--color-grey-50);
+    opacity: 0.5;
   }
 
   & svg {

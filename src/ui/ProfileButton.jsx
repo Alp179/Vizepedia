@@ -23,9 +23,7 @@ const StyledProfileButton = styled.button`
   border-radius: var(--border-radius-sm);
   transition: all 0.2s;
 
-  &:hover {
-    background-color: var(--color-grey-100);
-  }
+  
 `;
 
 function ProfileButton({ cabin }) {
