@@ -13,6 +13,7 @@ const PageContainer = styled.div`
   flex-direction: column;
   max-width: 800px;
   margin: auto;
+  height: 100vh;
 `;
 
 const Header = styled.div`

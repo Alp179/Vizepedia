@@ -26,6 +26,9 @@ const sizes = {
     border: transparent !important;
     font-weight: bold !important;
   `,
+  back: css`
+    height: 200px;
+  `
 };
 
 const variations = {

@@ -6,13 +6,13 @@ import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import { useNavigate } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
-
 import styled from "styled-components";
 import { useDocuments } from "../context/DocumentsContext";
 import Spinner from "./Spinner";
 
 const DocumentItem = styled.li`
-  background-color: ${(props) => (props.isCompleted ? "#e0f2e9" : "none")};
+  border-radius: 16px;
+  background-color: ${(props) => (props.isCompleted ? "#00ffa2" : "none")};
   padding: 8px;
   margin: 5px;
   cursor: pointer;
@@ -73,9 +73,9 @@ function DocumentsPage() {
   };
 
   return (
-    <div>
+    <div style={{display: "flex", flexDirection: "column", gap: "6px"}}>
       <h2>Tüm Belgeler</h2>
-      <h5>Başvurunuzda gerekli olan tüm belgeler</h5>
+      <div>Başvurunuzda gerekli olan tüm belgeler</div>
       <ul>
         {documents?.map((document) => (
           <DocumentItem
