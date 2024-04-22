@@ -27,8 +27,12 @@ const sizes = {
     font-weight: bold !important;
   `,
   back: css`
-    height: 200px;
-  `
+    
+    height: 7rem;
+    width: 160px;
+    position: absolute;
+    z-index: 2;
+  `,
 };
 
 const variations = {

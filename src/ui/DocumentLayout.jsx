@@ -7,21 +7,28 @@ import BackButton from "./BackButton";
 
 const StyledAppLayout = styled.div`
   background: var(--color-grey-1);
-  display: grid;
-  grid-template-columns: 26rem 1fr;
-  grid-template-rows: auto 1fr;
-  height: 100dvh;
+  display: flex;
+  height: 100%;
+  width: 100vw;
+  max-width: 100%;
+  overflow: hidden;
 `;
 
 const Main = styled.main`
-  height: 100%;
   background-color: var(--color-grey-1);
   padding: 4rem 4.8rem 6.4rem;
-  overflow: scroll;
+  height: 100%;
+  min-width: 100%;
+  display: flex;
+  margin-left: 50px;
+  margin-top: -40px;
+  flex-direction: column;
+  gap: 50px;
+  justify-content: space-between;
 `;
 
 const Container = styled.div`
-  max-width: 120rem;
+  width: 70%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
