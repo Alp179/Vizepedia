@@ -6,6 +6,8 @@ import { DocumentsContext } from "../context/DocumentsContext";
 import styled from "styled-components";
 
 const StepsContainer = styled.div`
+  margin-left: -70px;
+  max-width: 80%;
   display: flex;
   justify-content: space-evenly; // Her adımın eşit aralıklı olmasını sağlar
   position: relative;

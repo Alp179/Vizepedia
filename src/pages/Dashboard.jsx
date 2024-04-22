@@ -145,7 +145,7 @@ function Dashboard() {
   const stepLabels = documentsQuery.data?.map((doc) => doc.docName) || [];
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%"}}>
+    <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", flexDirection: "column", gap:"50px"}}>
       {" "}
       {/* Relative position for the flag */}{" "}
       {/* Relative position for the flag */}
