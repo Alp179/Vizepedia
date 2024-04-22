@@ -17,7 +17,7 @@ const StyledAppLayout = styled.div`
 const Main = styled.main`
   background-color: var(--color-grey-1);
   padding: 4rem 4.8rem 6.4rem;
-  height: 100%;
+  max-height: 100%;
   min-width: 100%;
   display: flex;
   margin-left: 50px;

@@ -11,7 +11,7 @@ import Spinner from "../ui/Spinner";
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 800px;
+  max-width: 80%;
   margin: auto;
   height: 100vh;
 `;
