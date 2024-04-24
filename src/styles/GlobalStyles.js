@@ -195,6 +195,23 @@ ul {
   list-style: none;
 }
 
+.hosgeldiniz {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.subtext {
+  text-align: center;
+  font-size: 16px;
+}
+
+@media (max-width: 450px) {
+  .hosgeldiniz {
+    font-size: 22px;
+  }
+}
+
 p,
 h1,
 h2,

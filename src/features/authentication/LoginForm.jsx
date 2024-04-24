@@ -2,10 +2,8 @@ import { useState } from "react";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import Input from "../../ui/Input";
-
 import FormRow from "../../ui/FormRow";
 import { useLogin } from "./useLogin";
-
 import SpinnerMini from "../../ui/SpinnerMini";
 
 function LoginForm() {
@@ -30,13 +28,9 @@ function LoginForm() {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <div style={{display: "flex", flexDirection: "column", gap:"12px"}}>
-        <p
-          style={{ textAlign: "center", fontSize: "24px", fontWeight: "bold" }}
-        >
-          Vizepedia`ya Hoş geldiniz
-        </p>
-        <p style={{textAlign: "center", fontSize:"16px"}}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <p className="hosgeldiniz">Vizepedia`ya Hoş geldiniz</p>
+        <p className="subtext">
           Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
           Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
         </p>

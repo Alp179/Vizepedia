@@ -26,7 +26,7 @@ const sizes = {
     border: transparent !important;
     font-weight: bold !important;
     @media (max-width: 450px) {
-      width: 320px;
+      width: 306px;
     }
   `,
   back: css`
