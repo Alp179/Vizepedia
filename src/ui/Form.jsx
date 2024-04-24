@@ -19,6 +19,10 @@ const Form = styled.form`
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
+      @media (max-width: 450px) {
+        width: 358px;
+        height: 510px;
+      }
     `}
 
   ${(props) =>

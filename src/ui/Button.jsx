@@ -25,12 +25,14 @@ const sizes = {
     border-radius: 11px !important;
     border: transparent !important;
     font-weight: bold !important;
+    @media (max-width: 450px) {
+      width: 320px;
+    }
   `,
   back: css`
-    
     height: 7rem;
     width: 160px;
-    position: absolute;
+    position: fixed;
     z-index: 2;
   `,
 };
