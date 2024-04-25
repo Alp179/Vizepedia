@@ -120,7 +120,7 @@ function MainNav() {
 
   return (
     <nav>
-      <Button size="large" variation="primary" onClick={continueToDocument}>
+      <Button size="dash" variation="primary" onClick={continueToDocument}>
         Devam et
       </Button>
       <NavList>

@@ -26,7 +26,7 @@ const sizes = {
     border: transparent !important;
     font-weight: bold !important;
     @media (max-width: 450px) {
-      width: 306px;
+      width: 306px !important;
     }
   `,
   back: css`
@@ -34,6 +34,14 @@ const sizes = {
     width: 160px;
     position: fixed;
     z-index: 2;
+  `,
+  dash: css`
+    font-size: 1.6rem;
+    padding: 2.4rem 4.8rem;
+    font-weight: 500;
+    @media (max-width: 1300px) {
+      padding: 1.8rem 3.5rem;
+    }
   `,
 };
 
