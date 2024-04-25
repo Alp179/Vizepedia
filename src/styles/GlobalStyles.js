@@ -206,6 +206,12 @@ ul {
   font-size: 16px;
 }
 
+@media (max-width: 1050px) {
+  .sidebartext {
+    font-size:16px;
+  }
+}
+
 @media (max-width: 450px) {
   .hosgeldiniz {
     font-size: 22px;

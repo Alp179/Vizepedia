@@ -25,6 +25,18 @@ const FlagContainer = styled.div`
   overflow: hidden; // Bayrağın konteynere taşmasını engeller
   border-radius: 10%; // Köşeleri yuvarlak yapar
 
+  @media (max-width: 1300px) {
+    top: 60%;
+  }
+
+  @media (max-width: 1250px) {
+    top: 50%;
+  }
+
+  @media (max-width: 1150px) {
+    top: 30%;
+  }
+
   & > span {
     width: 100%;
     height: 100%;
@@ -32,6 +44,7 @@ const FlagContainer = styled.div`
     background-size: cover; // Bayrağın konteynere sığmasını sağlar
     background-position: center; // Bayrağın ortalanmasını sağlar
   }
+
 
   // Küçük ekranlar için medya sorguları
   @media (max-width: 768px) {

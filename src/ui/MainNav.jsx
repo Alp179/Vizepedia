@@ -26,6 +26,15 @@ const NavList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  justify-content: center;
+  @media (max-width: 1300px) {
+    gap: 0.4rem;
+    margin-left: -10px;
+  }
+  @media (max-width: 1050px) {
+    margin-top: 10px;
+    margin-left: -17px;
+  }
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -40,6 +49,9 @@ const StyledNavLink = styled(NavLink)`
     padding: 1.2rem 2.4rem;
     transition: all 0.3s;
     background-color: transparent !important;
+    @media (max-width: 1300px) {
+      gap: 0.6rem;
+    }
   }
 
   /* This works because react-router places the active class on the active NavLink */
@@ -126,14 +138,14 @@ function MainNav() {
       <NavList>
         <li>
           <StyledNavLink to="/dashboard">
-            <HiPlus /> <span>Yeni</span>
+            <HiPlus /> <span className="sidebartext">Yeni</span>
           </StyledNavLink>
         </li>
         <li>
           <Modal>
             <Modal.Open opens="allDocs">
               <StyledNavLink to="/dashboard">
-                <HiDocument /> <span>Tüm belgeler</span>
+                <HiDocument /> <span className="sidebartext">Tüm belgeler</span>
               </StyledNavLink>
             </Modal.Open>
             <Modal.Window name="allDocs">
