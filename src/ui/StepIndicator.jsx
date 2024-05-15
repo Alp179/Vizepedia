@@ -1,17 +1,26 @@
 /* eslint-disable react/prop-types */
-import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
-import { DocumentsContext } from "../context/DocumentsContext";
+
 import styled from "styled-components";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
+import { getDocumentsForSelections } from "../utils/documentsFilter";
+import { fetchDocumentDetails } from "../utils/documentFetch";
+import Spinner from "./Spinner";
+
+import { getCurrentUser } from "../services/apiAuth";
+import { DocumentsContext } from "../context/DocumentsContext";
+import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 const StepsContainer = styled.div`
   margin-left: -70px;
   max-width: 80%;
   display: flex;
-  justify-content: space-evenly; // Her adımın eşit aralıklı olmasını sağlar
+  justify-content: space-evenly;
   position: relative;
-  margin-bottom: 100px; // Baloncuk için yer açıyor
+  margin-bottom: 100px;
 `;
 
 const StepCircle = styled.div`
@@ -27,11 +36,11 @@ const StepCircle = styled.div`
   text-align: center;
   margin-bottom: 5px;
   background-color: ${(props) =>
-    props.isactive ? "blue" : props.isCompleted ? "green" : "none"};
+    props.isActive ? "blue" : props.isCompleted ? "green" : "none"};
   color: ${(props) =>
-    props.isactive || props.isCompleted ? "white" : "black"};
+    props.isActive || props.isCompleted ? "white" : "black"};
   border-color: ${(props) =>
-    props.isactive ? "blue" : props.isCompleted ? "green" : "#ccc"};
+    props.isActive ? "blue" : props.isCompleted ? "green" : "#ccc"};
 `;
 
 const StepName = styled.div`
@@ -44,7 +53,7 @@ const StepName = styled.div`
   transition: max-width 0.6s ease;
 
   &:hover {
-    max-width: 27dvh; /* Hover durumunda max-width değerini arttır */
+    max-width: 27dvh;
   }
 `;
 
@@ -89,60 +98,127 @@ const ContinueButton = styled.button`
   }
 `;
 
-const StepIndicator = ({ steps, currentStep, onStepClick, documents }) => {
-  const { state: completedSteps } = useContext(DocumentsContext);
+const StepIndicator = () => {
+  const [userId, setUserId] = useState(null);
+  const { id: applicationId } = useParams();
   const navigate = useNavigate();
   const { setSelectedDocument } = useSelectedDocument();
 
-  const firstIncompleteIndex = steps.findIndex((step) => !completedSteps[step]);
+  const {
+    state: { completedDocuments },
+    dispatch,
+  } = useContext(DocumentsContext);
 
-  const handleContinue = (event) => {
-    event.stopPropagation();
-    const selectedDocument = documents.find(
-      (doc) => doc.docName === steps[firstIncompleteIndex]
-    );
+  const [currentStep] = useState(0);
 
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      if (user) {
+        setUserId(user.id);
+        fetchCompletedDocuments(user.id, applicationId).then((data) => {
+          const completedDocsMap = data.reduce((acc, doc) => {
+            if (!acc[applicationId]) {
+              acc[applicationId] = {};
+            }
+            acc[applicationId][doc.document_name] = true;
+            return acc;
+          }, {});
+          dispatch({
+            type: "SET_COMPLETED_DOCUMENTS",
+            payload: completedDocsMap,
+          });
+        });
+      }
+    });
+  }, [applicationId, dispatch]);
+
+  const {
+    data: userSelections,
+    isLoading: isLoadingUserSelections,
+    isError: isErrorUserSelections,
+  } = useQuery({
+    queryKey: ["userSelectionsStep", userId, applicationId],
+    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
+    enabled: !!userId && !!applicationId,
+  });
+
+  const documentNames = userSelections
+    ? getDocumentsForSelections(userSelections)
+    : [];
+
+  const {
+    data: documents,
+    isLoading: isLoadingDocuments,
+    isError: isErrorDocuments,
+  } = useQuery({
+    queryKey: ["documentDetailsStep", documentNames],
+    queryFn: () => fetchDocumentDetails(documentNames),
+    enabled: !!documentNames.length,
+  });
+
+  if (isLoadingUserSelections || isLoadingDocuments) return <Spinner />;
+  if (isErrorUserSelections || isErrorDocuments || !documents)
+    return <div>Error loading data.</div>;
+
+  const firstIncompleteIndex = documents.findIndex(
+    (doc) => !completedDocuments[applicationId]?.[doc.docName]
+  );
+
+  const handleContinue = () => {
+    if (!documents || documents.length === 0 || firstIncompleteIndex === -1) {
+      console.error("No documents found or all documents are completed.");
+      return;
+    }
+
+    const selectedDocument = documents[firstIncompleteIndex];
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
-      navigate("/documents");
+      navigate(`/documents/${applicationId}`);
     }
+  };
+
+  const handleStepClick = (index) => {
+    const selectedDocument = documents[index];
+    setSelectedDocument(selectedDocument);
+    navigate(`/summary/${applicationId}`);
   };
 
   return (
     <StepsContainer>
-      {steps.map((step, index) => {
-        const isactive = index === currentStep;
-        const isCompleted = completedSteps[step];
-        const bubbleLeftOffset = `${(index / (steps.length - 1)) * 100}%`;
+      {documents &&
+        documents.map((doc, index) => {
+          const isActive = index === currentStep;
+          const isCompleted = completedDocuments[applicationId]?.[doc.docName]; // completedDocuments kontrolü
+          const bubbleLeftOffset = (index / (documents.length - 1)) * 100;
 
-        return (
-          <div
-            key={step}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <StepCircle
-              isactive={isactive}
-              isCompleted={isCompleted}
-              onClick={() => onStepClick(index)}
+          return (
+            <div
+              key={doc.id}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              {index + 1}
-            </StepCircle>
-            <StepName title={step}>{step}</StepName>
-            {index === firstIncompleteIndex && (
-              <Bubble leftOffset={bubbleLeftOffset}>
-                <span>{step}</span>
-                <ContinueButton onClick={handleContinue}>
-                  Devam et
-                </ContinueButton>
-              </Bubble>
-            )}
-          </div>
-        );
-      })}
+              <StepCircle
+                isActive={isActive}
+                isCompleted={isCompleted}
+                onClick={() => handleStepClick(index)}
+              >
+                {index + 1}
+              </StepCircle>
+              <StepName title={doc.docName}>{doc.docName}</StepName>
+              {index === firstIncompleteIndex && (
+                <Bubble leftOffset={bubbleLeftOffset}>
+                  <span>{doc.docName}</span>
+                  <ContinueButton onClick={handleContinue}>
+                    Devam et
+                  </ContinueButton>
+                </Bubble>
+              )}
+            </div>
+          );
+        })}
     </StepsContainer>
   );
 };

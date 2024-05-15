@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/apiAuth";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUserSelections } from "../utils/userSelectionsFetch";
+import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import styled from "styled-components";
 import { useDocuments } from "../context/DocumentsContext";
 import Spinner from "./Spinner";
+import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 const DocumentItem = styled.li`
   border-radius: 16px;
@@ -22,27 +23,44 @@ const DocumentItem = styled.li`
 `;
 
 function DocumentsPage() {
+  const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const { setSelectedDocument } = useSelectedDocument();
-  const { state: completedDocuments } = useDocuments(); // Use the completed documents from context
+  const {
+    state: { completedDocuments },
+    dispatch,
+  } = useDocuments();
 
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id);
+        fetchCompletedDocuments(user.id, applicationId).then((data) => {
+          const completedDocsMap = data.reduce((acc, doc) => {
+            if (!acc[applicationId]) {
+              acc[applicationId] = {};
+            }
+            acc[applicationId][doc.document_name] = true;
+            return acc;
+          }, {});
+          dispatch({
+            type: "SET_COMPLETED_DOCUMENTS",
+            payload: completedDocsMap,
+          });
+        });
       }
     });
-  }, []);
+  }, [applicationId, dispatch]);
 
   const {
     data: userSelections,
     isLoading: isLoadingSelections,
     isError: isErrorSelections,
   } = useQuery({
-    queryKey: ["userSelections", userId],
-    queryFn: () => fetchUserSelections(userId),
-    enabled: !!userId,
+    queryKey: ["userSelectionsAllDocs", userId, applicationId],
+    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
+    enabled: !!userId && !!applicationId,
   });
 
   const documentNames = userSelections
@@ -54,7 +72,7 @@ function DocumentsPage() {
     isLoading: isLoadingDocuments,
     isError: isErrorDocuments,
   } = useQuery({
-    queryKey: ["documentDetails", documentNames],
+    queryKey: ["documentDetailsAllDocs", documentNames],
     queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !!documentNames.length,
   });
@@ -69,18 +87,18 @@ function DocumentsPage() {
 
   const handleDocumentClick = (document) => {
     setSelectedDocument(document);
-    navigate("/documents"); // Assume "/documentDetail" is the route for the document detail page
+    navigate(`/documents/${applicationId}`);
   };
 
   return (
-    <div style={{display: "flex", flexDirection: "column", gap: "6px"}}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
       <h2>Tüm Belgeler</h2>
       <div>Başvurunuzda gerekli olan tüm belgeler</div>
       <ul>
         {documents?.map((document) => (
           <DocumentItem
             key={document.id}
-            isCompleted={completedDocuments[document.docName]}
+            isCompleted={completedDocuments[applicationId]?.[document.docName]}
             onClick={() => handleDocumentClick(document)}
           >
             {document.docName}

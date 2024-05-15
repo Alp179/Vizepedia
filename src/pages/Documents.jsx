@@ -1,10 +1,9 @@
 import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import { DocumentsContext } from "../context/DocumentsContext";
-
 import { completeDocument, uncompleteDocument } from "../utils/supabaseActions";
 import Spinner from "../ui/Spinner";
 
@@ -82,10 +81,14 @@ const ActionButton = styled.button`
 `;
 
 const DocumentDetail = () => {
+  const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const { selectedDocument } = useSelectedDocument();
-  const { state: completedDocuments, dispatch } = useContext(DocumentsContext);
+  const {
+    state: { completedDocuments },
+    dispatch,
+  } = useContext(DocumentsContext);
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -95,26 +98,31 @@ const DocumentDetail = () => {
     });
   }, []);
 
-  const isCompleted = completedDocuments[selectedDocument?.docName];
+  const isCompleted =
+    completedDocuments[applicationId]?.[selectedDocument?.docName];
 
   const handleAction = async () => {
-    if (!userId || !selectedDocument) return;
+    if (!userId || !selectedDocument || !applicationId) return;
 
     try {
       if (isCompleted) {
-        await uncompleteDocument(userId, selectedDocument.docName);
+        await uncompleteDocument(
+          userId,
+          selectedDocument.docName,
+          applicationId
+        );
         dispatch({
           type: "UNCOMPLETE_DOCUMENT",
-          payload: selectedDocument.docName,
+          payload: { documentName: selectedDocument.docName, applicationId },
         });
       } else {
-        await completeDocument(userId, selectedDocument.docName);
+        await completeDocument(userId, selectedDocument.docName, applicationId);
         dispatch({
           type: "COMPLETE_DOCUMENT",
-          payload: selectedDocument.docName,
+          payload: { documentName: selectedDocument.docName, applicationId },
         });
       }
-      navigate("/dashboard");
+      navigate(`/dashboard/${applicationId}`);
     } catch (error) {
       console.error("Error updating document status:", error);
     }

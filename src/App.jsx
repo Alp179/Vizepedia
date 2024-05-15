@@ -15,8 +15,6 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
 
-import QuestionsLayout from "./ui/QuesitonsLayout";
-
 import WellcomeA from "./features/wellcomes/WellcomeA";
 import WellcomeD from "./features/wellcomes/WellcomeD";
 import WellcomeC from "./features/wellcomes/WellcomeC";
@@ -28,13 +26,12 @@ import DocumentLayout from "./ui/DocumentLayout";
 import { SelectedDocumentProvider } from "./context/SelectedDocumentContext";
 import { DocumentsProvider } from "./context/DocumentsContext";
 import DocumentSummary from "./pages/DocumentSummary";
-
-// import SignUp from "./pages/Signup";
+import { VisaApplicationProvider } from "./context/VisaApplicationContext";
+import QuestionsLayout from "./ui/QuesitonsLayout";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // staleTime: 60 * 1000,
       staleTime: 0,
     },
   },
@@ -43,84 +40,85 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <DocumentsProvider>
-        <SelectedDocumentProvider>
-          <UserSelectionsProvider>
-            <DarkModeProvider>
-              <ReactQueryDevtools initialIsOpen={false} />
+      <VisaApplicationProvider>
+        <DocumentsProvider>
+          <SelectedDocumentProvider>
+            <UserSelectionsProvider>
+              <DarkModeProvider>
+                <ReactQueryDevtools initialIsOpen={false} />
 
-              <GlobalStyles />
-              <BrowserRouter>
-                <Routes>
-                  <Route
-                    element={
-                      <ProtectedRoute>
-                        <AppLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route index element={<Dashboard />} />
+                <GlobalStyles />
+                <BrowserRouter>
+                  <Routes>
+                    <Route
+                      element={
+                        <ProtectedRoute>
+                          <AppLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route index element={<Dashboard />} />
+                      <Route path="dashboard" element={<Dashboard />} />
+                      <Route path="dashboard/:id" element={<Dashboard />} />
+                      <Route path="settings" element={<Settings />} />
+                      <Route path="account" element={<Account />} />
+                    </Route>
 
-                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route
+                      element={
+                        <ProtectedRoute>
+                          <QuestionsLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route path="wellcome" element={<Wellcome />} />
+                      <Route path="wellcome-1" element={<WellcomeA />} />
+                      <Route path="wellcome-2" element={<WellcomeB />} />
+                      <Route path="wellcome-3" element={<WellcomeC />} />
+                      <Route path="wellcome-4" element={<WellcomeD />} />
+                      <Route path="wellcome-5" element={<WellcomeE />} />
+                      <Route path="test" element={<ControlScreen />} />
+                    </Route>
 
-                    {/* <Route path="signup" element={<SignUp />} /> */}
-                    <Route path="settings" element={<Settings />} />
-                    <Route path="account" element={<Account />} />
-                  </Route>
+                    <Route
+                      element={
+                        <ProtectedRoute>
+                          <DocumentLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route path="documents/:id" element={<Documents />} />
+                      <Route path="summary" element={<DocumentSummary />} />
+                      <Route path="summary/:id" element={<DocumentSummary />} />
+                    </Route>
 
-                  <Route
-                    element={
-                      <ProtectedRoute>
-                        <QuestionsLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route path="wellcome" element={<Wellcome />} />
-                    <Route path="wellcome-1" element={<WellcomeA />} />
-                    <Route path="wellcome-2" element={<WellcomeB />} />
-                    <Route path="wellcome-3" element={<WellcomeC />} />
-                    <Route path="wellcome-4" element={<WellcomeD />} />
-                    <Route path="wellcome-5" element={<WellcomeE />} />
-                    <Route path="test" element={<ControlScreen />} />
-                  </Route>
-
-                  <Route
-                    element={
-                      <ProtectedRoute>
-                        <DocumentLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route path="documents" element={<Documents />} />
-                    <Route path="summary" element={<DocumentSummary />} />
-                  </Route>
-
-                  <Route path="login" element={<Login />} />
-                  <Route path="*" element={<PageNotFound />} />
-                </Routes>
-              </BrowserRouter>
-              <Toaster
-                position="top-center"
-                gutter={12}
-                containerStyle={{ margin: "8px" }}
-                toastOptions={{
-                  success: { duration: 3000 },
-                  error: {
-                    duration: 5000,
-                  },
-                  style: {
-                    fontSize: "16px",
-                    maxWidth: "500px",
-                    padding: "16px 24px",
-                    backgroundColor: "var(--color-grey-0",
-                    color: "var(--color-grey-700)",
-                  },
-                }}
-              />
-            </DarkModeProvider>
-          </UserSelectionsProvider>
-        </SelectedDocumentProvider>
-      </DocumentsProvider>
+                    <Route path="login" element={<Login />} />
+                    <Route path="*" element={<PageNotFound />} />
+                  </Routes>
+                </BrowserRouter>
+                <Toaster
+                  position="top-center"
+                  gutter={12}
+                  containerStyle={{ margin: "8px" }}
+                  toastOptions={{
+                    success: { duration: 3000 },
+                    error: {
+                      duration: 5000,
+                    },
+                    style: {
+                      fontSize: "16px",
+                      maxWidth: "500px",
+                      padding: "16px 24px",
+                      backgroundColor: "var(--color-grey-0",
+                      color: "var(--color-grey-700)",
+                    },
+                  }}
+                />
+              </DarkModeProvider>
+            </UserSelectionsProvider>
+          </SelectedDocumentProvider>
+        </DocumentsProvider>
+      </VisaApplicationProvider>
     </QueryClientProvider>
   );
 }

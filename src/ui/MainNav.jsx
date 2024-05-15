@@ -1,27 +1,23 @@
 /* eslint-disable no-unused-vars */
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import {
-  HiDocument,
-  HiOutlineCalendarDays,
-  HiOutlineCog6Tooth,
-  HiOutlineHome,
-  HiOutlineHomeModern,
-  HiOutlineUser,
-  HiOutlineUsers,
-  HiPlus,
-} from "react-icons/hi2";
+import { HiDocument, HiPlus } from "react-icons/hi2";
 import Button from "./Button";
 import Modal from "./Modal";
 import AllDocs from "./AllDocs";
 import { useContext, useEffect, useState } from "react";
-import { DocumentsContext, useDocuments } from "../context/DocumentsContext";
+import { useDocuments } from "../context/DocumentsContext";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import { getCurrentUser } from "../services/apiAuth";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUserSelections } from "../utils/userSelectionsFetch";
+import {
+  fetchUserSelectionsNav,
+  fetchUserSelectionsDash,
+} from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
+import { useVisaApplications } from "../context/VisaApplicationContext";
+
 const NavList = styled.ul`
   display: flex;
   flex-direction: column;
@@ -54,7 +50,6 @@ const StyledNavLink = styled(NavLink)`
     }
   }
 
-  /* This works because react-router places the active class on the active NavLink */
   &:hover,
   &:active,
   &.active:link,
@@ -82,8 +77,13 @@ const StyledNavLink = styled(NavLink)`
 function MainNav() {
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
-  const { state: completedDocuments, dispatch } = useDocuments();
+  const { id } = useParams();
+  const {
+    state: { completedDocuments },
+    dispatch,
+  } = useDocuments();
   const { setSelectedDocument } = useSelectedDocument();
+  const { applications } = useVisaApplications();
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -94,9 +94,9 @@ function MainNav() {
   }, []);
 
   const userSelectionsQuery = useQuery({
-    queryKey: ["userSelections", userId],
-    queryFn: () => fetchUserSelections(userId),
-    enabled: !!userId,
+    queryKey: ["userSelectionsNav", userId, id],
+    queryFn: () => fetchUserSelectionsDash(userId, id),
+    enabled: !!userId && !!id,
   });
 
   const documentNames = userSelectionsQuery.data
@@ -104,21 +104,22 @@ function MainNav() {
     : [];
 
   const documentsQuery = useQuery({
-    queryKey: ["documentDetails", documentNames],
+    queryKey: ["documentDetailsNav", documentNames],
     queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !!documentNames.length,
   });
 
   const continueToDocument = () => {
     if (!documentsQuery.data) return;
+
     const firstIncompleteIndex = documentsQuery.data.findIndex(
-      (doc) => !completedDocuments[doc.docName]
+      (doc) => !completedDocuments[id] || !completedDocuments[id][doc.docName]
     );
 
     if (firstIncompleteIndex !== -1) {
       const selectedDocument = documentsQuery.data[firstIncompleteIndex];
       setSelectedDocument(selectedDocument);
-      navigate("/documents");
+      navigate(`/documents/${selectedDocument.id}`);
     }
   };
 
@@ -137,14 +138,9 @@ function MainNav() {
       </Button>
       <NavList>
         <li>
-          <StyledNavLink to="/dashboard">
-            <HiPlus /> <span className="sidebartext">Yeni</span>
-          </StyledNavLink>
-        </li>
-        <li>
           <Modal>
             <Modal.Open opens="allDocs">
-              <StyledNavLink to="/dashboard">
+              <StyledNavLink>
                 <HiDocument /> <span className="sidebartext">Tüm belgeler</span>
               </StyledNavLink>
             </Modal.Open>
@@ -152,6 +148,18 @@ function MainNav() {
               <AllDocs />
             </Modal.Window>
           </Modal>
+        </li>
+        {applications.map((app) => (
+          <li key={app.id}>
+            <StyledNavLink to={`/dashboard/${app.id}`}>
+              {app.ans_country} Visa - {app.ans_purpose} - {app.ans_profession}
+            </StyledNavLink>
+          </li>
+        ))}
+        <li>
+          <StyledNavLink to="/wellcome-2">
+            <HiPlus /> <span className="sidebartext">Yeni</span>
+          </StyledNavLink>
         </li>
       </NavList>
     </nav>

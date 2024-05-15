@@ -6,11 +6,11 @@ import { getCurrentUser } from "../services/apiAuth";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
-import { fetchUserSelections } from "../utils/userSelectionsFetch";
+import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 
 const ReviewButton = styled.button`
   padding: 10px 15px;
@@ -26,11 +26,11 @@ const ReviewButton = styled.button`
 `;
 
 const VerifiedIcon = styled.img`
-  width: 70px; // İkonun genişliği
-  height: 70px; // İkonun yüksekliği
-  position: absolute; // Kartın sağ üst köşesine konumlandırmak için
-  top: 14px; // Üstten boşluk
-  right: 22px; // Sağdan boşluk
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  top: 14px;
+  right: 22px;
 `;
 
 const DocumentCard = styled.div`
@@ -40,7 +40,7 @@ const DocumentCard = styled.div`
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  position: relative; // İkon pozisyonlandırması için gerekli
+  position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
@@ -54,18 +54,25 @@ const DocumentMeta = styled.p`
 `;
 
 const DocumentSummary = () => {
+  const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const { setSelectedDocument } = useSelectedDocument();
-  const { state: completedDocuments, dispatch } = useContext(DocumentsContext);
+  const {
+    state: { completedDocuments },
+    dispatch,
+  } = useContext(DocumentsContext);
 
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id);
-        fetchCompletedDocuments(user.id).then((data) => {
+        fetchCompletedDocuments(user.id, applicationId).then((data) => {
           const completedDocsMap = data.reduce((acc, doc) => {
-            acc[doc.document_name] = true;
+            if (!acc[applicationId]) {
+              acc[applicationId] = {};
+            }
+            acc[applicationId][doc.document_name] = true;
             return acc;
           }, {});
           dispatch({
@@ -75,27 +82,30 @@ const DocumentSummary = () => {
         });
       }
     });
-  }, []);
+  }, [applicationId, dispatch]);
 
   const {
     data: userSelections,
     isLoading: isLoadingSelections,
     isError: isErrorSelections,
   } = useQuery({
-    queryKey: ["userSelections", userId],
-    queryFn: () => fetchUserSelections(userId),
-    enabled: !!userId,
+    queryKey: ["userSelectionsSum", userId, applicationId],
+    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
+    enabled: !!userId && !!applicationId,
   });
+
+  const documentNames = userSelections
+    ? getDocumentsForSelections(userSelections)
+    : [];
 
   const {
     data: documents,
     isLoading: isLoadingDocuments,
     isError: isErrorDocuments,
   } = useQuery({
-    queryKey: ["documentDetails", userSelections],
-    queryFn: () =>
-      fetchDocumentDetails(getDocumentsForSelections(userSelections)),
-    enabled: !!userSelections,
+    queryKey: ["documentDetailsSum", documentNames],
+    queryFn: () => fetchDocumentDetails(documentNames),
+    enabled: !!documentNames.length,
   });
 
   if (isLoadingSelections || isLoadingDocuments) {
@@ -108,7 +118,7 @@ const DocumentSummary = () => {
 
   const handleReview = (document) => {
     setSelectedDocument(document);
-    navigate("/documents");
+    navigate(`/documents/${applicationId}`);
   };
 
   return (
@@ -116,10 +126,9 @@ const DocumentSummary = () => {
       {documents?.map((document) => (
         <DocumentCard
           key={document.id}
-          isCompleted={completedDocuments[document.docName]}
+          isCompleted={completedDocuments[applicationId]?.[document.docName]}
         >
-          {/* Eğer belge tamamlanmışsa, doğrulanmış ikonunu göster */}
-          {completedDocuments[document.docName] && (
+          {completedDocuments[applicationId]?.[document.docName] && (
             <VerifiedIcon
               src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/patato/Untitled.png"
               alt="Verified"

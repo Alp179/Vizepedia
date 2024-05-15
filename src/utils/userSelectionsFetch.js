@@ -1,16 +1,29 @@
+// fetchUserSelections fonksiyonunu düzenleyin
 import supabase from "../services/supabase";
 
-// Kullanıcının seçimlerini çeken fonksiyon
-export async function fetchUserSelections(userId) {
+export async function fetchUserSelectionsNav(userId) {
   const { data, error } = await supabase
     .from("userAnswers")
-    .select("*")
-    .eq("userId", userId)
-    .single(); // Varsayılan olarak bir kullanıcının tek bir seçim seti olduğunu varsayıyoruz
+    .select("*") // Tüm sütunları seç
+    .eq("userId", userId);
 
   if (error) {
     console.error("Error fetching user selections:", error);
-    return null;
+    return [];
+  }
+
+  return data;
+}
+
+export async function fetchUserSelectionsDash(userId, applicationId) {
+  const { data, error } = await supabase
+    .from("userAnswers")
+    .select("*") // Tüm sütunları seç
+    .eq("userId", userId)
+    .eq("id", applicationId);
+  if (error) {
+    console.error("Error fetching user selections:", error);
+    return [];
   }
 
   return data;

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUser } from "../services/apiAuth";
-import { fetchUserSelections } from "../utils/userSelectionsFetch";
+import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import Spinner from "../ui/Spinner";
 import Heading from "../ui/Heading";
 import Row from "../ui/Row";
 import StepIndicator from "../ui/StepIndicator";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDocuments } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import styled from "styled-components";
@@ -16,14 +16,14 @@ import "flag-icons/css/flag-icons.min.css"; // CSS importu
 
 const FlagContainer = styled.div`
   position: absolute;
-  top: 80%; // Orta yukarıda konumlanacak şekilde ayarla
-  right: -10%; // Sağ üst köşede
-  transform: translateX(50%) translateY(-100%) rotate(31deg); // Bayrağı döndür ve konumlandır
-  width: 35vw; // Genişlik ekran genişliğinin bir yüzdesi olarak
-  height: 20vw; // Yükseklik ekran genişliğinin bir yüzdesi olarak
-  z-index: 1000; // Diğer elementlerin üzerinde olmasını sağlar
-  overflow: hidden; // Bayrağın konteynere taşmasını engeller
-  border-radius: 10%; // Köşeleri yuvarlak yapar
+  top: 80%;
+  right: -10%;
+  transform: translateX(50%) translateY(-100%) rotate(31deg);
+  width: 35vw;
+  height: 20vw;
+  z-index: 1000;
+  overflow: hidden;
+  border-radius: 10%;
 
   @media (max-width: 1300px) {
     top: 60%;
@@ -41,29 +41,23 @@ const FlagContainer = styled.div`
     width: 100%;
     height: 100%;
     display: block;
-    background-size: cover; // Bayrağın konteynere sığmasını sağlar
-    background-position: center; // Bayrağın ortalanmasını sağlar
+    background-size: cover;
+    background-position: center;
   }
 
-
-  // Küçük ekranlar için medya sorguları
   @media (max-width: 768px) {
-    width: 50vw; // Daha küçük ekranlarda genişliği artır
-    height: 30vw; // Daha küçük ekranlarda yüksekliği artır
-    transform: translateX(20%) translateY(-50%) rotate(31deg); // Konumu ayarla
+    width: 50vw;
+    height: 30vw;
+    transform: translateX(20%) translateY(-50%) rotate(31deg);
   }
 
-  // Daha da küçük ekranlar için medya sorguları
   @media (max-width: 480px) {
     width: 60vw;
     height: 40vw;
-    transform: translateX(10%) translateY(-50%) rotate(31deg); // Daha fazla ayarla
+    transform: translateX(10%) translateY(-50%) rotate(31deg);
   }
 `;
 
-// Dashboard bileşeninizi
-
-// Ülke adlarını ISO kodlarına çeviren harita
 const countryToCode = {
   Almanya: "de",
   Avusturya: "at",
@@ -97,40 +91,53 @@ const countryToCode = {
   BAE: "ae",
   Avustralya: "au",
   Birleşik_Krallık: "gb",
-  Hırvatistan: "hr", // Hırvatistan eklendi.
+  Hırvatistan: "hr",
 };
 
 function Dashboard() {
+  const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
-  const { state: completedDocuments, dispatch } = useDocuments();
+  const {
+    state: { completedDocuments },
+    dispatch,
+  } = useDocuments();
   const [countryCode, setCountryCode] = useState("");
 
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id);
-        fetchCompletedDocuments(user.id).then((data) => {
-          const completedDocs = data.reduce((acc, doc) => {
-            acc[doc.document_name] = true;
+        fetchCompletedDocuments(user.id, applicationId).then((data) => {
+          const completedDocsMap = data.reduce((acc, doc) => {
+            if (!acc[applicationId]) {
+              acc[applicationId] = {};
+            }
+            acc[applicationId][doc.document_name] = true;
             return acc;
           }, {});
-          dispatch({ type: "SET_COMPLETED_DOCUMENTS", payload: completedDocs });
-          fetchUserSelections(user.id).then((selections) => {
-            const ansCountry = selections?.ans_country; // Doğrudan objeden ans_country çekiliyor
-            setCountryCode(countryToCode[ansCountry] || "");
+          dispatch({
+            type: "SET_COMPLETED_DOCUMENTS",
+            payload: completedDocsMap,
           });
         });
       }
     });
-  }, [dispatch]);
+  }, [applicationId, dispatch]);
 
   const userSelectionsQuery = useQuery({
-    queryKey: ["userSelections", userId],
-    queryFn: () => fetchUserSelections(userId),
-    enabled: !!userId,
+    queryKey: ["userSelections", userId, applicationId],
+    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
+    enabled: !!userId && !!applicationId,
   });
+
+  useEffect(() => {
+    if (userSelectionsQuery.data) {
+      const ansCountry = userSelectionsQuery.data?.[0]?.ans_country;
+      setCountryCode(countryToCode[ansCountry] || "");
+    }
+  }, [userSelectionsQuery.data]);
 
   const documentNames = userSelectionsQuery.data
     ? getDocumentsForSelections(userSelectionsQuery.data)
@@ -152,16 +159,22 @@ function Dashboard() {
 
   const handleStepClick = (step) => {
     setCurrentStep(step);
-    navigate("/summary");
+    navigate(`/summary/${applicationId}`);
   };
 
   const stepLabels = documentsQuery.data?.map((doc) => doc.docName) || [];
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", flexDirection: "column", gap:"50px"}}>
-      {" "}
-      {/* Relative position for the flag */}{" "}
-      {/* Relative position for the flag */}
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: "50px",
+      }}
+    >
       <Row type="horizontal">
         <Heading as="h1">Dashboard</Heading>
       </Row>
