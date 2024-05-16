@@ -15,12 +15,19 @@ import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 const StepsContainer = styled.div`
-  margin-left: -70px;
+  margin-left: 0px;
   max-width: 80%;
   display: flex;
   justify-content: space-evenly;
   position: relative;
   margin-bottom: 100px;
+  @media (max-width: 1425px) {
+    margin-left: 20px;
+    width: 600px!important;
+  }
+  @media (max-width: 1270px) {
+    width: 400px!important;
+  }
 `;
 
 const StepCircle = styled.div`
@@ -54,6 +61,10 @@ const StepName = styled.div`
 
   &:hover {
     max-width: 27dvh;
+  }
+
+  @media (max-width: 1270px) {
+    max-width: 8dvh
   }
 `;
 

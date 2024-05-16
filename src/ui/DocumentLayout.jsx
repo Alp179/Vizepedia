@@ -9,16 +9,14 @@ const StyledAppLayout = styled.div`
   background: var(--color-grey-1);
   display: flex;
   height: 100%;
-  width: 100vw;
   max-width: 100%;
-  overflow: hidden;
 `;
 
 const Main = styled.main`
   background-color: var(--color-grey-1);
   padding: 4rem 4.8rem 6.4rem;
   max-height: 100%;
-  min-width: 100%;
+  width: 100%;
   display: flex;
   margin-left: 50px;
   margin-top: -40px;

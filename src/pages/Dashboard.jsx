@@ -22,14 +22,14 @@ const FlagContainer = styled.div`
   width: 35vw;
   height: 20vw;
   z-index: 1000;
-  overflow: hidden;
   border-radius: 10%;
+  overflow: hidden;
 
-  @media (max-width: 1300px) {
+  @media (max-width: 1500px) {
     top: 60%;
   }
 
-  @media (max-width: 1250px) {
+  @media (max-width: 1450px) {
     top: 50%;
   }
 
