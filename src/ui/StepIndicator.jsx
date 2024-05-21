@@ -28,6 +28,9 @@ const StepsContainer = styled.div`
   @media (max-width: 1270px) {
     width: 400px!important;
   }
+  @media (max-width: 830px) {
+    margin-left: -20px;
+  }
 `;
 
 const StepCircle = styled.div`
@@ -64,7 +67,13 @@ const StepName = styled.div`
   }
 
   @media (max-width: 1270px) {
-    max-width: 8dvh
+    max-width: 8dvh;
+  }
+  @media (max-width: 970px) {
+    max-width: 7dvh;
+  }
+  @media (max-width: 830px) {
+    max-width: 6dvh;
   }
 `;
 
