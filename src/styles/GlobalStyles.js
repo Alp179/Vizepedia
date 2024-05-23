@@ -208,7 +208,20 @@ ul {
 
 @media (max-width: 1050px) {
   .sidebartext {
-    font-size:16px;
+    font-size: 16px;
+  }
+}
+@media (max-width: 830px) {
+  .sidebartext {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 710px) {
+  .stepsAndNames {
+    flex-flow: row!important;
+    align-items: center;
+    gap: 10px;
   }
 }
 

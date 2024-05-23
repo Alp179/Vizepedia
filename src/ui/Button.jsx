@@ -46,6 +46,9 @@ const sizes = {
       padding: 1.5rem 2.7rem;
       font-size: 15px;
     }
+    @media (max-width: 710px) {
+      display:none;
+    }
   `,
 };
 

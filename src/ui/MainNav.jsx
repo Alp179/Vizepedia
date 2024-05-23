@@ -31,6 +31,9 @@ const NavList = styled.ul`
     margin-top: 10px;
     margin-left: -17px;
   }
+  @media (max-width: 710px) {
+    display:none;
+  }
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -47,6 +50,9 @@ const StyledNavLink = styled(NavLink)`
     background-color: transparent !important;
     @media (max-width: 1300px) {
       gap: 0.6rem;
+    }
+    @media (max-width: 1050px) {
+      font-size: 14px;
     }
   }
 

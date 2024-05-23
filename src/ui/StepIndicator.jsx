@@ -16,20 +16,29 @@ import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 const StepsContainer = styled.div`
   margin-left: 0px;
-  max-width: 80%;
+  max-width: 1000px;
   display: flex;
   justify-content: space-evenly;
   position: relative;
   margin-bottom: 100px;
   @media (max-width: 1425px) {
     margin-left: 20px;
-    width: 600px!important;
+    width: 600px !important;
   }
   @media (max-width: 1270px) {
-    width: 400px!important;
+    width: 400px !important;
   }
-  @media (max-width: 830px) {
+  @media (max-width: 950px) {
     margin-left: -20px;
+  }
+  @media (max-width: 820px) {
+    width: 300px !important;
+  }
+  @media (max-width: 710px) {
+    width: 200px!important;
+    flex-flow: column;
+    margin-left: -120px;
+    gap: 20px;
   }
 `;
 
@@ -41,6 +50,7 @@ const StepCircle = styled.div`
   width: 30px;
   height: 30px;
   line-height: 30px;
+  flex-shrink: 0;
   border: 2px solid;
   border-radius: 50%;
   text-align: center;
@@ -56,24 +66,28 @@ const StepCircle = styled.div`
 const StepName = styled.div`
   font-size: 14px;
   margin-top: 5px;
-  max-width: 10dvh;
+  max-width: 80px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   transition: max-width 0.6s ease;
 
   &:hover {
-    max-width: 27dvh;
+    max-width: 160px;
   }
 
   @media (max-width: 1270px) {
-    max-width: 8dvh;
+    max-width: 70px;
   }
-  @media (max-width: 970px) {
-    max-width: 7dvh;
+  @media (max-width: 990px) {
+    max-width: 60px;
   }
-  @media (max-width: 830px) {
-    max-width: 6dvh;
+  @media (max-width: 820px) {
+    max-width: 50px;
+  }
+  @media (max-width: 710px) {
+    max-width: 250px;
+    font-size: 18px;
   }
 `;
 
@@ -213,6 +227,7 @@ const StepIndicator = () => {
 
           return (
             <div
+              className="stepsAndNames"
               key={doc.id}
               style={{
                 display: "flex",

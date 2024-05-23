@@ -14,6 +14,9 @@ const Heading = styled.h1`
       @media (max-width: 1100px) {
         margin-left: -50px;
       }
+      @media (max-width: 710px) {
+        margin-left: -100px;
+      }
     `}
 
   ${(props) =>

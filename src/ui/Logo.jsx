@@ -25,6 +25,9 @@ const StyledLogo = styled.div`
       text-align: center;
       width: 80%;
       height: auto;
+      @media (max-width: 710px) {
+        display:none;
+      }
     `}
 `;
 

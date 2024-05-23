@@ -25,7 +25,7 @@ const FlagContainer = styled.div`
   border-radius: 10%;
   overflow: hidden;
 
-  @media (max-width: 1500px) {
+  @media (max-width: 1625px) {
     top: 60%;
   }
 
@@ -37,24 +37,37 @@ const FlagContainer = styled.div`
     top: 30%;
   }
 
+  @media (max-width: 990px) {
+    top: 20%;
+  }
+
+  @media (max-width: 890px) {
+    top: 10%;
+  }
+  @media (max-width: 820px) {
+    right: -20%; 
+  }
+  @media (max-width: 710px) {
+    width: 300px!important;
+    height: 170px!important;
+    top: 5%;
+  }
+  @media (max-width: 530px) {
+    right: -30%;
+  }
+  @media (max-width: 480px) {
+    right: -40%;
+  }
+  @media (max-width: 430px) {
+    right: -50%;
+  }
+
   & > span {
     width: 100%;
     height: 100%;
     display: block;
     background-size: cover;
     background-position: center;
-  }
-
-  @media (max-width: 768px) {
-    width: 50vw;
-    height: 30vw;
-    transform: translateX(20%) translateY(-50%) rotate(31deg);
-  }
-
-  @media (max-width: 480px) {
-    width: 60vw;
-    height: 40vw;
-    transform: translateX(10%) translateY(-50%) rotate(31deg);
   }
 `;
 
