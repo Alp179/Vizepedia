@@ -23,6 +23,7 @@ const Main = styled.main`
   flex-direction: column;
   gap: 50px;
   justify-content: space-between;
+ 
 `;
 
 const Container = styled.div`
@@ -31,6 +32,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
+  @media (max-width: 500px) {
+    width: 100%;
+    gap: 0;
+    margin: 0px;
+  }
 `;
 
 function DocumentLayout() {

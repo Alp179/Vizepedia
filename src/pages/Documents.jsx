@@ -9,74 +9,133 @@ import Spinner from "../ui/Spinner";
 
 const PageContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  max-width: 80%;
-  margin: auto;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
   height: 100vh;
-`;
-
-const Header = styled.div`
-  background-color: #f5f5f5;
   padding: 20px;
+  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  box-sizing: border-box;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+    padding: 10px;
+    height: 100%;
+  }
 `;
 
-const DocumentContainer = styled.div`
-  display: flex;
-  margin-top: 20px;
-`;
-
-const DocumentInfo = styled.div`
+const InfoContainer = styled.div`
   flex: 1;
   padding: 20px;
+  background: white;
+  border-radius: 15px;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 500px) {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
 `;
 
-const DocumentImage = styled.img`
-  max-width: 50%;
-  height: auto;
+const ImageContainer = styled.div`
+  flex: 0.4;
+  padding: 20px;
+  background: white;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 500px) {
+    margin-left: 0;
+    padding: 15px;
+  }
 `;
 
-const RelatedSteps = styled.div`
-  background-color: #e0e0e0;
-  padding: 10px;
+const DocumentTitle = styled.h1`
+  font-size: 24px;
+  color: #333;
+
+  @media (max-width: 500px) {
+    font-size: 20px;
+    text-align: center;
+  }
+`;
+
+const DocumentDescription = styled.p`
   margin-top: 20px;
+  color: #333;
+
+  @media (max-width: 500px) {
+    margin-top: 10px;
+    text-align: center;
+  }
+`;
+
+const DocumentMeta = styled.p`
+  margin-top: 10px;
+  color: #555;
+
+  @media (max-width: 500px) {
+    margin-top: 5px;
+    text-align: center;
+  }
 `;
 
 const ActionButton = styled.button`
-  padding: 10px 20px;
-  background-color: #4caf50;
+  padding: 15px 25px;
+  background-color: ${(props) => (props.isCompleted ? "#e74c3c" : "#2ecc71")};
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 16px;
   margin-top: 20px;
-  position: relative;
   transition: background-color 0.3s ease;
 
-  & span {
-    transition: opacity 0.15s ease;
-  }
-
   &:hover {
-    background-color: #43a047;
+    background-color: ${(props) => (props.isCompleted ? "#c0392b" : "#27ae60")};
   }
 
-  &:hover span {
-    opacity: ${(props) => (props.isCompleted ? 0 : 1)};
+  @media (max-width: 500px) {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 15px;
   }
+`;
 
-  &:hover::after {
-    content: "${(props) => (props.isCompleted ? "Geri al" : "")}";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    opacity: ${(props) => (props.isCompleted ? 1 : 0)};
-    transition: opacity 0.3s ease 0.9s;
+const DocumentImage = styled.img`
+  max-width: 100%;
+  height: auto;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+`;
+
+const RelatedSteps = styled.div`
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 15px;
+  margin-top: 20px;
+  color: #333;
+
+  @media (max-width: 500px) {
+    padding: 15px;
+  }
+`;
+
+const RelatedStepsTitle = styled.h3`
+  margin-bottom: 10px;
+
+  @media (max-width: 500px) {
+    text-align: center;
   }
 `;
 
@@ -134,34 +193,26 @@ const DocumentDetail = () => {
 
   return (
     <PageContainer>
-      <Header>
-        <h1>{selectedDocument.docName}</h1>
-        <p>{selectedDocument.docType}</p>
-        <p>
-          Estimated Completion Time: {selectedDocument.estimatedCompletionTime}
-        </p>
-      </Header>
-      <DocumentContainer>
-        <DocumentInfo>
-          <p>{selectedDocument.docDescription}</p>
-          <p>Source: {selectedDocument.docSource}</p>
-        </DocumentInfo>
-        <DocumentImage
-          src={selectedDocument.docImage}
-          alt={selectedDocument.docName}
-        />
-      </DocumentContainer>
-      <RelatedSteps>
-        <h3>Related Steps</h3>
-        <ul>
-          {selectedDocument.relatedSteps?.map((step, index) => (
-            <li key={index}>{step}</li>
-          ))}
-        </ul>
-      </RelatedSteps>
-      <ActionButton onClick={handleAction} isCompleted={isCompleted}>
-        <span>{isCompleted ? "Tamamlandı" : "Tamamla"}</span>
-      </ActionButton>
+      <InfoContainer>
+        <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
+        <DocumentDescription>{selectedDocument.docDescription}</DocumentDescription>
+        <DocumentMeta>Source: {selectedDocument.docSource}</DocumentMeta>
+        <ActionButton onClick={handleAction} isCompleted={isCompleted}>
+          {isCompleted ? "Tamamlandı" : "Tamamla"}
+        </ActionButton>
+        <RelatedSteps>
+          <RelatedStepsTitle>Bu Belge ile Bağlantılı İşlemler</RelatedStepsTitle>
+          <ul>
+            {selectedDocument.relatedSteps?.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ul>
+        </RelatedSteps>
+      </InfoContainer>
+      <ImageContainer>
+        <DocumentImage src={selectedDocument.docImage} alt={selectedDocument.docName} />
+        <DocumentMeta>Estimated Completion Time: {selectedDocument.estimatedCompletionTime}</DocumentMeta>
+      </ImageContainer>
     </PageContainer>
   );
 };
