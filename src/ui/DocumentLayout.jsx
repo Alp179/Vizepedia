@@ -13,7 +13,7 @@ const StyledAppLayout = styled.div`
 `;
 
 const Main = styled.main`
-  background-color: var(--color-grey-1);
+  background: var(--color-grey-1);
   padding: 4rem 4.8rem 6.4rem;
   width: 100%; // Genişliği %100 yaparak tam ekran kaplamasını sağlıyoruz
   display: flex;
@@ -24,13 +24,16 @@ const Main = styled.main`
 `;
 
 const Container = styled.div`
-  width: 70%; // Genişliği %100 yaparak tam ekran kaplamasını sağlıyoruz
+  width: 800px; // Genişliği %100 yaparak tam ekran kaplamasını sağlıyoruz
   height: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
-  @media (max-width: 500px) {
+  @media (max-width: 1100px) {
+    width: 85%;
+  }
+  @media (max-width: 680px) {
     width: 100%;
     gap: 0;
     margin: 0px;

@@ -58,8 +58,10 @@ const FlagContainer = styled.div`
   @media (max-width: 480px) {
     right: -40%;
   }
-  @media (max-width: 430px) {
-    right: -50%;
+  @media (max-width: 450px) {
+    width: 260px!important;
+    height: 160px!important;
+    right: -60%;
   }
 
   & > span {

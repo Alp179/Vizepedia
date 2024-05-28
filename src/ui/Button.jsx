@@ -34,6 +34,10 @@ const sizes = {
     width: 160px;
     position: fixed;
     z-index: 2;
+    @media (max-width: 450px) {
+      height: 6rem;
+      width: 120px;
+    }
   `,
   dash: css`
     font-size: 1.6rem;

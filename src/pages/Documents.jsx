@@ -18,7 +18,7 @@ const PageContainer = styled.div`
   border-radius: 20px;
   box-sizing: border-box;
 
-  @media (max-width: 500px) {
+  @media (max-width: 680px) {
     flex-direction: column;
     padding: 10px;
     height: 100%;
@@ -27,7 +27,7 @@ const PageContainer = styled.div`
 
 const InfoContainer = styled.div`
   flex: 1;
-  padding: 20px;
+  padding: 30px;
   background: white;
   border-radius: 15px;
   color: #333;
@@ -36,7 +36,7 @@ const InfoContainer = styled.div`
   justify-content: space-between;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
-  @media (max-width: 500px) {
+  @media (max-width: 680px) {
     padding: 15px;
     margin-bottom: 20px;
   }
@@ -54,7 +54,7 @@ const ImageContainer = styled.div`
   margin-left: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
-  @media (max-width: 500px) {
+  @media (max-width: 680px) {
     margin-left: 0;
     padding: 15px;
   }
@@ -64,7 +64,7 @@ const DocumentTitle = styled.h1`
   font-size: 24px;
   color: #333;
 
-  @media (max-width: 500px) {
+  @media (max-width: 680px) {
     font-size: 20px;
     text-align: center;
   }
@@ -74,7 +74,7 @@ const DocumentDescription = styled.p`
   margin-top: 20px;
   color: #333;
 
-  @media (max-width: 500px) {
+  @media (max-width: 680px) {
     margin-top: 10px;
     text-align: center;
   }
@@ -84,7 +84,7 @@ const DocumentMeta = styled.p`
   margin-top: 10px;
   color: #555;
 
-  @media (max-width: 500px) {
+  @media (max-width: 680px) {
     margin-top: 5px;
     text-align: center;
   }
@@ -105,7 +105,7 @@ const ActionButton = styled.button`
     background-color: ${(props) => (props.isCompleted ? "#c0392b" : "#27ae60")};
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 680px) {
     width: 100%;
     padding: 10px;
     font-size: 14px;
@@ -127,7 +127,7 @@ const RelatedSteps = styled.div`
   margin-top: 20px;
   color: #333;
 
-  @media (max-width: 500px) {
+  @media (max-width: 680px) {
     padding: 15px;
   }
 `;
@@ -135,7 +135,7 @@ const RelatedSteps = styled.div`
 const RelatedStepsTitle = styled.h3`
   margin-bottom: 10px;
 
-  @media (max-width: 500px) {
+  @media (max-width: 680px) {
     text-align: center;
   }
 `;
