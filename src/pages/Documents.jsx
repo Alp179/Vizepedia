@@ -12,9 +12,10 @@ const PageContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   padding: 20px;
   background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  border-radius: 20px;
   box-sizing: border-box;
 
   @media (max-width: 500px) {
