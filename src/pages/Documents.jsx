@@ -61,8 +61,12 @@ const ImageContainer = styled.div`
 `;
 
 const DocumentTitle = styled.h1`
-  font-size: 24px;
+  font-size: 26px;
   color: #333;
+
+  @media (max-width: 1000px) {
+    font-size: 24px;
+  }
 
   @media (max-width: 680px) {
     font-size: 20px;
@@ -73,6 +77,11 @@ const DocumentTitle = styled.h1`
 const DocumentDescription = styled.p`
   margin-top: 20px;
   color: #333;
+  font-size: 18px;
+
+  @media (max-width: 1000px) {
+    font-size: 16px;
+  }
 
   @media (max-width: 680px) {
     margin-top: 10px;
@@ -100,13 +109,17 @@ const ActionButton = styled.button`
   font-size: 16px;
   margin-top: 20px;
   transition: background-color 0.3s ease;
+  margin-left: auto;
+  font-weight: bold;
+  margin-right: auto;
+  width: 200px;
 
   &:hover {
     background-color: ${(props) => (props.isCompleted ? "#c0392b" : "#27ae60")};
   }
 
   @media (max-width: 680px) {
-    width: 100%;
+    width: 200px;
     padding: 10px;
     font-size: 14px;
     margin-top: 15px;
@@ -134,6 +147,7 @@ const RelatedSteps = styled.div`
 
 const RelatedStepsTitle = styled.h3`
   margin-bottom: 10px;
+  text-align: center;
 
   @media (max-width: 680px) {
     text-align: center;
@@ -196,23 +210,33 @@ const DocumentDetail = () => {
     <PageContainer>
       <InfoContainer>
         <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
-        <DocumentDescription>{selectedDocument.docDescription}</DocumentDescription>
+        <DocumentDescription>
+          {selectedDocument.docDescription}
+        </DocumentDescription>
         <DocumentMeta>Source: {selectedDocument.docSource}</DocumentMeta>
-        <ActionButton onClick={handleAction} isCompleted={isCompleted}>
-          {isCompleted ? "Tamamlandı" : "Tamamla"}
-        </ActionButton>
+
         <RelatedSteps>
-          <RelatedStepsTitle>Bu Belge ile Bağlantılı İşlemler</RelatedStepsTitle>
+          <RelatedStepsTitle>
+            Bu Belge ile Bağlantılı İşlemler
+          </RelatedStepsTitle>
           <ul>
             {selectedDocument.relatedSteps?.map((step, index) => (
               <li key={index}>{step}</li>
             ))}
           </ul>
         </RelatedSteps>
+        <ActionButton onClick={handleAction} isCompleted={isCompleted}>
+          {isCompleted ? "Tamamlandı" : "Tamamla"}
+        </ActionButton>
       </InfoContainer>
       <ImageContainer>
-        <DocumentImage src={selectedDocument.docImage} alt={selectedDocument.docName} />
-        <DocumentMeta>Estimated Completion Time: {selectedDocument.estimatedCompletionTime}</DocumentMeta>
+        <DocumentImage
+          src={selectedDocument.docImage}
+          alt={selectedDocument.docName}
+        />
+        <DocumentMeta>
+          Estimated Completion Time: {selectedDocument.estimatedCompletionTime}
+        </DocumentMeta>
       </ImageContainer>
     </PageContainer>
   );
