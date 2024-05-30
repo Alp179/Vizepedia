@@ -14,7 +14,7 @@ const PageContainer = styled.div`
   width: 100%;
   height: 100%;
   padding: 20px;
-  background: linear-gradient(135deg, #71b7e6, #9b59b6);
+  background: var(--color-grey-51);
   border-radius: 20px;
   box-sizing: border-box;
 
@@ -28,7 +28,7 @@ const PageContainer = styled.div`
 const InfoContainer = styled.div`
   flex: 1;
   padding: 30px;
-  background: white;
+  background: var(--color-grey-51);
   border-radius: 15px;
   color: #333;
   display: flex;
@@ -44,12 +44,12 @@ const InfoContainer = styled.div`
 
 const ImageContainer = styled.div`
   flex: 0.4;
+  gap: 16px;
   padding: 20px;
-  background: white;
+  background: var(--color-grey-51);
   border-radius: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   margin-left: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -61,14 +61,17 @@ const ImageContainer = styled.div`
 `;
 
 const DocumentTitle = styled.h1`
-  font-size: 26px;
-  color: #333;
+  font-size: 35px;
+  text-align: center;
+  font-weight: bold;
+  color: var(--color-grey-52);
 
   @media (max-width: 1000px) {
     font-size: 24px;
   }
 
   @media (max-width: 680px) {
+    margin-top: 10px;
     font-size: 20px;
     text-align: center;
   }
@@ -76,7 +79,7 @@ const DocumentTitle = styled.h1`
 
 const DocumentDescription = styled.p`
   margin-top: 20px;
-  color: #333;
+  color: var(--color-grey-53);
   font-size: 18px;
 
   @media (max-width: 1000px) {
@@ -84,6 +87,7 @@ const DocumentDescription = styled.p`
   }
 
   @media (max-width: 680px) {
+    font-size: 14px;
     margin-top: 10px;
     text-align: center;
   }
@@ -91,11 +95,39 @@ const DocumentDescription = styled.p`
 
 const DocumentMeta = styled.p`
   margin-top: 10px;
-  color: #555;
+  color: var(--color-grey-53);
 
   @media (max-width: 680px) {
+    font-size: 14px;
     margin-top: 5px;
     text-align: center;
+  }
+`;
+
+const ImageText = styled.p`
+  color: var(--color-grey-52);
+  font-weight: bold;
+`;
+
+const SourceButton = styled.button`
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: center;
+  padding: 15px 20px;
+  background-color: #004466;
+  color: #00ffa2;
+  border: 5px solid #00ffa2;
+  border-radius: 16px;
+  width: 150px;
+  &:hover {
+    background-color: #00ffa2;
+    color: #004466;
+  }
+  @media (max-width: 680px) {
+    font-size: 14px;
+    padding: 10px 15px;
+    margin-left: auto;
+    margin-right: auto;
   }
 `;
 
@@ -209,11 +241,14 @@ const DocumentDetail = () => {
   return (
     <PageContainer>
       <InfoContainer>
+        <DocumentMeta>
+          Tahmini Tamamlama Süresi: {selectedDocument.estimatedCompletionTime}
+        </DocumentMeta>
         <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
         <DocumentDescription>
           {selectedDocument.docDescription}
         </DocumentDescription>
-        <DocumentMeta>Source: {selectedDocument.docSource}</DocumentMeta>
+        <SourceButton>Bağlantı {selectedDocument.docSource}</SourceButton>
 
         <RelatedSteps>
           <RelatedStepsTitle>
@@ -230,13 +265,11 @@ const DocumentDetail = () => {
         </ActionButton>
       </InfoContainer>
       <ImageContainer>
+        <ImageText>Belge Örneği</ImageText>
         <DocumentImage
           src={selectedDocument.docImage}
           alt={selectedDocument.docName}
         />
-        <DocumentMeta>
-          Estimated Completion Time: {selectedDocument.estimatedCompletionTime}
-        </DocumentMeta>
       </ImageContainer>
     </PageContainer>
   );

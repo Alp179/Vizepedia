@@ -54,6 +54,7 @@ const DocumentTitle = styled.h3`
 `;
 
 const DocumentMeta = styled.p`
+  color: #004466;
   margin: 5px 0;
 `;
 
@@ -143,7 +144,7 @@ const DocumentSummary = () => {
             Type: {document.docType || "Not specified"}
           </DocumentMeta>
           <DocumentMeta>
-            Estimated Completion Time:
+            Estimated Completion Time:{" "}
             {document.estimatedCompletionTime || "Unknown"}
           </DocumentMeta>
           <ReviewButton onClick={() => handleReview(document)}>

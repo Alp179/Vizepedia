@@ -9,7 +9,7 @@ const StyledAppLayout = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100%; // Genişliği %100 yaparak tam ekran kaplamasını sağlıyoruz
+  width: 100%;
 `;
 
 const Main = styled.main`
@@ -24,7 +24,7 @@ const Main = styled.main`
 `;
 
 const Container = styled.div`
-  width: 800px; // Genişliği %100 yaparak tam ekran kaplamasını sağlıyoruz
+  width: 800px; 
   height: 100%;
   margin: 0 auto;
   display: flex;
@@ -44,7 +44,7 @@ function DocumentLayout() {
   return (
     <StyledAppLayout>
       <BackButton />
-      <Header /> {/* Header bileşeni burada üstte olacak */}
+      <Header /> 
       <Main>
         <Container>
           <Outlet />
