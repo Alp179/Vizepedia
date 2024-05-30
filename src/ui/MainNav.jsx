@@ -33,6 +33,7 @@ const NavList = styled.ul`
   }
   @media (max-width: 710px) {
     display:none;
+    width: 0;
   }
 `;
 

@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Spinner from "../ui/Spinner";
 import { getCurrentUser } from "../services/apiAuth";
-
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import styled from "styled-components";
@@ -31,6 +30,11 @@ const VerifiedIcon = styled.img`
   position: absolute;
   top: 14px;
   right: 22px;
+  @media (max-width: 500px) {
+    margin-top: 20px;
+    width: 50px;
+    height: 50px;
+  }
 `;
 
 const DocumentCard = styled.div`
