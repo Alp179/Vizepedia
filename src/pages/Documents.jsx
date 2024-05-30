@@ -270,6 +270,12 @@ const DocumentDetail = () => {
           src={selectedDocument.docImage}
           alt={selectedDocument.docName}
         />
+        <ImageText>
+          Temin Yeri:
+        </ImageText>
+        <ImageText>
+          Tür: 
+        </ImageText>
       </ImageContainer>
     </PageContainer>
   );
