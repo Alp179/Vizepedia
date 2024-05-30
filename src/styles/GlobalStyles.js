@@ -231,6 +231,13 @@ ul {
   }
 }
 
+.navbar-dash {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 p,
 h1,
 h2,

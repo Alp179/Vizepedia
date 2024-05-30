@@ -139,7 +139,7 @@ function MainNav() {
   }
 
   return (
-    <nav>
+    <nav className="navbar-dash">
       <Button size="dash" variation="primary" onClick={continueToDocument}>
         Devam et
       </Button>
