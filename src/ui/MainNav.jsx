@@ -23,17 +23,8 @@ const NavList = styled.ul`
   flex-direction: column;
   gap: 0.8rem;
   justify-content: center;
-  @media (max-width: 1300px) {
-    gap: 0.4rem;
-    margin-left: -10px;
-  }
-  @media (max-width: 1050px) {
-    margin-top: 10px;
-    margin-left: -17px;
-  }
-  @media (max-width: 710px) {
-    display:none;
-    width: 0;
+  @media (max-width: 500px) {
+    display: none;
   }
 `;
 

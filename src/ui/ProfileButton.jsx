@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { styled } from "styled-components";
-import UserAvatar from "../features/authentication/UserAvatar";
 
 import {
   HiPencil,
@@ -22,8 +21,9 @@ const StyledProfileButton = styled.button`
   padding: 1.2rem;
   border-radius: var(--border-radius-sm);
   transition: all 0.2s;
-
-  
+  @media (max-width: 500px) {
+    display: none;
+  }
 `;
 
 function ProfileButton({ cabin }) {
