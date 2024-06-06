@@ -136,6 +136,7 @@ const MobileMenu = () => {
   const { state: completedDocuments } = useDocuments();
   const [userId, setUserId] = useState(null);
   const menuRef = useRef();
+  const iconRef = useRef();
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -145,7 +146,12 @@ const MobileMenu = () => {
     });
 
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        iconRef.current &&
+        !iconRef.current.contains(event.target)
+      ) {
         setIsOpen(false);
       }
     };
@@ -198,6 +204,7 @@ const MobileMenu = () => {
   return (
     <>
       <MenuIcon
+        ref={iconRef}
         onClick={() => {
           setIsOpen(!isOpen);
         }}
