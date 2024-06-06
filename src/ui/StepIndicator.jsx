@@ -127,6 +127,12 @@ const Bubble = styled.div`
     border-radius: 4px;
     z-index: -1;
   }
+  @media (max-width: 500px) {
+    @media (max-height: 830px) {
+      padding: 12px;
+      font-size: 12px;
+    }
+  }
 `;
 
 const ContinueButton = styled.button`
