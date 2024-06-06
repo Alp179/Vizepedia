@@ -23,7 +23,7 @@ const NavList = styled.ul`
   flex-direction: column;
   gap: 0.8rem;
   justify-content: center;
-  @media (max-width: 500px) {
+  @media (max-width: 710px) {
     display: none;
   }
 `;

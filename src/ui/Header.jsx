@@ -13,7 +13,7 @@ const StyledHeader = styled.header`
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  @media (max-width: 500px) {
+  @media (max-width: 710px) {
     display: none;
   }
 `;

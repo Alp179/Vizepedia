@@ -50,7 +50,7 @@ const FlagContainer = styled.div`
   @media (max-width: 710px) {
     width: 300px!important;
     height: 170px!important;
-    top: 5%;
+    top: 11%;
   }
   @media (max-width: 530px) {
     top: 10%;

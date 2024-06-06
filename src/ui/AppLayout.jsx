@@ -39,7 +39,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
-  @media (max-width: 500px) {
+  @media (max-width: 710px) {
     height: 100vh;
   }
 `;

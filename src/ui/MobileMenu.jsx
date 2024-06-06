@@ -18,7 +18,7 @@ const MenuIcon = styled.div`
   top: 1rem;
   right: 1rem;
   z-index: 1200; /* Menünün üstünde olması için z-index değeri arttırıldı */
-  @media (min-width: 501px) {
+  @media (min-width: 710px) {
     display: none;
   }
 
@@ -72,7 +72,10 @@ const MenuContainer = styled.div`
   position: fixed;
   top: 0;
   right: 0;
-  width: 80%;
+  width: 60%;
+  @media (max-width: 500px) {
+    width: 80%;
+  }
   height: 100vh;
   background: rgba(255, 255, 255, 0.37);
   border-radius: 16px;
