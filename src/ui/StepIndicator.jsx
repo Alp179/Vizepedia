@@ -61,6 +61,13 @@ const StepCircle = styled.div`
     props.isActive || props.isCompleted ? "white" : "black"};
   border-color: ${(props) =>
     props.isActive ? "blue" : props.isCompleted ? "green" : "#ccc"};
+    @media (max-height: 830px) {
+      width: 25px;
+      height: 25px;
+      font-size: 14px;
+      justify-content: center;
+      align-items: center;
+    }
 `;
 
 const StepName = styled.div`
@@ -88,6 +95,9 @@ const StepName = styled.div`
   @media (max-width: 710px) {
     max-width: 250px;
     font-size: 18px;
+  }
+  @media (max-height: 830px) {
+    font-size: 16px;
   }
 `;
 
