@@ -81,7 +81,7 @@ function WellcomeE() {
 
   return (
     <>
-      <Heading as="h1">
+      <Heading as="h5">
         Lütfen konaklama türünüzü, seyahat aracınızı ve çocuklu yolculuk
         durumunuzu seçiniz
       </Heading>

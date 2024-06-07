@@ -17,7 +17,7 @@ function WellcomeC() {
 
   return (
     <>
-      <Heading as="h1">Gidiş amacınızı seçiniz</Heading>
+      <Heading as="h5">Gidiş amacınızı seçiniz</Heading>
       <PurposeSelection
         selectedPurpose={selectedPurpose}
         onPurposeChange={handlePurposeChange}

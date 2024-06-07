@@ -19,7 +19,7 @@ function WellcomeD() {
 
   return (
     <>
-      <Heading as="h1">Mesleğinizi seçiniz</Heading>
+      <Heading as="h5">Mesleğinizi seçiniz</Heading>
       <ProfessionSelection
         selectedProfession={selectedProfession}
         onProfessionChange={handleProfessionChange}
