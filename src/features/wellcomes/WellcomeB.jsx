@@ -4,6 +4,7 @@ import Heading from "../../ui/Heading";
 import CountrySelection from "./CountrySelection";
 import Button from "../../ui/Button";
 import { useState } from "react";
+import styled from "styled-components";
 
 function WellcomeB() {
   const navigate = useNavigate();
@@ -15,19 +16,29 @@ function WellcomeB() {
     dispatch({ type: "SET_COUNTRY", payload: country });
   };
 
+  const QuestionContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 36px;
+  `;
+
   return (
     <>
-      <Heading as="h1">Vize almak istediğiniz ülkeyi seçiniz</Heading>
-      <CountrySelection
-        selectedCountry={selectedCountry}
-        onCountryChange={handleCountryChange}
-      />
-      <Button
-        onClick={() => navigate("/wellcome-3")}
-        disabled={!selectedCountry}
-      >
-        Devam et
-      </Button>
+      <QuestionContainer>
+        <Heading as="h5">Vize almak istediğiniz ülkeyi seçiniz</Heading>
+        <CountrySelection
+          selectedCountry={selectedCountry}
+          onCountryChange={handleCountryChange}
+        />
+        <Button
+          size="question"
+          onClick={() => navigate("/wellcome-3")}
+          disabled={!selectedCountry}
+        >
+          Devam et
+        </Button>
+      </QuestionContainer>
     </>
   );
 }

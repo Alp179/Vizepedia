@@ -48,6 +48,21 @@ const Heading = styled.h1`
         font-size: 2.5rem;
       }
     `}
+    ${(props) =>
+    props.as === "h5" &&
+    css`
+      font-size: 3rem;
+      font-weight: 600;
+      text-align: center;
+      @media (max-width: 850px) {
+        font-size: 2.5rem;
+      }
+      @media (max-width: 710px) {
+        margin-top: 90px;
+        font-size: 2.2rem;
+      }
+    `}
+    
 
     line-height:1.4;
 `;

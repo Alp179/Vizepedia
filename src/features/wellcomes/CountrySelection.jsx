@@ -25,10 +25,20 @@ const RadioLabel = styled.label`
 `;
 
 const Container = styled.div`
+  min-width: 600px;
+  @media (max-width: 850px) {
+    min-width: 500px;
+  }
+  @media (max-width: 600px) {
+    min-width: 400px;
+  }
+  @media (max-width: 450px) {
+    min-width: 350px;
+  }
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
+  background: var(--color-grey-51);
 `;
 
 function CountrySelection({ selectedCountry, onCountryChange }) {

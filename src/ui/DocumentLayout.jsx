@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import Header from "./Header";
 import BackButton from "./BackButton";
+import MobileMenu from "./MobileMenu";
 
 const StyledAppLayout = styled.div`
   background: var(--color-grey-1);
@@ -45,6 +46,7 @@ function DocumentLayout() {
     <StyledAppLayout>
       <BackButton />
       <Header /> 
+      <MobileMenu />
       <Main>
         <Container>
           <Outlet />

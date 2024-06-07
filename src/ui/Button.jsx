@@ -51,8 +51,13 @@ const sizes = {
       font-size: 15px;
     }
     @media (max-width: 710px) {
-      display:none;
+      display: none;
     }
+  `,
+  question: css`
+    width: 200px;
+    padding: 1.3rem;
+    border-radius: 8px;
   `,
 };
 
