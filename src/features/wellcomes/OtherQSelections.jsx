@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
-
+import Heading from "../../ui/Heading";
 import Spinner from "../../ui/Spinner";
 
 import { useVehicles } from "./useVehicles";
@@ -9,6 +9,15 @@ import { useAccommodations } from "./useAccommodations";
 
 // Radyo butonları için etiket stili
 const RadioLabel = styled.label`
+  margin-top: 10px;
+  font-size: 18px;
+  @media (max-width: 850px) {
+    font-size: 1.6rem;
+  }
+  @media (max-width: 450px) {
+    margin-top: 5px;
+    font-size: 16px;
+  }
   display: flex;
   align-items: center;
   margin-bottom: 5px;
@@ -21,21 +30,21 @@ const RadioLabel = styled.label`
 
 // Üst div için stil
 const Container = styled.div`
-margin-top: 10px;
-min-width: 600px;
-@media (max-width: 850px) {
-  min-width: 500px;
-}
-@media (max-width: 600px) {
-  min-width: 400px;
-}
-@media (max-width: 450px) {
-  min-width: 350px;
-}
-padding: 20px;
-border-radius: 5px;
-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-background: var(--color-grey-51);
+  margin-top: 10px;
+  min-width: 600px;
+  @media (max-width: 850px) {
+    min-width: 500px;
+  }
+  @media (max-width: 600px) {
+    min-width: 400px;
+  }
+  @media (max-width: 450px) {
+    min-width: 350px;
+  }
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--color-grey-51);
 `;
 
 function OtherQSelections({
@@ -70,7 +79,7 @@ function OtherQSelections({
     <>
       <Container>
         <div>
-          <h2>Konaklama türü</h2>
+          <Heading as="h7">Konaklama türü</Heading>
           {accommodationsData &&
             accommodationsData.map((accommodation) => (
               <RadioLabel key={accommodation.id}>
@@ -92,7 +101,7 @@ function OtherQSelections({
 
       <Container>
         <div>
-          <h2>Seyahat Aracı</h2>
+          <Heading as="h7">Seyahat Aracı</Heading>
           {vehiclesData &&
             vehiclesData.map((vehicles) => (
               <RadioLabel key={vehicles.id}>
@@ -111,7 +120,7 @@ function OtherQSelections({
 
       <Container>
         <div>
-          <h2>Çocuklu yolculuk </h2>
+          <Heading as="h7">Çocuklu yolculuk </Heading>
           {kidsData &&
             kidsData.map((kids) => (
               <RadioLabel key={kids.id}>

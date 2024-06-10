@@ -7,6 +7,7 @@ import { useProfessions } from "./useProfession";
 
 // Radyo butonları için etiket stili
 const RadioLabel = styled.label`
+font-size: 18px;
   display: flex;
   align-items: center;
   margin-bottom: 5px;
@@ -14,6 +15,9 @@ const RadioLabel = styled.label`
 
   input[type="radio"] {
     margin-right: 10px;
+  }
+  @media (max-width: 450px) {
+    font-size: 16px;
   }
 `;
 

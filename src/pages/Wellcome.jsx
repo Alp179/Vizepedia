@@ -22,6 +22,16 @@ const QuestionContainer = styled.div`
   gap: 36px;
 `;
 
+const HeadingWidth = styled.p`
+font-size: 18px;
+font-weight: bold;
+text-align: center;
+@media (max-width: 450px) {
+  font-size: 16px;
+  width: 300px;
+}
+`
+
 function Wellcome() {
   const navigate = useNavigate();
 
@@ -29,10 +39,10 @@ function Wellcome() {
     <>
       <QuestionContainer>
         <Heading as="h5">Vizepedia’ya hoş geldiniz</Heading>
-        <h4 style={{textAlign: "center"}}>
+        <HeadingWidth>
           Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
           Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
-        </h4>
+        </HeadingWidth>
         <StyledInput placeholder="Ad (isteğe bağlı)"></StyledInput>
         <Button size="question" onClick={() => navigate("/wellcome-1")}>Devam et</Button>
       </QuestionContainer>

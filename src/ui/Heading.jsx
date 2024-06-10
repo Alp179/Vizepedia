@@ -69,6 +69,11 @@ const Heading = styled.h1`
         margin-top: 90px;
         font-size: 2.2rem;
       }
+      @media (max-width: 450px) {
+        margin-bottom: 10px;
+        width: 300px;
+        font-size: 2rem;
+      }
     `}
     ${(props) =>
       props.as === "h6" &&
@@ -85,6 +90,18 @@ const Heading = styled.h1`
           font-size: 2.2rem;
         }
       `}
+      ${(props) =>
+        props.as === "h7" &&
+        css`
+          font-size: 2.2rem;
+          font-weight: bold;
+          @media (max-width: 850px) {
+            font-size: 2rem;
+          }
+          @media (max-width: 450px) {
+            font-size: 1.8rem;
+          }
+        `}
     
 
     line-height:1.4;

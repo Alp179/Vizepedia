@@ -6,15 +6,20 @@ import { usePurpose } from "./usePurpose";
 
 // Select kutusu için stil
 const StyledSelect = styled.select`
+font-size: 18px;
   padding: 8px 12px;
   border-radius: 4px;
   border: 1px solid #ccc;
   margin: 10px 0;
   width: 100%;
+  @media (max-width: 450px) {
+    font-size: 16px;
+  }
 `;
 
 // Radyo butonları için etiket stili
 const RadioLabel = styled.label`
+font-size: 18px;
   display: flex;
   align-items: center;
   margin-bottom: 5px;
@@ -23,25 +28,27 @@ const RadioLabel = styled.label`
   input[type="radio"] {
     margin-right: 10px;
   }
+  @media (max-width: 450px) {
+    font-size: 16px;
+  }
 `;
 
 // Üst div için stil
 const Container = styled.div`
-min-width: 600px;
-@media (max-width: 850px) {
-  min-width: 500px;
-}
-@media (max-width: 600px) {
-  min-width: 400px;
-}
-@media (max-width: 450px) {
-  min-width: 350px;
-}
-padding: 20px;
-border-radius: 5px;
-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-background: var(--color-grey-51);
-
+  min-width: 600px;
+  @media (max-width: 850px) {
+    min-width: 500px;
+  }
+  @media (max-width: 600px) {
+    min-width: 400px;
+  }
+  @media (max-width: 450px) {
+    min-width: 350px;
+  }
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--color-grey-51);
 `;
 
 function PurposeSelection({ onPurposeChange, selectedPurpose }) {

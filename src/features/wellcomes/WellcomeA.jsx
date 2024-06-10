@@ -13,16 +13,26 @@ function WellcomeA() {
     gap: 36px;
   `;
 
+  const HeadingWidth = styled.p`
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    @media (max-width: 450px) {
+      font-size: 16px;
+      width: 300px;
+    }
+  `;
+
   return (
     <>
       <QuestionContainer>
         <Heading as="h5">Vizepedia’ya hoş geldiniz</Heading>
-        <h4 style={{textAlign: "center"}}>
+        <HeadingWidth>
           Lütfen seyahat amacınızı, mesleğinizi, konaklama türünüzü ve seyahat
           aracınızı aşağıdaki alanlarda belirtin. Bu bilgiler doğru belgeleri
           sunmamız için önemlidir ve size en iyi şekilde rehberlik edebilmemize
           yardımcı olacaktır.
-        </h4>
+        </HeadingWidth>
         <Button size="question" onClick={() => navigate("/wellcome-2")}>
           Devam et
         </Button>
