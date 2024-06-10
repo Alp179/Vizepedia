@@ -4,6 +4,7 @@ import { useUserSelections } from "./useUserSelections";
 import PurposeSelection from "./PurposeSelection";
 import Heading from "../../ui/Heading";
 import Button from "../../ui/Button";
+import styled from "styled-components";
 
 function WellcomeC() {
   const navigate = useNavigate();
@@ -15,19 +16,29 @@ function WellcomeC() {
     dispatch({ type: "SET_PURPOSE", payload: purpose }); // Global state'i güncelleyin
   };
 
+  const QuestionContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 36px;
+  `;
+
   return (
     <>
-      <Heading as="h5">Gidiş amacınızı seçiniz</Heading>
-      <PurposeSelection
-        selectedPurpose={selectedPurpose}
-        onPurposeChange={handlePurposeChange}
-      />
-      <Button
-        onClick={() => navigate("/wellcome-4")}
-        disabled={!selectedPurpose}
-      >
-        Devam et
-      </Button>
+      <QuestionContainer>
+        <Heading as="h5">Gidiş amacınızı seçiniz</Heading>
+        <PurposeSelection
+          selectedPurpose={selectedPurpose}
+          onPurposeChange={handlePurposeChange}
+        />
+        <Button
+          size="question"
+          onClick={() => navigate("/wellcome-4")}
+          disabled={!selectedPurpose}
+        >
+          Devam et
+        </Button>
+      </QuestionContainer>
     </>
   );
 }

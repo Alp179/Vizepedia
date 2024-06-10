@@ -4,6 +4,7 @@ import { useUserSelections } from "./useUserSelections";
 import ProfessionSelection from "./ProfessionSelection";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
+import styled from "styled-components";
 
 function WellcomeD() {
   const navigate = useNavigate();
@@ -17,19 +18,29 @@ function WellcomeD() {
     dispatch({ type: "SET_PROFESSION", payload: profession }); // Global state'i güncelleyin
   };
 
+  const QuestionContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 36px;
+  `;
+
   return (
     <>
-      <Heading as="h5">Mesleğinizi seçiniz</Heading>
-      <ProfessionSelection
-        selectedProfession={selectedProfession}
-        onProfessionChange={handleProfessionChange}
-      />
-      <Button
-        onClick={() => navigate("/wellcome-5")}
-        disabled={!selectedProfession}
-      >
-        Devam et
-      </Button>
+      <QuestionContainer>
+        <Heading as="h5">Mesleğinizi seçiniz</Heading>
+        <ProfessionSelection
+          selectedProfession={selectedProfession}
+          onProfessionChange={handleProfessionChange}
+        />
+        <Button
+          size="question"
+          onClick={() => navigate("/wellcome-5")}
+          disabled={!selectedProfession}
+        >
+          Devam et
+        </Button>
+      </QuestionContainer>
     </>
   );
 }

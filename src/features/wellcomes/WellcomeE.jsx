@@ -29,7 +29,6 @@ const StyledNavLink = styled(NavLink)`
   &.active:link,
   &.active:visited {
     color: var(--color-grey-800);
-    background-color: var(--color-grey-50);
     border-radius: var(--border-radius-sm);
   }
 
@@ -46,6 +45,13 @@ const StyledNavLink = styled(NavLink)`
   &.active:visited svg {
     color: var(--color-brand-600);
   }
+`;
+
+const QuestionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
 `;
 
 function WellcomeE() {
@@ -81,36 +87,39 @@ function WellcomeE() {
 
   return (
     <>
-      <Heading as="h5">
-        Lütfen konaklama türünüzü, seyahat aracınızı ve çocuklu yolculuk
-        durumunuzu seçiniz
-      </Heading>
-      <OtherQSelections
-        selectedAccommodation={selectedAccommodation}
-        selectedKid={selectedKid}
-        selectedVehicle={selectedVehicle}
-        onVehicleChange={handleVehicleChange}
-        onKidChange={handleKidChange}
-        onAccommodationChange={handleAccommodationChange}
-      />
+      <QuestionContainer>
+        <Heading as="h5">
+          Lütfen konaklama türünüzü, seyahat aracınızı ve çocuklu yolculuk
+          durumunuzu seçiniz
+        </Heading>
+        <OtherQSelections
+          selectedAccommodation={selectedAccommodation}
+          selectedKid={selectedKid}
+          selectedVehicle={selectedVehicle}
+          onVehicleChange={handleVehicleChange}
+          onKidChange={handleKidChange}
+          onAccommodationChange={handleAccommodationChange}
+        />
 
-      <Modal>
-        <Modal.Open opens="controlScreen">
-          <StyledNavLink to="">
-            <Button
-              onClick={() => navigate("/test")}
-              disabled={
-                !selectedVehicle || !selectedKid || !selectedAccommodation
-              }
-            >
-              Devam et
-            </Button>
-          </StyledNavLink>
-        </Modal.Open>
-        <Modal.Window name="controlScreen">
-          <ControlScreen />
-        </Modal.Window>
-      </Modal>
+        <Modal>
+          <Modal.Open opens="controlScreen">
+            <StyledNavLink to="">
+              <Button
+                size="question"
+                onClick={() => navigate("/test")}
+                disabled={
+                  !selectedVehicle || !selectedKid || !selectedAccommodation
+                }
+              >
+                Devam et
+              </Button>
+            </StyledNavLink>
+          </Modal.Open>
+          <Modal.Window name="controlScreen">
+            <ControlScreen />
+          </Modal.Window>
+        </Modal>
+      </QuestionContainer>
     </>
   );
 }
