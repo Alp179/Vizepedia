@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
+import styled from "styled-components";
 import { useEffect } from "react";
 import { useUserSelections } from "./useUserSelections";
 import Button from "../../ui/Button";
@@ -7,6 +7,7 @@ import ControlScreenDropdowns from "./ControlScreenDropdowns";
 import supabase from "../../services/supabase";
 import { useUser } from "../authentication/useUser";
 import Spinner from "../../ui/Spinner";
+import Heading from "../../ui/Heading";
 
 function ControlScreen() {
   const { state, dispatch } = useUserSelections();
@@ -54,9 +55,36 @@ function ControlScreen() {
     return <Spinner />;
   }
 
+  const ModalScreenContainer = styled.div`
+    width: 300px;
+    height: 700px;
+    @media (max-width: 750px) {
+      gap: 10px;
+      height: 600px;
+      width: 280px;
+    }
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    @media (max-height: 800px) {
+      height: 500px;
+    }
+    @media (min-width: 750px) {
+      @media (max-height: 800px) {
+        gap: 10px;
+      }
+    }
+    @media (max-width: 400px) {
+      @media (max-height: 700px)  {
+        width: 230px!important;
+      }
+    }
+  `;
+
   return (
-    <div>
-      <h1>Bilgi Kontrol Ekranı</h1>
+    <ModalScreenContainer>
+      <Heading as="h6">Bilgi Kontrol Ekranı</Heading>
       <ControlScreenDropdowns
         selectedCountry={state.country}
         onCountryChange={(country) =>
@@ -83,7 +111,7 @@ function ControlScreen() {
       />
 
       <Button onClick={handleSubmit}>Başlayalım</Button>
-    </div>
+    </ModalScreenContainer>
   );
 }
 

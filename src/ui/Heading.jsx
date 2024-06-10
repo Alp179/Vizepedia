@@ -29,6 +29,14 @@ const Heading = styled.h1`
     css`
       font-size: 2rem;
       font-weight: 600;
+      @media (max-width: 750px) {
+        font-size: 1.5rem;
+      }
+      @media (min-width: 750px) {
+        @media (max-height: 800px) {
+          font-size: 1.5rem;
+        }
+      }
     `}
 
     ${(props) =>
@@ -62,6 +70,21 @@ const Heading = styled.h1`
         font-size: 2.2rem;
       }
     `}
+    ${(props) =>
+      props.as === "h6" &&
+      css`
+        font-size: 3rem;
+        font-weight: 600;
+        text-align: center;
+        @media (min-width: 750px) {
+          @media (max-height: 800px) {
+            font-size: 2.2rem;
+          }
+        }
+        @media (max-width: 750px) {
+          font-size: 2.2rem;
+        }
+      `}
     
 
     line-height:1.4;

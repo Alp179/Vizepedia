@@ -19,6 +19,18 @@ const StyledSelect = styled.select`
   border: 1px solid #ccc;
   margin: 10px 0;
   width: 100%;
+  @media (max-width: 750px) {
+    @media (max-height: 800px) {
+      font-size: 14px;
+      padding: 2px 8px;
+    }
+  }
+  @media (min-width: 750px) {
+    @media (max-height: 800px) {
+      padding: 2px 8px;
+      font-size: 14px;
+    }
+  }
 `;
 
 // Üst div için stil
