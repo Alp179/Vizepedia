@@ -10,6 +10,7 @@ font-size: 18px;
   padding: 8px 12px;
   border-radius: 4px;
   border: 1px solid #ccc;
+  color: #4D4442;
   margin: 10px 0;
   width: 100%;
   @media (max-width: 450px) {

@@ -12,6 +12,7 @@ const StyledSelect = styled.select`
   border: 1px solid #ccc;
   margin: 10px 0;
   width: 100%;
+  color: #4D4442;
   @media (max-width: 450px) {
     font-size: 16px;
   }
