@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
@@ -28,6 +28,9 @@ import { DocumentsProvider } from "./context/DocumentsContext";
 import DocumentSummary from "./pages/DocumentSummary";
 import { VisaApplicationProvider } from "./context/VisaApplicationContext";
 import QuestionsLayout from "./ui/QuesitonsLayout";
+import { useEffect } from "react";
+import { fetchLatestApplication } from "./utils/userSelectionsFetch";
+import { getCurrentUser } from "./services/apiAuth";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +39,35 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+function RedirectDashboard() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function handleRedirect() {
+      const cachedApplicationId = localStorage.getItem("latestApplicationId");
+      if (cachedApplicationId) {
+        navigate(`/dashboard/${cachedApplicationId}`);
+      } else {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          const latestApplication = await fetchLatestApplication(
+            currentUser.id
+          );
+          if (latestApplication) {
+            localStorage.setItem("latestApplicationId", latestApplication.id);
+            navigate(`/dashboard/${latestApplication.id}`);
+          } else {
+            navigate("/dashboard"); // Ya da uygun bir yönlendirme yapın
+          }
+        }
+      }
+    }
+    handleRedirect();
+  }, [navigate]);
+
+  return null;
+}
 
 function App() {
   return (
@@ -57,8 +89,8 @@ function App() {
                         </ProtectedRoute>
                       }
                     >
-                      <Route index element={<Dashboard />} />
-                      <Route path="dashboard" element={<Dashboard />} />
+                      <Route index element={<RedirectDashboard />} />
+                      <Route path="dashboard" element={<RedirectDashboard />} />
                       <Route path="dashboard/:id" element={<Dashboard />} />
                       <Route path="settings" element={<Settings />} />
                       <Route path="account" element={<Account />} />

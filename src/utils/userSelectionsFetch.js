@@ -1,4 +1,3 @@
-// fetchUserSelections fonksiyonunu düzenleyin
 import supabase from "../services/supabase";
 
 export async function fetchUserSelectionsNav(userId) {
@@ -27,4 +26,20 @@ export async function fetchUserSelectionsDash(userId, applicationId) {
   }
 
   return data;
+}
+
+export async function fetchLatestApplication(userId) {
+  const { data, error } = await supabase
+    .from("userAnswers")
+    .select("*")
+    .eq("userId", userId)
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  if (error) {
+    console.error("Error fetching latest application:", error);
+    return null;
+  }
+
+  return data.length > 0 ? data[0] : null;
 }

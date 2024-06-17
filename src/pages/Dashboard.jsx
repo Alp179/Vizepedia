@@ -45,11 +45,11 @@ const FlagContainer = styled.div`
     top: 10%;
   }
   @media (max-width: 820px) {
-    right: -20%; 
+    right: -20%;
   }
   @media (max-width: 710px) {
-    width: 300px!important;
-    height: 170px!important;
+    width: 300px !important;
+    height: 170px !important;
     top: 11%;
   }
   @media (max-width: 530px) {
@@ -60,8 +60,8 @@ const FlagContainer = styled.div`
     right: -50%;
   }
   @media (max-width: 450px) {
-    width: 240px!important;
-    height: 140px!important;
+    width: 240px !important;
+    height: 140px !important;
     right: -70%;
     top: 8%;
     @media (max-height: 700px) {
