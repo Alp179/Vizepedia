@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi";
@@ -12,8 +13,11 @@ import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import UserAvatar from "../features/authentication/UserAvatar";
+import AllDocs from "./AllDocs"; // AllDocs bileşenini import et
 
-const MenuIcon = styled.div`
+const MenuIcon = styled.div.attrs((props) => ({
+  style: { display: props.isDocsOpen ? "none" : "block" },
+}))`
   position: fixed;
   top: 1rem;
   right: 1rem;
@@ -90,6 +94,9 @@ const MenuContainer = styled.div`
   transform: ${(props) =>
     props.isOpen ? "translateX(0)" : "translateX(100%)"};
   transition: transform 0.3s ease-in-out;
+  @media (min-width: 710px) {
+    display: none;
+  }
 `;
 
 const MenuHeader = styled.div`
@@ -127,8 +134,37 @@ const Overlay = styled.div`
   display: ${(props) => (props.isOpen ? "block" : "none")};
 `;
 
+const FullScreenModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 2rem; /* İçeriği daha yukarıda sergilemek için padding ekleyelim */
+  transform: ${(props) =>
+    props.isClosing ? "translateX(100%)" : "translateX(0)"};
+  transition: transform 0.3s ease-in-out;
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 36px; /* Butonu büyütelim */
+  cursor: pointer;
+`;
+
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDocsOpen, setIsDocsOpen] = useState(false); // Belgeler modal state
+  const [isClosing, setIsClosing] = useState(false); // Kapanma animasyonu için state
   const navigate = useNavigate();
   const { logout } = useLogout();
   const { applications } = useVisaApplications();
@@ -162,6 +198,21 @@ const MobileMenu = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleBackButton = (event) => {
+      if (isDocsOpen) {
+        event.preventDefault();
+        closeModal();
+      }
+    };
+
+    window.addEventListener("popstate", handleBackButton);
+
+    return () => {
+      window.removeEventListener("popstate", handleBackButton);
+    };
+  }, [isDocsOpen]);
+
   const userSelectionsQuery = useQuery({
     queryKey: ["userSelectionsNav", userId],
     queryFn: () => fetchUserSelectionsDash(userId),
@@ -193,6 +244,14 @@ const MobileMenu = () => {
     }
   };
 
+  const closeModal = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsDocsOpen(false);
+      setIsClosing(false);
+    }, 300); // Kapanma animasyonu süresi ile uyumlu
+  };
+
   if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
     return <div>Loading...</div>;
   }
@@ -208,6 +267,7 @@ const MobileMenu = () => {
         onClick={() => {
           setIsOpen(!isOpen);
         }}
+        isDocsOpen={isDocsOpen} // isDocsOpen state'ini buraya da ekle
       >
         <svg
           className={`ham hamRotate ham8 ${isOpen ? "active" : ""}`}
@@ -231,7 +291,12 @@ const MobileMenu = () => {
           <UserAvatar /> {/* Kullanıcı avatarı ve adı */}
         </MenuHeader>
         <MenuContent>
-          <StyledNavLink onClick={continueToDocument}>
+          <StyledNavLink
+            onClick={() => {
+              setIsDocsOpen(true);
+              setIsOpen(false); // Menü kapansın
+            }}
+          >
             <HiDocument /> Tüm Belgeler
           </StyledNavLink>
           {applications.map((app) => (
@@ -242,7 +307,7 @@ const MobileMenu = () => {
                 setIsOpen(false);
               }}
             >
-              {app.ans_country} Visa - {app.ans_purpose} - {app.ans_profession}
+              {app.ans_country} Visa - {app.ans_purpose} - {app.ans?.profession}
             </StyledNavLink>
           ))}
           <StyledNavLink
@@ -263,6 +328,19 @@ const MobileMenu = () => {
           </StyledNavLink>
         </MenuContent>
       </MenuContainer>
+
+      {isDocsOpen && (
+        <FullScreenModal isClosing={isClosing}>
+          <CloseButton
+            onClick={() => {
+              closeModal();
+            }}
+          >
+            ×
+          </CloseButton>
+          <AllDocs />
+        </FullScreenModal>
+      )}
     </>
   );
 };

@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import MobileMenu from "./MobileMenu"; // Yeni hamburger menü komponenti
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 const StyledAppLayout = styled.div`
   overflow: clip;
@@ -44,12 +44,20 @@ const Container = styled.div`
   }
 `;
 
+const MobileMenuContainer = styled.div`
+  @media (min-width: 710px) {
+    display: none;
+  }
+`;
+
 function AppLayout() {
   return (
     <StyledAppLayout>
       <Header />
       <Sidebar />
-      <MobileMenu /> {/* Hamburger menü komponenti */}
+      <MobileMenuContainer>
+        <MobileMenu /> {/* Hamburger menü komponenti */}
+      </MobileMenuContainer>
       <Main>
         <Container>
           <Outlet />
