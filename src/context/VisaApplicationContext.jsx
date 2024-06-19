@@ -20,6 +20,8 @@ const visaApplicationReducer = (state, action) => {
           ? { ...application, ...action.payload.changes }
           : application
       );
+    case "DELETE_APPLICATION":
+      return state.filter((application) => application.id !== action.payload);
     default:
       return state;
   }

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi";
+import { MdClose } from "react-icons/md"; // Çarpı işareti için icon import
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../features/authentication/useLogout";
 import { useVisaApplications } from "../context/VisaApplicationContext";
@@ -14,6 +15,10 @@ import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import UserAvatar from "../features/authentication/UserAvatar";
 import AllDocs from "./AllDocs"; // AllDocs bileşenini import et
+import DarkModeToggle from "./DarkModeToggle";
+
+import toast, { Toaster } from "react-hot-toast"; // React Hot Toast import
+import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 
 const MenuIcon = styled.div.attrs((props) => ({
   style: { display: props.isDocsOpen ? "none" : "block" },
@@ -123,6 +128,17 @@ const StyledNavLink = styled.div`
   }
 `;
 
+const DeleteButton = styled.button`
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  margin-left: 10px;
+  &:hover {
+    color: darkred;
+  }
+`;
+
 const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -167,7 +183,8 @@ const MobileMenu = () => {
   const [isClosing, setIsClosing] = useState(false); // Kapanma animasyonu için state
   const navigate = useNavigate();
   const { logout } = useLogout();
-  const { applications } = useVisaApplications();
+  const { applications, dispatch: applicationsDispatch } =
+    useVisaApplications();
   const { setSelectedDocument } = useSelectedDocument();
   const { state: completedDocuments } = useDocuments();
   const [userId, setUserId] = useState(null);
@@ -252,6 +269,59 @@ const MobileMenu = () => {
     }, 300); // Kapanma animasyonu süresi ile uyumlu
   };
 
+  const handleDelete = async (appId) => {
+    const confirmDelete = await new Promise((resolve) => {
+      toast(
+        (t) => (
+          <span>
+            Bu vize başvurusunu silmek istediğinizden emin misiniz?
+            <br />
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                resolve(true);
+              }}
+              style={{
+                marginRight: "8px",
+                color: "white",
+                backgroundColor: "red",
+                padding: "5px",
+                border: "none",
+              }}
+            >
+              Evet
+            </button>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                resolve(false);
+              }}
+              style={{ padding: "5px", border: "none" }}
+            >
+              Hayır
+            </button>
+          </span>
+        ),
+        {
+          duration: Infinity,
+        }
+      );
+    });
+
+    if (confirmDelete) {
+      try {
+        await deleteVisaApplication(appId);
+        // Başarıyla silindikten sonra, state'i güncelle
+        applicationsDispatch({ type: "DELETE_APPLICATION", payload: appId });
+        toast.success("Vize başvurusu başarıyla silindi!");
+        // Sayfayı yeniden yükleyerek tüm sayfanın render edilmesini sağla
+        navigate("/dashboard"); // Burada navigate kullanarak /dashboard'a yönlendiriyoruz
+      } catch (error) {
+        toast.error("Vize başvurusu silinemedi.");
+      }
+    }
+  };
+
   if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
     return <div>Loading...</div>;
   }
@@ -262,6 +332,7 @@ const MobileMenu = () => {
 
   return (
     <>
+      <Toaster />
       <MenuIcon
         ref={iconRef}
         onClick={() => {
@@ -300,15 +371,22 @@ const MobileMenu = () => {
             <HiDocument /> Tüm Belgeler
           </StyledNavLink>
           {applications.map((app) => (
-            <StyledNavLink
-              key={app.id}
-              onClick={() => {
-                navigate(`/dashboard/${app.id}`);
-                setIsOpen(false);
-              }}
-            >
-              {app.ans_country} Visa - {app.ans_purpose} - {app.ans?.profession}
-            </StyledNavLink>
+            <div key={app.id} style={{ display: "flex", alignItems: "center" }}>
+              <StyledNavLink
+                onClick={() => {
+                  navigate(`/dashboard/${app.id}`);
+                  setIsOpen(false);
+                }}
+              >
+                {app.ans_country} Visa - {app.ans_purpose} -{" "}
+                {app.ans?.profession}
+              </StyledNavLink>
+              {applications.length > 1 && (
+                <DeleteButton onClick={() => handleDelete(app.id)}>
+                  <MdClose size={20} />
+                </DeleteButton>
+              )}
+            </div>
           ))}
           <StyledNavLink
             onClick={() => {
@@ -326,6 +404,7 @@ const MobileMenu = () => {
           >
             Oturumu Kapat
           </StyledNavLink>
+          <DarkModeToggle />
         </MenuContent>
       </MenuContainer>
 

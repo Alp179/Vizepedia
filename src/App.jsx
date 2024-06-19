@@ -45,21 +45,14 @@ function RedirectDashboard() {
 
   useEffect(() => {
     async function handleRedirect() {
-      const cachedApplicationId = localStorage.getItem("latestApplicationId");
-      if (cachedApplicationId) {
-        navigate(`/dashboard/${cachedApplicationId}`);
-      } else {
-        const currentUser = await getCurrentUser();
-        if (currentUser) {
-          const latestApplication = await fetchLatestApplication(
-            currentUser.id
-          );
-          if (latestApplication) {
-            localStorage.setItem("latestApplicationId", latestApplication.id);
-            navigate(`/dashboard/${latestApplication.id}`);
-          } else {
-            navigate("/dashboard"); // Ya da uygun bir yönlendirme yapın
-          }
+      const currentUser = await getCurrentUser();
+      if (currentUser) {
+        const latestApplication = await fetchLatestApplication(currentUser.id);
+        if (latestApplication) {
+          localStorage.setItem("latestApplicationId", latestApplication.id);
+          navigate(`/dashboard/${latestApplication.id}`);
+        } else {
+          navigate("/wellcome-2"); // İlk başvuru yoksa welcome sayfasına yönlendirin
         }
       }
     }

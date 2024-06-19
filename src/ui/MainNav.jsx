@@ -2,6 +2,7 @@
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi2";
+import { MdClose } from "react-icons/md"; // Çarpı işareti için icon import
 import Button from "./Button";
 import Modal from "./Modal";
 import AllDocs from "./AllDocs";
@@ -17,6 +18,9 @@ import {
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import { useVisaApplications } from "../context/VisaApplicationContext";
+
+import toast, { Toaster } from "react-hot-toast"; // React Hot Toast import
+import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 
 const NavList = styled.ul`
   display: flex;
@@ -72,16 +76,28 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
+const DeleteButton = styled.button`
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  margin-left: 10px;
+  &:hover {
+    color: darkred;
+  }
+`;
+
 function MainNav() {
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
   const {
     state: { completedDocuments },
-    dispatch,
+    dispatch: documentsDispatch,
   } = useDocuments();
   const { setSelectedDocument } = useSelectedDocument();
-  const { applications } = useVisaApplications();
+  const { applications, dispatch: applicationsDispatch } =
+    useVisaApplications();
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -121,6 +137,59 @@ function MainNav() {
     }
   };
 
+  const handleDelete = async (appId) => {
+    const confirmDelete = await new Promise((resolve) => {
+      toast(
+        (t) => (
+          <span>
+            Bu vize başvurusunu silmek istediğinizden emin misiniz?
+            <br />
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                resolve(true);
+              }}
+              style={{
+                marginRight: "8px",
+                color: "white",
+                backgroundColor: "red",
+                padding: "5px",
+                border: "none",
+              }}
+            >
+              Evet
+            </button>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                resolve(false);
+              }}
+              style={{ padding: "5px", border: "none" }}
+            >
+              Hayır
+            </button>
+          </span>
+        ),
+        {
+          duration: Infinity,
+        }
+      );
+    });
+
+    if (confirmDelete) {
+      try {
+        await deleteVisaApplication(appId);
+        // Başarıyla silindikten sonra, state'i güncelle
+        applicationsDispatch({ type: "DELETE_APPLICATION", payload: appId });
+        toast.success("Vize başvurusu başarıyla silindi!");
+        // Sayfayı yeniden yükleyerek tüm sayfanın render edilmesini sağla
+        navigate("/dashboard"); // Burada navigate kullanarak /dashboard'a yönlendiriyoruz
+      } catch (error) {
+        toast.error("Vize başvurusu silinemedi.");
+      }
+    }
+  };
+
   if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
     return <div>Loading...</div>;
   }
@@ -131,6 +200,7 @@ function MainNav() {
 
   return (
     <nav className="navbar-dash">
+      <Toaster />
       <Button size="dash" variation="primary" onClick={continueToDocument}>
         Devam et
       </Button>
@@ -148,10 +218,15 @@ function MainNav() {
           </Modal>
         </li>
         {applications.map((app) => (
-          <li key={app.id}>
+          <li key={app.id} style={{ display: "flex", alignItems: "center" }}>
             <StyledNavLink to={`/dashboard/${app.id}`}>
               {app.ans_country} Visa - {app.ans_purpose} - {app.ans_profession}
             </StyledNavLink>
+            {applications.length > 1 && (
+              <DeleteButton onClick={() => handleDelete(app.id)}>
+                <MdClose size={20} />
+              </DeleteButton>
+            )}
           </li>
         ))}
         <li>
