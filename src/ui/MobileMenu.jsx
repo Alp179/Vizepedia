@@ -17,7 +17,7 @@ import UserAvatar from "../features/authentication/UserAvatar";
 import AllDocs from "./AllDocs"; // AllDocs bileşenini import et
 import DarkModeToggle from "./DarkModeToggle";
 
-import toast, { Toaster } from "react-hot-toast"; // React Hot Toast import
+import toast from "react-hot-toast"; // React Hot Toast import
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 
 const MenuIcon = styled.div.attrs((props) => ({
@@ -322,6 +322,51 @@ const MobileMenu = () => {
     }
   };
 
+  const handleLogout = async () => {
+    const confirmLogout = await new Promise((resolve) => {
+      toast(
+        (t) => (
+          <span>
+            Oturumu kapatmak istediğinizden emin misiniz?
+            <br />
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                resolve(true);
+              }}
+              style={{
+                marginRight: "8px",
+                color: "white",
+                backgroundColor: "red",
+                padding: "5px",
+                border: "none",
+              }}
+            >
+              Evet
+            </button>
+            <button
+              onClick={() => {
+                toast.dismiss(t.id);
+                resolve(false);
+              }}
+              style={{ padding: "5px", border: "none" }}
+            >
+              Hayır
+            </button>
+          </span>
+        ),
+        {
+          duration: Infinity,
+        }
+      );
+    });
+
+    if (confirmLogout) {
+      logout();
+      setIsOpen(false);
+    }
+  };
+
   if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
     return <div>Loading...</div>;
   }
@@ -332,7 +377,6 @@ const MobileMenu = () => {
 
   return (
     <>
-      <Toaster />
       <MenuIcon
         ref={iconRef}
         onClick={() => {
@@ -397,10 +441,7 @@ const MobileMenu = () => {
             <HiPlus /> Yeni
           </StyledNavLink>
           <StyledNavLink
-            onClick={() => {
-              logout();
-              setIsOpen(false);
-            }}
+            onClick={handleLogout} // Oturumu kapat butonuna handleLogout ekliyoruz
           >
             Oturumu Kapat
           </StyledNavLink>
