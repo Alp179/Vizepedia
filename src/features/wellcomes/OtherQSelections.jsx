@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import React from "react";
 import styled from "styled-components";
 import Heading from "../../ui/Heading";
 import Spinner from "../../ui/Spinner";
@@ -7,44 +8,82 @@ import { useVehicles } from "./useVehicles";
 import { useKids } from "./useKids";
 import { useAccommodations } from "./useAccommodations";
 
-// Radyo butonları için etiket stili
-const RadioLabel = styled.label`
-  margin-top: 10px;
-  font-size: 18px;
-  @media (max-width: 850px) {
-    font-size: 1.6rem;
-  }
-  @media (max-width: 450px) {
-    margin-top: 5px;
-    font-size: 16px;
-  }
+const Container = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 5px;
-  cursor: pointer;
+  margin-top: 10px;
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 8px 300px rgba(0, 0, 0, 0.2); /* Gölgeyi artırdık */
+  backdrop-filter: blur(6.3px);
+  -webkit-backdrop-filter: blur(6.3px);
+  background: rgba(255, 255, 255, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  width: 100%;
+  max-width: 400px;
+`;
 
-  input[type="radio"] {
-    margin-right: 10px;
+const SelectionButton = styled.button`
+  background-color: ${(props) =>
+    props.isSelected ? "#00c853" : "transparent"};
+  color: ${(props) => (props.isSelected ? "#ffffff" : "#000000")};
+  border: 1px solid ${(props) => (props.isSelected ? "#00c853" : "transparent")};
+  border-radius: 16px;
+  padding: 1rem 1rem;
+  cursor: pointer;
+  font-size: 1.4rem;
+  margin: 0.5rem;
+  width: 100%;
+  max-width: 140px;
+
+  &:hover {
+    border: 1px solid #00c853;
+  }
+
+  &:active {
+    border: 1px solid #00c853;
   }
 `;
 
-// Üst div için stil
-const Container = styled.div`
-  margin-top: 10px;
-  min-width: 600px;
-  @media (max-width: 850px) {
-    min-width: 500px;
+const Section = styled.div`
+  margin-bottom: 1rem;
+  text-align: center;
+
+  h4 {
+    margin-bottom: 1rem;
   }
-  @media (max-width: 600px) {
-    min-width: 400px;
-  }
-  @media (max-width: 450px) {
-    min-width: 350px;
-  }
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background: var(--color-grey-51);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+`;
+
+const HorizontalButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+`;
+
+const Divider = styled.div`
+  width: 80%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
+  margin: 1rem 0;
+`;
+
+const VerticalDivider = styled.div`
+  height: 24px; /* Adjust height to match button height */
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
 `;
 
 function OtherQSelections({
@@ -59,16 +98,16 @@ function OtherQSelections({
   const { isLoadingKids, kidsData } = useKids();
   const { isLoadingAccommodation, accommodationsData } = useAccommodations();
 
-  const handleVehicle = (e) => {
-    onVehicleChange(e.target.value); // Bu satırı ekleyin
+  const handleVehicle = (value) => {
+    onVehicleChange(value);
   };
 
-  const handleKid = (e) => {
-    onKidChange(e.target.value); // Bu satırı ekleyin
+  const handleKid = (value) => {
+    onKidChange(value);
   };
 
-  const handleAccommodation = (e) => {
-    onAccommodationChange(e.target.value); // Bu satırı ekleyin
+  const handleAccommodation = (value) => {
+    onAccommodationChange(value);
   };
 
   if (isLoadingVehicles && isLoadingKids && isLoadingAccommodation) {
@@ -76,67 +115,64 @@ function OtherQSelections({
   }
 
   return (
-    <>
-      <Container>
-        <div>
-          <Heading as="h7">Konaklama türü</Heading>
+    <Container>
+      <Section>
+        <Heading as="h7">Konaklama türü</Heading>
+        <HorizontalButtonGroup>
           {accommodationsData &&
-            accommodationsData.map((accommodation) => (
-              <RadioLabel key={accommodation.id}>
-                <input
-                  type="radio"
-                  name={accommodation.accommodationTypeName}
-                  value={accommodation.accommodationTypeName}
-                  checked={
+            accommodationsData.map((accommodation, index) => (
+              <React.Fragment key={accommodation.id}>
+                <SelectionButton
+                  isSelected={
                     selectedAccommodation ===
                     accommodation.accommodationTypeName
                   }
-                  onChange={handleAccommodation}
-                />
-                {accommodation.accommodationTypeName}
-              </RadioLabel>
+                  onClick={() =>
+                    handleAccommodation(accommodation.accommodationTypeName)
+                  }
+                >
+                  {accommodation.accommodationTypeName}
+                </SelectionButton>
+                {index < accommodationsData.length - 1 && <VerticalDivider />}
+              </React.Fragment>
             ))}
-        </div>
-      </Container>
-
-      <Container>
-        <div>
-          <Heading as="h7">Seyahat Aracı</Heading>
+        </HorizontalButtonGroup>
+      </Section>
+      <Divider />
+      <Section>
+        <Heading as="h7">Seyahat Aracı</Heading>
+        <ButtonGroup>
           {vehiclesData &&
             vehiclesData.map((vehicles) => (
-              <RadioLabel key={vehicles.id}>
-                <input
-                  type="radio"
-                  name={vehicles.travelVehicleName}
-                  value={vehicles.travelVehicleName}
-                  checked={selectedVehicle === vehicles.travelVehicleName}
-                  onChange={handleVehicle}
-                />
+              <SelectionButton
+                key={vehicles.id}
+                isSelected={selectedVehicle === vehicles.travelVehicleName}
+                onClick={() => handleVehicle(vehicles.travelVehicleName)}
+              >
                 {vehicles.travelVehicleName}
-              </RadioLabel>
+              </SelectionButton>
             ))}
-        </div>
-      </Container>
-
-      <Container>
-        <div>
-          <Heading as="h7">Çocuklu yolculuk </Heading>
+        </ButtonGroup>
+      </Section>
+      <Divider />
+      <Section>
+        <Heading as="h7">Çocuklu yolculuk</Heading>
+        <HorizontalButtonGroup>
           {kidsData &&
-            kidsData.map((kids) => (
-              <RadioLabel key={kids.id}>
-                <input
-                  type="radio"
-                  name={kids.kidState}
-                  value={kids.kidState}
-                  checked={selectedKid === kids.kidState}
-                  onChange={handleKid}
-                />
-                {kids.kidState}
-              </RadioLabel>
+            kidsData.map((kids, index) => (
+              <React.Fragment key={kids.id}>
+                <SelectionButton
+                  isSelected={selectedKid === kids.kidState}
+                  onClick={() => handleKid(kids.kidState)}
+                >
+                  {kids.kidState}
+                </SelectionButton>
+                {index < kidsData.length - 1 && <VerticalDivider />}
+              </React.Fragment>
             ))}
-        </div>
-      </Container>
-    </>
+        </HorizontalButtonGroup>
+      </Section>
+    </Container>
   );
 }
 

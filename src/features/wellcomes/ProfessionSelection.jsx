@@ -1,50 +1,58 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
-
 import Spinner from "../../ui/Spinner";
-
 import { useProfessions } from "./useProfession";
 
-// Radyo butonları için etiket stili
-const RadioLabel = styled.label`
-font-size: 18px;
+const Container = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 5px;
-  cursor: pointer;
+  margin-top: 10px;
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Gölgeyi artırdık */
+  backdrop-filter: blur(6.3px);
+  -webkit-backdrop-filter: blur(6.3px);
+  background: rgba(255, 255, 255, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  width: 100%;
+  max-width: 400px;
+`;
 
-  input[type="radio"] {
-    margin-right: 10px;
+const SelectionButton = styled.button`
+  background-color: ${(props) =>
+    props.isSelected ? "#00c853" : "transparent"};
+  color: ${(props) => (props.isSelected ? "#ffffff" : "#000000")};
+  border: 1px solid ${(props) => (props.isSelected ? "#00c853" : "transparent")};
+  border-radius: 16px;
+  padding: 1rem 1rem;
+  cursor: pointer;
+  font-size: 1.4rem;
+  margin: 0.3rem 0; /* Dikey sıralama için üst ve alt margin */
+  width: 100%;
+  max-width: 300px;
+
+  &:hover {
+    border: 1px solid #00c853;
   }
-  @media (max-width: 450px) {
-    font-size: 16px;
+
+  &:active {
+    border: 1px solid #00c853;
   }
 `;
 
-// Üst div için stil
-const Container = styled.div`
-min-width: 600px;
-@media (max-width: 850px) {
-  min-width: 500px;
-}
-@media (max-width: 600px) {
-  min-width: 400px;
-}
-@media (max-width: 450px) {
-  min-width: 350px;
-}
-padding: 20px;
-border-radius: 5px;
-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-background: var(--color-grey-51);
-
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: column; /* Dikey sıralama */
+  align-items: center;
+  gap: 5px; /* Butonlar arasındaki boşluğu azalt */
 `;
 
 function ProfessionSelection({ onProfessionChange, selectedProfession }) {
   const { isLoading, professionsData } = useProfessions();
 
-  const handleProfession = (e) => {
-    onProfessionChange(e.target.value); // Bu satırı ekleyin
+  const handleProfession = (value) => {
+    onProfessionChange(value);
   };
 
   if (isLoading) {
@@ -53,21 +61,18 @@ function ProfessionSelection({ onProfessionChange, selectedProfession }) {
 
   return (
     <Container>
-      <div>
+      <ButtonGroup>
         {professionsData &&
-          professionsData.map((professions) => (
-            <RadioLabel key={professions.id}>
-              <input
-                type="radio"
-                name={professions.professionName}
-                value={professions.professionName}
-                checked={selectedProfession === professions.professionName}
-                onChange={handleProfession}
-              />
-              {professions.professionName}
-            </RadioLabel>
+          professionsData.map((profession) => (
+            <SelectionButton
+              key={profession.id}
+              isSelected={selectedProfession === profession.professionName}
+              onClick={() => handleProfession(profession.professionName)}
+            >
+              {profession.professionName}
+            </SelectionButton>
           ))}
-      </div>
+      </ButtonGroup>
     </Container>
   );
 }

@@ -1,11 +1,9 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
-
 import Spinner from "../../ui/Spinner";
 import { usePurpose } from "./usePurpose";
 import { useCountries } from "./useCountries";
 import { useProfessions } from "./useProfession";
-
 import { useKids } from "./useKids";
 import { useAccommodations } from "./useAccommodations";
 import { useVehicles } from "./useVehicles";
@@ -14,32 +12,49 @@ import Heading from "../../ui/Heading";
 
 // Select kutusu için stil
 const StyledSelect = styled.select`
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  margin: 5px 0;
   width: 100%;
-  color: #4D4442;
-  @media (max-width: 750px) {
-    @media (max-height: 800px) {
-      font-size: 14px;
-      padding: 2px 8px;
-    }
+  color: #000000;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s;
+
+  &:hover,
+  &:active {
+    border: 1px solid #00c853;
   }
-  @media (min-width: 750px) {
-    @media (max-height: 800px) {
-      padding: 2px 8px;
-      font-size: 14px;
-    }
+
+  option {
+    color: #000000;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  @media (max-width: 750px) {
+    font-size: 12px;
+    padding: 6px 10px;
   }
 `;
 
-// Üst div için stil
-const Container = styled.div`
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: var(--color-grey-0);
+const Section = styled.div`
+  margin-bottom: 0rem; /* Mesafeyi azaltıldı */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Divider = styled.div`
+  width: 80%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
+  margin: 0.8rem 0; /* Mesafeyi azaltıldı */
 `;
 
 function ControlScreenDropdowns({
@@ -93,16 +108,15 @@ function ControlScreenDropdowns({
     ...(schCounData || []),
     ...(mainCounData || []),
   ].map((country, index) => ({
-    id: country.id ? `${country.id}-${index}` : `country-${index}`, // Eğer id varsa kullan, yoksa index kullan
+    id: country.id ? `${country.id}-${index}` : `country-${index}`,
     name: country.schCountryNames || country.mainCountryNames,
   }));
 
-  // Eğitim ve Düzenleme verilerini birleştir
   const combinedData = [
     ...(purposeEdData || []),
     ...(purposeRegData || []),
   ].map((purpose, index) => ({
-    id: purpose.id ? `${purpose.id}-${index}` : `purpose-${index}`, // Eğer id varsa kullan, yoksa index kullan
+    id: purpose.id ? `${purpose.id}-${index}` : `purpose-${index}`,
     description: purpose.purposeEdDescription || purpose.purposeRegDescription,
   }));
 
@@ -118,8 +132,8 @@ function ControlScreenDropdowns({
   }
 
   return (
-    <Container>
-      <div>
+    <>
+      <Section>
         <Heading as="h2">Vize almak istediğiniz ülke</Heading>
         <StyledSelect value={selectedCountry} onChange={handleChange}>
           <option value="">{state.country}</option>
@@ -129,8 +143,9 @@ function ControlScreenDropdowns({
             </option>
           ))}
         </StyledSelect>
-      </div>
-      <div>
+      </Section>
+      <Divider />
+      <Section>
         <Heading as="h2">Gidiş amacınız</Heading>
         <StyledSelect value={selectedPurpose} onChange={handlePurposeChange}>
           <option value="">{state.purpose}</option>
@@ -140,8 +155,9 @@ function ControlScreenDropdowns({
             </option>
           ))}
         </StyledSelect>
-      </div>
-      <div>
+      </Section>
+      <Divider />
+      <Section>
         <Heading as="h2">Mesleğiniz</Heading>
         <StyledSelect
           value={selectedProfession}
@@ -158,8 +174,9 @@ function ControlScreenDropdowns({
               </option>
             ))}
         </StyledSelect>
-      </div>
-      <div>
+      </Section>
+      <Divider />
+      <Section>
         <Heading as="h2">Konaklama türünüz</Heading>
         <StyledSelect
           value={selectedAccommodation}
@@ -175,8 +192,9 @@ function ControlScreenDropdowns({
             </option>
           ))}
         </StyledSelect>
-      </div>
-      <div>
+      </Section>
+      <Divider />
+      <Section>
         <Heading as="h2">Seyahat aracınız</Heading>
         <StyledSelect value={selectedVehicle} onChange={handleVehicleChange}>
           <option value="">{state.vehicle}</option>
@@ -186,8 +204,9 @@ function ControlScreenDropdowns({
             </option>
           ))}
         </StyledSelect>
-      </div>
-      <div>
+      </Section>
+      <Divider />
+      <Section>
         <Heading as="h2">Çocuklu yolculuk</Heading>
         <StyledSelect value={selectedKid} onChange={handleKidChange}>
           <option value="">{state.kid}</option>
@@ -197,8 +216,8 @@ function ControlScreenDropdowns({
             </option>
           ))}
         </StyledSelect>
-      </div>
-    </Container>
+      </Section>
+    </>
   );
 }
 

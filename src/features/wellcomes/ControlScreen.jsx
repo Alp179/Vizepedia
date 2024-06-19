@@ -56,30 +56,21 @@ function ControlScreen() {
   }
 
   const ModalScreenContainer = styled.div`
-    width: 300px;
-    height: 700px;
-    @media (max-width: 750px) {
-      gap: 10px;
-      height: 600px;
-      width: 280px;
-    }
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
-    @media (max-height: 800px) {
-      height: 500px;
-    }
-    @media (min-width: 750px) {
-      @media (max-height: 800px) {
-        gap: 10px;
-      }
-    }
-    @media (max-width: 400px) {
-      @media (max-height: 700px)  {
-        width: 230px!important;
-      }
-    }
+    justify-content: space-between;
+    margin-top: 1px;
+    padding: 10px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(6.3px);
+    -webkit-backdrop-filter: blur(6.3px);
+
+    border: 1px solid rgba(255, 255, 255, 0.52);
+    width: 100%;
+    max-width: 520px; /* Genişlik %20 arttırıldı */
+    max-height: 540px; /* Yükseklik %20 arttırıldı */
   `;
 
   return (
