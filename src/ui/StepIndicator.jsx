@@ -2,14 +2,12 @@
 import { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
-
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import Spinner from "./Spinner";
-
 import { getCurrentUser } from "../services/apiAuth";
 import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
@@ -46,28 +44,29 @@ const StepCircle = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
   flex-shrink: 0;
   border: 2px solid;
   border-radius: 50%;
   text-align: center;
   margin-bottom: 5px;
   background-color: ${(props) =>
-    props.isActive ? "blue" : props.isCompleted ? "green" : "none"};
+    props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "white"};
   color: ${(props) =>
     props.isActive || props.isCompleted ? "white" : "black"};
   border-color: ${(props) =>
-    props.isActive ? "blue" : props.isCompleted ? "green" : "#ccc"};
-    @media (max-height: 830px) {
-      width: 25px;
-      height: 25px;
-      font-size: 14px;
-      justify-content: center;
-      align-items: center;
-    }
+    props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "#ccc"};
+  @media (max-height: 830px) {
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    justify-content: center;
+    align-items: center;
+  }
 `;
 
 const StepName = styled.div`
@@ -102,11 +101,11 @@ const StepName = styled.div`
 `;
 
 const Bubble = styled.div`
-  background-color: #2ecc71;
+  background-color: #e0f7fa;
   padding: 16px;
   border-radius: 10px;
   position: absolute;
-  bottom: -92px;
+  bottom: -110px;
   left: ${(props) => `calc(${props.leftOffset}% - 30px)`};
   display: flex;
   align-items: center;
@@ -123,7 +122,7 @@ const Bubble = styled.div`
     transform: translateX(-50%) rotate(45deg);
     width: 20px;
     height: 20px;
-    background-color: #2ecc71;
+    background-color: #e0f7fa;
     border-radius: 4px;
     z-index: -1;
   }
@@ -136,7 +135,7 @@ const Bubble = styled.div`
 `;
 
 const ContinueButton = styled.button`
-  background-color: #3498db;
+  background-color: #00796b;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -144,7 +143,7 @@ const ContinueButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   &:hover {
-    background-color: #2980b9;
+    background-color: #004d40;
   }
 `;
 
@@ -159,7 +158,7 @@ const StepIndicator = () => {
     dispatch,
   } = useContext(DocumentsContext);
 
-  const [currentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(null);
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -206,21 +205,26 @@ const StepIndicator = () => {
     enabled: !!documentNames.length,
   });
 
+  useEffect(() => {
+    if (documents && documents.length > 0) {
+      const firstIncompleteIndex = documents.findIndex(
+        (doc) => !completedDocuments[applicationId]?.[doc.docName]
+      );
+      setCurrentStep(firstIncompleteIndex === -1 ? 0 : firstIncompleteIndex);
+    }
+  }, [documents, completedDocuments, applicationId]);
+
   if (isLoadingUserSelections || isLoadingDocuments) return <Spinner />;
   if (isErrorUserSelections || isErrorDocuments || !documents)
     return <div>Error loading data.</div>;
 
-  const firstIncompleteIndex = documents.findIndex(
-    (doc) => !completedDocuments[applicationId]?.[doc.docName]
-  );
-
   const handleContinue = () => {
-    if (!documents || documents.length === 0 || firstIncompleteIndex === -1) {
+    if (!documents || documents.length === 0 || currentStep === -1) {
       console.error("No documents found or all documents are completed.");
       return;
     }
 
-    const selectedDocument = documents[firstIncompleteIndex];
+    const selectedDocument = documents[currentStep];
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
       navigate(`/documents/${applicationId}`);
@@ -233,13 +237,15 @@ const StepIndicator = () => {
     navigate(`/summary/${applicationId}`);
   };
 
+  // Dinamik olarak Bubble'ın konumunu hesapla
+  const bubbleLeftOffset = currentStep * (100 / (documents.length - 1));
+
   return (
     <StepsContainer>
       {documents &&
         documents.map((doc, index) => {
           const isActive = index === currentStep;
-          const isCompleted = completedDocuments[applicationId]?.[doc.docName]; // completedDocuments kontrolü
-          const bubbleLeftOffset = (index / (documents.length - 1)) * 100;
+          const isCompleted = completedDocuments[applicationId]?.[doc.docName];
 
           return (
             <div
@@ -259,7 +265,7 @@ const StepIndicator = () => {
                 {index + 1}
               </StepCircle>
               <StepName title={doc.docName}>{doc.docName}</StepName>
-              {index === firstIncompleteIndex && (
+              {index === currentStep && (
                 <Bubble leftOffset={bubbleLeftOffset}>
                   <span>{doc.docName}</span>
                   <ContinueButton onClick={handleContinue}>
