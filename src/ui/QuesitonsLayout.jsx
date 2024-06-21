@@ -22,8 +22,13 @@ const Container = styled.div`
 const ProgressBarContainer = styled.div`
   width: 80%; /* Progress bar uzunluğunu %20 kısalttık */
   padding: 1rem;
-  margin: 0 auto;
+  margin: 8rem auto -15rem; /* Yukarı ile 8rem, aşağı ile 1rem boşluk */
   position: relative;
+
+  @media (max-width: 768px) {
+    margin-top: 8rem; /* Mobil cihazlar için yukarıdan boşluk 8rem */
+    width: 95%;
+  }
 `;
 
 const ProgressBarWrapper = styled.div`
@@ -42,7 +47,7 @@ const progressAnimation = keyframes`
 const ProgressBarReflection = styled.div`
   position: absolute;
   top: 5px; /* Çizginin barın üstünde konumlanmasını sağlar (2px + 4px) */
-  left: 15px; /* Soldan içeri girme miktarı */
+  left: 10px; /* Soldan içeri girme miktarı */
   height: 6px; /* Çizginin kalınlığı */
   border-radius: 50px;
   background-color: rgba(255, 255, 255, 0.5); /* Yansıma efekti için açık renk */
@@ -78,7 +83,7 @@ function QuestionsLayout() {
             height="20px"
             isLabelVisible={false} // Yüzdeyi kaldırdık
           />
-          <ProgressBarReflection style={{ width: `calc(${progress}% - 30px)` }} />
+          <ProgressBarReflection style={{ width: `calc(${progress}% - 20px)` }} />
         </ProgressBarWrapper>
       </ProgressBarContainer>
       <Container>
