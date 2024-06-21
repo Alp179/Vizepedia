@@ -115,10 +115,23 @@ const countryToCode = {
   Hırvatistan: "hr",
 };
 
+const CreatedAtContainer = styled.div`
+  font-size: 1.4rem;
+  color: var(--color-grey-700);
+  margin-top: -80px;
+  position: absolute;
+`;
+
+const CustomRow = styled(Row)`
+  position: relative;
+  margin-top: 30px;
+`;
+
 function Dashboard() {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const [createdAt, setCreatedAt] = useState(null);
   const navigate = useNavigate();
   const {
     state: { completedDocuments },
@@ -157,6 +170,9 @@ function Dashboard() {
     if (userSelectionsQuery.data) {
       const ansCountry = userSelectionsQuery.data?.[0]?.ans_country;
       setCountryCode(countryToCode[ansCountry] || "");
+
+      const createdAtDate = new Date(userSelectionsQuery.data?.[0]?.created_at);
+      setCreatedAt(createdAtDate.toLocaleDateString());
     }
   }, [userSelectionsQuery.data]);
 
@@ -196,9 +212,14 @@ function Dashboard() {
         gap: "50px",
       }}
     >
-      <Row type="horizontal">
-        <Heading as="h1">Dashboard</Heading>
-      </Row>
+      <CustomRow type="horizontal">
+        {createdAt && (
+          <CreatedAtContainer>
+            Vize başvurusu oluşturulma tarihi: {createdAt}
+          </CreatedAtContainer>
+        )}
+        <Heading as="h1">Hoş geldin Loko</Heading>
+      </CustomRow>
       <StepIndicator
         steps={stepLabels}
         currentStep={currentStep}
