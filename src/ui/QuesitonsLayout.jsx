@@ -22,7 +22,7 @@ const Container = styled.div`
 const ProgressBarContainer = styled.div`
   width: 80%; /* Progress bar uzunluğunu %20 kısalttık */
   padding: 1rem;
-  margin: 8rem auto -15rem; /* Yukarı ile 8rem, aşağı ile 1rem boşluk */
+  margin: 2rem auto -15rem; /* Yukarı ile 8rem, aşağı ile 1rem boşluk */
   position: relative;
 
   @media (max-width: 768px) {
