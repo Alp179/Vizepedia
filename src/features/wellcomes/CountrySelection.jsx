@@ -1,11 +1,14 @@
 /* eslint-disable react/prop-types */
+import { FiChevronDown } from "react-icons/fi";
+import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { useCountries } from "./useCountries";
 import Spinner from "../../ui/Spinner";
-import { useEffect, useState } from "react";
 
 // Stil tanımlamaları
 const StyledSelectContainer = styled.div`
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,26 +24,25 @@ const StyledSelectContainer = styled.div`
   -webkit-backdrop-filter: blur(6.3px);
   position: relative;
   border: ${({ isSelected }) => (isSelected ? "2px solid #3498db" : "none")};
-`;
+  transition: background-color 0.3s ease;
 
-const StyledSelect = styled.select`
-  font-size: 18px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: none;
-  background: transparent;
-  appearance: none;
-  color: #4d4442;
-  cursor: pointer;
-  position: absolute;
-  bottom: 10px;
+  &:hover {
+    background: rgba(255, 255, 255, 0.7); /* Hover durumu için daha açık renk */
+  }
 
-  &::-ms-expand {
-    display: none;
+  &:active {
+    transform: scale(0.95); /* Active durumu için küçültme efekti */
+  }
+
+  img {
+    width: 80px;
+    height: 50px;
+    margin-bottom: 10px;
   }
 `;
 
 const RadioLabel = styled.label`
+  z-index: -0;
   font-size: 18px;
   display: flex;
   flex-direction: column;
@@ -57,6 +59,15 @@ const RadioLabel = styled.label`
   -webkit-backdrop-filter: blur(6.3px);
   position: relative;
   border: ${({ checked }) => (checked ? "2px solid #3498db" : "none")};
+  transition: background-color 0.3s ease, transform 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.7); /* Hover durumu için daha açık renk */
+  }
+
+  &:active {
+    transform: scale(0.95); /* Active durumu için küçültme efekti */
+  }
 
   @media (max-width: 450px) {
     font-size: 16px;
@@ -79,17 +90,123 @@ const Container = styled.div`
   justify-content: center;
   gap: 20px;
   max-width: 1000px; /* Genişlik sınırı */
+  position: relative; /* Bu satırı ekleyin */
 
-  @media (max-width: 500px) {
+  @media (max-width: 768px) {
     justify-content: space-around; /* Mobil ekranlarda düzgün sıralama için */
   }
 `;
 
+const DropdownContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+`;
+
+const DropdownButton = styled.button`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 18px;
+  color: #4d4442;
+
+  .chevron {
+    margin-left: 5px;
+  }
+
+  &:hover {
+    color: #3498db; /* Hover durumunda yazı rengi değişir */
+  }
+
+  &:active {
+    transform: scale(0.95); /* Active durumu için küçültme efekti */
+  }
+`;
+
+const DropdownMenu = styled(motion.ul)`
+  position: absolute;
+  top: 100%;
+
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.5); /* Buzlu cam efekti */
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6.3px);
+  -webkit-backdrop-filter: blur(6.3px);
+  padding: 10px;
+  z-index: 1000; /* Dropdown menüyü üstte göstermek için z-index değerini artırdık */
+  width: 200px;
+  overflow: hidden;
+  max-height: 300px; /* Maksimum yükseklik */
+  overflow-y: auto; /* İçerik fazla olursa kaydırma çubuğu ekler */
+`;
+
+const DropdownItem = styled(motion.li)`
+  list-style: none;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: rgba(100, 100, 255, 0.1); /* Light indigo background */
+  }
+
+  &:active {
+    transform: scale(0.95); /* Active durumu için küçültme efekti */
+  }
+`;
+
+const chevronVariants = {
+  open: { rotate: 180 },
+  closed: { rotate: 0 },
+};
+
+const menuVariants = {
+  open: {
+    scaleY: 1,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.1,
+    },
+  },
+  closed: {
+    scaleY: 0,
+    transition: {
+      when: "afterChildren",
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  open: {
+    opacity: 1,
+    y: 0,
+  },
+  closed: {
+    opacity: 0,
+    y: -10,
+  },
+};
+
 function CountrySelection({ selectedCountry, onCountryChange }) {
   const { isLoading, schCounData, mainCounData } = useCountries();
   const [flags, setFlags] = useState({});
-  const [schengenFlag, setSchengenFlag] = useState("https://flagcdn.com/eu.svg");
+  const [schengenFlag, setSchengenFlag] = useState(
+    "https://flagcdn.com/eu.svg"
+  );
   const [schengenSelected, setSchengenSelected] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (!schCounData || !mainCounData) return;
@@ -110,7 +227,10 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
   }, [schCounData, mainCounData]);
 
   useEffect(() => {
-    if (schCounData && schCounData.some((country) => country.schCountryNames === selectedCountry)) {
+    if (
+      schCounData &&
+      schCounData.some((country) => country.schCountryNames === selectedCountry)
+    ) {
       setSchengenFlag(flags[selectedCountry]);
       setSchengenSelected(true);
     } else {
@@ -119,11 +239,27 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
     }
   }, [selectedCountry, flags, schCounData]);
 
-  // Event handler güncellemesi
-  const handleChange = (e) => {
-    const selectedValue = e.target.value;
-    onCountryChange(selectedValue);
+  const handleChange = (value) => {
+    onCountryChange(value);
+    setDropdownOpen(false);
   };
+
+  const toggleDropdown = () => {
+    setDropdownOpen((prev) => !prev);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   if (isLoading) {
     return <Spinner />;
@@ -131,30 +267,64 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
 
   return (
     <Container>
-      <StyledSelectContainer isSelected={schengenSelected}>
-        <img src={schengenFlag} alt="Schengen flag" />
-        <StyledSelect value={selectedCountry} onChange={handleChange}>
-          <option value="">{schengenSelected ? "" : "Schengen Ülkeleri"}</option>
-          {schCounData.map((country) => (
-            <option key={country.id} value={country.schCountryNames}>
-              {country.schCountryNames}
-            </option>
-          ))}
-        </StyledSelect>
-      </StyledSelectContainer>
+      <DropdownContainer ref={dropdownRef}>
+        <StyledSelectContainer
+          isSelected={schengenSelected}
+          onClick={toggleDropdown}
+        >
+          <DropdownButton>
+            <img src={schengenFlag} alt="Schengen flag" />
+            <div style={{ marginTop: "px", alignItems: "center" }}>
+              <span style={{ marginRight: "5px" }}>
+                {schengenSelected ? selectedCountry : "Schengen Ülkeleri"}
+              </span>
+              <motion.span
+                className="chevron"
+                animate={dropdownOpen ? "open" : "closed"}
+                variants={chevronVariants}
+              >
+                <FiChevronDown />
+              </motion.span>
+            </div>
+          </DropdownButton>
+          {dropdownOpen && (
+            <DropdownMenu
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={menuVariants}
+            >
+              {schCounData.map((country) => (
+                <DropdownItem
+                  key={country.id}
+                  variants={itemVariants}
+                  onClick={() => handleChange(country.schCountryNames)}
+                >
+                  {country.schCountryNames}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          )}
+        </StyledSelectContainer>
+      </DropdownContainer>
 
       {mainCounData.map((country) => {
         const countryName = country.mainCountryNames;
         return (
-          <RadioLabel key={country.id} checked={selectedCountry === countryName}>
+          <RadioLabel
+            key={country.id}
+            checked={selectedCountry === countryName}
+          >
             <input
               type="radio"
               name={countryName}
               value={countryName}
               checked={selectedCountry === countryName}
-              onChange={handleChange}
+              onChange={() => handleChange(countryName)}
             />
-            {flags[countryName] && <img src={flags[countryName]} alt={`${countryName} flag`} />}
+            {flags[countryName] && (
+              <img src={flags[countryName]} alt={`${countryName} flag`} />
+            )}
             {countryName}
           </RadioLabel>
         );
