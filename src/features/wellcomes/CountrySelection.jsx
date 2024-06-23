@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
-import { FiChevronDown } from "react-icons/fi";
-import { motion } from "framer-motion";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useCountries } from "./useCountries";
 import Spinner from "../../ui/Spinner";
+import DropdownMenuComponent from "../../ui/DrodownMenu";
 
 // Stil tanımlamaları
 const StyledSelectContainer = styled.div`
@@ -97,107 +96,6 @@ const Container = styled.div`
   }
 `;
 
-const DropdownContainer = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 200px;
-  height: 200px;
-`;
-
-const DropdownButton = styled.button`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  font-size: 18px;
-  color: #4d4442;
-
-  .chevron {
-    margin-left: 5px;
-  }
-
-  &:hover {
-    color: #3498db; /* Hover durumunda yazı rengi değişir */
-  }
-
-  &:active {
-    transform: scale(0.95); /* Active durumu için küçültme efekti */
-  }
-`;
-
-const DropdownMenu = styled(motion.ul)`
-  position: absolute;
-  top: 100%;
-
-  transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.5); /* Buzlu cam efekti */
-  border-radius: 10px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(6.3px);
-  -webkit-backdrop-filter: blur(6.3px);
-  padding: 10px;
-  z-index: 1000; /* Dropdown menüyü üstte göstermek için z-index değerini artırdık */
-  width: 200px;
-  overflow: hidden;
-  max-height: 300px; /* Maksimum yükseklik */
-  overflow-y: auto; /* İçerik fazla olursa kaydırma çubuğu ekler */
-`;
-
-const DropdownItem = styled(motion.li)`
-  list-style: none;
-  padding: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  &:hover {
-    background-color: rgba(100, 100, 255, 0.1); /* Light indigo background */
-  }
-
-  &:active {
-    transform: scale(0.95); /* Active durumu için küçültme efekti */
-  }
-`;
-
-const chevronVariants = {
-  open: { rotate: 180 },
-  closed: { rotate: 0 },
-};
-
-const menuVariants = {
-  open: {
-    scaleY: 1,
-    transition: {
-      when: "beforeChildren",
-      staggerChildren: 0.1,
-    },
-  },
-  closed: {
-    scaleY: 0,
-    transition: {
-      when: "afterChildren",
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const itemVariants = {
-  open: {
-    opacity: 1,
-    y: 0,
-  },
-  closed: {
-    opacity: 0,
-    y: -10,
-  },
-};
-
 function CountrySelection({ selectedCountry, onCountryChange }) {
   const { isLoading, schCounData, mainCounData } = useCountries();
   const [flags, setFlags] = useState({});
@@ -205,8 +103,6 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
     "https://flagcdn.com/eu.svg"
   );
   const [schengenSelected, setSchengenSelected] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (!schCounData || !mainCounData) return;
@@ -241,25 +137,7 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
 
   const handleChange = (value) => {
     onCountryChange(value);
-    setDropdownOpen(false);
   };
-
-  const toggleDropdown = () => {
-    setDropdownOpen((prev) => !prev);
-  };
-
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setDropdownOpen(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   if (isLoading) {
     return <Spinner />;
@@ -267,46 +145,19 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
 
   return (
     <Container>
-      <DropdownContainer ref={dropdownRef}>
-        <StyledSelectContainer
-          isSelected={schengenSelected}
-          onClick={toggleDropdown}
-        >
-          <DropdownButton>
-            <img src={schengenFlag} alt="Schengen flag" />
-            <div style={{ marginTop: "px", alignItems: "center" }}>
-              <span style={{ marginRight: "5px" }}>
-                {schengenSelected ? selectedCountry : "Schengen Ülkeleri"}
-              </span>
-              <motion.span
-                className="chevron"
-                animate={dropdownOpen ? "open" : "closed"}
-                variants={chevronVariants}
-              >
-                <FiChevronDown />
-              </motion.span>
-            </div>
-          </DropdownButton>
-          {dropdownOpen && (
-            <DropdownMenu
-              initial="closed"
-              animate="open"
-              exit="closed"
-              variants={menuVariants}
-            >
-              {schCounData.map((country) => (
-                <DropdownItem
-                  key={country.id}
-                  variants={itemVariants}
-                  onClick={() => handleChange(country.schCountryNames)}
-                >
-                  {country.schCountryNames}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          )}
-        </StyledSelectContainer>
-      </DropdownContainer>
+      <StyledSelectContainer isSelected={schengenSelected}>
+        <img src={schengenFlag} alt="Schengen flag" />
+        <DropdownMenuComponent
+          options={schCounData.map((country) => ({
+            id: country.id,
+            value: country.schCountryNames,
+            label: country.schCountryNames,
+          }))}
+          selected={selectedCountry}
+          onSelect={handleChange}
+          displayText={schengenSelected ? selectedCountry : "Schengen Ülkeleri"}
+        />
+      </StyledSelectContainer>
 
       {mainCounData.map((country) => {
         const countryName = country.mainCountryNames;
