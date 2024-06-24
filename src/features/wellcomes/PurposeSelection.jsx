@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import { FiChevronDown } from "react-icons/fi";
+import { motion } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import Spinner from "../../ui/Spinner";
 import { usePurpose } from "./usePurpose";
-import DropdownMenuComponent from "../../ui/DrodownMenu";
 
 // Stil tanımlamaları
 const StyledSelectContainer = styled.div`
@@ -31,16 +32,9 @@ const StyledSelectContainer = styled.div`
   &:active {
     transform: scale(0.95); /* Active durumu için küçültme efekti */
   }
-
-  img {
-    width: 60px; /* İkon boyutlarını ayarlıyoruz */
-    height: 60px;
-    margin-bottom: 10px;
-  }
 `;
 
 const RadioLabel = styled.label`
-  z-index: 0;
   font-size: 18px;
   display: flex;
   flex-direction: column;
@@ -94,35 +88,145 @@ const Container = styled.div`
   justify-content: center;
   gap: 20px;
   max-width: 1000px; /* Genişlik sınırı */
-  position: relative;
 
   @media (max-width: 768px) {
     justify-content: space-around; /* Mobil ekranlarda düzgün sıralama için */
   }
 `;
 
+const DropdownContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+`;
+
+const DropdownButton = styled.button`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 18px;
+  color: #4d4442;
+
+  .chevron {
+    margin-left: 5px;
+  }
+
+  &:hover {
+    color: #3498db; /* Hover durumunda yazı rengi değişir */
+  }
+
+  &:active {
+    transform: scale(0.95); /* Active durumu için küçültme efekti */
+  }
+`;
+
+const DropdownMenu = styled(motion.ul)`
+  position: absolute;
+  top: 100%;
+
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.5); /* Buzlu cam efekti */
+  border-radius: 10px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6.3px);
+  -webkit-backdrop-filter: blur(6.3px);
+  padding: 10px;
+  z-index: 1000;
+  width: 200px;
+  overflow: hidden;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.7); /* Hover durumu için daha açık renk */
+  }
+
+  &:active {
+    transform: scale(0.95); /* Active durumu için küçültme efekti */
+  }
+`;
+
+const DropdownItem = styled(motion.li)`
+  list-style: none;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  &:hover {
+    background-color: rgba(100, 100, 255, 0.1); /* Light indigo background */
+  }
+
+  &:active {
+    transform: scale(0.95); /* Active durumu için küçültme efekti */
+  }
+`;
+
+const chevronVariants = {
+  open: { rotate: 180 },
+  closed: { rotate: 0 },
+};
+
+const menuVariants = {
+  open: {
+    scaleY: 1,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.1,
+    },
+  },
+  closed: {
+    scaleY: 0,
+    transition: {
+      when: "afterChildren",
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  open: {
+    opacity: 1,
+    y: 0,
+  },
+  closed: {
+    opacity: 0,
+    y: -10,
+  },
+};
+
 function PurposeSelection({ onPurposeChange, selectedPurpose }) {
   const { isLoading, purposeRegData, purposeEdData } = usePurpose();
-  const [dropdownSelection, setDropdownSelection] = useState("");
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-  const handleDropdownChange = (value) => {
-    setDropdownSelection(value);
+  const handlePurposeChange = (value) => {
     onPurposeChange(value);
+    setOpen(false);
   };
 
-  const handleRadioChange = (value) => {
-    onPurposeChange(value);
-    setDropdownSelection(""); // Seçim yapılınca dropdown seçim sıfırlanır
+  const toggleDropdown = () => {
+    setOpen((prev) => !prev);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setOpen(false);
+    }
   };
 
   useEffect(() => {
-    if (
-      selectedPurpose &&
-      !purposeEdData.some((p) => p.purposeEdDescription === selectedPurpose)
-    ) {
-      setDropdownSelection("");
-    }
-  }, [selectedPurpose, purposeEdData]);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   if (isLoading) {
     return <Spinner />;
@@ -130,18 +234,51 @@ function PurposeSelection({ onPurposeChange, selectedPurpose }) {
 
   return (
     <Container>
-      <StyledSelectContainer isSelected={selectedPurpose.includes("Eğitim")}>
-        <DropdownMenuComponent
-          options={purposeEdData.map((purpose) => ({
-            id: purpose.id,
-            value: purpose.purposeEdDescription,
-            label: purpose.purposeEdDescription,
-          }))}
-          selected={selectedPurpose}
-          onSelect={handleDropdownChange}
-          displayText={dropdownSelection ? dropdownSelection : "Eğitim"}
-        />
-      </StyledSelectContainer>
+      <DropdownContainer ref={dropdownRef}>
+        <StyledSelectContainer
+          isSelected={selectedPurpose.includes("Eğitim")}
+          onClick={toggleDropdown}
+        >
+          <DropdownButton>
+            <img
+              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/icons/noun-education-5553332_1.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJpY29ucy9ub3VuLWVkdWNhdGlvbi01NTUzMzMyXzEuc3ZnIiwiaWF0IjoxNzE5MTQyMTMxLCJleHAiOjM5MjQ2Mzc3MzMxfQ.KVC3QDDNooCSvW50ccFcZlubNak8AktSbrSVdeefRUg&t=2024-06-23T11%3A28%3A51.044Z"
+              alt="Eğitim"
+              className="icon"
+            />
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span>Eğitim</span>
+              <motion.span
+                className="chevron"
+                animate={open ? "open" : "closed"}
+                variants={chevronVariants}
+              >
+                <FiChevronDown />
+              </motion.span>
+            </div>
+          </DropdownButton>
+          {open && (
+            <DropdownMenu
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={menuVariants}
+            >
+              {purposeEdData &&
+                purposeEdData.map((purpose) => (
+                  <DropdownItem
+                    key={purpose.id}
+                    variants={itemVariants}
+                    onClick={() =>
+                      handlePurposeChange(purpose.purposeEdDescription)
+                    }
+                  >
+                    {purpose.purposeEdDescription}
+                  </DropdownItem>
+                ))}
+            </DropdownMenu>
+          )}
+        </StyledSelectContainer>
+      </DropdownContainer>
 
       {purposeRegData &&
         purposeRegData.map((purpose) => {
@@ -175,7 +312,7 @@ function PurposeSelection({ onPurposeChange, selectedPurpose }) {
                 value={purpose.purposeRegDescription}
                 checked={selectedPurpose === purpose.purposeRegDescription}
                 onChange={() =>
-                  handleRadioChange(purpose.purposeRegDescription)
+                  handlePurposeChange(purpose.purposeRegDescription)
                 }
               />
               {iconUrl && (
