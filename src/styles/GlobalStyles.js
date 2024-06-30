@@ -203,6 +203,15 @@ ul {
   font-weight: bold;
 }
 
+.question-progressAndContent-container {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  @media (max-width: 710px) {
+    gap: 0px;
+  }
+}
+
 .subtext {
   text-align: center;
   font-size: 16px;

@@ -99,8 +99,7 @@ const DropdownContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 200px;
-  height: 200px;
+  
 `;
 
 const DropdownButton = styled.button`
@@ -113,7 +112,9 @@ const DropdownButton = styled.button`
   padding: 0;
   cursor: pointer;
   font-size: 18px;
-  color: #4d4442;
+  @media (max-width: 450px) {
+    font-size: 16px;
+  }
 
   .chevron {
     margin-left: 5px;

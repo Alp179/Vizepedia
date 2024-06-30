@@ -16,7 +16,7 @@
     "@tanstack/react-query-devtools": "^5.17.0",
     "components": "^0.1.0",
     "flag-icons": "^7.2.1",
-    "framer-motion": "^11.2.11",
+    "framer-motion": "^11.2.12",
     "hamburger-react": "^2.5.1",
     "i": "^0.3.7",
     "prop-types": "^15.8.1",

@@ -102,8 +102,7 @@ const DropdownContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 200px;
-  height: 200px;
+  
 `;
 
 const DropdownButton = styled.button`
@@ -115,11 +114,14 @@ const DropdownButton = styled.button`
   border: none;
   padding: 0;
   cursor: pointer;
+  line-height: 10px;
   font-size: 18px;
-  color: #4d4442;
+  @media (max-width: 450px) {
+    font-size: 16px;
+  }
 
   .chevron {
-    margin-left: 5px;
+   
   }
 
   &:hover {
@@ -134,7 +136,6 @@ const DropdownButton = styled.button`
 const DropdownMenu = styled(motion.ul)`
   position: absolute;
   top: 100%;
-
   transform: translateX(-50%);
   background: rgba(255, 255, 255, 0.5); /* Buzlu cam efekti */
   border-radius: 10px;
@@ -275,7 +276,7 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
           <DropdownButton>
             <img src={schengenFlag} alt="Schengen flag" />
             <div style={{ marginTop: "px", alignItems: "center" }}>
-              <span style={{ marginRight: "5px" }}>
+              <span>
                 {schengenSelected ? selectedCountry : "Schengen Ülkeleri"}
               </span>
               <motion.span
