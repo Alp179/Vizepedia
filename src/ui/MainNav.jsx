@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi2";
 import { MdClose } from "react-icons/md"; // Çarpı işareti için icon import
 import Button from "./Button";
@@ -32,6 +32,17 @@ const NavList = styled.ul`
   }
 `;
 
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
 const StyledNavLink = styled(NavLink)`
   &:link,
   &:visited {
@@ -44,6 +55,7 @@ const StyledNavLink = styled(NavLink)`
     padding: 1.2rem 2.4rem;
     transition: all 0.3s;
     background-color: transparent !important;
+    position: relative;
     @media (max-width: 1300px) {
       gap: 0.6rem;
     }
@@ -74,6 +86,11 @@ const StyledNavLink = styled(NavLink)`
   &.active:visited svg {
     color: var(--color-brand-600);
   }
+
+  &:hover .delete-button {
+    display: flex;
+    animation: ${fadeIn} 0.3s forwards;
+  }
 `;
 
 const DeleteButton = styled.button`
@@ -82,9 +99,47 @@ const DeleteButton = styled.button`
   color: red;
   cursor: pointer;
   margin-left: 10px;
+  position: absolute;
+  right: 10px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+
   &:hover {
     color: darkred;
   }
+
+  &:hover .icon {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+
+  &:hover .tooltip {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  ${StyledNavLink}:hover & {
+    display: flex;
+  }
+`;
+
+const Tooltip = styled.span`
+  position: absolute;
+  top: 0%;
+  left: -15%;
+  transform: translate(-50%, -50%) scale(0.5);
+  background: red;
+  color: white;
+  padding: 1.5rem 1.7rem;
+  border-radius: 3px;
+  font-size: 1.3rem;
+  opacity: 0;
+  display: none;
+  transition: opacity 1.3s ease-in-out, transform 1.3s ease-in-out;
 `;
 
 function MainNav() {
@@ -221,12 +276,16 @@ function MainNav() {
           <li key={app.id} style={{ display: "flex", alignItems: "center" }}>
             <StyledNavLink to={`/dashboard/${app.id}`}>
               {app.ans_country} Visa - {app.ans_purpose} - {app.ans_profession}
+              {applications.length > 1 && (
+                <DeleteButton
+                  className="delete-button"
+                  onClick={() => handleDelete(app.id)}
+                >
+                  <MdClose size={20} className="icon" />
+                  <Tooltip className="tooltip">Sil</Tooltip>
+                </DeleteButton>
+              )}
             </StyledNavLink>
-            {applications.length > 1 && (
-              <DeleteButton onClick={() => handleDelete(app.id)}>
-                <MdClose size={20} />
-              </DeleteButton>
-            )}
           </li>
         ))}
         <li>

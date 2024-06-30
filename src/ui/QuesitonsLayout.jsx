@@ -66,6 +66,12 @@ const ProgressBarReflection = styled.div`
   animation: ${progressAnimation} 1s ease-in-out;
 `;
 
+const MobileMenuWrapper = styled.div`
+  @media (min-width: 711px) {
+    display: none;
+  }
+`;
+
 function QuestionsLayout() {
   const location = useLocation();
   const progressValues = {
@@ -82,7 +88,9 @@ function QuestionsLayout() {
   return (
     <LoginLayout>
       <BackButton>Geri Dön</BackButton>
-      <MobileMenu />
+      <MobileMenuWrapper>
+        <MobileMenu />
+      </MobileMenuWrapper>
       <Header />
       <div className="question-progressAndContent-container">
         <ProgressBarContainer>
