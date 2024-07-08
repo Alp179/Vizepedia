@@ -70,7 +70,8 @@ const Heading = styled.h1`
         font-size: 2.2rem;
       }
       @media (max-width: 450px) {
-        margin-bottom: 10px;
+        margin-top: 80px;
+        margin-bottom: 0px;
         width: 300px;
         font-size: 2rem;
       }

@@ -26,6 +26,12 @@ const StyledSelectContainer = styled.div`
   border: ${({ isSelected }) => (isSelected ? "2px solid #3498db" : "none")};
   transition: background-color 0.3s ease;
 
+  @media (max-width: 400px) {
+    width: 135px;
+    height: 135px;
+    font-size: 15px;
+  }
+
   &:hover {
     background: rgba(255, 255, 255, 0.7); /* Hover durumu için daha açık renk */
   }
@@ -71,6 +77,12 @@ const RadioLabel = styled.label`
 
   @media (max-width: 450px) {
     font-size: 16px;
+  }
+
+  @media (max-width: 400px) {
+    width: 135px;
+    height: 135px;
+    font-size: 15px;
   }
 
   input[type="radio"] {

@@ -12,6 +12,7 @@ const LoginLayout = styled.main`
   flex-direction: column;
   gap: 7rem;
   background: var(--color-grey-1);
+  
 `;
 
 const Container = styled.div`
@@ -32,7 +33,10 @@ const ProgressBarContainer = styled.div`
 
   @media (max-width: 710px) {
     width: 95%;
-    margin-top: 100px;
+    margin-top: 50px;
+  }
+  @media (max-width: 450px) {
+    margin-top: 0;
   }
 `;
 

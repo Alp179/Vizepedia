@@ -208,7 +208,7 @@ ul {
   flex-direction: column;
   gap: 50px;
   @media (max-width: 710px) {
-    gap: 0px;
+    gap: 0;
   }
 }
 

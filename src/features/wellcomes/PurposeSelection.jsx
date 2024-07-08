@@ -29,6 +29,12 @@ const StyledSelectContainer = styled.div`
     background: rgba(255, 255, 255, 0.7); /* Hover durumu için daha açık renk */
   }
 
+  @media (max-width: 400px) {
+    width: 135px;
+    height: 135px;
+    font-size: 15px;
+  }
+
   &:active {
     transform: scale(0.95); /* Active durumu için küçültme efekti */
   }
@@ -52,6 +58,12 @@ const RadioLabel = styled.label`
   position: relative;
   border: ${({ checked }) => (checked ? "2px solid #3498db" : "none")};
   transition: background-color 0.3s ease, transform 0.2s ease;
+
+  @media (max-width: 400px) {
+    width: 135px;
+    height: 135px;
+    font-size: 15px;
+  }
 
   &:hover {
     background: rgba(255, 255, 255, 0.7); /* Hover durumu için daha açık renk */
@@ -99,7 +111,6 @@ const DropdownContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  
 `;
 
 const DropdownButton = styled.button`
