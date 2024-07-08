@@ -101,7 +101,7 @@ const Container = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  max-width: 1000px; /* Genişlik sınırı */
+  max-width: 900px; /* Genişlik sınırı */
   position: relative; /* Bu satırı ekleyin */
 
   @media (max-width: 768px) {
