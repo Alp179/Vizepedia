@@ -12,7 +12,7 @@ const LoginLayout = styled.main`
   flex-direction: column;
   gap: 7rem;
   background: var(--color-grey-1);
-  
+  overflow: hidden; /* Yeni eklenen satır */
 `;
 
 const Container = styled.div`
