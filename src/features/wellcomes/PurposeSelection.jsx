@@ -35,6 +35,11 @@ const StyledSelectContainer = styled.div`
     font-size: 15px;
   }
 
+  @media (max-width: 370px) {
+    width: 125px;
+    height: 125px;
+  }
+
   &:active {
     transform: scale(0.95); /* Active durumu için küçültme efekti */
   }
@@ -63,6 +68,12 @@ const RadioLabel = styled.label`
     width: 135px;
     height: 135px;
     font-size: 15px;
+  }
+
+  @media (max-width: 370px) {
+    width: 125px;
+    height: 125px;
+    font-size: 14px!important;
   }
 
   &:hover {
@@ -104,6 +115,9 @@ const Container = styled.div`
   @media (max-width: 768px) {
     justify-content: space-around; /* Mobil ekranlarda düzgün sıralama için */
   }
+  @media (max-width: 400px) {
+    gap: 10px;
+  }
 `;
 
 const DropdownContainer = styled.div`
@@ -125,6 +139,12 @@ const DropdownButton = styled.button`
   font-size: 18px;
   @media (max-width: 450px) {
     font-size: 16px;
+  }
+  @media (max-width: 400px) {
+    font-size: 15px;
+  }
+  @media (max-width: 370px) {
+    font-size: 14px;
   }
 
   .chevron {
@@ -253,6 +273,7 @@ function PurposeSelection({ onPurposeChange, selectedPurpose }) {
         >
           <DropdownButton>
             <img
+            style={{width: "68px", height: "68px"}}
               src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/icons/noun-education-5553332_1.svg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJpY29ucy9ub3VuLWVkdWNhdGlvbi01NTUzMzMyXzEuc3ZnIiwiaWF0IjoxNzE5MTQyMTMxLCJleHAiOjM5MjQ2Mzc3MzMxfQ.KVC3QDDNooCSvW50ccFcZlubNak8AktSbrSVdeefRUg&t=2024-06-23T11%3A28%3A51.044Z"
               alt="Eğitim"
               className="icon"

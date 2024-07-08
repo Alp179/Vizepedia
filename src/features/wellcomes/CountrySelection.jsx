@@ -32,6 +32,12 @@ const StyledSelectContainer = styled.div`
     font-size: 15px;
   }
 
+  @media (max-width: 370px) {
+    width: 125px;
+    height: 125px;
+    font-size: 14px;
+  }
+
   &:hover {
     background: rgba(255, 255, 255, 0.7); /* Hover durumu için daha açık renk */
   }
@@ -85,6 +91,12 @@ const RadioLabel = styled.label`
     font-size: 15px;
   }
 
+  @media (max-width: 370px) {
+    width: 125px;
+    height: 125px;
+    font-size: 14px;
+  }
+
   input[type="radio"] {
     display: none;
   }
@@ -106,6 +118,9 @@ const Container = styled.div`
 
   @media (max-width: 768px) {
     justify-content: space-around; /* Mobil ekranlarda düzgün sıralama için */
+  }
+  @media (max-width: 400px) {
+    gap: 10px;
   }
 `;
 
@@ -130,6 +145,12 @@ const DropdownButton = styled.button`
   font-size: 18px;
   @media (max-width: 450px) {
     font-size: 16px;
+  }
+  @media (max-width: 400px) {
+    font-size: 15px;
+  }
+  @media (max-width: 370px) {
+    font-size: 14px;
   }
 
   .chevron {
