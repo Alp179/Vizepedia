@@ -134,7 +134,7 @@ function ControlScreenDropdowns({
   return (
     <>
       <Section>
-        <Heading as="h2">Vize almak istediğiniz ülke</Heading>
+        <Heading as="h9">Vize almak istediğiniz ülke</Heading>
         <StyledSelect value={selectedCountry} onChange={handleChange}>
           <option value="">{state.country}</option>
           {combinedCountries.map((country) => (
@@ -146,7 +146,7 @@ function ControlScreenDropdowns({
       </Section>
       <Divider />
       <Section>
-        <Heading as="h2">Gidiş amacınız</Heading>
+        <Heading as="h9">Gidiş amacınız</Heading>
         <StyledSelect value={selectedPurpose} onChange={handlePurposeChange}>
           <option value="">{state.purpose}</option>
           {combinedData.map((purpose) => (
@@ -158,7 +158,7 @@ function ControlScreenDropdowns({
       </Section>
       <Divider />
       <Section>
-        <Heading as="h2">Mesleğiniz</Heading>
+        <Heading as="h9">Mesleğiniz</Heading>
         <StyledSelect
           value={selectedProfession}
           onChange={handleProfessionChange}
@@ -177,7 +177,7 @@ function ControlScreenDropdowns({
       </Section>
       <Divider />
       <Section>
-        <Heading as="h2">Konaklama türünüz</Heading>
+        <Heading as="h9">Konaklama türünüz</Heading>
         <StyledSelect
           value={selectedAccommodation}
           onChange={handleAccommodationChange}
@@ -195,7 +195,7 @@ function ControlScreenDropdowns({
       </Section>
       <Divider />
       <Section>
-        <Heading as="h2">Seyahat aracınız</Heading>
+        <Heading as="h9">Seyahat aracınız</Heading>
         <StyledSelect value={selectedVehicle} onChange={handleVehicleChange}>
           <option value="">{state.vehicle}</option>
           {vehiclesData.map((vehicle, index) => (
@@ -207,7 +207,7 @@ function ControlScreenDropdowns({
       </Section>
       <Divider />
       <Section>
-        <Heading as="h2">Çocuklu yolculuk</Heading>
+        <Heading as="h9">Çocuklu yolculuk</Heading>
         <StyledSelect value={selectedKid} onChange={handleKidChange}>
           <option value="">{state.kid}</option>
           {kidsData.map((kid, index) => (

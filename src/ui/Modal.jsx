@@ -12,7 +12,7 @@ const StyledModal = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: var(--color-grey-51);
-  border-radius: var(--border-radius-lg);
+  border-radius: 20px;
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
   transition: all 0.5s;

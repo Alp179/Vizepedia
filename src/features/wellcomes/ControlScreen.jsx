@@ -70,12 +70,12 @@ function ControlScreen() {
     border: 1px solid rgba(255, 255, 255, 0.52);
     width: 100%;
     max-width: 520px; /* Genişlik %20 arttırıldı */
-    max-height: 540px; /* Yükseklik %20 arttırıldı */
+    max-height: 800px; /* Yükseklik %20 arttırıldı */
   `;
 
   return (
     <ModalScreenContainer>
-      <Heading as="h6">Bilgi Kontrol Ekranı</Heading>
+      <Heading as="h8">Bilgi Kontrol Ekranı</Heading>
       <ControlScreenDropdowns
         selectedCountry={state.country}
         onCountryChange={(country) =>

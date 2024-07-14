@@ -103,6 +103,30 @@ const Heading = styled.h1`
             font-size: 1.8rem;
           }
         `}
+        ${(props) =>
+          props.as === "h8" &&
+          css`
+            font-size: 2.2rem;
+            font-weight: bold;
+            @media (max-width: 850px) {
+              font-size: 2rem;
+            }
+            @media (max-width: 450px) {
+              font-size: 1.8rem;
+            }
+          `}
+          ${(props) =>
+            props.as === "h9" &&
+            css`
+              font-size: 1.8rem;
+              font-weight: bold;
+              @media (max-width: 850px) {
+                font-size: 1.5rem;
+              }
+              @media (max-width: 450px) {
+                font-size: 1.3rem;
+              }
+            `}
     
 
     line-height:1.4;
