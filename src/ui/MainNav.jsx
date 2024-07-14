@@ -275,7 +275,7 @@ function MainNav() {
         {applications.map((app) => (
           <li key={app.id} style={{ display: "flex", alignItems: "center" }}>
             <StyledNavLink to={`/dashboard/${app.id}`}>
-              {app.ans_country} Visa - {app.ans_purpose} - {app.ans_profession}
+              {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
               {applications.length > 1 && (
                 <DeleteButton
                   className="delete-button"
