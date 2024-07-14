@@ -102,7 +102,7 @@ const Ellipse2 = styled.div`
   background: var(--color-grey-901);
   border-radius: 50%;
   filter: blur(150px);
-  box-shadow: 100px 10px 1000px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
 `;
 
 function QuestionsLayout() {
