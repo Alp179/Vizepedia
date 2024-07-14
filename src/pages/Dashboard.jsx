@@ -81,16 +81,58 @@ const FlagContainer = styled.div`
 
 const BlurredFlagBackground = styled.div`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 35vw;
-  height: 20vw;
-  background-size: cover;
-  background-position: center;
-  transform: translateX(50%) translateY(-100%) rotate(31deg);
-  filter: blur(100px);
+  top: 60%;
+  left: -40%;
+  width: 80vw;
+  height: 60vw;
+  transform: translateX(40%) translateY(-110%) rotate(31deg);
+  filter: blur(190px);
 
   z-index: 0; /* Updated to ensure it's in the background */
+  @media (max-width: 1625px) {
+    top: 60%;
+  }
+
+  @media (max-width: 1450px) {
+    top: 50%;
+  }
+
+  @media (max-width: 1150px) {
+    top: 30%;
+  }
+
+  @media (max-width: 990px) {
+    top: 20%;
+  }
+
+  @media (max-width: 890px) {
+    top: 10%;
+  }
+  @media (max-width: 820px) {
+    right: -20%;
+  }
+  @media (max-width: 710px) {
+    width: 300px !important;
+    height: 170px !important;
+    top: 11%;
+  }
+  @media (max-width: 530px) {
+    top: 10%;
+    right: -30%;
+  }
+  @media (max-width: 480px) {
+    right: -50%;
+  }
+  @media (max-width: 450px) {
+    width: 240px !important;
+    height: 140px !important;
+    right: -70%;
+    top: 8%;
+    @media (max-height: 700px) {
+      right: -90%;
+      top: 10%;
+    }
+  }
 `;
 
 const countryToCode = {
