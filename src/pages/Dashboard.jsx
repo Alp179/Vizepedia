@@ -79,6 +79,20 @@ const FlagContainer = styled.div`
   }
 `;
 
+const BlurredFlagBackground = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 35vw;
+  height: 20vw;
+  background-size: cover;
+  background-position: center;
+  transform: translateX(50%) translateY(-100%) rotate(31deg);
+  filter: blur(100px);
+
+  z-index: 0; /* Updated to ensure it's in the background */
+`;
+
 const countryToCode = {
   Almanya: "de",
   Avusturya: "at",
@@ -212,6 +226,13 @@ function Dashboard() {
         gap: "50px",
       }}
     >
+      {countryCode && (
+        <BlurredFlagBackground
+          style={{
+            backgroundImage: `url(https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode.toUpperCase()}.svg)`,
+          }}
+        />
+      )}
       <CustomRow type="horizontal">
         {createdAt && (
           <CreatedAtContainer>
