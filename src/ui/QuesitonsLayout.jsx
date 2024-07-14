@@ -78,7 +78,7 @@ const MobileMenuWrapper = styled.div`
 
 // Elipslerin olduğu konteyner
 const EllipsesContainer = styled.div`
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
   display: flex;
