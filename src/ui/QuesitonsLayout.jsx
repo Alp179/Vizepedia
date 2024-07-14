@@ -76,6 +76,35 @@ const MobileMenuWrapper = styled.div`
   }
 `;
 
+// Elipslerin olduğu konteyner
+const EllipsesContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  pointer-events: none; /* Ellipslerin tıklanmasını engeller */
+`;
+
+// Elips bileşeni
+const Ellipse = styled.div`
+  width: 30%;
+  height: 200px;
+  background: var(--color-grey-902);
+  border-radius: 50%;
+  filter: blur(150px);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+`;
+
+const Ellipse2 = styled.div`
+  width: 30%;
+  height: 200px;
+  background: var(--color-grey-901);
+  border-radius: 50%;
+  filter: blur(150px);
+  box-shadow: 100px 10px 1000px rgba(0, 0, 0, 0.5);
+`;
+
 function QuestionsLayout() {
   const location = useLocation();
   const progressValues = {
@@ -115,6 +144,11 @@ function QuestionsLayout() {
           <Outlet />
         </Container>
       </div>
+      <EllipsesContainer>
+        <Ellipse2 />
+        <Ellipse />
+        <Ellipse2 />
+      </EllipsesContainer>
     </LoginLayout>
   );
 }

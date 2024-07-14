@@ -7,7 +7,7 @@ import styled from "styled-components";
 const StyledAppLayout = styled.div`
   overflow: clip;
   display: grid;
-  grid-template-columns: 26rem 1fr;
+  grid-template-columns:26rem 1fr;
   grid-template-rows: auto 1fr;
   height: 100dvh;
   background: var(--color-grey-1);

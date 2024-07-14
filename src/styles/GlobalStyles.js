@@ -17,8 +17,8 @@ const GlobalStyles = createGlobalStyle`/*
   --color-box-0: drop-shadow(10px 40px 220px #07ff9c);
   --color-box-1: 42px 10px 140px -7px #004466;
   --color-grey-0: #fff;
-  --color-grey-1: linear-gradient(180deg, #00FFA2 0%, #00B78B 15.10%, #00837A 48.44%, #046 100%);
-  --color-grey-2: linear-gradient(180deg, #00FFA2 0%, #00B78B 15.10%, #00837A 48.44%, #046 100%);
+  --color-grey-1: #DDFBEF;
+  --color-grey-2: #DDFBEF;
   --color-grey-3: linear-gradient(180deg, #00FFA2 100%, #00B78B 15.10%, #00837A 48.44%, #046 0%);
   --color-grey-31: #004466;
   --color-grey-61: #00ffa2;
@@ -35,6 +35,8 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-700: #374151;
   --color-grey-800: #1f2937;
   --color-grey-900: #111827;
+  --color-grey-901: #00ffa2;
+  --color-grey-902: #004466;
   --stroke-ham-1: #000;
 
   --color-blue-100: #e0f2fe;
@@ -82,6 +84,8 @@ const GlobalStyles = createGlobalStyle`/*
 --color-grey-700: #e5e7eb;
 --color-grey-800: #f3f4f6;
 --color-grey-900: #f9fafb;
+--color-grey-901: transparent;
+--color-grey-902: transparent;
 --stroke-ham-1: #999;
 
 --color-blue-100: #075985;
