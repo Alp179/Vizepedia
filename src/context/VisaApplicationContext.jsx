@@ -1,8 +1,15 @@
 /* eslint-disable react/prop-types */
-import { createContext, useReducer, useContext, useEffect } from "react";
+import {
+  createContext,
+  useReducer,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useUser } from "../features/authentication/useUser";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelectionsNav } from "../utils/userSelectionsFetch";
+import { fetchFirmLocation } from "../services/apiVisaApplications";
 
 const VisaApplicationContext = createContext();
 
@@ -29,6 +36,7 @@ const visaApplicationReducer = (state, action) => {
 
 export const VisaApplicationProvider = ({ children }) => {
   const [applications, dispatch] = useReducer(visaApplicationReducer, []);
+  const [firmLocation, setFirmLocation] = useState(null);
   const { user } = useUser(); // Kullanıcı bilgilerini useUser hook'undan al
   const userId = user?.id;
 
@@ -45,8 +53,20 @@ export const VisaApplicationProvider = ({ children }) => {
     }
   }, [userAnswers, isSuccess, dispatch]);
 
+  const fetchFirmLocationData = async (country) => {
+    const location = await fetchFirmLocation(country);
+    setFirmLocation(location);
+  };
+
   return (
-    <VisaApplicationContext.Provider value={{ applications, dispatch }}>
+    <VisaApplicationContext.Provider
+      value={{
+        applications,
+        dispatch,
+        firmLocation,
+        fetchFirmLocation: fetchFirmLocationData,
+      }}
+    >
       {children}
     </VisaApplicationContext.Provider>
   );

@@ -13,6 +13,7 @@ import { useDocuments } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import styled from "styled-components";
 import "flag-icons/css/flag-icons.min.css"; // CSS importu
+import { fetchFirmLocation } from "../services/apiVisaApplications";
 
 const FlagContainer = styled.div`
   position: absolute;
@@ -216,37 +217,53 @@ function Dashboard() {
     });
   }, [applicationId, dispatch]);
 
-  const userSelectionsQuery = useQuery({
+  const {
+    data: userSelections,
+    isSuccess: isUserSelectionsSuccess,
+    isLoading: isUserSelectionsLoading,
+    isError: isUserSelectionsError,
+  } = useQuery({
     queryKey: ["userSelections", userId, applicationId],
     queryFn: () => fetchUserSelectionsDash(userId, applicationId),
     enabled: !!userId && !!applicationId,
   });
 
+  const ansCountry = userSelections?.[0]?.ans_country;
+
+  const { data: firmLocation, isSuccess: isFirmLocationSuccess } = useQuery({
+    queryKey: ["firmLocation", ansCountry],
+    queryFn: () => fetchFirmLocation(ansCountry),
+    enabled: !!ansCountry,
+  });
+
   useEffect(() => {
-    if (userSelectionsQuery.data) {
-      const ansCountry = userSelectionsQuery.data?.[0]?.ans_country;
+    if (isUserSelectionsSuccess && userSelections) {
       setCountryCode(countryToCode[ansCountry] || "");
 
-      const createdAtDate = new Date(userSelectionsQuery.data?.[0]?.created_at);
+      const createdAtDate = new Date(userSelections?.[0]?.created_at);
       setCreatedAt(createdAtDate.toLocaleDateString());
     }
-  }, [userSelectionsQuery.data]);
+  }, [userSelections, isUserSelectionsSuccess, ansCountry]);
 
-  const documentNames = userSelectionsQuery.data
-    ? getDocumentsForSelections(userSelectionsQuery.data)
+  const documentNames = userSelections
+    ? getDocumentsForSelections(userSelections)
     : [];
 
-  const documentsQuery = useQuery({
+  const {
+    data: documents,
+    isLoading: isDocumentsLoading,
+    isError: isDocumentsError,
+  } = useQuery({
     queryKey: ["documentDetails", documentNames],
     queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !!documentNames.length,
   });
 
-  if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
+  if (isUserSelectionsLoading || isDocumentsLoading) {
     return <Spinner />;
   }
 
-  if (userSelectionsQuery.isError || documentsQuery.isError) {
+  if (isUserSelectionsError || isDocumentsError) {
     return <div>Error loading data.</div>;
   }
 
@@ -255,7 +272,7 @@ function Dashboard() {
     navigate(`/summary/${applicationId}`);
   };
 
-  const stepLabels = documentsQuery.data?.map((doc) => doc.docName) || [];
+  const stepLabels = documents?.map((doc) => doc.docName) || [];
 
   return (
     <div
@@ -288,12 +305,15 @@ function Dashboard() {
         currentStep={currentStep}
         onStepClick={handleStepClick}
         completedDocuments={completedDocuments}
-        documents={documentsQuery.data}
+        documents={documents}
       />
       {countryCode && (
         <FlagContainer>
           <span className={`fi fi-${countryCode}`}></span>
         </FlagContainer>
+      )}
+      {isFirmLocationSuccess && firmLocation && (
+        <div dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }} />
       )}
     </div>
   );
