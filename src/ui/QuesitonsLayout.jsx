@@ -78,6 +78,9 @@ const MobileMenuWrapper = styled.div`
 
 // Elipslerin olduğu konteyner
 const EllipsesContainer = styled.div`
+  @media (max-width: 600px) {
+    display: none;
+  }
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -88,6 +91,9 @@ const EllipsesContainer = styled.div`
 
 // Elips bileşeni
 const Ellipse = styled.div`
+  @media (max-width: 600px) {
+    display: none;
+  }
   width: 30%;
   height: 200px;
   background: var(--color-grey-902);
@@ -97,6 +103,9 @@ const Ellipse = styled.div`
 `;
 
 const Ellipse2 = styled.div`
+  @media (max-width: 600px) {
+    display: none;
+  }
   width: 30%;
   height: 200px;
   background: var(--color-grey-901);
