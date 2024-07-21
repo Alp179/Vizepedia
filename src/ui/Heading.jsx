@@ -106,13 +106,15 @@ const Heading = styled.h1`
         ${(props) =>
           props.as === "h8" &&
           css`
+          text-align: center;
             font-size: 2.2rem;
             font-weight: bold;
+            padding-bottom: 20px;
             @media (max-width: 850px) {
               font-size: 2rem;
             }
             @media (max-width: 450px) {
-              font-size: 1.8rem;
+              font-size: 1.5rem;
             }
           `}
           ${(props) =>
@@ -124,7 +126,7 @@ const Heading = styled.h1`
                 font-size: 1.5rem;
               }
               @media (max-width: 450px) {
-                font-size: 1.3rem;
+                font-size: 1.2rem;
               }
             `}
     
