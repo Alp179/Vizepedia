@@ -11,8 +11,8 @@ const Heading = styled.h1`
     css`
       font-size: 3rem;
       font-weight: 600;
-      @media (max-width: 1100px) {
-        margin-left: -50px;
+      @media (max-width: 1425px) {
+        margin-left: -100px;
       }
       @media (max-width: 710px) {
         margin-top: 40px;

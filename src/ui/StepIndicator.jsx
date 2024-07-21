@@ -16,11 +16,11 @@ const StepsContainer = styled.div`
   margin-left: 0px;
   max-width: 1000px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   position: relative;
   margin-bottom: 100px;
   @media (max-width: 1425px) {
-    margin-left: 20px;
+    margin-left: -100px;
     width: 600px !important;
   }
   @media (max-width: 1270px) {
@@ -33,7 +33,7 @@ const StepsContainer = styled.div`
     width: 300px !important;
   }
   @media (max-width: 710px) {
-    width: 200px!important;
+    width: 200px !important;
     flex-flow: column;
     margin-left: -120px;
     gap: 20px;
@@ -41,6 +41,7 @@ const StepsContainer = styled.div`
 `;
 
 const StepCircle = styled.div`
+  z-index: 3000;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -70,6 +71,7 @@ const StepCircle = styled.div`
 `;
 
 const StepName = styled.div`
+  z-index: 3000;
   font-size: 14px;
   margin-top: 5px;
   max-width: 80px;

@@ -20,18 +20,29 @@ const FlagContainer = styled.div`
   top: 80%;
   right: -10%;
   transform: translateX(50%) translateY(-100%) rotate(31deg);
-  width: 35vw;
-  height: 20vw;
+  width: 700px;
+  height: 450px;
   z-index: 1000;
   border-radius: 10%;
   overflow: hidden;
 
+  @media (min-width: 1870px) {
+    right: -10%!important;
+  }
+
+  @media (min-width: 1625px) {
+    top: 30%;
+    right: -5%;
+  }
+
   @media (max-width: 1625px) {
-    top: 60%;
+    top: 30%;
+    right: 5%;
   }
 
   @media (max-width: 1450px) {
-    top: 50%;
+    top: 30%;
+    right: 5%;
   }
 
   @media (max-width: 1150px) {
@@ -90,6 +101,7 @@ const BlurredFlagBackground = styled.div`
   filter: blur(190px);
 
   z-index: 0; /* Updated to ensure it's in the background */
+  
   @media (max-width: 1625px) {
     top: 60%;
   }
@@ -177,6 +189,9 @@ const CreatedAtContainer = styled.div`
   color: var(--color-grey-700);
   margin-top: -80px;
   position: absolute;
+  @media (max-width: 1425px) {
+    margin-left: -100px;
+  }
 `;
 
 const CustomRow = styled(Row)`
@@ -295,7 +310,7 @@ function Dashboard() {
       <CustomRow type="horizontal">
         {createdAt && (
           <CreatedAtContainer>
-            Vize başvurusu oluşturulma tarihi: {createdAt}
+            Oluşturulma tarihi: {createdAt}
           </CreatedAtContainer>
         )}
         <Heading as="h1">Hoş geldin Loko</Heading>
