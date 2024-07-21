@@ -70,7 +70,6 @@ function ControlScreen() {
     width: 100%;
     max-width: 520px; /* Genişlik %20 arttırıldı */
     max-height: 800px; /* Yükseklik %20 arttırıldı */
-    
   `;
 
   return (

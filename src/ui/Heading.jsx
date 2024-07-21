@@ -113,8 +113,11 @@ const Heading = styled.h1`
             @media (max-width: 850px) {
               font-size: 2rem;
             }
-            @media (max-width: 450px) {
+            @media (max-width: 600px) {
               font-size: 1.5rem;
+              @media (max-height: 900px) {
+                font-size: 2.5rem;
+              }
             }
           `}
           ${(props) =>
@@ -125,8 +128,11 @@ const Heading = styled.h1`
               @media (max-width: 850px) {
                 font-size: 1.5rem;
               }
-              @media (max-width: 450px) {
+              @media (max-width: 600px) {
                 font-size: 1.2rem;
+                @media (max-height: 900px) {
+                  font-size: 2rem;
+                }
               }
             `}
     

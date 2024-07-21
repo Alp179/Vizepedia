@@ -40,6 +40,11 @@ const StyledSelect = styled.select`
     font-size: 12px;
     padding: 6px 10px;
   }
+  @media (max-width: 600px) {
+    @media (max-height: 900px) {
+      font-size: 1.5rem;
+    }
+  }
 `;
 
 const Section = styled.div`
@@ -55,6 +60,16 @@ const Divider = styled.div`
   height: 1px;
   background-color: rgba(0, 0, 0, 0.2);
   margin: 0.8rem 0; /* Mesafeyi azaltıldı */
+`;
+
+const ControlLayout = styled.div`
+  @media (max-width: 600px) {
+    @media (max-height: 900px) {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
 `;
 
 function ControlScreenDropdowns({
@@ -133,90 +148,95 @@ function ControlScreenDropdowns({
 
   return (
     <>
-      <Section>
-        <Heading as="h9">Vize almak istediğiniz ülke</Heading>
-        <StyledSelect value={selectedCountry} onChange={handleChange}>
-          <option value="">{state.country}</option>
-          {combinedCountries.map((country) => (
-            <option key={country.id} value={country.name}>
-              {country.name}
-            </option>
-          ))}
-        </StyledSelect>
-      </Section>
-      <Divider />
-      <Section>
-        <Heading as="h9">Gidiş amacınız</Heading>
-        <StyledSelect value={selectedPurpose} onChange={handlePurposeChange}>
-          <option value="">{state.purpose}</option>
-          {combinedData.map((purpose) => (
-            <option key={purpose.id} value={purpose.description}>
-              {purpose.description}
-            </option>
-          ))}
-        </StyledSelect>
-      </Section>
-      <Divider />
-      <Section>
-        <Heading as="h9">Mesleğiniz</Heading>
-        <StyledSelect
-          value={selectedProfession}
-          onChange={handleProfessionChange}
-        >
-          <option value="">{state.profession}</option>
-          {professionsData &&
-            professionsData.map((profession, index) => (
-              <option
-                key={`profession-${index}`}
-                value={profession.professionName}
-              >
-                {profession.professionName}
+      <ControlLayout>
+        <Section>
+          <Heading as="h9">Vize almak istediğiniz ülke</Heading>
+          <StyledSelect value={selectedCountry} onChange={handleChange}>
+            <option value="">{state.country}</option>
+            {combinedCountries.map((country) => (
+              <option key={country.id} value={country.name}>
+                {country.name}
               </option>
             ))}
-        </StyledSelect>
-      </Section>
-      <Divider />
-      <Section>
-        <Heading as="h9">Konaklama türünüz</Heading>
-        <StyledSelect
-          value={selectedAccommodation}
-          onChange={handleAccommodationChange}
-        >
-          <option value="">{state.accommodation}</option>
-          {accommodationsData.map((accommodation, index) => (
-            <option
-              key={`accommodation-${index}`}
-              value={accommodation.accommodationTypeName}
-            >
-              {accommodation.accommodationTypeName}
-            </option>
-          ))}
-        </StyledSelect>
-      </Section>
-      <Divider />
-      <Section>
-        <Heading as="h9">Seyahat aracınız</Heading>
-        <StyledSelect value={selectedVehicle} onChange={handleVehicleChange}>
-          <option value="">{state.vehicle}</option>
-          {vehiclesData.map((vehicle, index) => (
-            <option key={`vehicle-${index}`} value={vehicle.travelVehicleName}>
-              {vehicle.travelVehicleName}
-            </option>
-          ))}
-        </StyledSelect>
-      </Section>
-      <Divider />
-      <Section>
-        <Heading as="h9">Çocuklu yolculuk</Heading>
-        <StyledSelect value={selectedKid} onChange={handleKidChange}>
-          <option value="">{state.kid}</option>
-          {kidsData.map((kid, index) => (
-            <option key={`kid-${index}`} value={kid.kidState}>
-              {kid.kidState}
-            </option>
-          ))}
-        </StyledSelect>
-      </Section>
+          </StyledSelect>
+        </Section>
+        <Divider />
+        <Section>
+          <Heading as="h9">Gidiş amacınız</Heading>
+          <StyledSelect value={selectedPurpose} onChange={handlePurposeChange}>
+            <option value="">{state.purpose}</option>
+            {combinedData.map((purpose) => (
+              <option key={purpose.id} value={purpose.description}>
+                {purpose.description}
+              </option>
+            ))}
+          </StyledSelect>
+        </Section>
+        <Divider />
+        <Section>
+          <Heading as="h9">Mesleğiniz</Heading>
+          <StyledSelect
+            value={selectedProfession}
+            onChange={handleProfessionChange}
+          >
+            <option value="">{state.profession}</option>
+            {professionsData &&
+              professionsData.map((profession, index) => (
+                <option
+                  key={`profession-${index}`}
+                  value={profession.professionName}
+                >
+                  {profession.professionName}
+                </option>
+              ))}
+          </StyledSelect>
+        </Section>
+        <Divider />
+        <Section>
+          <Heading as="h9">Konaklama türünüz</Heading>
+          <StyledSelect
+            value={selectedAccommodation}
+            onChange={handleAccommodationChange}
+          >
+            <option value="">{state.accommodation}</option>
+            {accommodationsData.map((accommodation, index) => (
+              <option
+                key={`accommodation-${index}`}
+                value={accommodation.accommodationTypeName}
+              >
+                {accommodation.accommodationTypeName}
+              </option>
+            ))}
+          </StyledSelect>
+        </Section>
+        <Divider />
+        <Section>
+          <Heading as="h9">Seyahat aracınız</Heading>
+          <StyledSelect value={selectedVehicle} onChange={handleVehicleChange}>
+            <option value="">{state.vehicle}</option>
+            {vehiclesData.map((vehicle, index) => (
+              <option
+                key={`vehicle-${index}`}
+                value={vehicle.travelVehicleName}
+              >
+                {vehicle.travelVehicleName}
+              </option>
+            ))}
+          </StyledSelect>
+        </Section>
+        <Divider />
+        <Section>
+          <Heading as="h9">Çocuklu yolculuk</Heading>
+          <StyledSelect value={selectedKid} onChange={handleKidChange}>
+            <option value="">{state.kid}</option>
+            {kidsData.map((kid, index) => (
+              <option key={`kid-${index}`} value={kid.kidState}>
+                {kid.kidState}
+              </option>
+            ))}
+          </StyledSelect>
+        </Section>
+      </ControlLayout>
     </>
   );
 }

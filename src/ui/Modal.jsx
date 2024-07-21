@@ -15,8 +15,12 @@ const StyledModal = styled.div`
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
-  @media (max-width: 450px) {
-    padding: 2rem 3rem; 
+  @media (max-width: 600px) {
+    @media (max-height: 900px) {
+      padding: 2rem 3rem;
+      width: 90%;
+      height: 90%;
+    }
   }
   transition: all 0.5s;
 `;
