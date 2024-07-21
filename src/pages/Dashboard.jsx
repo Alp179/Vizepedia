@@ -14,6 +14,7 @@ import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import styled from "styled-components";
 import "flag-icons/css/flag-icons.min.css"; // CSS importu
 
+
 const FlagContainer = styled.div`
   position: absolute;
   top: 80%;
@@ -242,11 +243,25 @@ function Dashboard() {
     enabled: !!documentNames.length,
   });
 
-  if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
+  const visaFirmLocationsQuery = useQuery({
+    queryKey: ["visaFirmLocations", countryCode],
+    queryFn: () => fetchVisaFirmLocations(countryCode),
+    enabled: !!countryCode,
+  });
+
+  if (
+    userSelectionsQuery.isLoading ||
+    documentsQuery.isLoading ||
+    visaFirmLocationsQuery.isLoading
+  ) {
     return <Spinner />;
   }
 
-  if (userSelectionsQuery.isError || documentsQuery.isError) {
+  if (
+    userSelectionsQuery.isError ||
+    documentsQuery.isError ||
+    visaFirmLocationsQuery.isError
+  ) {
     return <div>Error loading data.</div>;
   }
 
@@ -294,6 +309,29 @@ function Dashboard() {
         <FlagContainer>
           <span className={`fi fi-${countryCode}`}></span>
         </FlagContainer>
+      )}
+      {visaFirmLocationsQuery.data && (
+        <div>
+          <h2>{visaFirmLocationsQuery.data.firm_name}</h2>
+          <MapComponent
+            firmLatitude={visaFirmLocationsQuery.data.firm_latitude}
+            firmLongitude={visaFirmLocationsQuery.data.firm_longitude}
+            consulateLocations={[
+              {
+                latitude: visaFirmLocationsQuery.data.consulate_latitude_1,
+                longitude: visaFirmLocationsQuery.data.consulate_longitude_1,
+              },
+              {
+                latitude: visaFirmLocationsQuery.data.consulate_latitude_2,
+                longitude: visaFirmLocationsQuery.data.consulate_longitude_2,
+              },
+              {
+                latitude: visaFirmLocationsQuery.data.consulate_latitude_3,
+                longitude: visaFirmLocationsQuery.data.consulate_longitude_3,
+              },
+            ]}
+          />
+        </div>
       )}
     </div>
   );
