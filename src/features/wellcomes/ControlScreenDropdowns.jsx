@@ -68,6 +68,24 @@ const ControlLayout = styled.div`
       display: flex;
       flex-direction: column;
       gap: 12px;
+      @media (max-height: 870px) {
+        gap: 10px;
+      }
+      @media (max-height: 850px) {
+        gap: 8px;
+      }
+      @media (max-height: 830px) {
+        gap: 6px;
+      }
+      @media (max-height: 810px) {
+        gap: 5px;
+      }
+      @media (max-height: 800px) {
+        gap: 4px;
+      }
+      @media (max-height: 790px) {
+        gap: 3px;
+      }
     }
   }
 `;
