@@ -12,7 +12,7 @@ import Heading from "../../ui/Heading";
 
 // Select kutusu için stil
 const StyledSelect = styled.select`
-  padding: 10px 14px;
+  padding: 6px;
   border-radius: 16px;
   border: 1px solid transparent;
   margin: 5px 0;
@@ -20,8 +20,15 @@ const StyledSelect = styled.select`
   color: #000000;
   background-color: transparent;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 12px;
   transition: all 0.3s;
+
+  @media (max-width: 825px) {
+    font-size: 12px!important;
+  }
+  @media (max-height: 770px) {
+    padding: 4px;
+  }
 
   &:hover,
   &:active {
@@ -35,16 +42,6 @@ const StyledSelect = styled.select`
   &:focus {
     outline: none;
   }
-
-  @media (max-width: 750px) {
-    font-size: 12px;
-    padding: 6px 10px;
-  }
-  @media (max-width: 600px) {
-    @media (max-height: 900px) {
-      font-size: 1.5rem;
-    }
-  }
 `;
 
 const Section = styled.div`
@@ -53,42 +50,28 @@ const Section = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media (max-height: 800px) {
+    height: 50px;
+  }
+  @media (max-height: 770px) {
+    margin-top: -1px;
+  }
 `;
 
 const Divider = styled.div`
-  width: 80%;
+  width: 90%;
   height: 1px;
   background-color: rgba(0, 0, 0, 0.2);
-  margin: 0.8rem 0; /* Mesafeyi azaltıldı */
-`;
-
-const ControlLayout = styled.div`
-  @media (max-width: 600px) {
-    @media (max-height: 900px) {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      @media (max-height: 870px) {
-        gap: 10px;
-      }
-      @media (max-height: 850px) {
-        gap: 8px;
-      }
-      @media (max-height: 830px) {
-        gap: 6px;
-      }
-      @media (max-height: 810px) {
-        gap: 5px;
-      }
-      @media (max-height: 800px) {
-        gap: 4px;
-      }
-      @media (max-height: 790px) {
-        gap: 3px;
-      }
-    }
+  margin: 4px auto;
+  @media (max-height: 850px) {
+    margin: 2px auto;
+  }
+  @media (max-height: 780px) {
+    margin: 1px auto;
   }
 `;
+
+const ControlLayout = styled.div``;
 
 function ControlScreenDropdowns({
   onPurposeChange,

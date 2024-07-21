@@ -61,15 +61,19 @@ function ControlScreen() {
     align-items: center;
     justify-content: space-between;
     margin-top: 1px;
-    padding: 10px;
+    padding: 8px;
     border-radius: 16px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(6.3px);
     -webkit-backdrop-filter: blur(6.3px);
     border: 1px solid rgba(255, 255, 255, 0.52);
-    width: 100%;
-    max-width: 520px; /* Genişlik %20 arttırıldı */
-    max-height: 800px; /* Yükseklik %20 arttırıldı */
+    width: calc(100vw - 180px);
+    max-width: 370px;
+    height: calc(100vh - 280px);
+    max-height: 640px;
+    @media (max-height: 770px) {
+      height: 450px;
+    }
   `;
 
   return (

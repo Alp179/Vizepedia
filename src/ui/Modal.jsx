@@ -15,14 +15,19 @@ const StyledModal = styled.div`
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
-  @media (max-width: 600px) {
-    @media (max-height: 900px) {
-      padding: 2rem 3rem;
-      width: 90%;
-      height: 90%;
-    }
-  }
+  display: flex
+  flex-direction: column;
+  width: calc(100vw - 100px);
+  max-width: 450px;
+  height: calc(100vh - 200px);
+  max-height: 720px;
+  justify-content: space-between;
   transition: all 0.5s;
+
+  @media (max-height: 770px) {
+    height: 500px;
+    padding: 20px 4rem;
+  }
 `;
 
 const Overlay = styled.div`

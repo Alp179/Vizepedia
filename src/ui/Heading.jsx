@@ -77,64 +77,57 @@ const Heading = styled.h1`
       }
     `}
     ${(props) =>
-      props.as === "h6" &&
-      css`
-        font-size: 3rem;
-        font-weight: 600;
-        text-align: center;
-        @media (min-width: 750px) {
-          @media (max-height: 800px) {
-            font-size: 2.2rem;
-          }
-        }
-        @media (max-width: 750px) {
+    props.as === "h6" &&
+    css`
+      font-size: 3rem;
+      font-weight: 600;
+      text-align: center;
+      @media (min-width: 750px) {
+        @media (max-height: 800px) {
           font-size: 2.2rem;
         }
-      `}
+      }
+      @media (max-width: 750px) {
+        font-size: 2.2rem;
+      }
+    `}
       ${(props) =>
-        props.as === "h7" &&
-        css`
-          font-size: 2.2rem;
-          font-weight: bold;
-          @media (max-width: 850px) {
-            font-size: 2rem;
-          }
-          @media (max-width: 450px) {
-            font-size: 1.8rem;
-          }
-        `}
+    props.as === "h7" &&
+    css`
+      font-size: 2.2rem;
+      font-weight: bold;
+      @media (max-width: 850px) {
+        font-size: 2rem;
+      }
+      @media (max-width: 450px) {
+        font-size: 1.8rem;
+      }
+    `}
         ${(props) =>
-          props.as === "h8" &&
-          css`
-          text-align: center;
-            font-size: 2.2rem;
-            font-weight: bold;
-            padding-bottom: 20px;
-            @media (max-width: 850px) {
-              font-size: 2rem;
-            }
-            @media (max-width: 600px) {
-              font-size: 1.5rem;
-              @media (max-height: 900px) {
-                font-size: 2.5rem;
-              }
-            }
-          `}
+    props.as === "h8" &&
+    css`
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      padding: 8px 0px 8px 0px;
+      @media (max-height: 825px) {
+        font-size: 18px;
+      }
+      @media (max-height: 770px) {
+        padding-bottom: 0;
+      }
+    `}
           ${(props) =>
-            props.as === "h9" &&
-            css`
-              font-size: 1.8rem;
-              font-weight: bold;
-              @media (max-width: 850px) {
-                font-size: 1.5rem;
-              }
-              @media (max-width: 600px) {
-                font-size: 1.2rem;
-                @media (max-height: 900px) {
-                  font-size: 2rem;
-                }
-              }
-            `}
+    props.as === "h9" &&
+    css`
+      text-align: center;
+      font-size: 16px;
+      margin: 4px 0 -4px 0;
+      font-weight: bold;
+      @media (max-height: 825px) {
+        font-size: 12px;
+      }
+    `}
     
 
     line-height:1.4;
