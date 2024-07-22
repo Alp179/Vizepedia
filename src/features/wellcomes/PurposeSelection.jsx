@@ -124,6 +124,7 @@ const DropdownContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  z-index: 3000;
   align-items: center;
 `;
 
@@ -171,7 +172,7 @@ const DropdownMenu = styled(motion.ul)`
   backdrop-filter: blur(6.3px);
   -webkit-backdrop-filter: blur(6.3px);
   padding: 10px;
-  z-index: 1000;
+  z-index: 3000;
   width: 200px;
   overflow: hidden;
 
