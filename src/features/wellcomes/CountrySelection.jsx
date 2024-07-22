@@ -154,7 +154,7 @@ const DropdownButton = styled.button`
   }
 
   .chevron {
-   
+   margin-left: 5px;
   }
 
   &:hover {
