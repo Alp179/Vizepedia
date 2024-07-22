@@ -5,6 +5,7 @@ import MobileMenu from "./MobileMenu"; // Yeni hamburger menü komponenti
 import styled from "styled-components";
 
 const StyledAppLayout = styled.div`
+  overflow-y: scroll!important;
   overflow: clip;
   display: grid;
   grid-template-columns:26rem 1fr;
