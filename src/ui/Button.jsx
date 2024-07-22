@@ -55,6 +55,7 @@ const sizes = {
     }
   `,
   question: css`
+    z-index: 2000;
     width: 200px;
     padding: 1.3rem;
     border-radius: 8px;

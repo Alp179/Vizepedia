@@ -328,7 +328,7 @@ function Dashboard() {
         </FlagContainer>
       )}
       {isFirmLocationSuccess && firmLocation && (
-        <div dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }} />
+        <div style={{zIndex: "2000"}} dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }} />
       )}
     </div>
   );
