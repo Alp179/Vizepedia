@@ -98,7 +98,8 @@ const StepName = styled.div`
     font-size: 18px;
   }
   @media (max-height: 830px) {
-    font-size: 16px;
+    font-size: 13px!important;
+    margin-top: 0px;
   }
 `;
 
