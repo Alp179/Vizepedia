@@ -104,6 +104,7 @@ const StepName = styled.div`
 
 const Bubble = styled.div`
   background-color: #e0f7fa;
+  color: black;
   padding: 16px;
   border-radius: 10px;
   position: absolute;

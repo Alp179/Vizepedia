@@ -26,8 +26,53 @@ const FlagContainer = styled.div`
   border-radius: 10%;
   overflow: hidden;
 
+
   @media (min-width: 1870px) {
     right: -10%!important;
+  }
+
+  @media (min-width: 1970px) {
+    right: -15%!important;
+  }
+
+  @media (min-width: 2030px) {
+    right: -20%!important;
+  }
+
+  @media (min-width: 2130px) {
+    right: -30%!important;
+  }
+
+  @media (min-width: 2270px) {
+    right: -40%!important;
+  }
+
+  @media (min-width: 2400px) {
+    right: -50%!important;
+  }
+
+  @media (min-width: 2530px) {
+    right: -60%!important;
+  }
+
+  @media (min-width: 2650px) {
+    right: -70%!important;
+  }
+
+  @media (min-width: 2800px) {
+    right: -85%!important;
+  }
+
+  @media (min-width: 2950px) {
+    right: -100%!important;
+  }
+
+  @media (min-width: 3100px) {
+    right: -115%!important;
+  }
+
+  @media (min-width: 3250px) {
+    right: -130%!important;
   }
 
   @media (min-width: 1625px) {
@@ -45,13 +90,12 @@ const FlagContainer = styled.div`
     right: 5%;
   }
 
-  @media (max-width: 1150px) {
-    top: 30%;
-  }
-
-  @media (max-width: 990px) {
+  @media (max-width: 1400px) {
+    width: 600px!important;
+    height: 350px!important;
     top: 20%;
-  }
+  } 
+
 
   @media (max-width: 890px) {
     top: 10%;
