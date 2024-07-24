@@ -146,7 +146,7 @@ const Tooltip = styled.span`
 
 const ScrollableDiv = styled.div`
   overflow-y: auto;
-  max-height: 250px;
+  max-height: 320px;
   width: 110%;
   margin: 0 auto;
 
