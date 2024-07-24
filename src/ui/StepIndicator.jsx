@@ -26,9 +26,6 @@ const StepsContainer = styled.div`
   @media (max-width: 1270px) {
     width: 400px !important;
   }
-  @media (max-width: 950px) {
-    margin-left: -20px;
-  }
   @media (max-width: 820px) {
     width: 300px !important;
   }
@@ -41,7 +38,7 @@ const StepsContainer = styled.div`
 `;
 
 const StepCircle = styled.div`
-  z-index: 3000;
+  z-index: 2000;
   display: flex;
   flex-direction: column;
   align-items: center;

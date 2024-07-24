@@ -26,7 +26,7 @@ const StyledAppLayout = styled.div`
 `;
 
 const Main = styled.main`
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: clip;
   z-index: 1000;
   backdrop-filter: blur(0px);
@@ -34,6 +34,19 @@ const Main = styled.main`
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+  &::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-brand-600);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
+  }
 `;
 
 const Container = styled.div`

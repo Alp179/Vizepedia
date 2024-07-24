@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const StyledModal = styled.div`
+z-index: 3000;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -38,7 +39,7 @@ const Overlay = styled.div`
   height: 100vh;
   background-color: var(--backdrop-color);
   backdrop-filter: blur(4px);
-  z-index: 1000;
+  z-index: 3000;
   transition: all 0.5s;
 `;
 

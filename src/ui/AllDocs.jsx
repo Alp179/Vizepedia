@@ -22,6 +22,31 @@ const DocumentItem = styled.li`
   }
 `;
 
+const ScrollableDiv = styled.div`
+  overflow-y: auto;
+  height: calc(100vh - 370px); /* You can adjust this height as needed */
+  width: 100%;
+  margin: 0 auto;
+  @media (max-height: 770px) {
+    height: 380px;
+  }
+
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-brand-600);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
+  }
+`;
+
 function AllDocs() {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
@@ -94,17 +119,20 @@ function AllDocs() {
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
       <h2>Tüm Belgeler</h2>
       <div>Başvurunuzda gerekli olan tüm belgeler</div>
-      <ul>
+
+      <ScrollableDiv>
         {documents?.map((document) => (
           <DocumentItem
             key={document.id}
-            isCompleted={completedDocuments[applicationId]?.[document.docName]}
+            isCompleted={
+              completedDocuments[applicationId]?.[document.docName]
+            }
             onClick={() => handleDocumentClick(document)}
           >
             {document.docName}
           </DocumentItem>
         ))}
-      </ul>
+      </ScrollableDiv>
     </div>
   );
 }
