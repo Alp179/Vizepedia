@@ -23,6 +23,7 @@ import toast, { Toaster } from "react-hot-toast"; // React Hot Toast import
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 
 const NavList = styled.ul`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
@@ -140,6 +141,28 @@ const Tooltip = styled.span`
   opacity: 0;
   display: none;
   transition: opacity 1.3s ease-in-out, transform 1.3s ease-in-out;
+`;
+
+const ScrollableDiv = styled.div`
+  overflow-y: scroll;
+  max-height: 250px;
+  width: 110%;
+  margin: 0 auto;
+
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-brand-600);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
+  }
 `;
 
 function MainNav() {
@@ -272,7 +295,7 @@ function MainNav() {
             </Modal.Window>
           </Modal>
         </li>
-        <div style={{overflowY: "scroll"}}>
+        <ScrollableDiv>
           {applications.map((app) => (
             <li key={app.id} style={{ display: "flex", alignItems: "center" }}>
               <StyledNavLink to={`/dashboard/${app.id}`}>
@@ -289,7 +312,7 @@ function MainNav() {
               </StyledNavLink>
             </li>
           ))}
-        </div>
+        </ScrollableDiv>
         <li>
           <StyledNavLink to="/wellcome-2">
             <HiPlus /> <span className="sidebartext">Yeni</span>
