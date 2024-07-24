@@ -26,7 +26,7 @@ const MenuIcon = styled.div.attrs((props) => ({
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 1200; /* Menünün üstünde olması için z-index değeri arttırıldı */
+  z-index: 3000; /* Menünün üstünde olması için z-index değeri arttırıldı */
   @media (min-width: 710px) {
     display: none;
   }
@@ -78,6 +78,7 @@ const MenuIcon = styled.div.attrs((props) => ({
 `;
 
 const MenuContainer = styled.div`
+z-index: 3000;
   position: fixed;
   top: 0;
   right: 0;
@@ -105,12 +106,14 @@ const MenuContainer = styled.div`
 `;
 
 const MenuHeader = styled.div`
+z-index: 3000;
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
 
 const MenuContent = styled.div`
+z-index: 3000;
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
@@ -118,6 +121,7 @@ const MenuContent = styled.div`
 `;
 
 const StyledNavLink = styled.div`
+z-index: 3000;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -130,6 +134,7 @@ const StyledNavLink = styled.div`
 
 const DeleteButton = styled.button`
   background: none;
+  z-index: 3000;
   border: none;
   color: red;
   cursor: pointer;

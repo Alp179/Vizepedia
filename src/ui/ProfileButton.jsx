@@ -10,6 +10,7 @@ import toast from "react-hot-toast"; // React Hot Toast import
 
 const StyledProfileButton = styled.button`
   font-size: 1.6rem;
+  z-index: 3000;
   font-weight: 500;
   background: none;
   border: none;

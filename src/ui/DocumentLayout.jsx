@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
-
 import Header from "./Header";
 import BackButton from "./BackButton";
 import MobileMenu from "./MobileMenu";
@@ -25,7 +24,8 @@ const Main = styled.main`
 `;
 
 const Container = styled.div`
-  width: 800px; 
+padding-top: 50px;
+  width: 800px;
   height: 100%;
   margin: 0 auto;
   display: flex;
@@ -41,12 +41,20 @@ const Container = styled.div`
   }
 `;
 
+const MobileMenuContainer = styled.div`
+  @media (min-width: 710px) {
+    display: none;
+  }
+`;
+
 function DocumentLayout() {
   return (
     <StyledAppLayout>
       <BackButton />
-      <Header /> 
-      <MobileMenu />
+      <Header />
+      <MobileMenuContainer>
+        <MobileMenu />
+      </MobileMenuContainer>
       <Main>
         <Container>
           <Outlet />

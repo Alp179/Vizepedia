@@ -26,14 +26,18 @@ const StyledAppLayout = styled.div`
 `;
 
 const Main = styled.main`
+  min-height: 100vh;
   overflow-y: auto;
   overflow-x: clip;
   z-index: 1000;
   backdrop-filter: blur(0px);
-  padding: 4rem 4.8rem 6.4rem;
+  padding: 10rem 4.8rem 6.4rem;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+  @media (max-width: 710px) {
+    padding-top: 4rem;
+  }
   &::-webkit-scrollbar {
     width: 16px;
   }

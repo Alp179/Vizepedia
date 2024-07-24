@@ -22,7 +22,7 @@ const FlagContainer = styled.div`
   transform: translateX(50%) translateY(-100%) rotate(31deg);
   width: 700px;
   height: 450px;
-  z-index: 1000;
+  z-index: 1;
   border-radius: 10%;
   overflow: hidden;
 
