@@ -45,6 +45,7 @@ const fadeIn = keyframes`
 `;
 
 const StyledNavLink = styled(NavLink)`
+  width: 90%;
   &:link,
   &:visited {
     display: flex;
