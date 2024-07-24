@@ -5,10 +5,9 @@ import MobileMenu from "./MobileMenu"; // Yeni hamburger menü komponenti
 import styled from "styled-components";
 
 const StyledAppLayout = styled.div`
-  overflow-y: scroll!important;
   overflow: clip;
   display: grid;
-  grid-template-columns:26rem 1fr;
+  grid-template-columns: 26rem 1fr;
   grid-template-rows: auto 1fr;
   height: 100dvh;
   background: var(--color-grey-1);
@@ -27,6 +26,9 @@ const StyledAppLayout = styled.div`
 `;
 
 const Main = styled.main`
+  overflow-y: scroll;
+  overflow-x: clip;
+  z-index: 1000;
   backdrop-filter: blur(0px);
   padding: 4rem 4.8rem 6.4rem;
   background: rgba(255, 255, 255, 0.2);

@@ -272,22 +272,24 @@ function MainNav() {
             </Modal.Window>
           </Modal>
         </li>
-        {applications.map((app) => (
-          <li key={app.id} style={{ display: "flex", alignItems: "center" }}>
-            <StyledNavLink to={`/dashboard/${app.id}`}>
-              {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
-              {applications.length > 1 && (
-                <DeleteButton
-                  className="delete-button"
-                  onClick={() => handleDelete(app.id)}
-                >
-                  <MdClose size={20} className="icon" />
-                  <Tooltip className="tooltip">Sil</Tooltip>
-                </DeleteButton>
-              )}
-            </StyledNavLink>
-          </li>
-        ))}
+        <div style={{overflowY: "scroll"}}>
+          {applications.map((app) => (
+            <li key={app.id} style={{ display: "flex", alignItems: "center" }}>
+              <StyledNavLink to={`/dashboard/${app.id}`}>
+                {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
+                {applications.length > 1 && (
+                  <DeleteButton
+                    className="delete-button"
+                    onClick={() => handleDelete(app.id)}
+                  >
+                    <MdClose size={20} className="icon" />
+                    <Tooltip className="tooltip">Sil</Tooltip>
+                  </DeleteButton>
+                )}
+              </StyledNavLink>
+            </li>
+          ))}
+        </div>
         <li>
           <StyledNavLink to="/wellcome-2">
             <HiPlus /> <span className="sidebartext">Yeni</span>
