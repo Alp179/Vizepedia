@@ -51,6 +51,22 @@ const Main = styled.main`
     border-radius: 10px;
     border: 3px solid var(--color-grey-2);
   }
+  @media (max-width: 450px) {
+    &::-webkit-scrollbar {
+      width: 1px;
+    }
+  
+    &::-webkit-scrollbar-track {
+      background: none;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--color-brand-600);
+      border-radius: 10px;
+      border: 3px solid var(--color-grey-2);
+    }
+
+  }
 `;
 
 const Container = styled.div`

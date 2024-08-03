@@ -353,11 +353,11 @@ function Dashboard() {
       )}
       <CustomRow type="horizontal">
         {createdAt && (
-          <CreatedAtContainer>
+          <CreatedAtContainer style={{zIndex: "3000"}}>
             Oluşturulma tarihi: {createdAt}
           </CreatedAtContainer>
         )}
-        <Heading as="h1">Hoş geldin Loko</Heading>
+        <Heading style={{zIndex: "3000"}} as="h1">Hoş geldin Loko</Heading>
       </CustomRow>
       <StepIndicator
         steps={stepLabels}

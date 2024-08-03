@@ -13,21 +13,21 @@ import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 const StepsContainer = styled.div`
-  margin-left: 0px;
-  max-width: 1000px;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 3000;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 16px;
+  width: auto!important;
+  margin-right: auto;
+  padding: 8px;
+  align-items: flex-start;
   display: flex;
   justify-content: flex-start;
   position: relative;
   margin-bottom: 100px;
   @media (max-width: 1425px) {
     margin-left: -100px;
-    width: 600px !important;
-  }
-  @media (max-width: 1270px) {
-    width: 400px !important;
-  }
-  @media (max-width: 820px) {
-    width: 300px !important;
   }
   @media (max-width: 710px) {
     width: 200px !important;
@@ -91,11 +91,12 @@ const StepName = styled.div`
     max-width: 50px;
   }
   @media (max-width: 710px) {
-    max-width: 250px;
+    max-width: 150px;
     font-size: 18px;
+    text-overflow: ellipsis!important;
   }
   @media (max-height: 830px) {
-    font-size: 13px!important;
+    font-size: 13px !important;
     margin-top: 0px;
   }
 `;
