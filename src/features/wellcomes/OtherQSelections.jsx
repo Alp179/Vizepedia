@@ -14,6 +14,7 @@ const Container = styled.div`
 }
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   align-items: center;
   margin-top: 10px;
   padding: 18px;
@@ -33,7 +34,7 @@ const SelectionButton = styled.button`
   color: ${(props) => (props.isSelected ? "#ffffff" : "#000000")};
   border: 1px solid ${(props) => (props.isSelected ? "#00c853" : "transparent")};
   border-radius: 16px;
-  padding: 1rem 1rem;
+  padding: 0.4rem 1rem;
   cursor: pointer;
   font-size: 1.4rem;
   margin: 0.5rem;
@@ -50,7 +51,7 @@ const SelectionButton = styled.button`
 `;
 
 const Section = styled.div`
-  margin-bottom: 1rem;
+  margin-bottom: 0.1rem;
   text-align: center;
 
   h4 {
@@ -66,7 +67,6 @@ const ButtonGroup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
 `;
 
 const HorizontalButtonGroup = styled.div`

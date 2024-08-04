@@ -15,7 +15,6 @@ const StyledNavLink = styled(NavLink)`
     display: flex;
     align-items: center;
     gap: 1.2rem;
-
     color: var(--color-grey-600);
     font-size: 1.6rem;
     font-weight: 500;

@@ -109,15 +109,22 @@ const RadioLabel = styled.label`
 `;
 
 const Container = styled.div`
+  max-height: calc(100vh - 450px);
+  overflow: auto; 
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  border-radius: 16px;
   gap: 20px;
-  max-width: 900px; /* Genişlik sınırı */
-  position: relative; /* Bu satırı ekleyin */
+  max-width: 900px;
+  position: relative; 
+  background-color: ${({ hasOverflow }) => (hasOverflow ? "rgba(255, 255, 255, 0.37)" : "transparent")};
+  
+  -webkit-backdrop-filter: ${({ hasOverflow }) => (hasOverflow ? "blur(6.3px)" : "none")};
+  border: ${({ hasOverflow }) => (hasOverflow ? "1px solid rgba(255, 255, 255, 0.52)" : "none")};
 
   @media (max-width: 768px) {
-    justify-content: space-around; /* Mobil ekranlarda düzgün sıralama için */
+    justify-content: space-around; 
   }
   @media (max-width: 400px) {
     gap: 10px;
@@ -129,7 +136,6 @@ const DropdownContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  
 `;
 
 const DropdownButton = styled.button`
@@ -154,7 +160,7 @@ const DropdownButton = styled.button`
   }
 
   .chevron {
-   margin-left: 5px;
+    margin-left: 5px;
   }
 
   &:hover {
@@ -240,7 +246,9 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
   );
   const [schengenSelected, setSchengenSelected] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [hasOverflow, setHasOverflow] = useState(false); // Yeni state
+  const containerRef = useRef(null); // Yeni ref
+  const dropdownRef = useRef(null); // Dropdown ref'i ekledik
 
   useEffect(() => {
     if (!schCounData || !mainCounData) return;
@@ -295,12 +303,27 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
     };
   }, []);
 
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (containerRef.current) {
+        const { scrollHeight, clientHeight } = containerRef.current;
+        setHasOverflow(scrollHeight > clientHeight);
+      }
+    };
+
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+    return () => {
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, []);
+
   if (isLoading) {
     return <Spinner />;
   }
 
   return (
-    <Container>
+    <Container ref={containerRef} hasOverflow={hasOverflow}>
       <DropdownContainer ref={dropdownRef}>
         <StyledSelectContainer
           isSelected={schengenSelected}
