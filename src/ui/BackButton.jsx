@@ -19,7 +19,7 @@ function BackButton() {
         navigate(-1); // Bir adım geri git
       }}
     >
-      &larr; Back
+      &larr; Geri
     </Button>
   );
 }

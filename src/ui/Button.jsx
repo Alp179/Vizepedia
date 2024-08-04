@@ -35,8 +35,9 @@ const sizes = {
     position: fixed;
     z-index: 2991;
     @media (max-width: 450px) {
-      height: 6rem;
-      width: 120px;
+      height: 40px;
+      font-size: 16px;
+      width: 80px;
     }
   `,
   dash: css`
