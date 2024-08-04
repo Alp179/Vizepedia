@@ -33,7 +33,7 @@ const sizes = {
     height: 7rem;
     width: 160px;
     position: fixed;
-    z-index: 3000;
+    z-index: 2991;
     @media (max-width: 450px) {
       height: 6rem;
       width: 120px;

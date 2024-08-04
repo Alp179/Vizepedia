@@ -20,7 +20,7 @@ const StepsContainer = styled.div`
   border-radius: 16px;
   width: auto!important;
   margin-right: auto;
-  padding: 8px;
+  padding: 14px;
   align-items: flex-start;
   display: flex;
   justify-content: flex-start;

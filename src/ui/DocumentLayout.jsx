@@ -24,7 +24,7 @@ const Main = styled.main`
 `;
 
 const Container = styled.div`
-padding-top: 50px;
+  padding-top: 50px;
   width: 800px;
   height: 100%;
   margin: 0 auto;

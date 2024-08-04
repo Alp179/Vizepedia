@@ -78,7 +78,7 @@ const MenuIcon = styled.div.attrs((props) => ({
 `;
 
 const MenuContainer = styled.div`
-z-index: 3000;
+  z-index: 3000;
   position: fixed;
   top: 0;
   right: 0;
@@ -106,14 +106,14 @@ z-index: 3000;
 `;
 
 const MenuHeader = styled.div`
-z-index: 3000;
+  z-index: 3000;
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
 
 const MenuContent = styled.div`
-z-index: 3000;
+  z-index: 3000;
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
@@ -121,7 +121,7 @@ z-index: 3000;
 `;
 
 const StyledNavLink = styled.div`
-z-index: 3000;
+  z-index: 3000;
   display: flex;
   align-items: center;
   gap: 1rem;

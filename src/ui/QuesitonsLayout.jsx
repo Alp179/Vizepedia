@@ -1,7 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
-import MobileMenu from "./MobileMenu";
 import BackButton from "./BackButton";
 import ProgressBar from "@ramonak/react-progress-bar";
 
@@ -26,14 +25,14 @@ const Container = styled.div`
 
 const ProgressBarContainer = styled.div`
   width: 80%; /* Progress bar uzunluğunu %20 kısalttık */
-  padding: 1rem;
+  padding: 4rem 1rem;
   padding-top: 150px;
   margin: -60px auto 0 auto;
 
   position: relative;
 
   @media (max-width: 710px) {
-    padding-top: 0;
+    padding-top: 70px;
     width: 95%;
     margin-top: 20px;
   }
@@ -72,11 +71,7 @@ const ProgressBarReflection = styled.div`
   animation: ${progressAnimation} 1s ease-in-out;
 `;
 
-const MobileMenuWrapper = styled.div`
-  @media (min-width: 711px) {
-    display: none;
-  }
-`;
+
 
 // Elipslerin olduğu konteyner
 const EllipsesContainer = styled.div`
@@ -132,9 +127,6 @@ function QuestionsLayout() {
   return (
     <LoginLayout>
       <BackButton>Geri Dön</BackButton>
-      <MobileMenuWrapper>
-        <MobileMenu />
-      </MobileMenuWrapper>
       <Header />
       <div className="question-progressAndContent-container">
         <ProgressBarContainer>

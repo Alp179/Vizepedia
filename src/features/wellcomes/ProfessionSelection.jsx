@@ -4,6 +4,9 @@ import Spinner from "../../ui/Spinner";
 import { useProfessions } from "./useProfession";
 
 const Container = styled.div`
+  @media (max-height: 885px) {
+    height: 400px;
+  }
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,6 +29,9 @@ const SelectionButton = styled.button`
   border: 1px solid ${(props) => (props.isSelected ? "#00c853" : "transparent")};
   border-radius: 16px;
   padding: 1rem 1rem;
+  @media (max-height: 885px) {
+    padding: 0.74rem 0.5rem;
+  }
   cursor: pointer;
   font-size: 1.4rem;
   margin: 0.3rem 0; /* Dikey sıralama için üst ve alt margin */
@@ -46,6 +52,9 @@ const ButtonGroup = styled.div`
   flex-direction: column; /* Dikey sıralama */
   align-items: center;
   gap: 5px; /* Butonlar arasındaki boşluğu azalt */
+  @media (max-height: 885px) {
+    gap: 0;
+  }
 `;
 
 function ProfessionSelection({ onProfessionChange, selectedProfession }) {
