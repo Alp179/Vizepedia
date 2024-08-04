@@ -422,7 +422,7 @@ const countryToCode = {
   Çin: "cn",
   BAE: "ae",
   Avustralya: "au",
-  Birleşik_Krallık: "gb",
+  "Birleşik Krallık": "gb",
   Hırvatistan: "hr",
 };
 

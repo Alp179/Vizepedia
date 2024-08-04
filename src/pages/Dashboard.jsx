@@ -26,53 +26,52 @@ const FlagContainer = styled.div`
   border-radius: 10%;
   overflow: hidden;
 
-
   @media (min-width: 1870px) {
-    right: -10%!important;
+    right: -10% !important;
   }
 
   @media (min-width: 1970px) {
-    right: -15%!important;
+    right: -15% !important;
   }
 
   @media (min-width: 2030px) {
-    right: -20%!important;
+    right: -20% !important;
   }
 
   @media (min-width: 2130px) {
-    right: -30%!important;
+    right: -30% !important;
   }
 
   @media (min-width: 2270px) {
-    right: -40%!important;
+    right: -40% !important;
   }
 
   @media (min-width: 2400px) {
-    right: -50%!important;
+    right: -50% !important;
   }
 
   @media (min-width: 2530px) {
-    right: -60%!important;
+    right: -60% !important;
   }
 
   @media (min-width: 2650px) {
-    right: -70%!important;
+    right: -70% !important;
   }
 
   @media (min-width: 2800px) {
-    right: -85%!important;
+    right: -85% !important;
   }
 
   @media (min-width: 2950px) {
-    right: -100%!important;
+    right: -100% !important;
   }
 
   @media (min-width: 3100px) {
-    right: -115%!important;
+    right: -115% !important;
   }
 
   @media (min-width: 3250px) {
-    right: -130%!important;
+    right: -130% !important;
   }
 
   @media (min-width: 1625px) {
@@ -91,11 +90,10 @@ const FlagContainer = styled.div`
   }
 
   @media (max-width: 1400px) {
-    width: 600px!important;
-    height: 350px!important;
+    width: 600px !important;
+    height: 350px !important;
     top: 20%;
-  } 
-
+  }
 
   @media (max-width: 890px) {
     top: 10%;
@@ -145,7 +143,7 @@ const BlurredFlagBackground = styled.div`
   filter: blur(190px);
 
   z-index: 0; /* Updated to ensure it's in the background */
-  
+
   @media (max-width: 1625px) {
     top: 60%;
   }
@@ -353,11 +351,13 @@ function Dashboard() {
       )}
       <CustomRow type="horizontal">
         {createdAt && (
-          <CreatedAtContainer style={{zIndex: "3000"}}>
+          <CreatedAtContainer style={{ zIndex: "3000" }}>
             Oluşturulma tarihi: {createdAt}
           </CreatedAtContainer>
         )}
-        <Heading style={{zIndex: "3000"}} as="h1">Hoş geldin Loko</Heading>
+        <Heading style={{ zIndex: "3000" }} as="h1">
+          Hoş geldin Loko
+        </Heading>
       </CustomRow>
       <StepIndicator
         steps={stepLabels}
@@ -372,7 +372,10 @@ function Dashboard() {
         </FlagContainer>
       )}
       {isFirmLocationSuccess && firmLocation && (
-        <div style={{zIndex: "2000"}} dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }} />
+        <div
+          style={{ zIndex: "2000" }}
+          dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
+        />
       )}
     </div>
   );

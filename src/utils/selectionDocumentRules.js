@@ -27,8 +27,8 @@ const selectionDocumentRules = {
       "Ekonomik Gösterge Belgeleri",
       "Son 3 Aylık Banka Hesap Dökümü",
     ],
-    Ogrenci: ["Öğrenci Belgesi", "Sponsor Evrakları"],
-    Isci: [
+    Öğrenci: ["Öğrenci Belgesi", "Sponsor Evrakları"],
+    Çalışan: [
       "SGK İşe Giriş Belgesi",
       "SGK Tescil ve Hizmet Dökümü",
       "Son 3 Aylık Maaş Bordrosu",
@@ -42,7 +42,7 @@ const selectionDocumentRules = {
       "Sponsor Evrakları",
       "Son 3 Aylık Banka Hesap Dökümü",
     ],
-    IsVeren: [], // İş verenler için gerekli belgeler
+    "İs&nbsp;Veren": [], // İş verenler için gerekli belgeler
   },
   vehicle: {
     Uçak: ["Uçak Rezervasyonu"],

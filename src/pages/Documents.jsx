@@ -6,6 +6,10 @@ import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import { DocumentsContext } from "../context/DocumentsContext";
 import { completeDocument, uncompleteDocument } from "../utils/supabaseActions";
 import Spinner from "../ui/Spinner";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
+import { getDocumentsForSelections } from "../utils/documentsFilter";
+import { fetchDocumentDetails } from "../utils/documentFetch";
 
 const PageContainer = styled.div`
   display: flex;
@@ -17,6 +21,7 @@ const PageContainer = styled.div`
   background: var(--color-grey-51);
   border-radius: 20px;
   box-sizing: border-box;
+  position: relative;
 
   @media (max-width: 680px) {
     flex-direction: column;
@@ -186,15 +191,62 @@ const RelatedStepsTitle = styled.h3`
   }
 `;
 
+const NavigationButton = styled.button`
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+
+  &:hover {
+    background-color: #2980b9;
+  }
+
+  &.left {
+    left: 10px;
+  }
+
+  &.right {
+    right: 10px;
+  }
+`;
+
 const DocumentDetail = () => {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
+  const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0);
   const navigate = useNavigate();
-  const { selectedDocument } = useSelectedDocument();
+  const { selectedDocument, setSelectedDocument } = useSelectedDocument();
   const {
     state: { completedDocuments },
     dispatch,
   } = useContext(DocumentsContext);
+
+  const { data: userSelections } = useQuery({
+    queryKey: ["userSelections", userId, applicationId],
+    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
+    enabled: !!userId && !!applicationId,
+  });
+
+  const documentNames = userSelections
+    ? getDocumentsForSelections(userSelections)
+    : [];
+
+  const { data: documents, isSuccess: isDocumentsSuccess } = useQuery({
+    queryKey: ["documentDetails", documentNames],
+    queryFn: () => fetchDocumentDetails(documentNames),
+    enabled: !!documentNames.length,
+  });
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -203,6 +255,29 @@ const DocumentDetail = () => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (isDocumentsSuccess && documents && !selectedDocument) {
+      const initialDocument = documents[0];
+      if (initialDocument) {
+        setSelectedDocument(initialDocument);
+        setCurrentDocumentIndex(0);
+      }
+    }
+  }, [isDocumentsSuccess, documents, selectedDocument, setSelectedDocument]);
+
+  useEffect(() => {
+    if (selectedDocument && documents) {
+      const index = documents.findIndex(
+        (doc) => doc.docName === selectedDocument.docName
+      );
+      setCurrentDocumentIndex(index);
+    }
+  }, [selectedDocument, documents]);
+
+  if (!selectedDocument) {
+    return <Spinner />;
+  }
 
   const isCompleted =
     completedDocuments[applicationId]?.[selectedDocument?.docName];
@@ -234,12 +309,25 @@ const DocumentDetail = () => {
     }
   };
 
-  if (!selectedDocument) {
-    return <Spinner />;
-  }
+  const handleNavigation = (direction) => {
+    if (direction === "prev" && currentDocumentIndex > 0) {
+      setSelectedDocument(documents[currentDocumentIndex - 1]);
+    } else if (
+      direction === "next" &&
+      currentDocumentIndex < documents.length - 1
+    ) {
+      setSelectedDocument(documents[currentDocumentIndex + 1]);
+    }
+  };
 
   return (
     <PageContainer>
+      <NavigationButton
+        className="left"
+        onClick={() => handleNavigation("prev")}
+      >
+        &lt;
+      </NavigationButton>
       <InfoContainer>
         <DocumentMeta>
           Tahmini Tamamlama Süresi: {selectedDocument.estimatedCompletionTime}
@@ -249,7 +337,6 @@ const DocumentDetail = () => {
           {selectedDocument.docDescription}
         </DocumentDescription>
         <SourceButton>Bağlantı {selectedDocument.docSource}</SourceButton>
-
         <RelatedSteps>
           <RelatedStepsTitle>
             Bu Belge ile Bağlantılı İşlemler
@@ -270,13 +357,15 @@ const DocumentDetail = () => {
           src={selectedDocument.docImage}
           alt={selectedDocument.docName}
         />
-        <ImageText>
-          Temin Yeri:
-        </ImageText>
-        <ImageText>
-          Tür: 
-        </ImageText>
+        <ImageText>Temin Yeri:</ImageText>
+        <ImageText>Tür:</ImageText>
       </ImageContainer>
+      <NavigationButton
+        className="right"
+        onClick={() => handleNavigation("next")}
+      >
+        &gt;
+      </NavigationButton>
     </PageContainer>
   );
 };
