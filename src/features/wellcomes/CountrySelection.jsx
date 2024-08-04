@@ -109,7 +109,7 @@ const RadioLabel = styled.label`
 `;
 
 const Container = styled.div`
-  max-height: calc(100vh - 450px);
+  max-height: calc(100vh - 40rem);
   overflow: auto; 
   display: flex;
   flex-wrap: wrap;
