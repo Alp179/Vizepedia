@@ -9,6 +9,9 @@ import { useKids } from "./useKids";
 import { useAccommodations } from "./useAccommodations";
 
 const Container = styled.div`
+@media (max-height: 925px) {
+  height: 450px;
+}
   display: flex;
   flex-direction: column;
   align-items: center;
