@@ -117,7 +117,7 @@ function AllDocs() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "6px", zIndex: "3000" }}>
       <h2>Tüm Belgeler</h2>
       <div>Başvurunuzda gerekli olan tüm belgeler</div>
 

@@ -37,6 +37,7 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-900: #111827;
   --color-grey-901: #00ffa2;
   --color-grey-902: #004466;
+  --color-grey-55: rgba(255, 255, 255, 0.5);
   --stroke-ham-1: #000;
 
   --color-blue-100: #e0f2fe;
@@ -53,7 +54,7 @@ const GlobalStyles = createGlobalStyle`/*
   --color-red-100: #fee2e2;
   --color-red-700: #b91c1c;
   --color-red-800: #991b1b;
-
+  --opacity-1: none;
   --backdrop-color: rgba(255, 255, 255, 0.1);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -86,6 +87,7 @@ const GlobalStyles = createGlobalStyle`/*
 --color-grey-900: #f9fafb;
 --color-grey-901: transparent;
 --color-grey-902: transparent;
+--color-grey-55: #091522;
 --stroke-ham-1: #999;
 
 --color-blue-100: #075985;
@@ -102,6 +104,8 @@ const GlobalStyles = createGlobalStyle`/*
 --color-red-100: #fee2e2;
 --color-red-700: #b91c1c;
 --color-red-800: #991b1b;
+
+--opacity-1: 0.8;
 
 --backdrop-color: rgba(0, 0, 0, 0.3);
 
@@ -285,6 +289,7 @@ FOR DARK MODE
 --color-grey-700: #e5e7eb;
 --color-grey-800: #f3f4f6;
 --color-grey-900: #f9fafb;
+
 
 --color-blue-100: #075985;
 --color-blue-700: #e0f2fe;

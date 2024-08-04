@@ -119,7 +119,6 @@ const Container = styled.div`
   max-width: 900px;
   position: relative; 
   background-color: ${({ hasOverflow }) => (hasOverflow ? "rgba(255, 255, 255, 0.37)" : "transparent")};
-  
   -webkit-backdrop-filter: ${({ hasOverflow }) => (hasOverflow ? "blur(6.3px)" : "none")};
   border: ${({ hasOverflow }) => (hasOverflow ? "1px solid rgba(255, 255, 255, 0.52)" : "none")};
 

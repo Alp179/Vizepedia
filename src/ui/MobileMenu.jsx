@@ -83,15 +83,16 @@ const MenuContainer = styled.div`
   top: 0;
   right: 0;
   width: 60%;
+  opacity: var(--opacity-1);
   @media (max-width: 500px) {
     width: 80%;
   }
   height: 100vh;
-  background: rgba(255, 255, 255, 0.37);
+  background: var(--color-grey-55);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(6.3px);
-  -webkit-backdrop-filter: blur(6.3px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.52);
   z-index: 1100; /* Menüyü açılır hale getirmek için z-index değeri */
   display: flex;
@@ -146,12 +147,13 @@ const DeleteButton = styled.button`
 
 const Overlay = styled.div`
   position: fixed;
+  backdrop-filter: blur(4px);
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background: transparent;
-  z-index: 1000; /* Menüden ve menü simgesinden daha düşük z-index değeri */
+  z-index: 1100; /* Menüden ve menü simgesinden daha düşük z-index değeri */
   display: ${(props) => (props.isOpen ? "block" : "none")};
 `;
 

@@ -38,8 +38,10 @@ const VerifiedIcon = styled.img`
 `;
 
 const DocumentCard = styled.div`
-  background: ${(props) => (props.isCompleted ? "#87F9CD" : "#fafafa")};
+  background: ${(props) => (props.isCompleted ? "#87F9CD" : "rgba(255, 255, 255, 0.37)")};
   border-radius: 8px;
+  -webkit-backdrop-filter: blur(6.3px);
+  border:1px solid rgba(255, 255, 255, 0.52);
   padding: 16px;
   margin-bottom: 10px;
   display: flex;
