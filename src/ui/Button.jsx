@@ -60,7 +60,7 @@ const sizes = {
     width: 200px;
     padding: 1.3rem;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
   `,
 };
 

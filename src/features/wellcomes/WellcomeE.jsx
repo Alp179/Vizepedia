@@ -49,6 +49,7 @@ const StyledNavLink = styled(NavLink)`
 const QuestionContainer = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 12px;
   align-items: center;
 `;
 

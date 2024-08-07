@@ -30,7 +30,7 @@ const StepsContainer = styled.div`
     margin-left: -100px;
   }
   @media (max-width: 710px) {
-    width: 200px !important;
+    width: 240px !important;
     flex-flow: column;
     margin-left: -120px;
     gap: 20px;
@@ -91,6 +91,9 @@ const StepName = styled.div`
     max-width: 50px;
   }
   @media (max-width: 710px) {
+    &:hover {
+      max-width: 200px;
+    }
     max-width: 150px;
     font-size: 18px;
     text-overflow: ellipsis!important;

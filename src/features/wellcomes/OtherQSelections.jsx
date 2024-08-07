@@ -10,7 +10,7 @@ import { useAccommodations } from "./useAccommodations";
 
 const Container = styled.div`
 @media (max-height: 925px) {
-  height: 450px;
+  height: 400px;
 }
   display: flex;
   flex-direction: column;
@@ -40,6 +40,9 @@ const SelectionButton = styled.button`
   margin: 0.5rem;
   width: 100%;
   max-width: 140px;
+  @media (max-height: 925px) {
+    padding: 0.1rem 1rem;
+  }
 
   &:hover {
     border: 1px solid #00c853;
@@ -61,6 +64,7 @@ const Section = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+ 
 `;
 
 const ButtonGroup = styled.div`
@@ -81,6 +85,9 @@ const Divider = styled.div`
   height: 1px;
   background-color: rgba(0, 0, 0, 0.2);
   margin: 1rem 0;
+  @media (max-height: 925px) {
+    margin: 0.3rem 0;
+  }
 `;
 
 const VerticalDivider = styled.div`
