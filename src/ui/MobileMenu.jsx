@@ -109,7 +109,8 @@ const MenuContainer = styled.div`
 const MenuHeader = styled.div`
   z-index: 3000;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 42px;
   align-items: center;
 `;
 
@@ -118,7 +119,7 @@ const MenuContent = styled.div`
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.5rem;
 `;
 
 const StyledNavLink = styled.div`
@@ -411,6 +412,7 @@ const MobileMenu = () => {
       <MenuContainer isOpen={isOpen} ref={menuRef}>
         <MenuHeader>
           <UserAvatar /> {/* Kullanıcı avatarı ve adı */}
+          <DarkModeToggle />
         </MenuHeader>
         <MenuContent>
           <StyledNavLink
@@ -421,24 +423,29 @@ const MobileMenu = () => {
           >
             <HiDocument /> Tüm Belgeler
           </StyledNavLink>
-          {applications.map((app) => (
-            <div key={app.id} style={{ display: "flex", alignItems: "center" }}>
-              <StyledNavLink
-                onClick={() => {
-                  navigate(`/dashboard/${app.id}`);
-                  setIsOpen(false);
-                }}
+          <div className="mobile-scrolldiv">
+            {applications.map((app) => (
+              <div
+                key={app.id}
+                style={{ display: "flex", alignItems: "center" }}
               >
-                {app.ans_country} Visa - {app.ans_purpose} -{" "}
-                {app.ans?.profession}
-              </StyledNavLink>
-              {applications.length > 1 && (
-                <DeleteButton onClick={() => handleDelete(app.id)}>
-                  <MdClose size={20} />
-                </DeleteButton>
-              )}
-            </div>
-          ))}
+                <StyledNavLink
+                  onClick={() => {
+                    navigate(`/dashboard/${app.id}`);
+                    setIsOpen(false);
+                  }}
+                >
+                  {app.ans_country} Visa - {app.ans_purpose} -{" "}
+                  {app.ans?.profession}
+                </StyledNavLink>
+                {applications.length > 1 && (
+                  <DeleteButton onClick={() => handleDelete(app.id)}>
+                    <MdClose size={20} />
+                  </DeleteButton>
+                )}
+              </div>
+            ))}
+          </div>
           <StyledNavLink
             onClick={() => {
               navigate("/wellcome-2");
@@ -452,7 +459,6 @@ const MobileMenu = () => {
           >
             Oturumu Kapat
           </StyledNavLink>
-          <DarkModeToggle />
         </MenuContent>
       </MenuContainer>
 
