@@ -18,7 +18,9 @@ const StepsContainer = styled.div`
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-radius: 16px;
-  width: auto!important;
+  width: auto;
+  max-width: 1000px;
+  overflow: auto;
   margin-right: auto;
   padding: 14px;
   align-items: flex-start;
@@ -26,11 +28,22 @@ const StepsContainer = styled.div`
   justify-content: flex-start;
   position: relative;
   margin-bottom: 100px;
+  
   @media (max-width: 1425px) {
     margin-left: -100px;
   }
+  @media (max-width: 1330px) {
+    max-width: 820px;
+  }
+  @media (max-width: 1110px) {
+    max-width: 620px;
+  }
+  @media (max-width: 890px) {
+    max-width: 450px;
+  }
   @media (max-width: 710px) {
     width: 240px !important;
+    overflow: visible;
     flex-flow: column;
     margin-left: -120px;
     gap: 20px;
