@@ -228,17 +228,31 @@ const countryToCode = {
 
 const CreatedAtContainer = styled.div`
   font-size: 1.4rem;
-  color: var(--color-grey-700);
-  margin-top: -80px;
-  position: absolute;
+  color: var(--color-grey-700); 
   @media (max-width: 1425px) {
     margin-left: -100px;
+  }
+  @media (max-width: 710px) {
+    width: 200px;
+    @media (max-height: 830px) {
+      font-size: 1.3rem;
+    }
   }
 `;
 
 const CustomRow = styled(Row)`
-  position: relative;
   margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  @media (max-width: 710px) {
+    @media (max-height: 830px) {
+      margin-bottom: -30px;
+      gap: 8px;
+    }
+  }
 `;
 
 function Dashboard() {
@@ -351,7 +365,7 @@ function Dashboard() {
       )}
       <CustomRow type="horizontal">
         {createdAt && (
-          <CreatedAtContainer style={{ zIndex: "3000" }}>
+          <CreatedAtContainer style={{ zIndex: "3000"}}>
             Oluşturulma tarihi: {createdAt}
           </CreatedAtContainer>
         )}

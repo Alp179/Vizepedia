@@ -15,13 +15,13 @@ const Heading = styled.h1`
         margin-left: -100px;
       }
       @media (max-width: 710px) {
-        margin-top: 40px;
         margin-left: -100px;
+        width: 250px;
         @media (max-height: 830px) {
-          font-size: 2.4rem;
-          margin-bottom: -30px;
+          font-size: 2.6rem;
         }
       }
+
     `}
 
   ${(props) =>
