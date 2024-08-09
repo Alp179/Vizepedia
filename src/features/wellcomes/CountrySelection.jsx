@@ -26,9 +26,12 @@ const StyledSelectContainer = styled.div`
   border: ${({ isSelected }) => (isSelected ? "2px solid #3498db" : "none")};
   transition: background-color 0.3s ease;
 
-  @media (max-width: 400px) {
+  @media (max-width: 450px) {
     width: 135px;
     height: 135px;
+  }
+
+  @media (max-width: 400px) {
     font-size: 15px;
   }
 
@@ -83,11 +86,11 @@ const RadioLabel = styled.label`
 
   @media (max-width: 450px) {
     font-size: 16px;
+    width: 135px;
+    height: 135px;
   }
 
   @media (max-width: 400px) {
-    width: 135px;
-    height: 135px;
     font-size: 15px;
   }
 
@@ -125,8 +128,8 @@ const Container = styled.div`
   @media (max-width: 768px) {
     justify-content: space-around; 
   }
-  @media (max-width: 400px) {
-    gap: 10px;
+  @media (max-width: 450px) {
+    gap: 0;
   }
 `;
 

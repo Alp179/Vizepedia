@@ -66,11 +66,11 @@ const Heading = styled.h1`
         font-size: 2.5rem;
       }
       @media (max-width: 710px) {
-        margin-top: 50px;
+        margin-top: 40px;
         font-size: 2.2rem;
       }
       @media (max-width: 450px) {
-        margin-top: 50px;
+        margin-top: 30px;
         margin-bottom: 0px;
         width: 300px;
         font-size: 2rem;
@@ -128,7 +128,6 @@ const Heading = styled.h1`
         font-size: 12px;
       }
     `}
-    
 
     line-height:1.4;
 `;

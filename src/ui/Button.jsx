@@ -34,6 +34,10 @@ const sizes = {
     width: 160px;
     position: fixed;
     z-index: 2991;
+    @media (max-width: 710px) {
+      height: 60px;
+      width: 100px;
+    }
     @media (max-width: 450px) {
       height: 40px;
       font-size: 16px;

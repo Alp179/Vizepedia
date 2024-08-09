@@ -224,13 +224,13 @@ ul {
   gap: 2px;
   border-radius: 16px;
   max-height: 250px;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .question-progressAndContent-container {
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 0px;
   @media (max-width: 710px) {
     gap: 0;
   }
@@ -247,7 +247,6 @@ ul {
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
   }
-
 }
 
 .subtext {

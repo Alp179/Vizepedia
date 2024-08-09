@@ -124,6 +124,7 @@ const MenuContent = styled.div`
 
 const StyledNavLink = styled.div`
   z-index: 3000;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   gap: 1rem;

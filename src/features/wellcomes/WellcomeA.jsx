@@ -10,7 +10,7 @@ function WellcomeA() {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 36px;
+    gap: 24px;
   `;
 
   const HeadingWidth = styled.p`

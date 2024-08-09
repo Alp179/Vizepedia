@@ -29,9 +29,12 @@ const StyledSelectContainer = styled.div`
     background: rgba(255, 255, 255, 0.7); /* Hover durumu için daha açık renk */
   }
 
-  @media (max-width: 400px) {
+  @media (max-width: 450px) {
     width: 135px;
     height: 135px;
+  }
+
+  @media (max-width: 400px) {
     font-size: 15px;
   }
 
@@ -64,9 +67,12 @@ const RadioLabel = styled.label`
   border: ${({ checked }) => (checked ? "2px solid #3498db" : "none")};
   transition: background-color 0.3s ease, transform 0.2s ease;
 
-  @media (max-width: 400px) {
+  @media (max-width: 450px) {
     width: 135px;
     height: 135px;
+  }
+
+  @media (max-width: 400px) {
     font-size: 15px;
   }
 
@@ -115,8 +121,8 @@ const Container = styled.div`
   @media (max-width: 768px) {
     justify-content: space-around; /* Mobil ekranlarda düzgün sıralama için */
   }
-  @media (max-width: 400px) {
-    gap: 10px;
+  @media (max-width: 450px) {
+    gap: 0;
   }
 `;
 

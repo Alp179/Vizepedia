@@ -22,6 +22,7 @@ const PageContainer = styled.div`
   border-radius: 20px;
   box-sizing: border-box;
   position: relative;
+  
 
   @media (max-width: 680px) {
     flex-direction: column;

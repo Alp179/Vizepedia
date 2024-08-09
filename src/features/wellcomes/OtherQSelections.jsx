@@ -9,11 +9,9 @@ import { useKids } from "./useKids";
 import { useAccommodations } from "./useAccommodations";
 
 const Container = styled.div`
-@media (max-height: 925px) {
-  height: 400px;
-}
   display: flex;
   flex-direction: column;
+  gap: 16px;
   justify-content: space-around;
   align-items: center;
   margin-top: 10px;
@@ -26,6 +24,12 @@ const Container = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.52);
   width: 100%;
   max-width: 400px;
+  @media (max-height: 810px) {
+    gap: 8px;
+  }
+  @media (max-width: 450px) {
+    max-width: 300px;
+  }
 `;
 
 const SelectionButton = styled.button`

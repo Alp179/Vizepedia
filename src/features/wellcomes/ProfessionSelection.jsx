@@ -4,9 +4,6 @@ import Spinner from "../../ui/Spinner";
 import { useProfessions } from "./useProfession";
 
 const Container = styled.div`
-  @media (max-height: 885px) {
-    height: 400px;
-  }
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,6 +17,9 @@ const Container = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.52);
   width: 100%;
   max-width: 400px;
+  @media (max-width: 450px) {
+    max-width: 300px;
+  }
 `;
 
 const SelectionButton = styled.button`
@@ -28,7 +28,7 @@ const SelectionButton = styled.button`
   color: ${(props) => (props.isSelected ? "#ffffff" : "#000000")};
   border: 1px solid ${(props) => (props.isSelected ? "#00c853" : "transparent")};
   border-radius: 16px;
-  padding: 1rem 1rem;
+  padding: 0.7rem 1rem;
   @media (max-height: 885px) {
     padding: 0.74rem 0.5rem;
   }

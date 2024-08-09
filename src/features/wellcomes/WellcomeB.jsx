@@ -20,7 +20,7 @@ function WellcomeB() {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 36px;
+    gap: 12px;
   `;
 
   return (
