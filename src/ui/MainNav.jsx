@@ -104,11 +104,19 @@ const DeleteButton = styled.button`
   position: absolute;
   right: 10px;
   display: none;
+  margin-right: -10px;
   align-items: center;
   justify-content: center;
   width: 2.4rem;
   height: 2.4rem;
 
+  @media (max-width: 1300px){
+    margin-right: -5px;
+  }
+  @media (max-width: 1050px) {
+    width: 2rem;
+    height: 2rem;
+  }
   &:hover {
     color: darkred;
   }
@@ -134,14 +142,18 @@ const Tooltip = styled.span`
   top: 0%;
   left: -15%;
   transform: translate(-50%, -50%) scale(0.5);
-  background: red;
+  background: #A40013;
   color: white;
-  padding: 1.5rem 1.7rem;
+  padding: 1.5rem 1.5rem;
   border-radius: 3px;
   font-size: 1.3rem;
   opacity: 0;
   display: none;
   transition: opacity 1.3s ease-in-out, transform 1.3s ease-in-out;
+  @media (max-width: 1050px) {
+    padding: 1.3rem 1.3rem;
+    margin-top: -5px;
+  }
 `;
 
 const ScrollableDiv = styled.div`
@@ -298,7 +310,7 @@ function MainNav() {
         </li>
         <ScrollableDiv>
           {applications.map((app) => (
-            <li key={app.id} style={{ display: "flex", alignItems: "center" }}>
+            <li key={app.id} style={{ display: "flex", alignItems: "center", marginLeft: "-10px"}}>
               <StyledNavLink to={`/dashboard/${app.id}`}>
                 {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
                 {applications.length > 1 && (
