@@ -45,7 +45,7 @@ const fadeIn = keyframes`
 `;
 
 const StyledNavLink = styled(NavLink)`
-  width: 90%;
+width: 90%;
   &:link,
   &:visited {
     display: flex;
@@ -60,8 +60,10 @@ const StyledNavLink = styled(NavLink)`
     position: relative;
     @media (max-width: 1300px) {
       gap: 0.6rem;
+      width: 150px;
     }
     @media (max-width: 1050px) {
+      width: 130px;
       font-size: 14px;
     }
   }
@@ -111,11 +113,12 @@ const DeleteButton = styled.button`
   height: 2.4rem;
 
   @media (max-width: 1300px){
-    margin-right: -5px;
+    margin-right: -20px;
   }
   @media (max-width: 1050px) {
     width: 2rem;
     height: 2rem;
+    margin-right: -15px;
   }
   &:hover {
     color: darkred;
@@ -150,17 +153,31 @@ const Tooltip = styled.span`
   opacity: 0;
   display: none;
   transition: opacity 1.3s ease-in-out, transform 1.3s ease-in-out;
+  @media (max-width: 1300px) {
+    margin-right: -20px;
+  }
   @media (max-width: 1050px) {
     padding: 1.3rem 1.3rem;
     margin-top: -5px;
+    margin-left: -8px;
   }
 `;
 
 const ScrollableDiv = styled.div`
   overflow-y: auto;
   max-height: 320px;
-  width: 110%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 115%;
   margin: 0 auto;
+  margin-left: -10px;
+  @media (max-width: 1300px) {
+    width: 120%;
+  }
+  @media (max-width: 1050px) {
+    gap: 4px;
+  }
 
   /* Scrollbar styling */
   &::-webkit-scrollbar {
@@ -310,8 +327,8 @@ function MainNav() {
         </li>
         <ScrollableDiv>
           {applications.map((app) => (
-            <li key={app.id} style={{ display: "flex", alignItems: "center", marginLeft: "-10px"}}>
-              <StyledNavLink to={`/dashboard/${app.id}`}>
+            <li className="mainnav-buzlucam" key={app.id}>
+              <StyledNavLink style={{justifyContent: "flex-end"}} to={`/dashboard/${app.id}`}>
                 {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
                 {applications.length > 1 && (
                   <DeleteButton

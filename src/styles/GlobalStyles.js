@@ -234,6 +234,20 @@ ul {
   }
 }
 
+.mainnav-buzlucam {
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+
+}
+
 .subtext {
   text-align: center;
   font-size: 16px;
