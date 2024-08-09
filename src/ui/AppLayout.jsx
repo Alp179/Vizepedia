@@ -47,7 +47,7 @@ const Main = styled.main`
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: var(--color-brand-600);
+    background-color: var(--color-grey-54);
     border-radius: 10px;
     border: 3px solid var(--color-grey-2);
   }

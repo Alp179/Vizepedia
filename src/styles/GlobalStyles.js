@@ -26,6 +26,7 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-51: #DDFBEF;
   --color-grey-52: #004466;
   --color-grey-53: #18212f;
+  --color-grey-54: #2ecc71;
   --color-grey-100: #f3f4f6;
   --color-grey-200: #e5e7eb;
   --color-grey-300: #d1d5db;
@@ -72,6 +73,7 @@ const GlobalStyles = createGlobalStyle`/*
 --color-grey-51: #414652;
 --color-grey-52: #fff;
 --color-grey-53: #fff;
+--color-grey-54: #4f46e5;
 --color-grey-1: #111827;
 --color-grey-2: #18212f;
 --color-grey-3: #18212f;
