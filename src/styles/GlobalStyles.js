@@ -236,6 +236,16 @@ ul {
   }
 }
 
+.handle-delete {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+  width: 100%;
+  border-radius: 16px;
+}
+
 .mainnav-buzlucam {
   border-radius: 16px;
   display: flex;

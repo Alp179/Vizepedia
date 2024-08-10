@@ -249,19 +249,25 @@ function MainNav() {
     const confirmDelete = await new Promise((resolve) => {
       toast(
         (t) => (
-          <span>
+          <span className="handle-delete">
+            <p style={{textAlign: "center"}}>
             Bu vize başvurusunu silmek istediğinizden emin misiniz?
+            </p>
             <br />
+            <div style={{display: "flex", flexWrap: "wrap", gap: "4px"}}>
             <button
               onClick={() => {
                 toast.dismiss(t.id);
                 resolve(true);
               }}
               style={{
+                width: "60px",
+                height: "30px",
+                textAlign: "center",
                 marginRight: "8px",
                 color: "white",
-                backgroundColor: "red",
-                padding: "5px",
+                borderRadius: "8px",
+                backgroundColor: "#A40013",
                 border: "none",
               }}
             >
@@ -272,10 +278,11 @@ function MainNav() {
                 toast.dismiss(t.id);
                 resolve(false);
               }}
-              style={{ padding: "5px", border: "none" }}
+              style={{width: "60px", height: "30px", border: "none", borderRadius: "8px", color: "black" }}
             >
               Hayır
             </button>
+            </div>
           </span>
         ),
         {
