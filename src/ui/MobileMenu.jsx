@@ -112,6 +112,9 @@ const MenuHeader = styled.div`
   justify-content: flex-start;
   gap: 42px;
   align-items: center;
+  @media (max-width: 330px) {
+    gap: 16px;
+  }
 `;
 
 const MenuContent = styled.div`

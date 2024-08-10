@@ -16,118 +16,17 @@ import "flag-icons/css/flag-icons.min.css"; // CSS importu
 import { fetchFirmLocation } from "../services/apiVisaApplications";
 
 const FlagContainer = styled.div`
-  position: absolute;
-  top: 80%;
-  right: -10%;
-  transform: translateX(50%) translateY(-100%) rotate(31deg);
+  position: fixed;
+  top: 0;
+  right: 0;
   width: 700px;
   height: 450px;
-  z-index: 1;
+  transform: translate(23%, -20%) rotate(31deg);
   border-radius: 10%;
   overflow: hidden;
-
-  @media (min-width: 1870px) {
-    right: -10% !important;
-  }
-
-  @media (min-width: 1970px) {
-    right: -15% !important;
-  }
-
-  @media (min-width: 2030px) {
-    right: -20% !important;
-  }
-
-  @media (min-width: 2130px) {
-    right: -30% !important;
-  }
-
-  @media (min-width: 2270px) {
-    right: -40% !important;
-  }
-
-  @media (min-width: 2400px) {
-    right: -50% !important;
-  }
-
-  @media (min-width: 2530px) {
-    right: -60% !important;
-  }
-
-  @media (min-width: 2650px) {
-    right: -70% !important;
-  }
-
-  @media (min-width: 2800px) {
-    right: -85% !important;
-  }
-
-  @media (min-width: 2950px) {
-    right: -100% !important;
-  }
-
-  @media (min-width: 3100px) {
-    right: -115% !important;
-  }
-
-  @media (min-width: 3250px) {
-    right: -130% !important;
-  }
-
-  @media (min-width: 1625px) {
-    top: 30%;
-    right: -5%;
-  }
-
-  @media (max-width: 1625px) {
-    width: 600px;
-    height: 360px;
-    top: 20%;
-    right: 0%;
-  }
-
-  @media (max-width: 1050px) {
-    width: 500px;
-    height: 300px;
-    top: 15%;
-    right: -5%;
-  }
-
-  @media (max-width: 820px) {
-    width: 400px;
-    height: 240px;
-    top: 10%;
-    right: -10%;
-  }
-  @media (max-width: 710px) {
-    width: 300px !important;
-    height: 170px !important;
-    top: 11%;
-    right: -20%;
-  }
-  @media (max-width: 530px) {
-    top: 10%;
-    right: -30%;
-  }
-  @media (max-width: 480px) {
-    right: -50%;
-  }
-  @media (max-width: 450px) {
-    width: 240px !important;
-    height: 140px !important;
-    right: -70%;
-    top: 8%;
-    @media (max-height: 700px) {
-      right: -150%;
-      top: 10%;
-    }
-  }
-
-  @media (max-width: 390px) {
-    @media (min-height: 844px) {
-      right: -100%;
-    }
-  }
+  z-index: 1000;
+  pointer-events: none;
+  
 
   & > span {
     width: 100%;
@@ -136,7 +35,33 @@ const FlagContainer = styled.div`
     background-size: cover;
     background-position: center;
   }
+
+  @media (max-width: 1450px) {
+    width: 600px;
+    height: 360px;
+  }
+
+  @media (max-width: 1200px) {
+    width: 500px;
+    height: 300px;
+  }
+
+  @media (max-width: 900px) {
+    width: 400px;
+    height: 240px;
+  }
+
+  @media (max-width: 450px) {
+    width: 300px;
+    height: 180px;
+  }
+
+  @media (max-width: 375px) {
+    width: 250px;
+    height: 150px;
+  }
 `;
+
 
 const BlurredFlagBackground = styled.div`
   position: absolute;
