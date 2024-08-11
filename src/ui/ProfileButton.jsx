@@ -30,33 +30,47 @@ function ProfileButton({ cabin }) {
     const confirmLogout = await new Promise((resolve) => {
       toast(
         (t) => (
-          <span>
-            Oturumu kapatmak istediğinizden emin misiniz?
+          <span className="handle-delete">
+            <p style={{ textAlign: "center" }}>
+              Oturumu kapatmak istediğinizden emin misiniz?
+            </p>
             <br />
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                resolve(true);
-              }}
-              style={{
-                marginRight: "8px",
-                color: "white",
-                backgroundColor: "red",
-                padding: "5px",
-                border: "none",
-              }}
-            >
-              Evet
-            </button>
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                resolve(false);
-              }}
-              style={{ padding: "5px", border: "none" }}
-            >
-              Hayır
-            </button>
+            <div style={{display:"flex", flexWrap: "wrap", gap: "4px"}}>
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(true);
+                }}
+                style={{
+                  display: "flex",
+                  
+                  borderRadius: "8px",
+                  marginRight: "8px",
+                  color: "white",
+                  backgroundColor: "#A40013",
+                  width: "60px",
+                  height: "30px",
+                  border: "none",
+                }}
+              >
+                Evet
+              </button>
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(false);
+                }}
+                style={{
+                  borderRadius: "8px",
+                  width: "60px",
+                  height: "30px",
+                  border: "none",
+                  color: "black",
+                }}
+              >
+                Hayır
+              </button>
+            </div>
           </span>
         ),
         {

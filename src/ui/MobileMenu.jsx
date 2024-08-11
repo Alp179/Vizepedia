@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi";
-import { MdClose } from "react-icons/md"; // Çarpı işareti için icon import
+import { MdClose } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../features/authentication/useLogout";
 import { useVisaApplications } from "../context/VisaApplicationContext";
@@ -14,10 +13,10 @@ import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import UserAvatar from "../features/authentication/UserAvatar";
-import AllDocs from "./AllDocs"; // AllDocs bileşenini import et
+import AllDocs from "./AllDocs";
 import DarkModeToggle from "./DarkModeToggle";
 
-import toast from "react-hot-toast"; // React Hot Toast import
+import toast from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 
 const MenuIcon = styled.div.attrs((props) => ({
@@ -26,11 +25,10 @@ const MenuIcon = styled.div.attrs((props) => ({
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 3000; /* Menünün üstünde olması için z-index değeri arttırıldı */
+  z-index: 3000;
   @media (min-width: 710px) {
     display: none;
   }
-
   .ham {
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
@@ -94,7 +92,7 @@ const MenuContainer = styled.div`
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.52);
-  z-index: 1100; /* Menüyü açılır hale getirmek için z-index değeri */
+  z-index: 1100;
   display: flex;
   flex-direction: column;
   padding: 2rem;
@@ -157,26 +155,42 @@ const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: transparent;
-  z-index: 1100; /* Menüden ve menü simgesinden daha düşük z-index değeri */
-  display: ${(props) => (props.isOpen ? "block" : "none")};
+  background-color: var(--backdrop-color);
+  z-index: 1100;
+  display: ${(props) => (props.isOpen || props.isDocsOpen ? "block" : "none")};
 `;
 
 const FullScreenModal = styled.div`
+  z-index: 3000;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: white;
-  z-index: 1000;
+  top: 50%;
+  left: 50%;
+  background-color: var(--color-grey-51);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  padding: 3.2rem 4rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding-top: 2rem; /* İçeriği daha yukarıda sergilemek için padding ekleyelim */
+  width: calc(100vw - 100px);
+  max-width: 450px;
+  height: calc(100vh - 200px);
+  max-height: 720px;
+  justify-content: space-between;
   transform: ${(props) =>
-    props.isClosing ? "translateX(100%)" : "translateX(0)"};
+    props.isClosing ? "translate(100%, -50%)" : "translate(-50%, -50%)"};
   transition: transform 0.3s ease-in-out;
+  @media (max-width: 450px) {
+    width: 90%!important;
+    height: 75%!important;
+  }
+  @media (max-height: 700px) {
+    height: 75%;
+  }
+  @media (max-width: 450px) {
+    @media (max-height: 675px) {
+      height: 80%!important;
+    }
+  }
 `;
 
 const CloseButton = styled.button`
@@ -185,14 +199,14 @@ const CloseButton = styled.button`
   right: 10px;
   background: none;
   border: none;
-  font-size: 36px; /* Butonu büyütelim */
+  font-size: 36px;
   cursor: pointer;
 `;
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDocsOpen, setIsDocsOpen] = useState(false); // Belgeler modal state
-  const [isClosing, setIsClosing] = useState(false); // Kapanma animasyonu için state
+  const [isDocsOpen, setIsDocsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const navigate = useNavigate();
   const { logout } = useLogout();
   const { applications, dispatch: applicationsDispatch } =
@@ -258,6 +272,7 @@ const MobileMenu = () => {
     enabled: !!documentNames.length,
   });
 
+  /* eslint-disable no-unused-vars */
   const continueToDocument = () => {
     if (!documentsQuery.data) return;
 
@@ -278,7 +293,7 @@ const MobileMenu = () => {
     setTimeout(() => {
       setIsDocsOpen(false);
       setIsClosing(false);
-    }, 300); // Kapanma animasyonu süresi ile uyumlu
+    }, 300);
   };
 
   const handleDelete = async (appId) => {
@@ -323,11 +338,9 @@ const MobileMenu = () => {
     if (confirmDelete) {
       try {
         await deleteVisaApplication(appId);
-        // Başarıyla silindikten sonra, state'i güncelle
         applicationsDispatch({ type: "DELETE_APPLICATION", payload: appId });
         toast.success("Vize başvurusu başarıyla silindi!");
-        // Sayfayı yeniden yükleyerek tüm sayfanın render edilmesini sağla
-        navigate("/dashboard"); // Burada navigate kullanarak /dashboard'a yönlendiriyoruz
+        navigate("/dashboard");
       } catch (error) {
         toast.error("Vize başvurusu silinemedi.");
       }
@@ -394,7 +407,7 @@ const MobileMenu = () => {
         onClick={() => {
           setIsOpen(!isOpen);
         }}
-        isDocsOpen={isDocsOpen} // isDocsOpen state'ini buraya da ekle
+        isDocsOpen={isDocsOpen}
       >
         <svg
           className={`ham hamRotate ham8 ${isOpen ? "active" : ""}`}
@@ -412,17 +425,17 @@ const MobileMenu = () => {
           />
         </svg>
       </MenuIcon>
-      <Overlay isOpen={isOpen} onClick={() => setIsOpen(false)} />
+      <Overlay isOpen={isOpen} isDocsOpen={isDocsOpen} /> {/* Blur efekt */}
       <MenuContainer isOpen={isOpen} ref={menuRef}>
         <MenuHeader>
-          <UserAvatar /> {/* Kullanıcı avatarı ve adı */}
+          <UserAvatar />
           <DarkModeToggle />
         </MenuHeader>
         <MenuContent>
           <StyledNavLink
             onClick={() => {
               setIsDocsOpen(true);
-              setIsOpen(false); // Menü kapansın
+              setIsOpen(false);
             }}
           >
             <HiDocument /> Tüm Belgeler
@@ -458,9 +471,7 @@ const MobileMenu = () => {
           >
             <HiPlus /> Yeni
           </StyledNavLink>
-          <StyledNavLink
-            onClick={handleLogout} // Oturumu kapat butonuna handleLogout ekliyoruz
-          >
+          <StyledNavLink onClick={handleLogout}>
             Oturumu Kapat
           </StyledNavLink>
         </MenuContent>

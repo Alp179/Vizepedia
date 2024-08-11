@@ -12,6 +12,7 @@ import Spinner from "./Spinner";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 const DocumentItem = styled.li`
+  display: flex;
   border-radius: 16px;
   background-color: ${(props) => (props.isCompleted ? "#00ffa2" : "none")};
   padding: 8px;
