@@ -170,16 +170,15 @@ const DropdownButton = styled.button`
 const DropdownMenu = styled(motion.ul)`
   position: absolute;
   top: 100%;
-
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.5); /* Buzlu cam efekti */
+  background: var(--color-grey-51);
   border-radius: 10px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(6.3px);
   -webkit-backdrop-filter: blur(6.3px);
   padding: 10px;
   z-index: 3000;
-  width: 200px;
+  width: 170px;
   overflow: hidden;
 
   &:hover {

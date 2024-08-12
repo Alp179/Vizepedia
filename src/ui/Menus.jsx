@@ -8,7 +8,7 @@ import { useOutsideClick } from "../hooks/useOutsideClick";
 import UserAvatar from "../features/authentication/UserAvatar";
 
 const Menu = styled.div`
-z-index: 3000;
+  z-index: 3000;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -35,7 +35,9 @@ const StyledToggle = styled.button`
 `;
 
 const StyledList = styled.ul`
-z-index: 2990;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  z-index: 2990;
   position: fixed;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 16px;
@@ -49,7 +51,7 @@ z-index: 2990;
 `;
 
 const StyledButton = styled.button`
-z-index: 2990;
+  z-index: 2990;
   width: 100%;
   text-align: left;
   background: none;

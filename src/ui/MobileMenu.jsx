@@ -51,6 +51,7 @@ const MenuIcon = styled.div.attrs((props) => ({
     stroke-width: 5.5;
     stroke-linecap: round;
   }
+
   .ham8 .top {
     stroke-dasharray: 40 160;
   }

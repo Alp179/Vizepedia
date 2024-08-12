@@ -23,6 +23,13 @@ const Avatar = styled.img`
   outline: 2px solid var(--color-grey-100);
 `;
 
+const UserName = styled.span`
+  z-index: 2990;
+  color: white;  /* Beyaz renk */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);  /* Siyah gölge */
+`;
+
+
 function UserAvatar() {
   const { user } = useUser();
   const { fullName, avatar } = user.user_metadata;
@@ -32,7 +39,7 @@ function UserAvatar() {
         src={avatar || "default-user.jpg"}
         alt={`Avatar of ${fullName}`}
       />
-      <span>{fullName}</span>
+      <UserName>{fullName}</UserName>
     </StyledUserAvatar>
   );
 }

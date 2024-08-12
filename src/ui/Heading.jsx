@@ -15,6 +15,7 @@ const Heading = styled.h1`
         margin-left: -100px;
       }
       @media (max-width: 710px) {
+        mix-blend-mode: difference;
         margin-left: -100px;
         width: 250px;
         @media (max-height: 830px) {

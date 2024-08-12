@@ -57,6 +57,7 @@ const StyledSelectContainer = styled.div`
 `;
 
 const RadioLabel = styled.label`
+  line-height: 22px;
   z-index: -0;
   font-size: 18px;
   display: flex;
@@ -182,14 +183,13 @@ const DropdownMenu = styled(motion.ul)`
   position: absolute;
   top: 100%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.5); /* Buzlu cam efekti */
+  border: 1px solid white;
+  background: var(--color-grey-51);
   border-radius: 10px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(6.3px);
-  -webkit-backdrop-filter: blur(6.3px);
   padding: 10px;
   z-index: 1000; /* Dropdown menüyü üstte göstermek için z-index değerini artırdık */
-  width: 200px;
+  width: 170px;
   overflow: hidden;
   max-height: 300px; /* Maksimum yükseklik */
   overflow-y: auto; /* İçerik fazla olursa kaydırma çubuğu ekler */

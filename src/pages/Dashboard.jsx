@@ -163,6 +163,7 @@ const CreatedAtContainer = styled.div`
     margin-left: -100px;
   }
   @media (max-width: 710px) {
+    mix-blend-mode: difference;
     width: 200px;
     @media (max-height: 830px) {
       font-size: 1.3rem;
@@ -295,7 +296,7 @@ function Dashboard() {
       )}
       <CustomRow type="horizontal">
         {createdAt && (
-          <CreatedAtContainer style={{ zIndex: "3000"}}>
+          <CreatedAtContainer style={{ zIndex: "3000" }}>
             Oluşturulma tarihi: {createdAt}
           </CreatedAtContainer>
         )}
