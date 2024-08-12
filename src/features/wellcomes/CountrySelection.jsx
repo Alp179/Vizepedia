@@ -61,6 +61,7 @@ const RadioLabel = styled.label`
   font-size: 18px;
   display: flex;
   flex-direction: column;
+  text-align: center;
   align-items: center;
   margin: 10px;
   padding: 20px;
@@ -113,20 +114,23 @@ const RadioLabel = styled.label`
 
 const Container = styled.div`
   max-height: calc(100vh - 40rem);
-  overflow: auto; 
+  overflow: auto;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   border-radius: 16px;
   gap: 20px;
   max-width: 900px;
-  position: relative; 
-  background-color: ${({ hasOverflow }) => (hasOverflow ? "rgba(255, 255, 255, 0.37)" : "transparent")};
-  -webkit-backdrop-filter: ${({ hasOverflow }) => (hasOverflow ? "blur(6.3px)" : "none")};
-  border: ${({ hasOverflow }) => (hasOverflow ? "1px solid rgba(255, 255, 255, 0.52)" : "none")};
+  position: relative;
+  background-color: ${({ hasOverflow }) =>
+    hasOverflow ? "rgba(255, 255, 255, 0.37)" : "transparent"};
+  -webkit-backdrop-filter: ${({ hasOverflow }) =>
+    hasOverflow ? "blur(6.3px)" : "none"};
+  border: ${({ hasOverflow }) =>
+    hasOverflow ? "1px solid rgba(255, 255, 255, 0.52)" : "none"};
 
   @media (max-width: 768px) {
-    justify-content: space-around; 
+    justify-content: space-around;
   }
   @media (max-width: 450px) {
     gap: 0;
