@@ -196,7 +196,8 @@ const NavigationButton = styled.button`
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  background-color: #3498db;
+  background: var(--color-grey-903);
+  z-index: 3000;
   color: white;
   border: none;
   border-radius: 50%;

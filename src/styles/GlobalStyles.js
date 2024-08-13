@@ -38,6 +38,7 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-900: #111827;
   --color-grey-901: #00ffa2;
   --color-grey-902: #004466;
+  --color-grey-903: #2ecc71;
   --color-grey-55: rgba(255, 255, 255, 0.5);
   --stroke-ham-1: #000;
 
@@ -89,6 +90,7 @@ const GlobalStyles = createGlobalStyle`/*
 --color-grey-900: #f9fafb;
 --color-grey-901: transparent;
 --color-grey-902: transparent;
+--color-grey-903: rgba(255, 255, 255, 0.2);
 --color-grey-55: #091522;
 --stroke-ham-1: #999;
 
