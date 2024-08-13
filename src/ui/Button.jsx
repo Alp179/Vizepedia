@@ -47,7 +47,7 @@ const sizes = {
   dash: css`
     color: #00ffa2 !important;
     font-weight: bold !important;
-    border: 2px solid #87f9cd;
+    border: 4px solid #87f9cd;
     border-radius: 16px;
     font-size: 1.6rem;
     padding: 1.8rem 4.8rem;
