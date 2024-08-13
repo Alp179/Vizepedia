@@ -151,11 +151,13 @@ const StepName = styled.div`
 `;
 
 const ContinueButton = styled.button`
+  flex-shrink: 0;
   height: 60px;
   background-color: #00796b;
   color: white;
+  margin-right: 8px;
   border: none;
-  padding: 10px 20px;
+  width: 100px;
   border-radius: 5px;
   cursor: pointer;
   &:hover {
@@ -175,7 +177,7 @@ const ContinueButton = styled.button`
       font-size: 13px;
     }
   }
-  
+
   z-index: 4000; /* Butonun her zaman üstte olmasını sağlar */
 `;
 

@@ -323,7 +323,7 @@ function MainNav() {
         <li>
           <Modal>
             <Modal.Open opens="allDocs">
-              <StyledNavLink>
+              <StyledNavLink style={{width: "100%"}}>
                 <HiDocument /> <span className="sidebartext">Tüm belgeler</span>
               </StyledNavLink>
             </Modal.Open>

@@ -56,9 +56,12 @@ const sizes = {
     @media (max-width: 1300px) {
       padding: 1.8rem 3.5rem;
     }
-    @media (max-width: 830px) {
+    @media (max-width: 1050px) {
       padding: 1.5rem 2.7rem;
-      font-size: 15px;
+    }
+    @media (max-width: 830px) {
+      padding: 1rem 2.5rem;
+      font-size: 14px;
     }
     @media (max-width: 710px) {
       display: none;
