@@ -13,7 +13,7 @@ import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 const StepAndContinueContainer = styled.div`
-  width: 740px;
+  max-width: 740px;
   align-items: center;
   display: flex;
   gap: 16px;
@@ -59,7 +59,7 @@ const StepsContainer = styled.div`
 
   &::-webkit-scrollbar {
     border-radius: 16px;
-    height: 12px;
+    height: 8px;
   }
 
   &::-webkit-scrollbar-track {
@@ -165,6 +165,7 @@ const ContinueButton = styled.button`
     padding: 0;
     width: 80px;
     height: 60px;
+    font-size: 14px;
   }
   @media (max-width: 710px) {
     width: 60%;
