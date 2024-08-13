@@ -56,6 +56,22 @@ const StepsContainer = styled.div`
     align-items: flex-start;
     justify-content: flex-start;
   }
+
+  &::-webkit-scrollbar {
+    border-radius: 16px;
+    height: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 16px;
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-grey-54);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
+  }
 `;
 
 const StepCircleContainer = styled.div`
