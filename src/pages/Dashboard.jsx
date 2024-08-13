@@ -169,6 +169,9 @@ const CreatedAtContainer = styled.div`
       font-size: 1.3rem;
     }
   }
+  @media (max-width: 360px) {
+    margin-left: -120px;
+  }
 `;
 
 const CustomRow = styled(Row)`

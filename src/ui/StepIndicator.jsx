@@ -12,22 +12,59 @@ import { getCurrentUser } from "../services/apiAuth";
 import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
-const StepsContainer = styled.div`
+const StepAndContinueContainer = styled.div`
+  width: 740px;
+  align-items: center;
+  display: flex;
+  gap: 16px;
   background: rgba(255, 255, 255, 0.2);
   z-index: 3000;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-radius: 16px;
-  width: 600px; /* Genişliği 600px ile sınırla */
+  @media (max-width: 1425px) {
+    margin-left: -100px;
+  }
+  @media (max-width: 1050px) {
+    max-width: 480px!important;
+  }
+  @media (max-width: 710px) {
+    gap: 8px;
+    flex-flow: column;
+    width: 250px;
+    justify-content: flex-start
+    align-items: flex-start;
+    padding-bottom: 16px;
+  }
+  @media (max-width: 360px) {
+    margin-left: -130px;
+  } 
+`;
+
+const StepsContainer = styled.div`
+  width: 600px;
   overflow-x: auto; /* Yatay kaydırma */
   padding: 14px;
-  margin-bottom: 60px; /* Devam et butonu için yer bırak */
   position: relative;
+  @media (max-width: 1050px) {
+    width: 370px;
+  }
+  @media (max-width: 710px) {
+    overflow: visible;
+    margin-right: auto;
+    flex-flow: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
 `;
 
 const StepCircleContainer = styled.div`
   display: flex;
   gap: 10px; /* Circle'lar arasındaki boşluk */
+  @media (max-width: 710px) {
+    flex-flow: column;
+    gap: 12px;
+  }
 `;
 
 const StepCircle = styled.div`
@@ -98,6 +135,7 @@ const StepName = styled.div`
 `;
 
 const ContinueButton = styled.button`
+  height: 60px;
   background-color: #00796b;
   color: white;
   border: none;
@@ -107,11 +145,20 @@ const ContinueButton = styled.button`
   &:hover {
     background-color: #004d40;
   }
-  position: absolute; /* Devam et butonunu sabit yap */
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 20px; /* StepName'in 20px altında yer alması için */
-  bottom: -20px; /* StepsContainer'dan 20px yukarıda tut */
+  @media (max-width: 1050px) {
+    padding: 0;
+    width: 80px;
+    height: 60px;
+  }
+  @media (max-width: 710px) {
+    width: 60%;
+    @media (max-height: 830px) {
+      width: 40%;
+      height: 42px;
+      font-size: 13px;
+    }
+  }
+  
   z-index: 4000; /* Butonun her zaman üstte olmasını sağlar */
 `;
 
@@ -207,38 +254,40 @@ const StepIndicator = () => {
 
   return (
     <>
-      <StepsContainer>
-        <StepCircleContainer>
-          {documents &&
-            documents.map((doc, index) => {
-              const isActive = index === currentStep;
-              const isCompleted =
-                completedDocuments[applicationId]?.[doc.docName];
+      <StepAndContinueContainer>
+        <StepsContainer>
+          <StepCircleContainer>
+            {documents &&
+              documents.map((doc, index) => {
+                const isActive = index === currentStep;
+                const isCompleted =
+                  completedDocuments[applicationId]?.[doc.docName];
 
-              return (
-                <div
-                  className="stepsAndNames"
-                  key={doc.id}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <StepCircle
-                    isActive={isActive}
-                    isCompleted={isCompleted}
-                    onClick={() => handleStepClick(index)}
+                return (
+                  <div
+                    className="stepsAndNames"
+                    key={doc.id}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
                   >
-                    {index + 1}
-                  </StepCircle>
-                  <StepName title={doc.docName}>{doc.docName}</StepName>
-                </div>
-              );
-            })}
-        </StepCircleContainer>
-      </StepsContainer>
-      <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
+                    <StepCircle
+                      isActive={isActive}
+                      isCompleted={isCompleted}
+                      onClick={() => handleStepClick(index)}
+                    >
+                      {index + 1}
+                    </StepCircle>
+                    <StepName title={doc.docName}>{doc.docName}</StepName>
+                  </div>
+                );
+              })}
+          </StepCircleContainer>
+        </StepsContainer>
+        <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
+      </StepAndContinueContainer>
     </>
   );
 };

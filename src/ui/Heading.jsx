@@ -22,6 +22,9 @@ const Heading = styled.h1`
           font-size: 2.6rem;
         }
       }
+      @media (max-width: 360px) {
+        margin-left: -120px;
+      }
 
     `}
 
