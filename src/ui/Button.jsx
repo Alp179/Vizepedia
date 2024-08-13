@@ -45,9 +45,14 @@ const sizes = {
     }
   `,
   dash: css`
+    color: #00ffa2 !important;
+    font-weight: bold !important;
+    border: 2px solid #87f9cd;
+    border-radius: 16px;
     font-size: 1.6rem;
-    padding: 2.4rem 4.8rem;
+    padding: 1.8rem 4.8rem;
     font-weight: 500;
+    background: #004466 !important;
     @media (max-width: 1300px) {
       padding: 1.8rem 3.5rem;
     }
@@ -57,6 +62,10 @@ const sizes = {
     }
     @media (max-width: 710px) {
       display: none;
+    }
+    &:hover {
+      color: #004466!important;
+      background-color: #87f9cd!important;
     }
   `,
   question: css`

@@ -316,7 +316,7 @@ function MainNav() {
   return (
     <nav className="navbar-dash">
       <Toaster />
-      <Button size="dash" variation="primary" onClick={continueToDocument}>
+      <Button size="dash" onClick={continueToDocument}>
         Devam et
       </Button>
       <NavList>

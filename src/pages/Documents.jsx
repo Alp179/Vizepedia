@@ -22,7 +22,6 @@ const PageContainer = styled.div`
   border-radius: 20px;
   box-sizing: border-box;
   position: relative;
-  
 
   @media (max-width: 680px) {
     flex-direction: column;
@@ -134,6 +133,8 @@ const SourceButton = styled.button`
     padding: 10px 15px;
     margin-left: auto;
     margin-right: auto;
+    max-width: 150px;
+    width: 80%;
   }
 `;
 
@@ -151,6 +152,9 @@ const ActionButton = styled.button`
   font-weight: bold;
   margin-right: auto;
   width: 200px;
+  @media (max-width: 710px) {
+    width: 80% !important;
+  }
 
   &:hover {
     background-color: ${(props) => (props.isCompleted ? "#c0392b" : "#27ae60")};
@@ -177,6 +181,7 @@ const RelatedSteps = styled.div`
   border-radius: 15px;
   margin-top: 20px;
   color: #333;
+  box-shadow: 0px 9px 24px -12px rgba(0, 0, 0, 0.75);
 
   @media (max-width: 680px) {
     padding: 15px;
@@ -186,6 +191,10 @@ const RelatedSteps = styled.div`
 const RelatedStepsTitle = styled.h3`
   margin-bottom: 10px;
   text-align: center;
+
+  @media (max-width: 1000px) {
+    font-size: 16px;
+  }
 
   @media (max-width: 680px) {
     text-align: center;
