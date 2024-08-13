@@ -30,6 +30,9 @@ const sizes = {
     }
   `,
   back: css`
+    background: #0f8d97 !important;
+    color: #87f9cd !important;
+    font-weight: bold;
     height: 7rem;
     width: 160px;
     position: fixed;
@@ -67,16 +70,19 @@ const sizes = {
       display: none;
     }
     &:hover {
-      color: #004466!important;
-      background-color: #87f9cd!important;
+      color: #004466 !important;
+      background-color: #87f9cd !important;
+    }
+    &:active {
+      box-shadow: none;
     }
   `,
-  question: css`
-    z-index: 2000;
-    width: 200px;
-    padding: 1.3rem;
-    border-radius: 8px;
-    margin-bottom: 12px;
+  baslayalim: css`
+    height: 40px !important;
+    width: 80% !important;
+    @media (max-width: 825px) {
+      font-size: 14px!important;
+    }
   `,
 };
 
@@ -93,6 +99,30 @@ const variations = {
   login: css`
     color: var(--color-grey-31);
     background-color: var(--color-grey-61);
+  `,
+  question: css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #004466;
+    font-weight: bold;
+    font-size: 16px;
+    background: #00ffa2;
+    box-shadow: 0px 10px 1px -1px #2ecc71;
+    z-index: 2000;
+    width: 400px;
+    padding: 1.3rem;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    @media (max-width: 450px) {
+      width: 300px;
+    }
+    @media (max-width: 360px) {
+      width: 80%;
+    }
+    &:hover {
+      background: #00ff75;
+    }
   `,
   secondary: css`
     color: var(--color-grey-600);

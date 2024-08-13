@@ -20,11 +20,11 @@ const StyledSelect = styled.select`
   color: #000000;
   background-color: transparent;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 16px;
   transition: all 0.3s;
 
   @media (max-width: 825px) {
-    font-size: 12px!important;
+    font-size: 14px!important;
   }
   @media (max-height: 770px) {
     padding: 4px;

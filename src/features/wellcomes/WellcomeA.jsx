@@ -33,7 +33,7 @@ function WellcomeA() {
           sunmamız için önemlidir ve size en iyi şekilde rehberlik edebilmemize
           yardımcı olacaktır.
         </HeadingWidth>
-        <Button size="question" onClick={() => navigate("/wellcome-2")}>
+        <Button variation="question" onClick={() => navigate("/wellcome-2")}>
           Devam et
         </Button>
       </QuestionContainer>

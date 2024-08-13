@@ -32,7 +32,7 @@ function WellcomeB() {
           onCountryChange={handleCountryChange}
         />
         <Button
-          size="question"
+          variation="question"
           onClick={() => navigate("/wellcome-3")}
           disabled={!selectedCountry}
         >

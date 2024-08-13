@@ -104,7 +104,7 @@ function ControlScreen() {
         }
       />
 
-      <Button onClick={handleSubmit}>Başlayalım</Button>
+      <Button variation="question" size="baslayalim" onClick={handleSubmit}>Başlayalım</Button>
     </ModalScreenContainer>
   );
 }

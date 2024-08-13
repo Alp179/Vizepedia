@@ -32,7 +32,7 @@ function WellcomeC() {
           onPurposeChange={handlePurposeChange}
         />
         <Button
-          size="question"
+          variation="question"
           onClick={() => navigate("/wellcome-4")}
           disabled={!selectedPurpose}
         >

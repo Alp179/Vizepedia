@@ -44,7 +44,7 @@ function Wellcome() {
           Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
         </HeadingWidth>
         <StyledInput placeholder="Ad (isteğe bağlı)"></StyledInput>
-        <Button size="question" onClick={() => navigate("/wellcome-1")}>Devam et</Button>
+        <Button variation="question" onClick={() => navigate("/wellcome-1")}>Devam et</Button>
       </QuestionContainer>
     </>
   );

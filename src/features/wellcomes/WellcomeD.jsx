@@ -34,7 +34,7 @@ function WellcomeD() {
           onProfessionChange={handleProfessionChange}
         />
         <Button
-          size="question"
+          variation="question"
           onClick={() => navigate("/wellcome-5")}
           disabled={!selectedProfession}
         >

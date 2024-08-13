@@ -24,9 +24,9 @@ const Container = styled.div`
 
 const SelectionButton = styled.button`
   background-color: ${(props) =>
-    props.isSelected ? "#00c853" : "transparent"};
-  color: ${(props) => (props.isSelected ? "#ffffff" : "#000000")};
-  border: 1px solid ${(props) => (props.isSelected ? "#00c853" : "transparent")};
+    props.isSelected ? "#00ffa2" : "transparent"};
+  color: ${(props) => (props.isSelected ? "#004466" : "#000000")};
+  border: 1px solid ${(props) => (props.isSelected ? "#004466" : "transparent")};
   border-radius: 16px;
   padding: 0.7rem 1rem;
   @media (max-height: 885px) {

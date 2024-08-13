@@ -104,7 +104,7 @@ function WellcomeE() {
           <Modal.Open opens="controlScreen">
             <StyledNavLink to="">
               <Button
-                size="question"
+                variation="question"
                 onClick={() => navigate("/test")}
                 disabled={
                   !selectedVehicle || !selectedKid || !selectedAccommodation
