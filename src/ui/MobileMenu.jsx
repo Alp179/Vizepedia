@@ -23,7 +23,7 @@ const MenuIcon = styled.div.attrs((props) => ({
   style: { display: props.isDocsOpen ? "none" : "block" },
 }))`
   background: ${(props) =>
-    props.isActive ? "rgba(255, 255, 255, 0.5)" : "rgba(255, 255, 255, 0.5)"};
+    props.isOpen ? "transparent" : "rgba(255, 255, 255, 0.5)"};
   border-radius: 6px;
   display: flex;
   height: 42px;
@@ -52,7 +52,8 @@ const MenuIcon = styled.div.attrs((props) => ({
   .line {
     fill: none;
     transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
-    stroke: black;
+    stroke: ${(props) =>
+      props.isOpen ? "var(--stroke-ham-1)" : "black"};
     stroke-width: 5.5;
     stroke-linecap: round;
   }
@@ -186,15 +187,15 @@ const FullScreenModal = styled.div`
     props.isClosing ? "translate(100%, -50%)" : "translate(-50%, -50%)"};
   transition: transform 0.3s ease-in-out;
   @media (max-width: 450px) {
-    width: 90%!important;
-    height: 75%!important;
+    width: 90% !important;
+    height: 75% !important;
   }
   @media (max-height: 700px) {
     height: 75%;
   }
   @media (max-width: 450px) {
     @media (max-height: 675px) {
-      height: 80%!important;
+      height: 80% !important;
     }
   }
 `;
@@ -410,6 +411,7 @@ const MobileMenu = () => {
     <>
       <MenuIcon
         ref={iconRef}
+        isOpen={isOpen}
         onClick={() => {
           setIsOpen(!isOpen);
         }}
@@ -477,12 +479,9 @@ const MobileMenu = () => {
           >
             <HiPlus /> Yeni
           </StyledNavLink>
-          <StyledNavLink onClick={handleLogout}>
-            Oturumu Kapat
-          </StyledNavLink>
+          <StyledNavLink onClick={handleLogout}>Oturumu Kapat</StyledNavLink>
         </MenuContent>
       </MenuContainer>
-
       {isDocsOpen && (
         <FullScreenModal isClosing={isClosing}>
           <CloseButton
