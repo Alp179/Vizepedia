@@ -34,7 +34,7 @@ const Container = styled.div`
 
 const SelectionButton = styled.button`
   background-color: ${(props) =>
-    props.isSelected ? "#00ffa2" : "transparent"};
+    props.isSelected ? "#87f9cd" : "transparent"};
   color: ${(props) => (props.isSelected ? "#004466" : "#000000")};
   border: 1px solid ${(props) => (props.isSelected ? "#004466" : "transparent")};
   border-radius: 16px;

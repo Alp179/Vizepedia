@@ -21,6 +21,9 @@ const Main = styled.main`
   gap: 50px;
   justify-content: space-between;
   flex: 1;
+  @media (max-width: 450px) {
+    padding: 4rem 0.5rem;
+  }
 `;
 
 const Container = styled.div`
@@ -32,10 +35,10 @@ const Container = styled.div`
   flex-direction: column;
   gap: 3.2rem;
   @media (max-width: 1100px) {
-    width: 85%;
+    width: 100%;
   }
   @media (max-width: 680px) {
-    width: 100%;
+    width: 100%!important;
     gap: 0;
     margin: 0px;
   }
