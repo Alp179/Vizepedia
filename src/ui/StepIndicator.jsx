@@ -26,7 +26,7 @@ const StepAndContinueContainer = styled.div`
     margin-left: -100px;
   }
   @media (max-width: 1050px) {
-    max-width: 480px!important;
+    max-width: 500px!important;
   }
   @media (max-width: 710px) {
     gap: 8px;
@@ -152,22 +152,23 @@ const StepName = styled.div`
 
 const ContinueButton = styled.button`
   flex-shrink: 0;
-  height: 60px;
-  background-color: #00796b;
-  color: white;
+  height: 50px;
+  background-color: #004466;
+  font-size: 14px;
+  color: #00ffa2;
+  font-weight: bold;
+  border: 4px solid #87f9cd;
   margin-right: 8px;
-  border: none;
   width: 100px;
-  border-radius: 5px;
+  border-radius: 12px;
   cursor: pointer;
   &:hover {
-    background-color: #004d40;
+    background-color: #87f9cd;
+    color: #004466;
   }
-  @media (max-width: 1050px) {
-    padding: 0;
-    width: 80px;
-    height: 60px;
-    font-size: 14px;
+
+  @media (max-width: 830px) {
+    height: 50px;
   }
   @media (max-width: 710px) {
     width: 60%;

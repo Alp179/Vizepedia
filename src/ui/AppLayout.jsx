@@ -51,9 +51,9 @@ const Main = styled.main`
     border-radius: 10px;
     border: 3px solid var(--color-grey-2);
   }
-  @media (max-width: 450px) {
+  @media (max-width: 710px) {
     &::-webkit-scrollbar {
-      width: 1px;
+      width: 0;
     }
   
     &::-webkit-scrollbar-track {
@@ -71,7 +71,7 @@ const Main = styled.main`
 
 const Container = styled.div`
   max-width: 120rem;
-  margin: 0 100px;
+  margin: 0 0 0 100px;
   display: flex;
   flex-direction: column;
   gap: 3.2rem;

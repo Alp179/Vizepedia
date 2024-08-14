@@ -22,6 +22,11 @@ import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 const MenuIcon = styled.div.attrs((props) => ({
   style: { display: props.isDocsOpen ? "none" : "block" },
 }))`
+  background: ${(props) =>
+    props.isActive ? "rgba(255, 255, 255, 0.5)" : "rgba(255, 255, 255, 0.5)"};
+  border-radius: 6px;
+  display: flex;
+  height: 42px;
   position: fixed;
   top: 1rem;
   right: 1rem;
@@ -47,7 +52,7 @@ const MenuIcon = styled.div.attrs((props) => ({
   .line {
     fill: none;
     transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
-    stroke: var(--stroke-ham-1);
+    stroke: black;
     stroke-width: 5.5;
     stroke-linecap: round;
   }
