@@ -28,6 +28,10 @@ const PageContainer = styled.div`
     padding: 10px;
     height: 100%;
   }
+  @media (max-width: 450px) {
+    width: 90%;
+    margin: 0 auto;
+  }
 `;
 
 const InfoContainer = styled.div`
@@ -72,7 +76,7 @@ const DocumentTitle = styled.h1`
   color: var(--color-grey-52);
 
   @media (max-width: 1000px) {
-    font-size: 24px;
+    font-size: 32px;
   }
 
   @media (max-width: 680px) {
@@ -88,7 +92,7 @@ const DocumentDescription = styled.p`
   font-size: 18px;
 
   @media (max-width: 1000px) {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   @media (max-width: 680px) {

@@ -21,8 +21,14 @@ const Main = styled.main`
   gap: 50px;
   justify-content: space-between;
   flex: 1;
+  @media (max-width: 650px) {
+    padding: 4rem 1rem;
+  }
   @media (max-width: 450px) {
     padding: 4rem 0.5rem;
+  }
+  @media (max-width: 310px) {
+    padding: 4rem 0;
   }
 `;
 

@@ -32,6 +32,7 @@ const ReviewButton = styled.button`
 const DocImage = styled.img`
   height: 45px;
   width: 36px;
+  margin-left: 16px;
 `;
 
 const VerifiedIcon = styled.img`
@@ -49,10 +50,12 @@ const DocumentCard = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.52);
   padding: 16px;
   margin-bottom: 10px;
+  margin: 10px auto 0 auto;
+  width: 90%;
   height: 180px;
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  @media (max-width: 450px) {
+  @media (max-width: 650px) {
     width: 100%;
   }
 `;
@@ -71,6 +74,9 @@ const DocumentTitle = styled.h3`
   font-weight: bold;
   @media (max-width: 550px) {
     font-size: 16px;
+  }
+  @media (max-width: 310px) {
+    font-size: 14px;
   }
 `;
 
