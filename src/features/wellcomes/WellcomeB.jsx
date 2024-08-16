@@ -21,6 +21,7 @@ function WellcomeB() {
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    
   `;
 
   return (

@@ -118,7 +118,7 @@ const variations = {
       width: 300px;
     }
     @media (max-width: 360px) {
-      width: 80%;
+      width: calc(100vw - 40px);
     }
     &:hover {
       background: #00ff75;

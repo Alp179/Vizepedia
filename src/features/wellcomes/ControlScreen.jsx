@@ -74,6 +74,14 @@ function ControlScreen() {
     @media (max-height: 770px) {
       height: 450px;
     }
+    @media (max-width: 300px) {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: calc(100vw - 50px);
+      margin 0 auto;
+    }
   `;
 
   return (

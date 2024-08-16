@@ -22,6 +22,9 @@ function WellcomeA() {
       font-size: 16px;
       width: 300px;
     }
+    @media (max-width: 300px) {
+      width: 270px!important;
+    }
   `;
 
   return (

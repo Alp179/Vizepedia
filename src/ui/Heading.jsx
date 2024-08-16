@@ -79,6 +79,10 @@ const Heading = styled.h1`
         width: 300px;
         font-size: 2rem;
       }
+      @media (max-width: 300px) {
+        width: 270px!important;
+      }
+      
     `}
     ${(props) =>
     props.as === "h6" &&
@@ -122,6 +126,9 @@ const Heading = styled.h1`
       @media (max-height: 770px) {
         padding-bottom: 0;
       }
+      @media (max-width: 400px) {
+        font-size: 16px;
+      }
     `}
           ${(props) =>
     props.as === "h9" &&
@@ -133,6 +140,9 @@ const Heading = styled.h1`
       font-weight: bold;
       @media (max-height: 825px) {
         font-size: 12px;
+      }
+      @media (max-width: 400px) {
+        font-size: 14px;
       }
     `}
 

@@ -29,6 +29,9 @@ const StyledModal = styled.div`
     height: 500px;
     padding: 20px 4rem;
   }
+  @media (max-width: 300px) {
+    width: calc(100vw);
+  }
 `;
 
 const Overlay = styled.div`
