@@ -39,6 +39,8 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-901: #00ffa2;
   --color-grey-902: #004466;
   --color-grey-903: #2ecc71;
+  --color-grey-904: #004466;
+  --color-grey-905: #00ffa2;
   --color-grey-55: rgba(255, 255, 255, 0.5);
   --stroke-ham-1: #000;
 
@@ -91,6 +93,8 @@ const GlobalStyles = createGlobalStyle`/*
 --color-grey-901: transparent;
 --color-grey-902: transparent;
 --color-grey-903: rgba(255, 255, 255, 0.2);
+--color-grey-904: white;
+--color-grey-905: rgba(255, 255, 255, 0.2);
 --color-grey-55: #091522;
 --stroke-ham-1: #999;
 
@@ -228,6 +232,7 @@ ul {
   border-radius: 16px;
   max-height: 250px;
   overflow: auto;
+ 
 }
 
 .question-progressAndContent-container {
@@ -256,7 +261,7 @@ ul {
   align-items: flex-start;
   justify-content: flex-start;
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--color-grey-905)!important;
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
   }

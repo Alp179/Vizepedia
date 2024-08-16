@@ -25,7 +25,6 @@ const Heading = styled.h1`
       @media (max-width: 360px) {
         margin-left: -120px;
       }
-
     `}
 
   ${(props) =>
@@ -63,6 +62,7 @@ const Heading = styled.h1`
     ${(props) =>
     props.as === "h5" &&
     css`
+      color: var(--color-grey-904);
       font-size: 3rem;
       font-weight: 600;
       text-align: center;
@@ -98,6 +98,7 @@ const Heading = styled.h1`
       ${(props) =>
     props.as === "h7" &&
     css`
+      color: var(--color-grey-904);
       font-size: 2.2rem;
       font-weight: bold;
       @media (max-width: 850px) {
@@ -110,6 +111,7 @@ const Heading = styled.h1`
         ${(props) =>
     props.as === "h8" &&
     css`
+      color: var(--color-grey-904);
       text-align: center;
       font-size: 22px;
       font-weight: bold;
@@ -124,6 +126,7 @@ const Heading = styled.h1`
           ${(props) =>
     props.as === "h9" &&
     css`
+      color: var(--color-grey-904);
       text-align: center;
       font-size: 16px;
       margin: 4px 0 -4px 0;

@@ -23,6 +23,7 @@ const QuestionContainer = styled.div`
 `;
 
 const HeadingWidth = styled.p`
+color: var(--color-grey-904);
 font-size: 18px;
 font-weight: bold;
 text-align: center;

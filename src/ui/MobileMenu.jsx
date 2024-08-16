@@ -52,8 +52,7 @@ const MenuIcon = styled.div.attrs((props) => ({
   .line {
     fill: none;
     transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
-    stroke: ${(props) =>
-      props.isOpen ? "var(--stroke-ham-1)" : "black"};
+    stroke: ${(props) => (props.isOpen ? "var(--stroke-ham-1)" : "black")};
     stroke-width: 5.5;
     stroke-linecap: round;
   }
@@ -131,6 +130,7 @@ const MenuContent = styled.div`
 `;
 
 const StyledNavLink = styled.div`
+  width: 86%;
   z-index: 3000;
   border-radius: 16px;
   display: flex;

@@ -45,7 +45,7 @@ const fadeIn = keyframes`
 `;
 
 const StyledNavLink = styled(NavLink)`
-width: 90%;
+  width: 90%;
   &:link,
   &:visited {
     display: flex;
@@ -72,10 +72,11 @@ width: 90%;
   &:active,
   &.active:link,
   &.active:visited {
-    color: var(--color-grey-800);
+    color: var(--color-grey-904);
     background-color: var(--color-grey-50);
     border-radius: var(--border-radius-sm);
   }
+
 
   & svg {
     width: 2.4rem;
@@ -112,7 +113,7 @@ const DeleteButton = styled.button`
   width: 2.4rem;
   height: 2.4rem;
 
-  @media (max-width: 1300px){
+  @media (max-width: 1300px) {
     margin-right: -20px;
   }
   @media (max-width: 1050px) {
@@ -145,7 +146,7 @@ const Tooltip = styled.span`
   top: 0%;
   left: -15%;
   transform: translate(-50%, -50%) scale(0.5);
-  background: #A40013;
+  background: #a40013;
   color: white;
   padding: 1.5rem 1.5rem;
   border-radius: 3px;
@@ -250,38 +251,44 @@ function MainNav() {
       toast(
         (t) => (
           <span className="handle-delete">
-            <p style={{textAlign: "center"}}>
-            Bu vize başvurusunu silmek istediğinizden emin misiniz?
+            <p style={{ textAlign: "center" }}>
+              Bu vize başvurusunu silmek istediğinizden emin misiniz?
             </p>
             <br />
-            <div style={{display: "flex", flexWrap: "wrap", gap: "4px"}}>
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                resolve(true);
-              }}
-              style={{
-                width: "60px",
-                height: "30px",
-                textAlign: "center",
-                marginRight: "8px",
-                color: "white",
-                borderRadius: "8px",
-                backgroundColor: "#A40013",
-                border: "none",
-              }}
-            >
-              Evet
-            </button>
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                resolve(false);
-              }}
-              style={{width: "60px", height: "30px", border: "none", borderRadius: "8px", color: "black" }}
-            >
-              Hayır
-            </button>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(true);
+                }}
+                style={{
+                  width: "60px",
+                  height: "30px",
+                  textAlign: "center",
+                  marginRight: "8px",
+                  color: "white",
+                  borderRadius: "8px",
+                  backgroundColor: "#A40013",
+                  border: "none",
+                }}
+              >
+                Evet
+              </button>
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(false);
+                }}
+                style={{
+                  width: "60px",
+                  height: "30px",
+                  border: "none",
+                  borderRadius: "8px",
+                  color: "black",
+                }}
+              >
+                Hayır
+              </button>
             </div>
           </span>
         ),
@@ -323,7 +330,7 @@ function MainNav() {
         <li>
           <Modal>
             <Modal.Open opens="allDocs">
-              <StyledNavLink style={{width: "100%"}}>
+              <StyledNavLink style={{ width: "100%" }}>
                 <HiDocument /> <span className="sidebartext">Tüm belgeler</span>
               </StyledNavLink>
             </Modal.Open>
@@ -335,7 +342,10 @@ function MainNav() {
         <ScrollableDiv>
           {applications.map((app) => (
             <li className="mainnav-buzlucam" key={app.id}>
-              <StyledNavLink style={{justifyContent: "flex-end"}} to={`/dashboard/${app.id}`}>
+              <StyledNavLink
+                style={{ justifyContent: "flex-start" }}
+                to={`/dashboard/${app.id}`}
+              >
                 {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
                 {applications.length > 1 && (
                   <DeleteButton

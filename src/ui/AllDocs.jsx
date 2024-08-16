@@ -12,15 +12,24 @@ import Spinner from "./Spinner";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 const DocumentItem = styled.li`
+  color: ${(props) =>
+    props.isCompleted ? "#374151" : "var(--color-grey-700)"};
   display: flex;
-  border-radius: 16px;
+  border-radius: 8px;
   background-color: ${(props) => (props.isCompleted ? "#00ffa2" : "none")};
   padding: 8px;
-  margin: 5px;
+  margin: 0; /* Boşluğu sıfırladık */
   cursor: pointer;
   &:hover {
     background-color: ${(props) => (props.isCompleted ? "#cde0d9" : "#f0f0f0")};
   }
+`;
+
+const Bracket = styled.div`
+  background-color: grey;
+  height: 2px;
+  width: 100%;
+  margin: 0 auto; /* Bracket boşluğunu sıfırladık */
 `;
 
 const ScrollableDiv = styled.div`
@@ -118,21 +127,28 @@ function AllDocs() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "6px", zIndex: "3000" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "6px",
+        zIndex: "3000",
+      }}
+    >
       <h2>Tüm Belgeler</h2>
-      <div>Başvurunuzda gerekli olan tüm belgeler</div>
+      <div>Başvurunuzda gerekli olan tüm belgeleri aşağıda görebilirsiniz</div>
 
       <ScrollableDiv>
-        {documents?.map((document) => (
-          <DocumentItem
-            key={document.id}
-            isCompleted={
-              completedDocuments[applicationId]?.[document.docName]
-            }
-            onClick={() => handleDocumentClick(document)}
-          >
-            {document.docName}
-          </DocumentItem>
+        {documents?.map((document, index) => (
+          <div key={document.id}>
+            <DocumentItem
+              isCompleted={completedDocuments[applicationId]?.[document.docName]}
+              onClick={() => handleDocumentClick(document)}
+            >
+              {document.docName}
+            </DocumentItem>
+            {index < documents.length - 1 && <Bracket />}
+          </div>
         ))}
       </ScrollableDiv>
     </div>

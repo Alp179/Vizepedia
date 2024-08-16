@@ -132,7 +132,7 @@ function OtherQSelections({
     <Container>
       <Section>
         <Heading as="h7">Konaklama türü</Heading>
-        <HorizontalButtonGroup>
+        <HorizontalButtonGroup style={{marginLeft: "-24px"}}>
           {accommodationsData &&
             accommodationsData.map((accommodation, index) => (
               <React.Fragment key={accommodation.id}>
