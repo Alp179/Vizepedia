@@ -26,19 +26,19 @@ const StepAndContinueContainer = styled.div`
     margin-left: -100px;
   }
   @media (max-width: 1050px) {
-    max-width: 500px!important;
+    max-width: 500px !important;
   }
   @media (max-width: 710px) {
     gap: 8px;
     flex-flow: column;
     width: 250px;
-    justify-content: flex-start
-    align-items: flex-start;
+    justify-content: flex-start;
+    align-item: flex-start;
     padding-bottom: 16px;
   }
   @media (max-width: 360px) {
     margin-left: -130px;
-  } 
+  }
 `;
 
 const StepsContainer = styled.div`

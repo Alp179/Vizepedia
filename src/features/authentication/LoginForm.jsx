@@ -5,6 +5,7 @@ import Input from "../../ui/Input";
 import FormRow from "../../ui/FormRow";
 import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
+import { signInWithGoogle } from "../../services/apiAuth"; // Google oturum açma fonksiyonunu import ediyoruz
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -24,6 +25,11 @@ function LoginForm() {
         },
       }
     );
+  }
+
+  // Google oturum açma butonu için event handler
+  function handleGoogleSignIn() {
+    signInWithGoogle();
   }
 
   return (
@@ -57,9 +63,21 @@ function LoginForm() {
           disabled={isLoading}
         />
       </FormRow>
+
       <FormRow orientation="vertical">
         <Button size="login" variation="login" disabled={isLoading}>
           {!isLoading ? "Login" : <SpinnerMini />}
+        </Button>
+      </FormRow>
+
+      <FormRow orientation="vertical">
+        <Button
+          size="login" // Butonun boyutunu belirtiyoruz
+          variation="outline" // Butonun stilini belirtiyoruz
+          type="button"
+          onClick={handleGoogleSignIn} // Google oturum açma fonksiyonunu çağırıyoruz
+        >
+          Google ile Giriş Yap
         </Button>
       </FormRow>
     </Form>
