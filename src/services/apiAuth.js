@@ -3,11 +3,16 @@ import supabase, { supabaseUrl } from "./supabase";
 
 // Yeni fonksiyon: Google ile oturum açma
 export async function signInWithGoogle() {
-  const { error } = await supabase.auth.signInWithOAuth({
+  const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
   });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("Google ile oturum açma hatası:", error.message);
+    return { error };
+  }
+
+  return { data };
 }
 
 // Halihazırdaki fonksiyonlar

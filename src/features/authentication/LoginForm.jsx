@@ -5,13 +5,14 @@ import Input from "../../ui/Input";
 import FormRow from "../../ui/FormRow";
 import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
-import { signInWithGoogle } from "../../services/apiAuth"; // Google oturum açma fonksiyonunu import ediyoruz
+import { signInWithGoogle } from "../../services/apiAuth";
+import { useNavigate } from "react-router-dom"; // Yönlendirme için gerekli
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const { login, isLoading } = useLogin();
+  const navigate = useNavigate(); // Yönlendirme fonksiyonunu tanımlıyoruz
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -28,8 +29,11 @@ function LoginForm() {
   }
 
   // Google oturum açma butonu için event handler
-  function handleGoogleSignIn() {
-    signInWithGoogle();
+  async function handleGoogleSignIn() {
+    const { data, error } = await signInWithGoogle();
+    if (!error && data) {
+      navigate("/dashboard"); // Yönlendirme işlemi burada gerçekleşir
+    }
   }
 
   return (
@@ -63,7 +67,6 @@ function LoginForm() {
           disabled={isLoading}
         />
       </FormRow>
-
       <FormRow orientation="vertical">
         <Button size="login" variation="login" disabled={isLoading}>
           {!isLoading ? "Login" : <SpinnerMini />}
