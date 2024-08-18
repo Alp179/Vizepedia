@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import Input from "../../ui/Input";
@@ -6,13 +7,12 @@ import FormRow from "../../ui/FormRow";
 import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
 import { signInWithGoogle } from "../../services/apiAuth";
-import { useNavigate } from "react-router-dom"; // Yönlendirme için gerekli
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, isLoading } = useLogin();
-  const navigate = useNavigate(); // Yönlendirme fonksiyonunu tanımlıyoruz
+  const navigate = useNavigate(); // Yönlendirme fonksiyonu
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -32,9 +32,22 @@ function LoginForm() {
   async function handleGoogleSignIn() {
     const { data, error } = await signInWithGoogle();
     if (!error && data) {
-      navigate("/dashboard"); // Yönlendirme işlemi burada gerçekleşir
+      // Yönlendirme işlemi
+      navigate("/dashboard");
     }
   }
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(
+      window.location.hash.replace("#", "?")
+    );
+    const accessToken = urlParams.get("access_token");
+
+    if (accessToken) {
+      // Token'ı işleyebilir veya gerekli işlemleri yapabilirsiniz
+      navigate("/dashboard"); // Yönlendirme işlemi
+    }
+  }, [navigate]);
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -49,7 +62,6 @@ function LoginForm() {
         <Input
           type="email"
           id="email"
-          // This makes this form better for password managers
           autoComplete="username"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -75,10 +87,10 @@ function LoginForm() {
 
       <FormRow orientation="vertical">
         <Button
-          size="login" // Butonun boyutunu belirtiyoruz
-          variation="outline" // Butonun stilini belirtiyoruz
+          size="login"
+          variation="outline"
           type="button"
-          onClick={handleGoogleSignIn} // Google oturum açma fonksiyonunu çağırıyoruz
+          onClick={handleGoogleSignIn}
         >
           Google ile Giriş Yap
         </Button>
