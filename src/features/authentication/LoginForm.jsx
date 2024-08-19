@@ -15,6 +15,9 @@ const BracketContainer = styled.div`
   align-items: center;
   width: 100%;
   justify-content: center;
+  @media (max-width: 370px) {
+    gap: 8px;
+  }
 `;
 
 const Bracket = styled.div`
@@ -23,6 +26,9 @@ const Bracket = styled.div`
   width: 135px;
   @media (max-width: 450px) {
     width: 100px;
+  }
+  @media (max-width: 370px) {
+    width: 70px;
   }
 `;
 
