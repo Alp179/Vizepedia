@@ -23,7 +23,7 @@ const sizes = {
     height: 44px;
     width: 371px;
     border-radius: 11px !important;
-    border: transparent !important;
+    border: transparent;
     font-weight: bold !important;
     @media (max-width: 450px) {
       width: 306px !important;
@@ -81,7 +81,7 @@ const sizes = {
     height: 40px !important;
     width: 80% !important;
     @media (max-width: 825px) {
-      font-size: 14px!important;
+      font-size: 14px !important;
     }
   `,
 };
@@ -99,6 +99,18 @@ const variations = {
   login: css`
     color: var(--color-grey-31);
     background-color: var(--color-grey-61);
+    @media (max-width: 370px) {
+      width: calc(100vw - 20px)!important;
+    }
+  `,
+  googleauth: css`
+    background: white;
+    color: black;
+    font-weight: bold;
+    border: 1px solid var(--color-grey-300);
+    @media (max-width: 370px) {
+      width: calc(100vw - 20px)!important;
+    }
   `,
   question: css`
     display: flex;

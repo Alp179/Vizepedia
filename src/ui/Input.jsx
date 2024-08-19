@@ -12,6 +12,9 @@ export const Input = styled.input`
     width: 306px;
     height: 44px;
   }
+  @media (max-width: 370px) {
+    width: calc(100vw - 20px);
+  }
 `;
 
 export default Input;

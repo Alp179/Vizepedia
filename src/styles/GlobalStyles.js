@@ -220,6 +220,27 @@ ul {
 }
 
 
+.subtext {
+  text-align: center;
+  font-size: 16px;
+}
+@media (max-width: 450px) {
+  .subtext {
+    font-size: 16px;
+  }
+  .hosgeldiniz {
+    font-size: 22px;
+  }
+}
+@media (max-width: 370px) {
+  .subtext {
+    font-size: 14px;
+  }
+  .hosgeldiniz {
+    font-size: 18px!important;
+  }
+}
+
 .mobile-scrolldiv {
   padding: 4px 0;
   background: rgba(255, 255, 255, 0.2);
@@ -267,10 +288,7 @@ ul {
   }
 }
 
-.subtext {
-  text-align: center;
-  font-size: 16px;
-}
+
 
 @media (max-width: 1050px) {
   .sidebartext {
@@ -291,11 +309,6 @@ ul {
   }
 }
 
-@media (max-width: 450px) {
-  .hosgeldiniz {
-    font-size: 22px;
-  }
-}
 
 .navbar-dash {
   display: flex;

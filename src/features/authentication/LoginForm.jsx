@@ -2,11 +2,29 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
+import styled from "styled-components";
 import Input from "../../ui/Input";
 import FormRow from "../../ui/FormRow";
 import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
 import { signInWithGoogle } from "../../services/apiAuth";
+
+const BracketContainer = styled.div`
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+`;
+
+const Bracket = styled.div`
+  height: 1px;
+  border: 1px solid var(--color-grey-300);
+  width: 135px;
+  @media (max-width: 450px) {
+    width: 100px;
+  }
+`;
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -58,6 +76,21 @@ function LoginForm() {
           Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
         </p>
       </div>
+      <FormRow orientation="vertical">
+        <Button
+          size="login"
+          variation="googleauth"
+          type="button"
+          onClick={handleGoogleSignIn}
+        >
+          Google ile Giriş Yap
+        </Button>
+      </FormRow>
+      <BracketContainer>
+        <Bracket />
+        <p style={{ color: "var(--color-grey-700)" }}>ya da</p>
+        <Bracket />
+      </BracketContainer>
       <FormRow orientation="vertical" label="E-posta Adresi">
         <Input
           type="email"
@@ -82,17 +115,6 @@ function LoginForm() {
       <FormRow orientation="vertical">
         <Button size="login" variation="login" disabled={isLoading}>
           {!isLoading ? "Login" : <SpinnerMini />}
-        </Button>
-      </FormRow>
-
-      <FormRow orientation="vertical">
-        <Button
-          size="login"
-          variation="outline"
-          type="button"
-          onClick={handleGoogleSignIn}
-        >
-          Google ile Giriş Yap
         </Button>
       </FormRow>
     </Form>

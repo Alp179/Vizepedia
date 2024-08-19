@@ -6,6 +6,7 @@ const StyledFormRow = styled.div`
   flex-direction: column;
   justify-content: center;
 
+
   grid-template-columns: ${(props) =>
     props.orientation === "vertical" ? "1fr" : "24rem 1fr 1.2fr"};
   gap: ${(props) => (props.orientation === "vertical" ? "0.8rem" : "2.4rem")};

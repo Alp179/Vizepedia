@@ -6,15 +6,10 @@ const StyledLogo = styled.div`
   ${(props) =>
     props.variant === "login" &&
     css`
-      margin-top: -50px;
       margin-right: auto;
-      margin-bottom: -20px;
       margin-left: auto;
-      width: 180px;
+      width: 125px;
       height: auto;
-      @media (max-width: 450px) {
-        margin-top: -100px;
-      }
     `}
 
   ${(props) =>
