@@ -17,7 +17,7 @@ const Container = styled.div`
   justify-content: center;
   gap: 4rem;
   @media (max-height: 800px) {
-    margin-top: 60px;
+    margin-top: 40px;
     gap: 3rem;
   }
 `;

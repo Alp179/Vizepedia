@@ -20,7 +20,7 @@ const Form = styled.form`
       align-items: center;
       @media (max-width: 450px) {
         width: 358px;
-        height: 510px;
+        height: 540px;
       }
       @media (max-width: 370px) {
         width: 100%!important;
