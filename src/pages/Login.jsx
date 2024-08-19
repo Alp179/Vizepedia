@@ -20,6 +20,9 @@ const Container = styled.div`
     margin-top: 40px;
     gap: 3rem;
   }
+  @media (max-width: 370px) {
+    gap: 1.6rem;
+  }
 `;
 
 function Login() {

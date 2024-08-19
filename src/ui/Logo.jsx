@@ -10,6 +10,9 @@ const StyledLogo = styled.div`
       margin-left: auto;
       width: 125px;
       height: auto;
+      @media (max-width: 370px) {
+        width: 100px;
+      }
     `}
 
   ${(props) =>
