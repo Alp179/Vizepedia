@@ -14,6 +14,7 @@ import ProtectedRoute from "./ui/ProtectedRoute";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
+import MainPage from "./pages/MainPage";
 
 import WellcomeA from "./features/wellcomes/WellcomeA";
 import WellcomeD from "./features/wellcomes/WellcomeD";
@@ -28,6 +29,7 @@ import { DocumentsProvider } from "./context/DocumentsContext";
 import DocumentSummary from "./pages/DocumentSummary";
 import { VisaApplicationProvider } from "./context/VisaApplicationContext";
 import QuestionsLayout from "./ui/QuesitonsLayout";
+import MainPageLayout from "./ui/MainPageLayout";
 import { useEffect } from "react";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
@@ -75,6 +77,15 @@ function App() {
                 <GlobalStyles />
                 <BrowserRouter>
                   <Routes>
+                    <Route
+                      element={
+                        <ProtectedRoute>
+                          <MainPageLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route path="mainpage" element={<MainPage />} />
+                    </Route>
                     <Route
                       element={
                         <ProtectedRoute>

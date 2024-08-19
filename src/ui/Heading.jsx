@@ -80,9 +80,8 @@ const Heading = styled.h1`
         font-size: 2rem;
       }
       @media (max-width: 300px) {
-        width: 270px!important;
+        width: 270px !important;
       }
-      
     `}
     ${(props) =>
     props.as === "h6" &&
@@ -145,6 +144,31 @@ const Heading = styled.h1`
         font-size: 14px;
       }
     `}
+    ${(props) =>
+    props.as === "h10" &&
+    css`
+    color: var(--color-grey-904);
+      font-size: 20px;
+      font-weight: 600;
+    `}
+      ${(props) =>
+    props.as === "h11" &&
+    css`
+    color: var(--color-grey-904);
+      font-size: 72px;
+      font-weight: 600;
+      max-width: 1100px;
+    `}
+
+        ${(props) =>
+    props.as === "h12" &&
+    css`
+      color: var(--color-grey-904);
+      max-width: 700px;
+      font-size: 22px;
+      font-weight: 600;
+    `}
+  
 
     line-height:1.4;
 `;

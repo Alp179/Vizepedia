@@ -1,5 +1,4 @@
 import { styled } from "styled-components";
-
 import Heading from "../ui/Heading";
 import Button from "../ui/Button";
 import { useNavigate } from "react-router-dom";
@@ -23,18 +22,18 @@ const QuestionContainer = styled.div`
 `;
 
 const HeadingWidth = styled.p`
-color: var(--color-grey-904);
-font-size: 18px;
-font-weight: bold;
-text-align: center;
-@media (max-width: 450px) {
-  font-size: 16px;
-  width: 300px;
-}
-@media (max-width: 300px) {
-  width: 270px;
-}
-`
+  color: var(--color-grey-904);
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  @media (max-width: 450px) {
+    font-size: 16px;
+    width: 300px;
+  }
+  @media (max-width: 300px) {
+    width: 270px;
+  }
+`;
 
 function Wellcome() {
   const navigate = useNavigate();
@@ -48,7 +47,9 @@ function Wellcome() {
           Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
         </HeadingWidth>
         <StyledInput placeholder="Ad (isteğe bağlı)"></StyledInput>
-        <Button variation="question" onClick={() => navigate("/wellcome-1")}>Devam et</Button>
+        <Button variation="question" onClick={() => navigate("/wellcome-1")}>
+          Devam et
+        </Button>
       </QuestionContainer>
     </>
   );

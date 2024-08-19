@@ -27,6 +27,12 @@ const StyledLogo = styled.div`
         display: none;
       }
     `}
+    ${(props) =>
+      props.variant === "mainpage" &&
+      css`
+        width: 165px;
+        height: auto;
+      `}
 `;
 
 const Img = styled.img``;

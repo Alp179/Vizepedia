@@ -100,7 +100,7 @@ const variations = {
     color: var(--color-grey-31);
     background-color: var(--color-grey-61);
     @media (max-width: 370px) {
-      width: calc(100vw - 20px)!important;
+      width: calc(100vw - 20px) !important;
     }
   `,
   googleauth: css`
@@ -109,7 +109,7 @@ const variations = {
     font-weight: bold;
     border: 1px solid var(--color-grey-300);
     @media (max-width: 370px) {
-      width: calc(100vw - 20px)!important;
+      width: calc(100vw - 20px) !important;
     }
   `,
   question: css`
@@ -161,6 +161,25 @@ const variations = {
     &:hover {
       border-color: black;
     }
+  `,
+  mainpage: css`
+    width: 165px;
+    height: 55px;
+    border-radius: 20px;
+    background: #004466;
+    color: #87f9cd;
+    font-size: 20px;
+    font-weight: bold;
+  `,
+  mainpage2: css`
+    color: var(--color-grey-904);
+    width: 165px;
+    height: 55px;
+    border-radius: 20px;
+    border: 2px solid var(--color-grey-904);
+    background: transparent;
+    font-size: 20px;
+    font-weight: bold;
   `,
 };
 
