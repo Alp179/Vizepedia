@@ -120,7 +120,7 @@ function LoginForm() {
       </FormRow>
       <FormRow orientation="vertical">
         <Button size="login" variation="login" disabled={isLoading}>
-          {!isLoading ? "Login" : <SpinnerMini />}
+          {!isLoading ? "Giriş yap" : <SpinnerMini />}
         </Button>
       </FormRow>
     </Form>
