@@ -44,6 +44,9 @@ const Main = styled.main`
 const Container = styled.div`
   max-width: 100vw;
   margin: 50px 50px 0 50px;
+  @media (max-width: 1225px) {
+    margin: 32px 0 0 0;
+  }
 `;
 
 

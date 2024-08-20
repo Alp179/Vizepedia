@@ -36,6 +36,9 @@ const StyledLogo = styled.div`
         @media (max-width: 1200px) {
           width: 120px;
         }
+        @media (max-width: 732px) {
+          width: 98px;
+        }
       `}
       ${(props) =>
         props.variant === "mainpage2" &&

@@ -167,6 +167,12 @@ const Heading = styled.h1`
       @media (max-width: 1200px) {
         font-size: 48px;
       }
+      @media (max-width: 732px) {
+        font-size: 36px;
+      }
+      @media (max-width: 360px) {
+        font-size: 28px;
+      }
     `}
 
         ${(props) =>
@@ -178,6 +184,9 @@ const Heading = styled.h1`
       font-weight: 600;
       @media (max-width: 1200px) {
         font-size: 20px;
+      }
+      @media (max-width: 732px) {
+        font-size: 16px;
       }
     `}
     

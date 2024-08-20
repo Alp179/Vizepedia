@@ -170,10 +170,18 @@ const variations = {
     color: #87f9cd;
     font-size: 20px;
     font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     @media (max-width: 1200px) {
       width: 120px;
       font-size: 16px;
       height: 50px;
+    }
+    @media (max-width: 732px) {
+      width: 102px;
+      height: 34px;
+      font-size: 14px;
     }
   `,
   mainpage2: css`
