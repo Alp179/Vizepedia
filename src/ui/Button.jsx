@@ -193,6 +193,9 @@ const variations = {
     background: transparent;
     font-size: 20px;
     font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     @media (max-width: 1200px) {
       width: 120px;
       font-size: 16px;
