@@ -32,7 +32,24 @@ const StyledLogo = styled.div`
       css`
         width: 165px;
         height: auto;
+        flex-shrink: 0;
+        @media (max-width: 1200px) {
+          width: 120px;
+        }
       `}
+      ${(props) =>
+        props.variant === "mainpage2" &&
+        css`
+          width: 165px;
+          height: auto;
+          flex-shrink: 0;
+          @media (max-width: 1200px) {
+            width: 120px;
+          }
+          @media (max-width: 870px) {
+            display: none;
+          }
+        `}
 `;
 
 const Img = styled.img``;

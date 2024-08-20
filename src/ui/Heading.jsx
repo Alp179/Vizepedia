@@ -147,17 +147,26 @@ const Heading = styled.h1`
     ${(props) =>
     props.as === "h10" &&
     css`
-    color: var(--color-grey-904);
+      color: var(--color-grey-904);
       font-size: 20px;
       font-weight: 600;
+      @media (max-width: 1200px) {
+        font-size: 18px;
+      }
+      @media (max-width: 870px) {
+        display: none;
+      }
     `}
       ${(props) =>
     props.as === "h11" &&
     css`
-    color: var(--color-grey-904);
+      color: var(--color-grey-904);
       font-size: 72px;
       font-weight: 600;
       max-width: 1100px;
+      @media (max-width: 1200px) {
+        font-size: 48px;
+      }
     `}
 
         ${(props) =>
@@ -167,7 +176,11 @@ const Heading = styled.h1`
       max-width: 700px;
       font-size: 22px;
       font-weight: 600;
+      @media (max-width: 1200px) {
+        font-size: 20px;
+      }
     `}
+    
   
 
     line-height:1.4;

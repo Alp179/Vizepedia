@@ -170,6 +170,11 @@ const variations = {
     color: #87f9cd;
     font-size: 20px;
     font-weight: bold;
+    @media (max-width: 1200px) {
+      width: 120px;
+      font-size: 16px;
+      height: 50px;
+    }
   `,
   mainpage2: css`
     color: var(--color-grey-904);
@@ -180,6 +185,14 @@ const variations = {
     background: transparent;
     font-size: 20px;
     font-weight: bold;
+    @media (max-width: 1200px) {
+      width: 120px;
+      font-size: 16px;
+      height: 50px;
+    }
+    @media (max-width: 870px) {
+      display: none;
+    }
   `,
 };
 
