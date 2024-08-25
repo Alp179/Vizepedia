@@ -28,31 +28,44 @@ const StyledLogo = styled.div`
       }
     `}
     ${(props) =>
-      props.variant === "mainpage" &&
-      css`
-        width: 165px;
-        height: auto;
-        flex-shrink: 0;
-        @media (max-width: 1200px) {
-          width: 120px;
-        }
-        @media (max-width: 732px) {
-          width: 98px;
-        }
-      `}
+    props.variant === "mainpage" &&
+    css`
+      width: 165px;
+      height: auto;
+      flex-shrink: 0;
+      @media (max-width: 1200px) {
+        width: 120px;
+      }
+      @media (max-width: 732px) {
+        width: 98px;
+      }
+    `}
       ${(props) =>
-        props.variant === "mainpage2" &&
-        css`
-          width: 165px;
-          height: auto;
-          flex-shrink: 0;
-          @media (max-width: 1200px) {
-            width: 120px;
-          }
-          @media (max-width: 870px) {
-            display: none;
-          }
-        `}
+    props.variant === "mainpage2" &&
+    css`
+      width: 165px;
+      height: auto;
+      flex-shrink: 0;
+      @media (max-width: 1200px) {
+        width: 120px;
+      }
+      @media (max-width: 870px) {
+        display: none;
+      }
+    `}
+        ${(props) =>
+    props.variant === "bulten" &&
+    css`
+      width: 227px;
+      height: 65px;
+    `}
+
+    ${(props) =>
+      props.variant === "footer" &&
+      css`
+        width: 154px;
+        height: 44px;
+      `}
 `;
 
 const Img = styled.img``;

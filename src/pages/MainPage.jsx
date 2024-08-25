@@ -3,6 +3,7 @@ import Heading from "../ui/Heading";
 import Logo from "../ui/Logo";
 import DarkModeToggle from "../ui/DarkModeToggle";
 import Button from "../ui/Button";
+import Marquee from "react-fast-marquee";
 
 const Navbar = styled.div`
   width: 80%;
@@ -258,6 +259,57 @@ const WhyCards2PlaneImage = styled.img`
   }
 `;
 
+const RahatProfesyonelContainer = styled.div`
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 100px;
+  @media (max-width: 800px) {
+    gap: 40px;
+  }
+  @media (max-width: 580px) {
+    gap: 8px;
+  }
+`;
+
+const RahatProfesyonelImage = styled.div`
+  width: 300px;
+  height: 600px;
+  background: red;
+  @media (max-width: 732px) {
+    width: 175px;
+    height: 350px;
+  }
+  @media (max-width: 410px) {
+    width: 150px;
+    height: 300px;
+  }
+  @media (max-width: 350px) {
+    width: 120px;
+    height: 240px;
+  }
+`;
+
+const RahatProfesyonelMobileHeading = styled.p`
+  @media (min-width: 500px) {
+    display: none !important;
+  }
+  color: var(--color-grey-904);
+  font-weight: 600;
+  text-align: center;
+  font-size: 36px;
+  margin-top: 70px;
+  margin-bottom: -70px;
+  display: block;
+  @media (max-width: 370px) {
+    font-size: 32px;
+  }
+  @media (max-width: 360px) {
+    font-size: 28px;
+  }
+`;
+
 function MainPage() {
   return (
     <>
@@ -347,6 +399,257 @@ function MainPage() {
           <WhyCards2PlaneImage src="../public/bonbon-plane.png" />
         </WhyCards2>
       </WhyCardsContainer2>
+      <section
+        style={{
+          width: "100%",
+          marginTop: "100px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Heading as="h11">38 Ülke</Heading>
+        <Marquee>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/us.svg"
+              alt="Amerika Birleşik Devletleri"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/gb.svg"
+              alt="Birleşik Krallık"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/ae.svg"
+              alt="Birleşik Arap Emirlikleri"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/gr.svg"
+              alt="Yunanistan"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/nl.svg"
+              alt="Hollanda"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/it.svg"
+              alt="İtalya"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/ca.svg"
+              alt="Kanada"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/ch.svg"
+              alt="İsviçre"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/bg.svg"
+              alt="Bulgaristan"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/be.svg"
+              alt="Belçika"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/cz.svg"
+              alt="Çekya"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/dk.svg"
+              alt="Danimarka"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/de.svg"
+              alt="Almanya"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/ee.svg"
+              alt="Estonya"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/ie.svg"
+              alt="İrlanda"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/es.svg"
+              alt="İspanya"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/fr.svg"
+              alt="Fransa"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/lv.svg"
+              alt="Litvanya"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/hu.svg"
+              alt="Macaristan"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/fi.svg"
+              alt="Finlandiya"
+            />
+          </div>
+          <div className="slide">
+            <img
+              src="https://github.com/HatScripts/circle-flags/raw/gh-pages/flags/se.svg"
+              alt="İsveç"
+            />
+          </div>
+        </Marquee>
+        <Heading as="h11">Tek Rehber</Heading>
+      </section>
+      <RahatProfesyonelMobileHeading>Çok Rahat</RahatProfesyonelMobileHeading>
+      <RahatProfesyonelContainer>
+        <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
+          <Heading as="h14">Çok Rahat</Heading>
+          <Heading as="h13">
+            Vize başvuru sürecinin karmaşıklığını ve bilgi kirliliğinin negatif
+            hissiyatını unutun ve her adımda size sunulan rehberlikle rahat,
+            güvenli ve başarıya odaklı bir deneyimi yaşayın!
+          </Heading>
+        </div>
+        <RahatProfesyonelImage>s</RahatProfesyonelImage>
+      </RahatProfesyonelContainer>
+      <RahatProfesyonelMobileHeading>
+        Çok Profesyonel
+      </RahatProfesyonelMobileHeading>
+      <RahatProfesyonelContainer>
+        <RahatProfesyonelImage>s</RahatProfesyonelImage>
+        <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
+          <Heading as="h14">Çok Profesyonel</Heading>
+          <Heading as="h13">
+            Vizepedia, alanında uzman ekibi ve profesyonel yaklaşımıyla vize
+            başvurularınızda güvenilir ve etkili bir çözüm ortağı olarak
+            yanınızda!
+          </Heading>
+        </div>
+      </RahatProfesyonelContainer>
+
+      <div className="bulten-abone">
+        <div
+          className="bulten-responsive"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-around",
+          }}
+        >
+          <div className="bulten-header">Bültenimize Abone ol</div>
+          <div className="bulten-subtext">
+            Vize duyuruları ve en son blog yazılarımızdan ilk sizin haberiniz
+            olsun. Hemen abone olun!
+          </div>
+        </div>
+        <div
+          className="bulten-inputvelogo"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-around",
+            alignItems: "flex-end",
+          }}
+        >
+          <Logo variant="bulten" />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+            }}
+          >
+            <div className="bulten-input">
+              <img src="images/mail-image.png" />
+              <input className="bulten-mail" />
+            </div>
+            <button className="bulten-abone-buton">Abone ol</button>
+          </div>
+        </div>
+      </div>
+      <div className="footer">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "34px",
+          }}
+        >
+          <div className="footer-header">
+            Vize başvurusu yapmak hiç bu kadar kolay olmamıştı.
+          </div>
+          <div className="ceper">
+            <div className="footer-buton">Hemen başlayın</div>
+          </div>
+        </div>
+        <div className="footer-divider"></div>
+        <div
+          className="footer-wrap"
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            maxWidth: "80%",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
+          <Logo variant="footer" />
+          <div style={{ display: "flex", gap: "30px" }}>
+            <div className="footer-links">Ana Sayfa</div>
+            <div className="footer-links">Hakkında</div>
+            <div className="footer-links">Blog</div>
+          </div>
+          <div style={{ display: "flex", gap: "25px" }}>
+            <img src="images/linkedin.png" />
+            <img src="images/Facebook.png" />
+            <img src="images/Instagram.png" />
+            <img src="images/Youtube.png" />
+          </div>
+        </div>
+      </div>
     </>
   );
 }

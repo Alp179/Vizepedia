@@ -189,6 +189,47 @@ const Heading = styled.h1`
         font-size: 16px;
       }
     `}
+    ${(props) =>
+      props.as === "h13" &&
+      css`
+        color: var(--color-grey-904);
+        max-width: 500px;
+        font-size: 26px;
+        @media (max-width: 1200px) {
+          font-size: 20px;
+        }
+        @media (max-width: 970px) {
+          max-width: 300px;
+        }
+        @media (max-width: 580px) {
+          font-size: 16px;
+          max-width: 200px;
+        }
+        @media (max-width: 370px) {
+          max-width: 180px;
+        }
+        @media (max-width: 350px) {
+          max-width: 150px;
+        }
+      `}
+      ${(props) =>
+        props.as === "h14" &&
+        css`
+          color: var(--color-grey-904);
+          font-size: 72px;
+          font-weight: 600;
+          max-width: 1100px;
+          @media (max-width: 1200px) {
+            font-size: 48px;
+          }
+          @media (max-width: 732px) {
+            font-size: 36px;
+          }
+          @media (max-width: 500px) {
+            display: none;
+          }
+          
+        `}
     
   
 
