@@ -395,9 +395,8 @@ Slider h2 span {
   padding: 0 9px;
 }
 
-
-
 .bulten-abone {
+  padding: 32px;
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 92px;
@@ -411,57 +410,6 @@ Slider h2 span {
   background-image: var(--color-grey-906);
 }
 
-@media (max-width: 1150px) {
-  .bulten-abone {
-      width: 400px !important;
-      height: 779px !important;
-      flex-flow: wrap !important;
-      justify-content: space-around !important;
-  }
-
-  .bulten-inputvelogo {
-      flex-flow: column-reverse;
-  }
-
-  .bulten-input {
-      width: 360px !important;
-      margin-left: 20px;
-  }
-
-  .bulten-header {
-      margin-left: 20px;
-  }
-
-  .bulten-subtext {
-      margin-left: 20px;
-  }
-
-  .bulten-logo1 {
-      margin-right: 20px;
-      width: 180px !important;
-      height: auto !important;
-  }
-}
-
-@media (max-width: 410px) {
-  .bulten-abone {
-      width: 350px !important;
-      height: 660px !important;
-  }
-
-  .bulten-header {
-      font-size: 50px !important;
-  }
-
-  .bulten-subtext {
-      font-size: 20px !important;
-  }
-
-  .bulten-input {
-      width: 300px !important;
-  }
-}
-
 .bulten-header {
   max-width: 400px;
   font-weight: 700;
@@ -472,7 +420,6 @@ Slider h2 span {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
-
 }
 
 .bulten-subtext {
@@ -482,7 +429,6 @@ Slider h2 span {
   line-height: 141%;
   letter-spacing: 0.01em;
   color: var(--color-grey-600);
-
 }
 
 .bulten-input {
@@ -520,6 +466,89 @@ Slider h2 span {
 
 }
 
+@media (max-width: 1150px) {
+  .bulten-abone {
+    width: 90%;
+    height: auto;
+  }
+  .bulten-header {
+    margin-bottom: 50px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .bulten-header {
+    font-size: 45px!important;
+    line-height: 55px;
+  }
+  .bulten-subtext {
+    font-size: 16px!important;
+  }
+  .bulten-input {
+    width: 450px;
+  }
+}
+
+@media (max-width: 860px) {
+  .bulten-input {
+    width: 350px!important;
+  }
+}
+
+@media (max-width: 710px) {
+  .bulten-abone {
+    width: 350px !important;
+    height: 660px !important;
+    flex-flow: wrap !important;
+    justify-content: space-around !important;
+    padding: 16px;
+  }
+
+  .bulten-inputvelogo {
+    flex-flow: column-reverse!important;
+    align-items: center!important;
+  }
+
+  .bulten-header {
+    font-size: 50px !important;
+    margin-left: 20px;
+    margin-bottom: 0px;
+  }
+
+  .bulten-subtext {
+    font-size: 20px !important;
+    margin-left: 20px;
+  }
+
+  .bulten-input {
+    width: 300px !important;
+    margin-left: 20px;
+  
+  }
+}
+
+@media (max-width: 370px) {
+  .bulten-abone {
+    width: 90%!important;
+    height: auto;
+  }
+  .bulten-input {
+    width: 200px!important;
+  }
+  .bulten-header {
+    font-size: 36px!important;
+    margin: 20px auto -10px auto!important;
+    text-align: center;
+  }
+  .bulten-abone-buton {
+    width: 100px;
+    font-size: 16px;
+  }
+  .bulten-mail {
+    width: 90%;
+  }
+}
+
 .footer {
   margin-top: 200px;
   border-radius: 100% / 40% 40% 0% 0%;
@@ -533,7 +562,9 @@ Slider h2 span {
     height: 100%;
     min-height: 750px;
   }
-
+  @media (max-width: 370px) {
+    min-height: 900px;
+  }
 }
 
 

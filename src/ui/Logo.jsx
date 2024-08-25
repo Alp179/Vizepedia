@@ -58,14 +58,18 @@ const StyledLogo = styled.div`
     css`
       width: 227px;
       height: 65px;
+      @media (max-width: 370px) {
+        width: 180px;
+        height: 40px;
+      }
     `}
 
     ${(props) =>
-      props.variant === "footer" &&
-      css`
-        width: 154px;
-        height: 44px;
-      `}
+    props.variant === "footer" &&
+    css`
+      width: 154px;
+      height: 44px;
+    `}
 `;
 
 const Img = styled.img``;
