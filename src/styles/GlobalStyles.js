@@ -399,6 +399,14 @@ Slider h2 span {
   height: 100px;
   width: 100px;
   padding: 0 9px;
+  @media (min-width: 2100px) {
+    height: 125px;
+    width: 125px;
+  }
+  @media (max-width: 410px) {
+    height: 75px;
+    width: 75px;
+  }
 }
 
 .bulten-abone {
