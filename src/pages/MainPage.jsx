@@ -125,6 +125,12 @@ const WhyCardsContext = styled.p`
 `;
 
 const WhyCardsImagesSavings = styled.img`
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   width: 212px;
   height: 212px;
   margin-top: auto;
@@ -137,6 +143,12 @@ const WhyCardsImagesSavings = styled.img`
 `;
 
 const WhyCardsImagesWatch = styled.img`
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   width: 212px;
   height: 212px;
   margin-top: auto;
@@ -150,6 +162,12 @@ const WhyCardsImagesWatch = styled.img`
 `;
 
 const WhyCardsImagesHappy = styled.img`
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   width: 212px;
   height: 212px;
   margin-top: auto;
@@ -163,6 +181,12 @@ const WhyCardsImagesHappy = styled.img`
 `;
 
 const WhyCardsImagesPhone = styled.img`
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   width: 212px;
   height: 212px;
   margin-top: auto;
@@ -242,6 +266,12 @@ const WhyCardsContext2 = styled.p`
 `;
 
 const WhyCards2DocImage = styled.img`
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   width: 142px;
   height: 185px;
   margin: auto 10px auto 0;
@@ -254,6 +284,12 @@ const WhyCards2DocImage = styled.img`
 `;
 
 const WhyCards2PlaneImage = styled.img`
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   margin: auto 10px auto 0;
   width: 203px;
   height: 115px;

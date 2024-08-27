@@ -390,6 +390,12 @@ Slider h2 span {
 }
 
 .slide img {
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;  
   height: 100px;
   width: 100px;
   padding: 0 9px;

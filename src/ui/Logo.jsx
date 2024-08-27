@@ -3,6 +3,12 @@ import styled, { css } from "styled-components";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledLogo = styled.div`
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   ${(props) =>
     props.variant === "login" &&
     css`
