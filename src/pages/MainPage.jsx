@@ -36,6 +36,12 @@ const BigTexts = styled.div`
 
 const HeroImage = styled.img`
   z-index: 1;
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   @media (max-width: 1200px) {
     width: 90%;
   }
@@ -607,7 +613,7 @@ function MainPage() {
           </div>
         </div>
       </div>
-      
+
       <div className="footer">
         <div
           style={{

@@ -168,10 +168,15 @@ const variations = {
     border-radius: 20px;
     background: #004466;
     color: #87f9cd;
+    border: 2px solid #87f9cd;
     font-size: 20px;
     font-weight: bold;
     display: flex;
     justify-content: center;
+    &:hover {
+      background: #87f9cd;
+      color: #004466;
+    }
     align-items: center;
     @media (max-width: 1200px) {
       width: 120px;
@@ -196,6 +201,10 @@ const variations = {
     display: flex;
     justify-content: center;
     align-items: center;
+    &:hover {
+      background: #004466;
+      color: #87f9cd;
+    }
     @media (max-width: 1200px) {
       width: 120px;
       font-size: 16px;

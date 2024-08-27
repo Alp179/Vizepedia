@@ -443,12 +443,14 @@ Slider h2 span {
 }
 
 .bulten-mail {
-  padding-left: 2.5rem;
+  margin-left: 2.5rem;
+  width: 80%;
   border: 2px solid transparent;
   border-radius: 8px;
   outline: none;
   background-color: transparent;
   color: #0d0c22;
+  font-size: 24px;
   transition: .3s ease;
 }
 
@@ -459,11 +461,15 @@ Slider h2 span {
   box-shadow: 0px 6px 0px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   font-weight: 700;
+  border: 2px solid #87f9cd;
   font-size: 20px;
   text-align: center;
   color: #00FFA2;
   margin-top: -20px;
-
+  &:hover {
+    background: #87f9cd;
+    color: #004466;
+  }
 }
 
 @media (max-width: 1150px) {
@@ -487,11 +493,17 @@ Slider h2 span {
   .bulten-input {
     width: 450px;
   }
+  .bulten-mail {
+    font-size: 18px;
+  }
 }
 
 @media (max-width: 860px) {
   .bulten-input {
     width: 350px!important;
+  }
+  .bulten-mail {
+    font-size: 16px;
   }
 }
 
@@ -525,6 +537,9 @@ Slider h2 span {
     margin-left: 20px;
   
   }
+  .bulten-abone-buton {
+    margin-top: -5px;
+  }
 }
 
 @media (max-width: 370px) {
@@ -546,6 +561,8 @@ Slider h2 span {
   }
   .bulten-mail {
     width: 90%;
+    font-size: 14px;
+    margin-left: 10px;
   }
 }
 
@@ -558,6 +575,12 @@ Slider h2 span {
   background-size: cover;
   background-position: center;
   opacity: 0.92;
+  user-drag: none;  
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
   @media (max-width: 750px) {
     height: 100%;
     min-height: 750px;
