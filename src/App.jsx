@@ -15,6 +15,7 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
 import MainPage from "./pages/MainPage";
+import BlogPage from "./pages/BlogPage";
 
 import WellcomeA from "./features/wellcomes/WellcomeA";
 import WellcomeD from "./features/wellcomes/WellcomeD";
@@ -30,6 +31,7 @@ import DocumentSummary from "./pages/DocumentSummary";
 import { VisaApplicationProvider } from "./context/VisaApplicationContext";
 import QuestionsLayout from "./ui/QuesitonsLayout";
 import MainPageLayout from "./ui/MainPageLayout";
+import BlogPageLayout from "./ui/BlogPageLayout";
 import { useEffect } from "react";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
@@ -85,6 +87,15 @@ function App() {
                       }
                     >
                       <Route path="mainpage" element={<MainPage />} />
+                    </Route>
+                    <Route
+                      element={
+                        <ProtectedRoute>
+                          <BlogPageLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route path="blogpage" element={<BlogPage />} />
                     </Route>
                     <Route
                       element={
