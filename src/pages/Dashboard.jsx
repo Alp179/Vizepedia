@@ -12,8 +12,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDocuments } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import styled from "styled-components";
-import "flag-icons/css/flag-icons.min.css"; // CSS importu
-import { fetchFirmLocation } from "../services/apiVisaApplications";
+import "flag-icons/css/flag-icons.min.css";
+import supabase from "../services/supabase";
 
 const FlagContainer = styled.div`
   position: fixed;
@@ -26,7 +26,6 @@ const FlagContainer = styled.div`
   overflow: hidden;
   z-index: 1000;
   pointer-events: none;
-  
 
   & > span {
     width: 100%;
@@ -62,7 +61,6 @@ const FlagContainer = styled.div`
   }
 `;
 
-
 const BlurredFlagBackground = styled.div`
   position: absolute;
   top: 60%;
@@ -71,8 +69,7 @@ const BlurredFlagBackground = styled.div`
   height: 60vw;
   transform: translateX(40%) translateY(-110%) rotate(31deg);
   filter: blur(190px);
-
-  z-index: 0; /* Updated to ensure it's in the background */
+  z-index: 0;
 
   @media (max-width: 1625px) {
     top: 60%;
@@ -120,45 +117,9 @@ const BlurredFlagBackground = styled.div`
   }
 `;
 
-const countryToCode = {
-  Almanya: "de",
-  Avusturya: "at",
-  Belçika: "be",
-  Çekya: "cz",
-  Danimarka: "dk",
-  Estonya: "ee",
-  Finlandiya: "fi",
-  Fransa: "fr",
-  Yunanistan: "gr",
-  Macaristan: "hu",
-  İzlanda: "is",
-  İtalya: "it",
-  Letonya: "lv",
-  Litvanya: "lt",
-  Lüksemburg: "lu",
-  Malta: "mt",
-  Hollanda: "nl",
-  Norveç: "no",
-  Polonya: "pl",
-  Portekiz: "pt",
-  Slovakya: "sk",
-  Slovenya: "si",
-  İspanya: "es",
-  İsveç: "se",
-  İsviçre: "ch",
-  Lihtenştayn: "li",
-  Rusya: "ru",
-  ABD: "us",
-  Çin: "cn",
-  BAE: "ae",
-  Avustralya: "au",
-  Birleşik_Krallık: "gb",
-  Hırvatistan: "hr",
-};
-
 const CreatedAtContainer = styled.div`
   font-size: 1.4rem;
-  color: var(--color-grey-700); 
+  color: var(--color-grey-700);
   @media (max-width: 1425px) {
     margin-left: -100px;
   }
@@ -187,6 +148,38 @@ const CustomRow = styled(Row)`
       gap: 8px;
     }
   }
+`;
+
+const InfoContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  gap: 20px;
+  z-index: 1000;
+`;
+
+const MapContainer = styled.div`aa
+  flex: 1;
+  min-width: 50%;
+  overflow: hidden;
+  border-radius: 10px;
+  transform: scale(0.8); /* Haritayı %20 küçültmek için */
+  transform-origin: center; /* Ortalanmış küçültme */
+`;
+
+const InfoDetails = styled.div`
+  flex: 1;
+  color: var(--color-grey-800);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 function Dashboard() {
@@ -235,6 +228,20 @@ function Dashboard() {
 
   const ansCountry = userSelections?.[0]?.ans_country;
 
+  async function fetchFirmLocation(country) {
+    const { data, error } = await supabase
+      .from("visa_firm_locations")
+      .select("*")
+      .eq("country", country)
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data;
+  }
+
   const { data: firmLocation, isSuccess: isFirmLocationSuccess } = useQuery({
     queryKey: ["firmLocation", ansCountry],
     queryFn: () => fetchFirmLocation(ansCountry),
@@ -243,6 +250,42 @@ function Dashboard() {
 
   useEffect(() => {
     if (isUserSelectionsSuccess && userSelections) {
+      const countryToCode = {
+        Almanya: "de",
+        Avusturya: "at",
+        Belçika: "be",
+        Çekya: "cz",
+        Danimarka: "dk",
+        Estonya: "ee",
+        Finlandiya: "fi",
+        Fransa: "fr",
+        Yunanistan: "gr",
+        Macaristan: "hu",
+        İzlanda: "is",
+        İtalya: "it",
+        Letonya: "lv",
+        Litvanya: "lt",
+        Lüksemburg: "lu",
+        Malta: "mt",
+        Hollanda: "nl",
+        Norveç: "no",
+        Polonya: "pl",
+        Portekiz: "pt",
+        Slovakya: "sk",
+        Slovenya: "si",
+        İspanya: "es",
+        İsveç: "se",
+        İsviçre: "ch",
+        Lihtenştayn: "li",
+        Rusya: "ru",
+        ABD: "us",
+        Çin: "cn",
+        BAE: "ae",
+        Avustralya: "au",
+        Birleşik_Krallık: "gb",
+        Hırvatistan: "hr",
+      };
+
       setCountryCode(countryToCode[ansCountry] || "");
 
       const createdAtDate = new Date(userSelections?.[0]?.created_at);
@@ -320,10 +363,38 @@ function Dashboard() {
         </FlagContainer>
       )}
       {isFirmLocationSuccess && firmLocation && (
-        <div
-          style={{ zIndex: "2000" }}
-          dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
-        />
+        <InfoContainer>
+          <MapContainer
+            dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
+          />
+          <InfoDetails>
+            <div>
+              <strong>Firma Adı: </strong>
+              {firmLocation.firm_name}
+            </div>
+            <div>
+              <strong>Vize Ücreti: </strong>
+              {firmLocation.visa_fee} €
+            </div>
+            <div>
+              <strong>Servis Ücreti: </strong>
+              {firmLocation.service_fee} €
+            </div>
+            <div>
+              <strong>Ofis Saatleri: </strong>
+              {firmLocation.office_hours}
+            </div>
+            <div>
+            <a
+              href={firmLocation.firm_url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              İstanbul harici başvuru merkezleri için tıklayın
+            </a>
+            </div>
+          </InfoDetails>
+        </InfoContainer>
       )}
     </div>
   );
