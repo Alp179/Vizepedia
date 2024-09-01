@@ -36,13 +36,12 @@ const BlogInput = styled.input`
   }
 `;
 
-
 function BlogHeader() {
   return (
     <StyledHeader>
-        <Logo variant="mainpage" />
-        <Logo variant="mainpage" />
-        <BlogInput />
+      <Logo variant="mainpage" />
+      <Logo variant="mainpage" />
+      <BlogInput />
     </StyledHeader>
   );
 }

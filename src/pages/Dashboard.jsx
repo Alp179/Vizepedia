@@ -165,7 +165,7 @@ const InfoContainer = styled.div`
   z-index: 1000;
 `;
 
-const MapContainer = styled.div`aa
+const MapContainer = styled.div`
   flex: 1;
   min-width: 50%;
   overflow: hidden;
@@ -385,13 +385,13 @@ function Dashboard() {
               {firmLocation.office_hours}
             </div>
             <div>
-            <a
-              href={firmLocation.firm_url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              İstanbul harici başvuru merkezleri için tıklayın
-            </a>
+              <a
+                href={firmLocation.firm_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                İstanbul harici başvuru merkezleri için tıklayın
+              </a>
             </div>
           </InfoDetails>
         </InfoContainer>

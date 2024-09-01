@@ -10,12 +10,12 @@ import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import GlobalStyles from "./styles/GlobalStyles";
 import AppLayout from "./ui/AppLayout";
+import BlogLayout from "./ui/BlogLayout"; // BlogLayout bileşeni
 import ProtectedRoute from "./ui/ProtectedRoute";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
 import MainPage from "./pages/MainPage";
-import BlogPage from "./pages/BlogPage";
 
 import WellcomeA from "./features/wellcomes/WellcomeA";
 import WellcomeD from "./features/wellcomes/WellcomeD";
@@ -31,7 +31,8 @@ import DocumentSummary from "./pages/DocumentSummary";
 import { VisaApplicationProvider } from "./context/VisaApplicationContext";
 import QuestionsLayout from "./ui/QuesitonsLayout";
 import MainPageLayout from "./ui/MainPageLayout";
-import BlogPageLayout from "./ui/BlogPageLayout";
+import BlogHome from "./pages/BlogHome"; // Blog anasayfası
+import BlogDetail from "./pages/BlogDetail"; // Blog detay sayfası
 import { useEffect } from "react";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
@@ -88,15 +89,7 @@ function App() {
                     >
                       <Route path="mainpage" element={<MainPage />} />
                     </Route>
-                    <Route
-                      element={
-                        <ProtectedRoute>
-                          <BlogPageLayout />
-                        </ProtectedRoute>
-                      }
-                    >
-                      <Route path="blogpage" element={<BlogPage />} />
-                    </Route>
+
                     <Route
                       element={
                         <ProtectedRoute>
@@ -137,6 +130,14 @@ function App() {
                       <Route path="documents/:id" element={<Documents />} />
                       <Route path="summary" element={<DocumentSummary />} />
                       <Route path="summary/:id" element={<DocumentSummary />} />
+                    </Route>
+
+                    {/* Blog Routes */}
+                    <Route
+                      element={<BlogLayout />} // ProtectedRoute kaldırıldı
+                    >
+                      <Route path="blog" element={<BlogHome />} />
+                      <Route path="blog/:slug" element={<BlogDetail />} />
                     </Route>
 
                     <Route path="login" element={<Login />} />
