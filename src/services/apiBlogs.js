@@ -28,9 +28,11 @@ export async function fetchRelatedBlogs(tags) {
   const { data, error } = await supabase
     .from("blogs")
     .select("*")
-    .contains("tags", tags)
+    .contains('tags', tags)  // Array içindeki değerleri arıyoruz
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
   return data;
 }
+
+

@@ -1,5 +1,6 @@
 import { styled } from "styled-components";
 import Logo from "./Logo";
+import DarkModeToggle from "./DarkModeToggle";
 
 const StyledHeader = styled.header`
   position: fixed;
@@ -42,6 +43,7 @@ function BlogHeader() {
       <Logo variant="mainpage" />
       <Logo variant="mainpage" />
       <BlogInput />
+      <DarkModeToggle/>
     </StyledHeader>
   );
 }
