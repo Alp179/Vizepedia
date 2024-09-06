@@ -20,7 +20,7 @@ const fadeInUp = keyframes`
 const BlogContainer = styled.div`
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 80px auto;
   padding: 20px;
   position: relative;
 `;
@@ -28,8 +28,7 @@ const BlogContainer = styled.div`
 const BlogHeader = styled.h1`
   text-align: center;
   margin-bottom: 40px;
-  font-size: 2.5rem;
-  color: #333;
+  font-size: 60px ;
 `;
 
 const CategoriesWrapper = styled.div`
@@ -281,6 +280,7 @@ function BlogHome() {
   return (
     <BlogContainer>
       <BlogHeader>Başlayın Keşfedin Vize Alın</BlogHeader>
+      <BlogHeader>Seyahat Edin</BlogHeader>
       <ArrowButton className="left" onClick={() => handleScroll("left")}>
         {"<"}
       </ArrowButton>
