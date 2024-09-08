@@ -24,15 +24,39 @@ export async function fetchBlogBySlug(slug) {
 }
 
 // Benzer etiketlere sahip blog yazılarını getir
+// Benzer etiketlere sahip blog yazılarını getir
+// Benzer etiketlere sahip blog yazılarını getir
 export async function fetchRelatedBlogs(tags) {
+  // tags'i virgülle ayrılmış string olarak kabul ediyoruz ve her bir etiketi ayrı ayrı aratıyoruz
+  const searchTags = tags.split(",").map((tag) => tag.trim()); // Virgüllerden ayırıp her bir etiketi trimliyoruz
+
+  // Tüm etiketleri ilike sorgusu ile aratıyoruz
   const { data, error } = await supabase
     .from("blogs")
     .select("*")
-    .contains('tags', tags)  // Array içindeki değerleri arıyoruz
+    .or(searchTags.map((tag) => `tags.ilike.%${tag}%`).join(",")) // Her bir etiket için ilike sorgusu
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
   return data;
 }
 
+// Bloglarda arama yapma fonksiyonu
 
+// Bloglarda arama yapma fonksiyonu
+
+// Bloglarda arama yapma fonksiyonu
+export async function searchBlogs(searchTerm) {
+  const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+  const { data, error } = await supabase
+    .from("blogs")
+    .select("*")
+    .or(
+      `title.ilike.%${lowerCaseSearchTerm}%,content.ilike.%${lowerCaseSearchTerm}%,tags.ilike.%${lowerCaseSearchTerm}%`
+    )
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
