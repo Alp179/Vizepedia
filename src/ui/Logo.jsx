@@ -57,8 +57,9 @@ const StyledLogo = styled.div`
     props.variant === "blogpage1" &&
     css`
       position: absolute;
-      top: 30%;
-      right: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       width: 165px;
       height: auto;
       flex-shrink: 0;
@@ -69,6 +70,23 @@ const StyledLogo = styled.div`
         display: none;
       }
     `}
+    ${(props) =>
+      props.variant === "blogpage2" &&
+      css`
+        position: absolute;
+        top: 50%;
+        left: 20%;
+        transform: translate(-50%, -50%);
+        width: 165px;
+        height: auto;
+        flex-shrink: 0;
+        @media (max-width: 1200px) {
+          width: 120px;
+        }
+        @media (max-width: 870px) {
+          display: none;
+        }
+      `}
         ${(props) =>
     props.variant === "bulten" &&
     css`

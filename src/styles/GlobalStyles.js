@@ -44,6 +44,8 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-906: linear-gradient(to bottom right, rgba(255, 255, 255, 0.53) 70%, #004466);
   --color-grey-907: url(../public/footer-background.png);
   --color-grey-908: linear-gradient(180deg, rgba(0, 255, 162, 0.4) 0%, rgba(0, 68, 102, 0.4) 15%, rgba(36, 0, 255, 0.4) 25%, rgba(248, 24, 225, 0.4) 40%, rgba(221, 251, 239, 1) 60%);
+  --color-grey-909: white;
+  --color-grey-910: #004466;
   --color-grey-55: rgba(255, 255, 255, 0.5);
   --stroke-ham-1: #000;
 
@@ -101,6 +103,8 @@ const GlobalStyles = createGlobalStyle`/*
 --color-grey-906: none;
 --color-grey-907: rgba(255, 255, 255, 0.2);
 --color-grey-908: #111827;
+--color-grey-909: rgba(255, 255, 255, 0.2);
+--color-grey-910: white;
 --color-grey-55: #091522;
 --stroke-ham-1: #999;
 

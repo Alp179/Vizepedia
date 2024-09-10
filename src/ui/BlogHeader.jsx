@@ -11,7 +11,7 @@ const StyledHeader = styled.header`
   top: 0%;
   left: 0%;
   width: 100%;
-  padding: 2.5rem 4.8rem;
+  padding: 40px;
   z-index: 2990;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
@@ -19,11 +19,17 @@ const StyledHeader = styled.header`
 `;
 
 const HeaderContents = styled.div`
-  width: 80%;
+  width: 70%;
   display: flex;
   align-items: center;
   margin-left: auto;
   margin-right: auto;
+`;
+
+const InputAndDarkToggleContainer = styled.div`
+  position: absolute;
+  right: 20%;
+  display: flex;
 `;
 
 const BlogInput = styled.input`
@@ -143,7 +149,7 @@ function BlogHeader() {
   return (
     <StyledHeader>
       <HeaderContents>
-        <Logo variant="mainpage" />
+        <Logo variant="blogpage2" />
         <Logo variant="blogpage1" />
         <div
           style={{
@@ -153,17 +159,19 @@ function BlogHeader() {
             position: "relative",
           }}
         >
-          <BlogInput
-            ref={searchInputRef}
-            type="text"
-            placeholder="Bloglarda ara..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setShowSearchResults(true);
-            }}
-          />
-          <DarkModeToggle />
+          <InputAndDarkToggleContainer>
+            <BlogInput
+              ref={searchInputRef}
+              type="text"
+              placeholder="Bloglarda ara..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setShowSearchResults(true);
+              }}
+            />
+            <DarkModeToggle />
+          </InputAndDarkToggleContainer>
           <SearchResultsContainer
             show={filteredBlogs.length > 0 && showSearchResults}
             ref={searchResultsRef}

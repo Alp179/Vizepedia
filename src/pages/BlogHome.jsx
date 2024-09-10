@@ -20,7 +20,7 @@ const fadeInUp = keyframes`
 const BlogContainer = styled.div`
   width: 100%;
   max-width: 1200px;
-  margin: 80px auto;
+  margin: 50px auto;
   padding: 20px;
   position: relative;
 `;
@@ -28,10 +28,11 @@ const BlogContainer = styled.div`
 const BlogHeader = styled.h1`
   text-align: center;
   margin-bottom: 40px;
-  font-size: 60px ;
+  font-size: 60px;
 `;
 
 const CategoriesWrapper = styled.div`
+  margin-top: 120px;
   display: flex;
   overflow-x: hidden;
   position: relative;
@@ -64,7 +65,10 @@ const BlogItem = styled.div`
 `;
 
 const LargeBlogItem = styled(BlogItem)`
-  height: 350px;
+  display: flex;
+  flex-direction: column;
+  height: 360px;
+  background: var(--color-grey-909);
 `;
 
 const SmallBlogItem = styled(BlogItem)`
@@ -85,7 +89,7 @@ const CategoryLabel = styled.span`
   color: #fff;
   padding: 5px 10px;
   border-radius: 5px;
-  font-size: 0.9rem;
+  font-size: 14px;
   z-index: 2;
 `;
 
@@ -103,7 +107,10 @@ const SmallBlogImage = styled.img`
 `;
 
 const BlogContent = styled.div`
-  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
 `;
 
 const SmallBlogContent = styled.div`
@@ -111,19 +118,19 @@ const SmallBlogContent = styled.div`
 `;
 
 const BlogTitle = styled.h3`
-  font-size: 1.2rem;
+  font-size: 14px;
   margin-bottom: 10px;
-  color: #333;
+  color: var(--color-grey-600);
 `;
 
 const BlogExcerpt = styled.p`
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-  color: #666;
+  max-height: 0px;
+  font-size: 12px;
+  color: var(--color-grey-600);
 `;
 
 const BlogDate = styled.span`
-  font-size: 0.8rem;
+  font-size: 11px;
   color: #999;
 `;
 
@@ -132,8 +139,10 @@ const ContinueReading = styled(Link)`
   align-items: center;
   color: #007bff;
   font-weight: bold;
-  font-size: 1rem;
-  margin-top: 10px;
+  font-size: 11px;
+  position: absolute;
+  bottom: 1%;
+  left: 5%;
   text-decoration: none;
 
   &:hover {
@@ -152,10 +161,11 @@ const ContinueReading = styled(Link)`
 
 const ArrowButton = styled.button`
   position: absolute;
-  top: 40%; /* Butonu büyük kartların ortasına kaydırıyoruz */
+  margin: -10px;
+  top: 41%; /* Butonu büyük kartların ortasına kaydırıyoruz */
   transform: translateY(-50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
+  background-color: var(--color-grey-905);
+  color: var(--color-grey-910);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -168,7 +178,8 @@ const ArrowButton = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: #004466;
+    color: #00ffa2;
   }
 
   &.left {
