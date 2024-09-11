@@ -11,7 +11,7 @@ const StyledHeader = styled.header`
   top: 0%;
   left: 0%;
   width: 100%;
-  padding: 40px;
+  padding: 20px;
   z-index: 2990;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
@@ -21,14 +21,14 @@ const StyledHeader = styled.header`
 const HeaderContents = styled.div`
   width: 70%;
   display: flex;
+  justify-content: center;
   align-items: center;
   margin-left: auto;
   margin-right: auto;
 `;
 
 const InputAndDarkToggleContainer = styled.div`
-  position: absolute;
-  right: 20%;
+  margin-left: auto;
   display: flex;
 `;
 
@@ -45,17 +45,17 @@ const BlogInput = styled.input`
 
 const SearchResultsContainer = styled.div`
   position: absolute;
-  top: 20px;
-  right: 20%;
+  top: 65px;
+  right: 15%;
   width: 350px;
   max-height: 300px; /* Maksimum yüksekliği 300 piksel olarak ayarladık */
   overflow-y: auto; /* Taşan içeriğin scroll ile erişilebilir olmasını sağladık */
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 1);
   backdrop-filter: blur(10px);
   border-radius: 10px;
   box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  z-index: 100;
+  z-index: 2999;
   display: ${({ show }) => (show ? "block" : "none")};
 
   /* Scrollbar görünümünü özelleştiriyoruz */
@@ -78,6 +78,7 @@ const SmallRelatedBlogCard = styled.div`
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+  z-index: 2999;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Kartlar arasına ince bir çizgi ekliyoruz */
 
@@ -151,46 +152,38 @@ function BlogHeader() {
       <HeaderContents>
         <Logo variant="blogpage2" />
         <Logo variant="blogpage1" />
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginLeft: "auto",
-            position: "relative",
-          }}
+
+        <InputAndDarkToggleContainer>
+          <BlogInput
+            ref={searchInputRef}
+            type="text"
+            placeholder="Bloglarda ara..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setShowSearchResults(true);
+            }}
+          />
+          <DarkModeToggle />
+        </InputAndDarkToggleContainer>
+        <SearchResultsContainer
+          show={filteredBlogs.length > 0 && showSearchResults}
+          ref={searchResultsRef}
         >
-          <InputAndDarkToggleContainer>
-            <BlogInput
-              ref={searchInputRef}
-              type="text"
-              placeholder="Bloglarda ara..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setShowSearchResults(true);
-              }}
-            />
-            <DarkModeToggle />
-          </InputAndDarkToggleContainer>
-          <SearchResultsContainer
-            show={filteredBlogs.length > 0 && showSearchResults}
-            ref={searchResultsRef}
-          >
-            {isLoading && <p>Yükleniyor...</p>}
-            {isError && <p>Bir hata oluştu.</p>}
-            {filteredBlogs.map((blog) => (
-              <SmallRelatedBlogCard
-                key={blog.id}
-                onClick={() => handleBlogClick(blog.slug)}
-              >
-                <RelatedBlogImage src={blog.cover_image} alt={blog.title} />
-                <RelatedBlogInfo>
-                  <RelatedBlogTitleSmall>{blog.title}</RelatedBlogTitleSmall>
-                </RelatedBlogInfo>
-              </SmallRelatedBlogCard>
-            ))}
-          </SearchResultsContainer>
-        </div>
+          {isLoading && <p>Yükleniyor...</p>}
+          {isError && <p>Bir hata oluştu.</p>}
+          {filteredBlogs.map((blog) => (
+            <SmallRelatedBlogCard
+              key={blog.id}
+              onClick={() => handleBlogClick(blog.slug)}
+            >
+              <RelatedBlogImage src={blog.cover_image} alt={blog.title} />
+              <RelatedBlogInfo>
+                <RelatedBlogTitleSmall>{blog.title}</RelatedBlogTitleSmall>
+              </RelatedBlogInfo>
+            </SmallRelatedBlogCard>
+          ))}
+        </SearchResultsContainer>
       </HeaderContents>
     </StyledHeader>
   );

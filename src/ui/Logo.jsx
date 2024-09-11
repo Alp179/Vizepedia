@@ -73,10 +73,6 @@ const StyledLogo = styled.div`
     ${(props) =>
       props.variant === "blogpage2" &&
       css`
-        position: absolute;
-        top: 50%;
-        left: 20%;
-        transform: translate(-50%, -50%);
         width: 165px;
         height: auto;
         flex-shrink: 0;
