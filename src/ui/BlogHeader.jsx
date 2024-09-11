@@ -45,9 +45,9 @@ const BlogInput = styled.input`
 
 const SearchResultsContainer = styled.div`
   position: absolute;
-  top: 90px;
-  width: 100%;
-  max-width: 500px;
+  top: 20px;
+  right: 20%;
+  width: 350px;
   max-height: 300px; /* Maksimum yüksekliği 300 piksel olarak ayarladık */
   overflow-y: auto; /* Taşan içeriğin scroll ile erişilebilir olmasını sağladık */
   background: rgba(255, 255, 255, 0.2);
@@ -100,8 +100,8 @@ const RelatedBlogInfo = styled.div`
 `;
 
 const RelatedBlogTitleSmall = styled.h4`
-  font-size: 1rem;
-  color: #333;
+  font-size: 13px;
+  color: var(--color-grey-600);
   margin: 5px 0;
 `;
 

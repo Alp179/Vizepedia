@@ -75,7 +75,7 @@ const SmallBlogItem = styled(BlogItem)`
   height: 120px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  background: var(--color-grey-909);
 
   // Yeni kartların animasyonlu olarak görünmesini sağlıyoruz
   animation: ${fadeInUp} 0.5s ease both;
@@ -103,6 +103,8 @@ const SmallBlogImage = styled.img`
   width: 100px;
   height: 80px;
   object-fit: cover;
+  margin-right: auto;
+  margin-bottom: auto;
   border-radius: 8px;
 `;
 
@@ -114,6 +116,10 @@ const BlogContent = styled.div`
 `;
 
 const SmallBlogContent = styled.div`
+  gap: 8px;
+  margin: 4px 4px 0 8px;
+  display: flex;
+  flex-direction: column;
   flex: 1;
 `;
 
@@ -198,7 +204,7 @@ const LoadMoreButton = styled.button`
   padding: 10px 20px;
   border-radius: 30px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 18px;
   margin: 40px auto;
   display: block;
   transition: all 0.3s ease;
@@ -336,7 +342,10 @@ function BlogHome() {
                 </LargeBlogItem>
                 {otherBlogs.slice(0, visibleCount).map((blog) => (
                   <SmallBlogItem key={blog.id}>
-                    <Link to={`/blog/${blog.slug}`}>
+                    <Link
+                      style={{ display: "flex", margin: "0 auto auto 0" }}
+                      to={`/blog/${blog.slug}`}
+                    >
                       {blog.cover_image && (
                         <SmallBlogImage
                           src={blog.cover_image.trim()}
@@ -357,6 +366,10 @@ function BlogHome() {
                         <BlogTitle>{blog.title}</BlogTitle>
                       </SmallBlogContent>
                     </Link>
+                    <ContinueReading to={`/blog/${latestBlog.slug}`}>
+                      Devamını Gör
+                      <ArrowForwardIcon />
+                    </ContinueReading>
                   </SmallBlogItem>
                 ))}
               </CategoryColumn>
