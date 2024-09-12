@@ -27,9 +27,24 @@ const BlogContainer = styled.div`
   @media (max-width: 1300px) {
     width: 90%;
   }
+  @media (max-width: 550px) {
+    margin-top: 0;
+  }
+`;
+
+const Divider = styled.div`
+  max-width: 1400px;
+  width: 90%;
+  height: 1px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--color-grey-904);
 `;
 
 const BlogHeader = styled.h1`
+  font-weight: 100;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
   margin-bottom: 20px;
   font-size: 72px;
@@ -39,6 +54,28 @@ const BlogHeader = styled.h1`
   @media (max-width: 910px) {
     font-size: 52px;
   }
+  @media (max-width: 810px) {
+    font-size: 42px;
+    margin-bottom: 10px;
+  }
+  @media (max-width: 660px) {
+    font-size: 36px;
+  }
+  @media (max-width: 550px) {
+    font-size: 32px;
+  }
+  @media (max-width: 485px) {
+    font-size: 28px;
+  }
+  @media (max-width: 435px) {
+    font-size: 24px;
+  }
+  @media (max-width: 370px) {
+    font-size: 20px;
+  }
+  @media (max-width: 320px) {
+    font-size: 17px;
+  }
 `;
 
 const CategoriesWrapper = styled.div`
@@ -46,12 +83,18 @@ const CategoriesWrapper = styled.div`
   display: flex;
   overflow-x: hidden;
   position: relative;
+  @media (max-width: 550px) {
+    margin-top: 30px;
+  }
 `;
 
 const CategoriesContainer = styled.div`
   display: flex;
   gap: 20px;
   transition: transform 0.3s ease-in-out;
+  @media (max-width: 910px) {
+    gap: 10px;
+  }
 `;
 
 const CategoryColumn = styled.div`
@@ -98,8 +141,8 @@ const CategoryLabel = styled.span`
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: #fff;
+  background-color: var(--color-grey-911);
+  color: var(--color-grey-600);
   padding: 5px 10px;
   border-radius: 5px;
   font-size: 14px;
@@ -201,6 +244,9 @@ const ArrowButton = styled.button`
   align-items: center;
   justify-content: center;
   transition: background-color 0.3s ease;
+  @media (max-width: 610px) {
+    margin: 0;
+  }
 
   &:hover {
     background-color: #004466;
@@ -290,9 +336,10 @@ function BlogHome() {
 
   const handleScroll = (direction) => {
     const container = containerRef.current;
-    const scrollAmount = 300; // Kaydırma miktarı
+    // Ekran genişliği 910px'in altında ise scrollAmount 250 olacak, aksi halde 300 olacak
+    const scrollAmount = window.innerWidth <= 910 ? 260 : 320; 
     const maxScrollLeft = container.scrollWidth - container.clientWidth;
-
+  
     if (direction === "left") {
       if (container.scrollLeft <= 0) {
         container.scrollTo({ left: maxScrollLeft, behavior: "smooth" });
@@ -307,6 +354,7 @@ function BlogHome() {
       }
     }
   };
+  
 
   // Herhangi bir kategoride 3'ten fazla blog varsa "Daha Fazla Göster" butonunu göster
   const showLoadMoreButton = Object.keys(groupedBlogs).some(
@@ -317,7 +365,9 @@ function BlogHome() {
     <>
       <BlogContainer>
         <BlogHeader>Başlayın Keşfedin Vize Alın</BlogHeader>
-        <BlogHeader>Seyahat Edin</BlogHeader>
+        <BlogHeader>
+          <strong>Seyahat Edin</strong>
+        </BlogHeader>
         <ArrowButton className="left" onClick={() => handleScroll("left")}>
           {"<"}
         </ArrowButton>
@@ -411,6 +461,50 @@ function BlogHome() {
           {">"}
         </ArrowButton>
       </BlogContainer>
+
+      <Divider />
+
+      <div className="bulten-abone">
+        <div
+          className="bulten-responsive"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-around",
+          }}
+        >
+          <div className="bulten-header">Bültenimize Abone ol</div>
+          <div className="bulten-subtext">
+            Vize duyuruları ve en son blog yazılarımızdan ilk sizin haberiniz
+            olsun. Hemen abone olun!
+          </div>
+        </div>
+        <div
+          className="bulten-inputvelogo"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-around",
+            alignItems: "flex-end",
+          }}
+        >
+          <Logo variant="bulten" />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+            }}
+          >
+            <div className="bulten-input">
+              <img src="images/mail-image.png" />
+              <input className="bulten-mail" />
+            </div>
+            <button className="bulten-abone-buton">Abone ol</button>
+          </div>
+        </div>
+      </div>
+
       <div className="footer">
         <div
           style={{

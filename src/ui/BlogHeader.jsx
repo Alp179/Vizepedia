@@ -25,15 +25,24 @@ const HeaderContents = styled.div`
   align-items: center;
   margin-left: auto;
   margin-right: auto;
-  @media (max-width: 1300px) {
+  @media (max-width: 910px) {
+    width: 90%;
+  }
+  @media (max-width: 550px) {
+    width: 100%;
+    justify-content: space-between;
   }
 `;
 
 const InputAndDarkToggleContainer = styled.div`
   margin-left: auto;
   display: flex;
+  gap: 4px;
   @media (max-width: 1300px) {
     align-self: flex-end;
+  }
+  @media (max-width: 550px) {
+    gap: 0;
   }
 `;
 
@@ -50,22 +59,39 @@ const BlogInput = styled.input`
     width: 200px;
     height: 36px;
   }
+  @media (max-width: 910px) {
+    width: 160px;
+  }
+  @media (max-width: 710px) {
+    width: 120px;
+    font-size: 12px;
+  }
+  @media (max-width: 550px) {
+    width: 75px;
+    padding-left: 8px;
+  }
 `;
 
 const SearchResultsContainer = styled.div`
   position: absolute;
   top: 65px;
-  right: 15%;
+  right: 10%;
   width: 350px;
   max-height: 300px; /* Maksimum yüksekliği 300 piksel olarak ayarladık */
+  overflow-x: hidden;
   overflow-y: auto; /* Taşan içeriğin scroll ile erişilebilir olmasını sağladık */
-  background: rgba(255, 255, 255, 1);
+  background: var(--color-grey-912);
   backdrop-filter: blur(10px);
   border-radius: 10px;
   box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.1);
   padding: 20px;
   z-index: 2999;
   display: ${({ show }) => (show ? "block" : "none")};
+
+  @media (max-width: 910px) {
+    width: 200px;
+    padding: 8px;
+  }
 
   /* Scrollbar görünümünü özelleştiriyoruz */
   ::-webkit-scrollbar {
@@ -81,15 +107,20 @@ const SearchResultsContainer = styled.div`
 `;
 
 const SmallRelatedBlogCard = styled.div`
+  align-items: center;
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  width: 100%;
+  height: 100px;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
   z-index: 2999;
-  padding-bottom: 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Kartlar arasına ince bir çizgi ekliyoruz */
+
+  @media (max-width: 910px) {
+    height: 90px;
+  }
 
   &:hover {
     text-decoration: underline;
@@ -101,6 +132,10 @@ const RelatedBlogImage = styled.img`
   height: 80px;
   object-fit: cover;
   border-radius: 8px;
+  @media (max-width: 910px) {
+    width: 60px;
+    height: 48px;
+  }
 `;
 
 const RelatedBlogInfo = styled.div`
@@ -113,6 +148,9 @@ const RelatedBlogTitleSmall = styled.h4`
   font-size: 13px;
   color: var(--color-grey-600);
   margin: 5px 0;
+  @media (max-width: 910px) {
+    font-size: 11px;
+  }
 `;
 
 function BlogHeader() {

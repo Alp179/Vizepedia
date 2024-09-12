@@ -64,11 +64,21 @@ const StyledLogo = styled.div`
       height: auto;
       flex-shrink: 0;
       @media (max-width: 1300px) {
-        left: 20%;
         width: 140px;
         position: relavite;
-        top: none;
-        left: none;
+      }
+      @media (max-width: 910px) {
+        width: 120px;
+      }
+      @media (max-width: 710px) {
+        width: 100px;
+      }
+      @media (max-width: 380px) {
+        width: 80px;
+        left: 45%;
+      }
+      @media (max-width: 350px) {
+        left: 20%;
       }
     `}
     ${(props) =>
@@ -78,6 +88,19 @@ const StyledLogo = styled.div`
         height: auto;
         flex-shrink: 0;
         @media (max-width: 1300px) {
+          width: 140px;
+          position: relavite;
+        }
+        @media (max-width: 910px) {
+          width: 120px;
+        }
+        @media (max-width: 710px) {
+          width: 75px;
+        }
+        @media (max-width: 380px) {
+          width: 60px;
+        }
+        @media (max-width: 350px) {
           display: none;
         }
       `}
