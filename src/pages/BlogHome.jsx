@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { useRef, useState } from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import Logo from "../ui/Logo";
 
 // Yeni kartlar için animasyon tanımlıyoruz
 const fadeInUp = keyframes`
@@ -23,16 +24,25 @@ const BlogContainer = styled.div`
   margin: 50px auto;
   padding: 20px;
   position: relative;
+  @media (max-width: 1300px) {
+    width: 90%;
+  }
 `;
 
 const BlogHeader = styled.h1`
   text-align: center;
-  margin-bottom: 40px;
-  font-size: 60px;
+  margin-bottom: 20px;
+  font-size: 72px;
+  @media (max-width: 1300px) {
+    font-size: 60px;
+  }
+  @media (max-width: 910px) {
+    font-size: 52px;
+  }
 `;
 
 const CategoriesWrapper = styled.div`
-  margin-top: 120px;
+  margin-top: 100px;
   display: flex;
   overflow-x: hidden;
   position: relative;
@@ -49,6 +59,9 @@ const CategoryColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  @media (max-width: 910px) {
+    flex: 0 0 250px;
+  }
 `;
 
 const BlogItem = styled.div`
@@ -127,12 +140,18 @@ const BlogTitle = styled.h3`
   font-size: 14px;
   margin-bottom: 10px;
   color: var(--color-grey-600);
+  @media (max-width: 910px) {
+    font-size: 13px;
+  }
 `;
 
 const BlogExcerpt = styled.p`
   max-height: 0px;
   font-size: 12px;
   color: var(--color-grey-600);
+  @media (max-width: 910px) {
+    font-size: 11px;
+  }
 `;
 
 const BlogDate = styled.span`
@@ -295,66 +314,33 @@ function BlogHome() {
   );
 
   return (
-    <BlogContainer>
-      <BlogHeader>Başlayın Keşfedin Vize Alın</BlogHeader>
-      <BlogHeader>Seyahat Edin</BlogHeader>
-      <ArrowButton className="left" onClick={() => handleScroll("left")}>
-        {"<"}
-      </ArrowButton>
-      <CategoriesWrapper ref={containerRef}>
-        <CategoriesContainer>
-          {Object.keys(groupedBlogs).map((category) => {
-            const [latestBlog, ...otherBlogs] = groupedBlogs[category];
-            const visibleCount = visibleCounts[category];
+    <>
+      <BlogContainer>
+        <BlogHeader>Başlayın Keşfedin Vize Alın</BlogHeader>
+        <BlogHeader>Seyahat Edin</BlogHeader>
+        <ArrowButton className="left" onClick={() => handleScroll("left")}>
+          {"<"}
+        </ArrowButton>
+        <CategoriesWrapper ref={containerRef}>
+          <CategoriesContainer>
+            {Object.keys(groupedBlogs).map((category) => {
+              const [latestBlog, ...otherBlogs] = groupedBlogs[category];
+              const visibleCount = visibleCounts[category];
 
-            return (
-              <CategoryColumn key={category}>
-                <LargeBlogItem>
-                  <Link to={`/blog/${latestBlog.slug}`}>
-                    <CategoryLabel>{category}</CategoryLabel>
-                    {latestBlog.cover_image && (
-                      <BlogImage
-                        src={latestBlog.cover_image.trim()}
-                        alt={latestBlog.title}
-                      />
-                    )}
-                    <BlogContent>
-                      <BlogDate>
-                        {new Date(latestBlog.created_at).toLocaleDateString(
-                          "tr-TR",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          }
-                        )}
-                      </BlogDate>
-                      <BlogTitle>{latestBlog.title}</BlogTitle>
-                      <BlogExcerpt>
-                        {latestBlog.content.substring(0, 50)}...
-                      </BlogExcerpt>
-                    </BlogContent>
-                  </Link>
-                  <ContinueReading to={`/blog/${latestBlog.slug}`}>
-                    Devamını Gör
-                    <ArrowForwardIcon />
-                  </ContinueReading>
-                </LargeBlogItem>
-                {otherBlogs.slice(0, visibleCount).map((blog) => (
-                  <SmallBlogItem key={blog.id}>
-                    <Link
-                      style={{ display: "flex", margin: "0 auto auto 0" }}
-                      to={`/blog/${blog.slug}`}
-                    >
-                      {blog.cover_image && (
-                        <SmallBlogImage
-                          src={blog.cover_image.trim()}
-                          alt={blog.title}
+              return (
+                <CategoryColumn key={category}>
+                  <LargeBlogItem>
+                    <Link to={`/blog/${latestBlog.slug}`}>
+                      <CategoryLabel>{category}</CategoryLabel>
+                      {latestBlog.cover_image && (
+                        <BlogImage
+                          src={latestBlog.cover_image.trim()}
+                          alt={latestBlog.title}
                         />
                       )}
-                      <SmallBlogContent>
+                      <BlogContent>
                         <BlogDate>
-                          {new Date(blog.created_at).toLocaleDateString(
+                          {new Date(latestBlog.created_at).toLocaleDateString(
                             "tr-TR",
                             {
                               year: "numeric",
@@ -363,34 +349,112 @@ function BlogHome() {
                             }
                           )}
                         </BlogDate>
-                        <BlogTitle>{blog.title}</BlogTitle>
-                      </SmallBlogContent>
+                        <BlogTitle>{latestBlog.title}</BlogTitle>
+                        <BlogExcerpt>
+                          {latestBlog.content.substring(0, 50)}...
+                        </BlogExcerpt>
+                      </BlogContent>
                     </Link>
                     <ContinueReading to={`/blog/${latestBlog.slug}`}>
                       Devamını Gör
                       <ArrowForwardIcon />
                     </ContinueReading>
-                  </SmallBlogItem>
-                ))}
-              </CategoryColumn>
-            );
-          })}
-        </CategoriesContainer>
-      </CategoriesWrapper>
+                  </LargeBlogItem>
+                  {otherBlogs.slice(0, visibleCount).map((blog) => (
+                    <SmallBlogItem key={blog.id}>
+                      <Link
+                        style={{ display: "flex", margin: "0 auto auto 0" }}
+                        to={`/blog/${blog.slug}`}
+                      >
+                        {blog.cover_image && (
+                          <SmallBlogImage
+                            src={blog.cover_image.trim()}
+                            alt={blog.title}
+                          />
+                        )}
+                        <SmallBlogContent>
+                          <BlogDate>
+                            {new Date(blog.created_at).toLocaleDateString(
+                              "tr-TR",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )}
+                          </BlogDate>
+                          <BlogTitle>{blog.title}</BlogTitle>
+                        </SmallBlogContent>
+                      </Link>
+                      <ContinueReading to={`/blog/${latestBlog.slug}`}>
+                        Devamını Gör
+                        <ArrowForwardIcon />
+                      </ContinueReading>
+                    </SmallBlogItem>
+                  ))}
+                </CategoryColumn>
+              );
+            })}
+          </CategoriesContainer>
+        </CategoriesWrapper>
 
-      {/* Eğer herhangi bir kategoride 3'ten fazla blog varsa, "Daha Fazla Göster" butonunu göster */}
-      {showLoadMoreButton && (
-        <LoadMoreWrapper>
-          <LoadMoreButton onClick={handleLoadMore}>
-            Daha Fazla Göster
-          </LoadMoreButton>
-        </LoadMoreWrapper>
-      )}
+        {/* Eğer herhangi bir kategoride 3'ten fazla blog varsa, "Daha Fazla Göster" butonunu göster */}
+        {showLoadMoreButton && (
+          <LoadMoreWrapper>
+            <LoadMoreButton onClick={handleLoadMore}>
+              Daha Fazla Göster
+            </LoadMoreButton>
+          </LoadMoreWrapper>
+        )}
 
-      <ArrowButton className="right" onClick={() => handleScroll("right")}>
-        {">"}
-      </ArrowButton>
-    </BlogContainer>
+        <ArrowButton className="right" onClick={() => handleScroll("right")}>
+          {">"}
+        </ArrowButton>
+      </BlogContainer>
+      <div className="footer">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "34px",
+          }}
+        >
+          <div className="footer-header">
+            Vize başvurusu yapmak hiç bu kadar kolay olmamıştı.
+          </div>
+          <div className="ceper">
+            <div className="footer-buton">Hemen başlayın</div>
+          </div>
+        </div>
+        <div className="footer-divider"></div>
+        <div
+          className="footer-wrap"
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            maxWidth: "80%",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
+          <Logo variant="footer" />
+          <div style={{ display: "flex", gap: "30px" }}>
+            <div className="footer-links">Ana Sayfa</div>
+            <div className="footer-links">Hakkında</div>
+            <div className="footer-links">Blog</div>
+          </div>
+          <div style={{ display: "flex", gap: "25px" }}>
+            <img src="images/linkedin.png" />
+            <img src="images/Facebook.png" />
+            <img src="images/Instagram.png" />
+            <img src="images/Youtube.png" />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 

@@ -63,11 +63,12 @@ const StyledLogo = styled.div`
       width: 165px;
       height: auto;
       flex-shrink: 0;
-      @media (max-width: 1200px) {
-        width: 120px;
-      }
-      @media (max-width: 870px) {
-        display: none;
+      @media (max-width: 1300px) {
+        left: 20%;
+        width: 140px;
+        position: relavite;
+        top: none;
+        left: none;
       }
     `}
     ${(props) =>
@@ -76,10 +77,7 @@ const StyledLogo = styled.div`
         width: 165px;
         height: auto;
         flex-shrink: 0;
-        @media (max-width: 1200px) {
-          width: 120px;
-        }
-        @media (max-width: 870px) {
+        @media (max-width: 1300px) {
           display: none;
         }
       `}

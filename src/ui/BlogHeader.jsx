@@ -19,17 +19,22 @@ const StyledHeader = styled.header`
 `;
 
 const HeaderContents = styled.div`
-  width: 70%;
+  width: 80%;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-left: auto;
   margin-right: auto;
+  @media (max-width: 1300px) {
+  }
 `;
 
 const InputAndDarkToggleContainer = styled.div`
   margin-left: auto;
   display: flex;
+  @media (max-width: 1300px) {
+    align-self: flex-end;
+  }
 `;
 
 const BlogInput = styled.input`
@@ -41,6 +46,10 @@ const BlogInput = styled.input`
   background: transparent;
   padding: 0.8rem 1.2rem;
   box-shadow: var(--shadow-sm);
+  @media (max-width: 1300px) {
+    width: 200px;
+    height: 36px;
+  }
 `;
 
 const SearchResultsContainer = styled.div`
