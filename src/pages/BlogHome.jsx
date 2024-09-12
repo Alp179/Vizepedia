@@ -305,7 +305,7 @@ function BlogHome() {
   const initializeVisibleCounts = (categories) => {
     const initialCounts = {};
     categories.forEach((category) => {
-      initialCounts[category] = 3;
+      initialCounts[category] = window.innerWidth <= 910 ? 2 : 3 ;
     });
     setVisibleCounts(initialCounts);
   };
