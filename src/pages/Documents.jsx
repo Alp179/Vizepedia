@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
@@ -10,6 +10,17 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-20%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
 
 const PageContainer = styled.div`
   display: flex;
@@ -32,6 +43,9 @@ const PageContainer = styled.div`
     width: 90%;
     margin: 0 auto;
   }
+
+  /* Belgeler arası geçiş için animasyon */
+  animation: ${fadeIn} 0.5s ease-in-out;
 `;
 
 const InfoContainer = styled.div`
