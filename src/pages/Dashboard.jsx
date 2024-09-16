@@ -174,6 +174,9 @@ const InfoContainer = styled.div`
   @media (max-width: 760px) {
     width: 400px;
   }
+  @media (max-width: 710px) {
+    margin-bottom: 50px;
+  }
   @media (max-width: 500px) {
     width: 300px;
   }
