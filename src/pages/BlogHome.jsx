@@ -133,8 +133,6 @@ const SmallBlogItem = styled(BlogItem)`
   display: flex;
   align-items: center;
   background: var(--color-grey-909);
-
-  // Yeni kartların animasyonlu olarak görünmesini sağlıyoruz
   animation: ${fadeInUp} 0.5s ease both;
 `;
 
@@ -289,11 +287,7 @@ const LoadMoreWrapper = styled.div`
 `;
 
 function BlogHome() {
-  const {
-    data: blogs,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: blogs, isLoading, isError } = useQuery({
     queryKey: ["allBlogs"],
     queryFn: fetchAllBlogs,
   });
@@ -302,6 +296,24 @@ function BlogHome() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+
+  // Touch events for mobile scrolling
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
+    setScrollLeft(containerRef.current.scrollLeft);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    const x = e.touches[0].pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    containerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
 
   // Her kategori için küçük kartların sayısını yönetmek için state tutuyoruz
   const [visibleCounts, setVisibleCounts] = useState({});
@@ -395,6 +407,9 @@ function BlogHome() {
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUpOrLeave}
           onMouseLeave={handleMouseUpOrLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <CategoriesContainer>
             {Object.keys(groupedBlogs).map((category) => {
