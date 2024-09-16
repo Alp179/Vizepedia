@@ -152,7 +152,6 @@ const CustomRow = styled(Row)`
 
 const InfoContainer = styled.div`
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -163,15 +162,40 @@ const InfoContainer = styled.div`
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   gap: 20px;
   z-index: 1000;
+  @media (max-width: 1425px) {
+    margin-left: -100px;
+  }
+  @media (max-width: 1100px) {
+    flex-flow: column;
+    gap: 0;
+    min-width: 300px;
+    padding-bottom: 20px;
+  }
+  @media (max-width: 710px) {
+    padding-bottom: 0px!important;
+  }
+  @media (max-width: 389px) {
+    min-width: 250px!important;
+  }
+  @media (max-width: 360px) {
+    margin-left: -130px;
+  }
 `;
 
 const MapContainer = styled.div`
+  min-width: 450px;
   flex: 1;
-  min-width: 50%;
   overflow: hidden;
   border-radius: 10px;
   transform: scale(0.8); /* Haritayı %20 küçültmek için */
   transform-origin: center; /* Ortalanmış küçültme */
+  @media (max-width: 1100px) {
+    width: 100%;
+    min-width: 300px;
+  }
+  @media (max-width: 389px) {
+    min-width: 280px!important;
+  }
 `;
 
 const InfoDetails = styled.div`
