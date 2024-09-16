@@ -86,6 +86,7 @@ const CategoriesWrapper = styled.div`
   @media (max-width: 550px) {
     margin-top: 30px;
   }
+  cursor: grab;
 `;
 
 const CategoriesContainer = styled.div`
@@ -298,6 +299,9 @@ function BlogHome() {
   });
 
   const containerRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   // Her kategori için küçük kartların sayısını yönetmek için state tutuyoruz
   const [visibleCounts, setVisibleCounts] = useState({});
@@ -305,9 +309,26 @@ function BlogHome() {
   const initializeVisibleCounts = (categories) => {
     const initialCounts = {};
     categories.forEach((category) => {
-      initialCounts[category] = window.innerWidth <= 910 ? 2 : 3 ;
+      initialCounts[category] = window.innerWidth <= 910 ? 2 : 3;
     });
     setVisibleCounts(initialCounts);
+  };
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - containerRef.current.offsetLeft);
+    setScrollLeft(containerRef.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5; // Sürükleme hızı
+    containerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUpOrLeave = () => {
+    setIsDragging(false);
   };
 
   if (isLoading) return <p>Yükleniyor...</p>;
@@ -324,22 +345,11 @@ function BlogHome() {
     initializeVisibleCounts(Object.keys(groupedBlogs));
   }
 
-  const handleLoadMore = () => {
-    setVisibleCounts((prevCounts) => {
-      const updatedCounts = {};
-      Object.keys(prevCounts).forEach((category) => {
-        updatedCounts[category] = prevCounts[category] + 3;
-      });
-      return updatedCounts;
-    });
-  };
-
   const handleScroll = (direction) => {
     const container = containerRef.current;
-    // Ekran genişliği 910px'in altında ise scrollAmount 250 olacak, aksi halde 300 olacak
-    const scrollAmount = window.innerWidth <= 910 ? 260 : 320; 
+    const scrollAmount = window.innerWidth <= 910 ? 260 : 320;
     const maxScrollLeft = container.scrollWidth - container.clientWidth;
-  
+
     if (direction === "left") {
       if (container.scrollLeft <= 0) {
         container.scrollTo({ left: maxScrollLeft, behavior: "smooth" });
@@ -354,9 +364,17 @@ function BlogHome() {
       }
     }
   };
-  
 
-  // Herhangi bir kategoride 3'ten fazla blog varsa "Daha Fazla Göster" butonunu göster
+  const handleLoadMore = () => {
+    setVisibleCounts((prevCounts) => {
+      const updatedCounts = {};
+      Object.keys(prevCounts).forEach((category) => {
+        updatedCounts[category] = prevCounts[category] + 3;
+      });
+      return updatedCounts;
+    });
+  };
+
   const showLoadMoreButton = Object.keys(groupedBlogs).some(
     (category) => groupedBlogs[category].length > visibleCounts[category]
   );
@@ -371,7 +389,13 @@ function BlogHome() {
         <ArrowButton className="left" onClick={() => handleScroll("left")}>
           {"<"}
         </ArrowButton>
-        <CategoriesWrapper ref={containerRef}>
+        <CategoriesWrapper
+          ref={containerRef}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUpOrLeave}
+          onMouseLeave={handleMouseUpOrLeave}
+        >
           <CategoriesContainer>
             {Object.keys(groupedBlogs).map((category) => {
               const [latestBlog, ...otherBlogs] = groupedBlogs[category];
@@ -448,7 +472,6 @@ function BlogHome() {
           </CategoriesContainer>
         </CategoriesWrapper>
 
-        {/* Eğer herhangi bir kategoride 3'ten fazla blog varsa, "Daha Fazla Göster" butonunu göster */}
         {showLoadMoreButton && (
           <LoadMoreWrapper>
             <LoadMoreButton onClick={handleLoadMore}>
