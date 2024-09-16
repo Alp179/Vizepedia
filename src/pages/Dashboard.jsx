@@ -158,24 +158,27 @@ const InfoContainer = styled.div`
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(10px);
   border-radius: 12px;
-  padding: 20px;
+  padding: 22px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  gap: 20px;
+  gap: 32px;
   z-index: 1000;
   @media (max-width: 1425px) {
     margin-left: -100px;
   }
-  @media (max-width: 1100px) {
+  @media (max-width: 1285px) {
     flex-flow: column;
-    gap: 0;
-    min-width: 300px;
+    gap: 22px;
+    width: 500px;
     padding-bottom: 20px;
   }
-  @media (max-width: 710px) {
-    padding-bottom: 0px!important;
+  @media (max-width: 760px) {
+    width: 400px;
+  }
+  @media (max-width: 500px) {
+    width: 300px;
   }
   @media (max-width: 389px) {
-    min-width: 250px!important;
+    width: 250px;
   }
   @media (max-width: 360px) {
     margin-left: -130px;
@@ -183,18 +186,25 @@ const InfoContainer = styled.div`
 `;
 
 const MapContainer = styled.div`
-  min-width: 450px;
-  flex: 1;
+  height: auto;
+  flex-shrink: 0;
   overflow: hidden;
   border-radius: 10px;
-  transform: scale(0.8); /* Haritayı %20 küçültmek için */
-  transform-origin: center; /* Ortalanmış küçültme */
-  @media (max-width: 1100px) {
-    width: 100%;
-    min-width: 300px;
+  @media (max-width: 1285px) {
+    width: 420px;
+    height: 420px;
+  }
+  @media (max-width: 760px) {
+    width: 350px;
+    height: 350px;
+  }
+  @media (max-width: 500px) {
+    width: 280px;
+    height: 280px;
   }
   @media (max-width: 389px) {
-    min-width: 280px!important;
+    height: 230px;
+    width: 230px;
   }
 `;
 
