@@ -42,7 +42,7 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-904: #004466;
   --color-grey-905: #00ffa2;
   --color-grey-906: linear-gradient(to bottom right, rgba(255, 255, 255, 0.53) 70%, #004466);
-  --color-grey-907: url(../public/footer-background.png);
+  --color-grey-907: url(https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/footer-background.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9mb290ZXItYmFja2dyb3VuZC5wbmciLCJpYXQiOjE3MjY3NDY0MjgsImV4cCI6MzU3OTc1OTkyMDgyOH0.3xoxQvSrux3AlkkY1NDx77aX87JNVG9D64NeTjY7nzA&t=2024-09-19T11%3A47%3A08.940Z);
   --color-grey-908: linear-gradient(180deg, rgba(0, 255, 162, 0.4) 0%, rgba(0, 68, 102, 0.4) 15%, rgba(36, 0, 255, 0.4) 25%, rgba(248, 24, 225, 0.4) 40%, rgba(221, 251, 239, 1) 60%);
   --color-grey-909: white;
   --color-grey-910: #004466;

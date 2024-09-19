@@ -374,7 +374,7 @@ function MainPage() {
           Size özel hazırlanmış belge listesi ve adım adım rehberle başvuru
           sürecinizi kolayca yönetin ve dünyayı keşfetmeye başlayın!
         </Heading>
-        <HeroImage src="../public/heroimage.png" />
+        <HeroImage src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/heroimage.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9oZXJvaW1hZ2UucG5nIiwiaWF0IjoxNzI2NzQ2MzQ2LCJleHAiOjM1NjQ5ODU1MjA3NDZ9.uRJ4_AUjzc782qUs4mfYynxEUIvJV6h-hyfffxnjZoQ&t=2024-09-19T11%3A45%3A47.061Z" />
       </BigTexts>
       <Why>Neden Vizepedia</Why>
       <WhyCardsContainer>
@@ -385,7 +385,7 @@ function MainPage() {
             sürecindeki danışmanlık giderlerinden tasarruf etmenize yardımcı
             olur ve seyahat bütçenizi optimize eder.
           </WhyCardsContext>
-          <WhyCardsImagesSavings src="../public/bonbon-savings.png" />
+          <WhyCardsImagesSavings src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-savings.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tc2F2aW5ncy5wbmciLCJpYXQiOjE3MjY3NDYxMDYsImV4cCI6MzU2OTUzOTQ5MTcwNn0.yzZ2SUat2iWwr-nw-FDalidPonfm0htsMK8abhUVXwE&t=2024-09-19T11%3A41%3A46.357Z" />
         </WhyCards>
         <WhyCards>
           <WhyCardsHeading>Zaman Tasarrufu</WhyCardsHeading>
@@ -395,7 +395,7 @@ function MainPage() {
             hale getirir. Böylece, süreci daha rahat ve keyifli bir deneyime
             dönüştürebilirsiniz.
           </WhyCardsContext>
-          <WhyCardsImagesWatch src="../public/bonbon-watch.png" />
+          <WhyCardsImagesWatch src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-watch.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24td2F0Y2gucG5nIiwiaWF0IjoxNzI2NzQ2MTQ5LCJleHAiOjM1NjQ5Njc2MzU3NDl9.-6p5u_p_rJ_INyezByUk8t1Q1mWNrDqxOi9goUAJaHs&t=2024-09-19T11%3A42%3A29.644Z" />
         </WhyCards>
         <WhyCards>
           <WhyCardsHeading>Ferah Arayüz</WhyCardsHeading>
@@ -404,7 +404,7 @@ function MainPage() {
             dostu bir arayüz sunarak, vize başvuru süreci boyunca rahat ve
             sorunsuz bir deneyim yaşamanıza yardımcı olur.
           </WhyCardsContext>
-          <WhyCardsImagesHappy src="../public/bonbon-happy.png" />
+          <WhyCardsImagesHappy src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-happy.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24taGFwcHkucG5nIiwiaWF0IjoxNzI2NzQ2MTczLCJleHAiOjM1NjQ5NzAwNTQ5NzN9.-CamkzBL3l9uT1UoNblJTC44Z8RhVGirCRW1F1PFnfo&t=2024-09-19T11%3A42%3A54.189Z" />
         </WhyCards>
         <WhyCards>
           <WhyCardsHeading>Güncel ve Doğru</WhyCardsHeading>
@@ -414,7 +414,7 @@ function MainPage() {
             doğru bilgileri sunar. Bu sayede, güncel bilgilere güvenerek
             başvurularınızı gerçekleştirin.
           </WhyCardsContext>
-          <WhyCardsImagesPhone src="../public/bonbon-phone.png" />
+          <WhyCardsImagesPhone src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-phone.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tcGhvbmUucG5nIiwiaWF0IjoxNzI2NzQ2MjAxLCJleHAiOjM1NjQ5NzAwNTUwMDF9.3uHu4K0rGopXwLfQIoR-AH6U5ZKJF2_05eU2ZmIZgbQ&t=2024-09-19T11%3A43%3A21.751Z" />
         </WhyCards>
       </WhyCardsContainer>
       <WhyCardsContainer2>
@@ -427,7 +427,7 @@ function MainPage() {
               bir şekilde yönetmenize imkan tanır.
             </WhyCardsContext2>
           </WhyCards2Inner>
-          <WhyCards2DocImage src="../public/bonbon-doc.png" />
+          <WhyCards2DocImage src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-doc.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tZG9jLnBuZyIsImlhdCI6MTcyNjc0NjIzMywiZXhwIjozNTY0OTY4MjQwNjMzfQ.AWcqQkP3gXZKiGH8_VZ5CIpzsH3WJWWnBfq3XHGqDEM&t=2024-09-19T11%3A43%3A53.452Z" />
         </WhyCards2>
         <WhyCards2>
           <WhyCards2Inner>
@@ -438,7 +438,7 @@ function MainPage() {
               sizde!
             </WhyCardsContext2>
           </WhyCards2Inner>
-          <WhyCards2PlaneImage src="../public/bonbon-plane.png" />
+          <WhyCards2PlaneImage src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-plane.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tcGxhbmUucG5nIiwiaWF0IjoxNzI2NzQ2MjU3LCJleHAiOjM1NjQ5NzAwNTUwNTd9.7vO6zqUpjLNpS-5lH1uRR9dz4L7qHXJq5DUYluevvt0&t=2024-09-19T11%3A44%3A17.689Z" />
         </WhyCards2>
       </WhyCardsContainer2>
       <section
