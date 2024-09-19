@@ -22,6 +22,65 @@ import { useVisaApplications } from "../context/VisaApplicationContext";
 import toast, { Toaster } from "react-hot-toast"; // React Hot Toast import
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 
+// Glow Button animasyonu için gerekli keyframes
+const glowing = keyframes`
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+`;
+
+// Glow efektli buton
+const GlowButton = styled.button`
+  width: 220px;
+  height: 50px;
+  border: none;
+  outline: none;
+  color: #fff;
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+
+  &:before {
+    content: '';
+    background: linear-gradient(-45deg, #004466,#004466, #87F9CD, #87F9CD, #87F9CD,   #004466, #004466 );
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    animation: ${glowing} 20s linear infinite ;
+    opacity: 1;  // Opacity'yi 1 yaparak pasif durumda da animasyonu aktif hale getirdik
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 10px;
+  }
+
+  &:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+  }
+
+  &:active {
+    color: #000;
+  }
+
+  &:active:after {
+    background: transparent;
+  }
+`;
+
+
 const NavList = styled.ul`
   width: 100%;
   display: flex;
@@ -76,7 +135,6 @@ const StyledNavLink = styled(NavLink)`
     background-color: var(--color-grey-50);
     border-radius: var(--border-radius-sm);
   }
-
 
   & svg {
     width: 2.4rem;
@@ -301,11 +359,9 @@ function MainNav() {
     if (confirmDelete) {
       try {
         await deleteVisaApplication(appId);
-        // Başarıyla silindikten sonra, state'i güncelle
         applicationsDispatch({ type: "DELETE_APPLICATION", payload: appId });
         toast.success("Vize başvurusu başarıyla silindi!");
-        // Sayfayı yeniden yükleyerek tüm sayfanın render edilmesini sağla
-        navigate("/dashboard"); // Burada navigate kullanarak /dashboard'a yönlendiriyoruz
+        navigate("/dashboard");
       } catch (error) {
         toast.error("Vize başvurusu silinemedi.");
       }
@@ -323,9 +379,9 @@ function MainNav() {
   return (
     <nav className="navbar-dash">
       <Toaster />
-      <Button size="dash" onClick={continueToDocument}>
+      <GlowButton onClick={continueToDocument}>
         Devam et
-      </Button>
+      </GlowButton>
       <NavList>
         <li>
           <Modal>

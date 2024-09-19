@@ -11,7 +11,7 @@ import StepIndicator from "../ui/StepIndicator";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDocuments } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import "flag-icons/css/flag-icons.min.css";
 import supabase from "../services/supabase";
 
@@ -61,61 +61,88 @@ const FlagContainer = styled.div`
   }
 `;
 
+
+
+
+// Sürekli ve kesintisiz yukarıdan aşağıya akan animasyon
+const moveFlagAnimation = keyframes`
+  0% {
+    transform: translateY(-55%) rotate(31deg);
+  }
+  10% {
+    transform: translateY(-40%) rotate(31deg);
+  }
+  20% {
+    transform: translateY(-30%) rotate(31deg);
+  }
+   30% {
+    transform: translateY(-20%) rotate(31deg);
+  }
+  40% {
+    transform: translateY(-10%) rotate(31deg);
+  }
+  50% {
+    transform: translateY(-0%) rotate(31deg);
+  }
+    60% {
+    transform: translateY(-10%) rotate(31deg);
+  }
+  70% {
+    transform: translateY(-20%) rotate(31deg);
+  }
+  80% {
+    transform: translateY(-30%) rotate(31deg);
+  }
+   90% {
+    transform: translateY(-40%) rotate(31deg);
+  }
+  100% {
+    transform: translateY(-55%) rotate(31deg);
+  }
+  
+`;
+
 const BlurredFlagBackground = styled.div`
   position: absolute;
-  top: 60%;
-  left: -40%;
-  width: 80vw;
-  height: 60vw;
-  transform: translateX(40%) translateY(-110%) rotate(31deg);
+  top: -50%;
+  left: 25%;
+  width: 60vw;  // %50 daralma
+  height: 45vw; // %50 daralma
   filter: blur(190px);
   z-index: 0;
+  animation: ${moveFlagAnimation} 14s linear infinite; // Akış alanı daraltıldı ve süre ayarlandı
 
   @media (max-width: 1625px) {
-    top: 60%;
+    top: -50%;
   }
 
   @media (max-width: 1450px) {
-    top: 50%;
+    top: -40%;
   }
 
   @media (max-width: 1150px) {
-    top: 30%;
+    top: -30%;
   }
 
   @media (max-width: 990px) {
-    top: 20%;
+    top: -20%;
   }
 
-  @media (max-width: 890px) {
-    top: 10%;
-  }
-  @media (max-width: 820px) {
-    right: -20%;
-  }
   @media (max-width: 710px) {
-    width: 300px !important;
-    height: 170px !important;
-    top: 11%;
+    width: 150px !important; // Daraltılmış genişlik
+    height: 85px !important; // Daraltılmış yükseklik
   }
+
   @media (max-width: 530px) {
-    top: 10%;
     right: -30%;
   }
-  @media (max-width: 480px) {
-    right: -50%;
-  }
+
   @media (max-width: 450px) {
-    width: 240px !important;
-    height: 140px !important;
-    right: -70%;
-    top: 8%;
-    @media (max-height: 700px) {
-      right: -90%;
-      top: 10%;
-    }
+    width: 120px !important;
+    height: 70px !important;
   }
 `;
+
 
 const CreatedAtContainer = styled.div`
   font-size: 1.4rem;
