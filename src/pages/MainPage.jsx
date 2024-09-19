@@ -374,7 +374,7 @@ function MainPage() {
           Size özel hazırlanmış belge listesi ve adım adım rehberle başvuru
           sürecinizi kolayca yönetin ve dünyayı keşfetmeye başlayın!
         </Heading>
-        <HeroImage src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/heroimage.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9oZXJvaW1hZ2UucG5nIiwiaWF0IjoxNzI2NzQ2MzQ2LCJleHAiOjM1NjQ5ODU1MjA3NDZ9.uRJ4_AUjzc782qUs4mfYynxEUIvJV6h-hyfffxnjZoQ&t=2024-09-19T11%3A45%3A47.061Z" />
+        <HeroImage src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/mainpage-icons/heroimage.png" />
       </BigTexts>
       <Why>Neden Vizepedia</Why>
       <WhyCardsContainer>
