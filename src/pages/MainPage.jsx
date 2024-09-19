@@ -385,7 +385,10 @@ function MainPage() {
             sürecindeki danışmanlık giderlerinden tasarruf etmenize yardımcı
             olur ve seyahat bütçenizi optimize eder.
           </WhyCardsContext>
-          <WhyCardsImagesSavings src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-savings.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tc2F2aW5ncy5wbmciLCJpYXQiOjE3MjY3NDYxMDYsImV4cCI6MzU2OTUzOTQ5MTcwNn0.yzZ2SUat2iWwr-nw-FDalidPonfm0htsMK8abhUVXwE&t=2024-09-19T11%3A41%3A46.357Z" />
+          <WhyCardsImagesSavings
+            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-savings.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tc2F2aW5ncy5wbmciLCJpYXQiOjE3MjY3NDYxMDYsImV4cCI6MzU2OTUzOTQ5MTcwNn0.yzZ2SUat2iWwr-nw-FDalidPonfm0htsMK8abhUVXwE&t=2024-09-19T11%3A41%3A46.357Z"
+            alt="bonbon-savings"
+          />
         </WhyCards>
         <WhyCards>
           <WhyCardsHeading>Zaman Tasarrufu</WhyCardsHeading>
@@ -395,7 +398,10 @@ function MainPage() {
             hale getirir. Böylece, süreci daha rahat ve keyifli bir deneyime
             dönüştürebilirsiniz.
           </WhyCardsContext>
-          <WhyCardsImagesWatch src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-watch.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24td2F0Y2gucG5nIiwiaWF0IjoxNzI2NzQ2MTQ5LCJleHAiOjM1NjQ5Njc2MzU3NDl9.-6p5u_p_rJ_INyezByUk8t1Q1mWNrDqxOi9goUAJaHs&t=2024-09-19T11%3A42%3A29.644Z" />
+          <WhyCardsImagesWatch
+            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-watch.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24td2F0Y2gucG5nIiwiaWF0IjoxNzI2NzQ2MTQ5LCJleHAiOjM1NjQ5Njc2MzU3NDl9.-6p5u_p_rJ_INyezByUk8t1Q1mWNrDqxOi9goUAJaHs&t=2024-09-19T11%3A42%3A29.644Z"
+            alt="bonbon-watch"
+          />
         </WhyCards>
         <WhyCards>
           <WhyCardsHeading>Ferah Arayüz</WhyCardsHeading>
