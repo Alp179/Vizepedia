@@ -5,6 +5,7 @@ import styled, { keyframes } from "styled-components";
 import { useRef, useState } from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Logo from "../ui/Logo";
+import MailerLiteForm from "../ui/MailerLiteForm";
 
 // Yeni kartlar için animasyon tanımlıyoruz
 const fadeInUp = keyframes`
@@ -287,7 +288,11 @@ const LoadMoreWrapper = styled.div`
 `;
 
 function BlogHome() {
-  const { data: blogs, isLoading, isError } = useQuery({
+  const {
+    data: blogs,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["allBlogs"],
     queryFn: fetchAllBlogs,
   });
@@ -502,47 +507,7 @@ function BlogHome() {
 
       <Divider />
 
-      <div className="bulten-abone">
-        <div
-          className="bulten-responsive"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-around",
-          }}
-        >
-          <div className="bulten-header">Bültenimize Abone ol</div>
-          <div className="bulten-subtext">
-            Vize duyuruları ve en son blog yazılarımızdan ilk sizin haberiniz
-            olsun. Hemen abone olun!
-          </div>
-        </div>
-        <div
-          className="bulten-inputvelogo"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-around",
-            alignItems: "flex-end",
-          }}
-        >
-          <Logo variant="bulten" />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <div className="bulten-input">
-              <img src="images/mail-image.png" />
-              <input className="bulten-mail" />
-            </div>
-            <button className="bulten-abone-buton">Abone ol</button>
-          </div>
-        </div>
-      </div>
-
+      <MailerLiteForm />
       <div className="footer">
         <div
           style={{
