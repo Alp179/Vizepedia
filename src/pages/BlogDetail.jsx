@@ -23,7 +23,13 @@ const BlogDetailContainer = styled.div`
   gap: 20px;
   padding: 40px 0;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 50px auto;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 60px 30px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 `;
 
 const BlogContentWrapper = styled.div`
@@ -32,29 +38,25 @@ const BlogContentWrapper = styled.div`
 `;
 
 const GlassContainer = styled.div`
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 30px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 20px 12px;
 `;
 
 const BlogTitle = styled.h1`
-  font-size: 2.5rem;
+  font-size: 38px;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--color-grey-600);
 `;
 
 const BlogDate = styled.p`
-  font-size: 1rem;
+  font-size: 14px;
   color: #777;
   margin-bottom: 30px;
 `;
 
 const BlogContent = styled.div`
   line-height: 1.8;
-  font-size: 2.1rem;
+  font-size: 18px;
+  margin-top: 20px;
   color: #444;
   img {
     max-width: 100%;
@@ -64,27 +66,35 @@ const BlogContent = styled.div`
 `;
 
 const CategoryBadge = styled.div`
-  position: absolute;
-  top: -20px;
-  left: 0;
-  background-color: rgba(0, 128, 0, 0.7); /* Kategori rengi */
-  color: white;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-size: 1rem;
+  background-color: var(--color-grey-911);
+  color: var(--color-grey-600);
+  width: 55px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  font-size: 14px;
   backdrop-filter: blur(5px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 `;
 
+const CategoryAndDate = styled.div`
+  padding: 0 10px;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+`;
+
 const RelatedBlogsWrapper = styled.div`
   flex: 1;
-  background-color: #f7f7f7;
+  background-color: transparent;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 100px;
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 360px);
   overflow-y: auto;
 `;
 
@@ -92,6 +102,10 @@ const RelatedBlogTitle = styled.h2`
   font-size: 1.5rem;
   margin-bottom: 20px;
   color: #333;
+`;
+
+const BlogImage = styled.img`
+  border-radius: 16px;
 `;
 
 const SmallRelatedBlogCard = styled(Link)`
@@ -165,9 +179,8 @@ function BlogDetail() {
   return (
     <BlogDetailContainer>
       <BlogContentWrapper>
-        <CategoryBadge>{blog.category}</CategoryBadge>
-        <GlassContainer>
-          <BlogTitle>{blog.title}</BlogTitle>
+        <CategoryAndDate>
+          <CategoryBadge>{blog.category}</CategoryBadge>
           <BlogDate>
             {new Date(blog.created_at).toLocaleDateString("tr-TR", {
               year: "numeric",
@@ -175,7 +188,12 @@ function BlogDetail() {
               day: "numeric",
             })}
           </BlogDate>
-          {blog.cover_image && <img src={blog.cover_image} alt={blog.title} />}
+        </CategoryAndDate>
+        <GlassContainer>
+          <BlogTitle>{blog.title}</BlogTitle>
+          {blog.cover_image && (
+            <BlogImage src={blog.cover_image} alt={blog.title} />
+          )}
           <BlogContent dangerouslySetInnerHTML={{ __html: blog.content }} />
         </GlassContainer>
       </BlogContentWrapper>
