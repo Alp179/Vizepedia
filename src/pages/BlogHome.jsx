@@ -508,6 +508,7 @@ function BlogHome() {
       <Divider />
 
       <MailerLiteForm />
+
       <div className="footer">
         <div
           style={{

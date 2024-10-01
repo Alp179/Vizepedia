@@ -4,6 +4,7 @@ import Logo from "../ui/Logo";
 import DarkModeToggle from "../ui/DarkModeToggle";
 import Button from "../ui/Button";
 import Marquee from "react-fast-marquee";
+import MailerLiteForm from "../ui/MailerLiteForm";
 
 const Navbar = styled.div`
   width: 80%;
@@ -374,7 +375,10 @@ function MainPage() {
           Size özel hazırlanmış belge listesi ve adım adım rehberle başvuru
           sürecinizi kolayca yönetin ve dünyayı keşfetmeye başlayın!
         </Heading>
-        <HeroImage src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/mainpage-icons/heroimage.png" />
+        <HeroImage
+          src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/hero-image.png?t=2024-10-01T13%3A58%3A37.493Z"
+          alt="hero-image"
+        />
       </BigTexts>
       <Why>Neden Vizepedia</Why>
       <WhyCardsContainer>
@@ -386,7 +390,7 @@ function MainPage() {
             olur ve seyahat bütçenizi optimize eder.
           </WhyCardsContext>
           <WhyCardsImagesSavings
-            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-savings.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tc2F2aW5ncy5wbmciLCJpYXQiOjE3MjY3NDYxMDYsImV4cCI6MzU2OTUzOTQ5MTcwNn0.yzZ2SUat2iWwr-nw-FDalidPonfm0htsMK8abhUVXwE&t=2024-09-19T11%3A41%3A46.357Z"
+            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-savings.png?t=2024-10-01T13%3A58%3A51.889Z"
             alt="bonbon-savings"
           />
         </WhyCards>
@@ -399,7 +403,7 @@ function MainPage() {
             dönüştürebilirsiniz.
           </WhyCardsContext>
           <WhyCardsImagesWatch
-            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-watch.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24td2F0Y2gucG5nIiwiaWF0IjoxNzI2NzQ2MTQ5LCJleHAiOjM1NjQ5Njc2MzU3NDl9.-6p5u_p_rJ_INyezByUk8t1Q1mWNrDqxOi9goUAJaHs&t=2024-09-19T11%3A42%3A29.644Z"
+            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-watch.png?t=2024-10-01T13%3A59%3A14.116Z"
             alt="bonbon-watch"
           />
         </WhyCards>
@@ -410,7 +414,10 @@ function MainPage() {
             dostu bir arayüz sunarak, vize başvuru süreci boyunca rahat ve
             sorunsuz bir deneyim yaşamanıza yardımcı olur.
           </WhyCardsContext>
-          <WhyCardsImagesHappy src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-happy.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24taGFwcHkucG5nIiwiaWF0IjoxNzI2NzQ2MTczLCJleHAiOjM1NjQ5NzAwNTQ5NzN9.-CamkzBL3l9uT1UoNblJTC44Z8RhVGirCRW1F1PFnfo&t=2024-09-19T11%3A42%3A54.189Z" />
+          <WhyCardsImagesHappy
+            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-happy.png?t=2024-10-01T13%3A59%3A27.902Z"
+            alt="bonbon-happy"
+          />
         </WhyCards>
         <WhyCards>
           <WhyCardsHeading>Güncel ve Doğru</WhyCardsHeading>
@@ -420,7 +427,10 @@ function MainPage() {
             doğru bilgileri sunar. Bu sayede, güncel bilgilere güvenerek
             başvurularınızı gerçekleştirin.
           </WhyCardsContext>
-          <WhyCardsImagesPhone src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-phone.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tcGhvbmUucG5nIiwiaWF0IjoxNzI2NzQ2MjAxLCJleHAiOjM1NjQ5NzAwNTUwMDF9.3uHu4K0rGopXwLfQIoR-AH6U5ZKJF2_05eU2ZmIZgbQ&t=2024-09-19T11%3A43%3A21.751Z" />
+          <WhyCardsImagesPhone
+            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-phone.png?t=2024-10-01T14%3A00%3A19.108Z"
+            alt="bonbon-phone"
+          />
         </WhyCards>
       </WhyCardsContainer>
       <WhyCardsContainer2>
@@ -433,7 +443,10 @@ function MainPage() {
               bir şekilde yönetmenize imkan tanır.
             </WhyCardsContext2>
           </WhyCards2Inner>
-          <WhyCards2DocImage src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-doc.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tZG9jLnBuZyIsImlhdCI6MTcyNjc0NjIzMywiZXhwIjozNTY0OTY4MjQwNjMzfQ.AWcqQkP3gXZKiGH8_VZ5CIpzsH3WJWWnBfq3XHGqDEM&t=2024-09-19T11%3A43%3A53.452Z" />
+          <WhyCards2DocImage
+            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-doc.png?t=2024-10-01T14%3A00%3A36.059Z"
+            alt="bonbon-doc"
+          />
         </WhyCards2>
         <WhyCards2>
           <WhyCards2Inner>
@@ -444,7 +457,10 @@ function MainPage() {
               sizde!
             </WhyCardsContext2>
           </WhyCards2Inner>
-          <WhyCards2PlaneImage src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/mainpage-icons/bonbon-plane.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJtYWlucGFnZS1pY29ucy9ib25ib24tcGxhbmUucG5nIiwiaWF0IjoxNzI2NzQ2MjU3LCJleHAiOjM1NjQ5NzAwNTUwNTd9.7vO6zqUpjLNpS-5lH1uRR9dz4L7qHXJq5DUYluevvt0&t=2024-09-19T11%3A44%3A17.689Z" />
+          <WhyCards2PlaneImage
+            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-flight.png?t=2024-10-01T14%3A00%3A47.915Z"
+            alt="bonbon-flight"
+          />
         </WhyCards2>
       </WhyCardsContainer2>
       <section
@@ -615,46 +631,7 @@ function MainPage() {
         </div>
       </RahatProfesyonelContainer>
 
-      <div className="bulten-abone">
-        <div
-          className="bulten-responsive"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-around",
-          }}
-        >
-          <div className="bulten-header">Bültenimize Abone ol</div>
-          <div className="bulten-subtext">
-            Vize duyuruları ve en son blog yazılarımızdan ilk sizin haberiniz
-            olsun. Hemen abone olun!
-          </div>
-        </div>
-        <div
-          className="bulten-inputvelogo"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-around",
-            alignItems: "flex-end",
-          }}
-        >
-          <Logo variant="bulten" />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <div className="bulten-input">
-              <img src="images/mail-image.png" />
-              <input className="bulten-mail" />
-            </div>
-            <button className="bulten-abone-buton">Abone ol</button>
-          </div>
-        </div>
-      </div>
+      <MailerLiteForm />
 
       <div className="footer">
         <div

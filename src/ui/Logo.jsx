@@ -109,9 +109,14 @@ const StyledLogo = styled.div`
     css`
       width: 227px;
       height: 65px;
-      @media (max-width: 370px) {
+      @media (max-width: 1000px) {
         width: 180px;
         height: 40px;
+      }
+      @media (max-width: 360px) {
+        margin-top: 20px;
+        width: 150px;
+        height: 32px;
       }
     `}
 
