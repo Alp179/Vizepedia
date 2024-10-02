@@ -37,7 +37,7 @@ const BlogDetailContainer = styled.div`
     padding: 30px 14px;
   }
   @media (max-width: 750px) {
-    flex-flow: column;
+    flex-flow: column!important;
   }
 `;
 
