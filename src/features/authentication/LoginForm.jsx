@@ -32,19 +32,6 @@ const Bracket = styled.div`
   }
 `;
 
-// "Üye Olmadan Devam Et" linki için stil
-const AnonymousLink = styled.p`
-  color: var(--color-grey-700);
-  text-decoration: underline;
-  cursor: pointer;
-  text-align: center;
-  margin-top: 12px;
-
-  &:hover {
-    color: var(--color-grey-900);
-  }
-`;
-
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -72,12 +59,6 @@ function LoginForm() {
       // Yönlendirme işlemi
       navigate("/dashboard");
     }
-  }
-
-  // Anonim giriş işlemi
-  function handleAnonymousAccess() {
-    localStorage.setItem("isAnonymous", "true"); // Anonim durumu sakla
-    navigate("/wellcome"); // Dashboard'a yönlendir
   }
 
   useEffect(() => {
@@ -142,11 +123,6 @@ function LoginForm() {
           {!isLoading ? "Giriş yap" : <SpinnerMini />}
         </Button>
       </FormRow>
-
-      {/* Üye Olmadan Devam Et Linki */}
-      <AnonymousLink onClick={handleAnonymousAccess}>
-        Üye olmadan devam et
-      </AnonymousLink>
     </Form>
   );
 }

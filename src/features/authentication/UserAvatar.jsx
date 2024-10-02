@@ -29,20 +29,14 @@ const UserName = styled.span`
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);  /* Siyah gölge */
 `;
 
+
 function UserAvatar() {
   const { user } = useUser();
-
-  // Eğer kullanıcı yoksa veya anonimse bileşeni render etme
-  if (!user || localStorage.getItem("isAnonymous") === "true") {
-    return null; // Anonim kullanıcı için bileşeni gizle
-  }
-
   const { fullName, avatar } = user.user_metadata;
-
   return (
     <StyledUserAvatar>
       <Avatar
-        src={avatar || "default-user.jpg"}  // Eğer avatar yoksa varsayılan resim kullanılır
+        src={avatar || "default-user.jpg"}
         alt={`Avatar of ${fullName}`}
       />
       <UserName>{fullName}</UserName>

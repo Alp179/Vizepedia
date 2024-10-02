@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
@@ -23,7 +23,7 @@ import WellcomeC from "./features/wellcomes/WellcomeC";
 import WellcomeB from "./features/wellcomes/WellcomeB";
 import WellcomeE from "./features/wellcomes/WellcomeE";
 import { UserSelectionsProvider } from "./context/UserSelectionsContext";
-import ControlScreen from "./features/wellcomes/ControlScreen"; // ControlScreen
+import ControlScreen from "./features/wellcomes/ControlScreen";
 import DocumentLayout from "./ui/DocumentLayout";
 import { SelectedDocumentProvider } from "./context/SelectedDocumentContext";
 import { DocumentsProvider } from "./context/DocumentsContext";
@@ -47,35 +47,22 @@ const queryClient = new QueryClient({
 
 function RedirectDashboard() {
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     async function handleRedirect() {
-      const isAnonymous = localStorage.getItem("isAnonymous");
-
-      // Modal açılırken yönlendirme yapmayı engelle
-      if (location.pathname === "/wellcome") {
-        return;
-      }
-
-      if (isAnonymous === "true") {
-        // Anonim kullanıcıyı wellcome sayfasına yönlendir
-        navigate("/wellcome");
-      } else {
-        const currentUser = await getCurrentUser();
-        if (currentUser) {
-          const latestApplication = await fetchLatestApplication(currentUser.id);
-          if (latestApplication) {
-            localStorage.setItem("latestApplicationId", latestApplication.id);
-            navigate(`/dashboard/${latestApplication.id}`);
-          } else {
-            navigate("/wellcome-2");
-          }
+      const currentUser = await getCurrentUser();
+      if (currentUser) {
+        const latestApplication = await fetchLatestApplication(currentUser.id);
+        if (latestApplication) {
+          localStorage.setItem("latestApplicationId", latestApplication.id);
+          navigate(`/dashboard/${latestApplication.id}`);
+        } else {
+          navigate("/wellcome-2"); // İlk başvuru yoksa welcome sayfasına yönlendirin
         }
       }
     }
     handleRedirect();
-  }, [navigate, location.pathname]);
+  }, [navigate]);
 
   return null;
 }
@@ -130,10 +117,8 @@ function App() {
                       <Route path="wellcome-3" element={<WellcomeC />} />
                       <Route path="wellcome-4" element={<WellcomeD />} />
                       <Route path="wellcome-5" element={<WellcomeE />} />
+                      <Route path="test" element={<ControlScreen />} />
                     </Route>
-
-                    {/* Anonim ve doğrulanmış kullanıcılar için ayrı bir rota */}
-                    <Route path="test" element={<ControlScreen />} />
 
                     <Route
                       element={
@@ -148,7 +133,9 @@ function App() {
                     </Route>
 
                     {/* Blog Routes */}
-                    <Route element={<BlogLayout />}>
+                    <Route
+                      element={<BlogLayout />} // ProtectedRoute kaldırıldı
+                    >
                       <Route path="blog" element={<BlogHome />} />
                       <Route path="blog/:slug" element={<BlogDetail />} />
                     </Route>

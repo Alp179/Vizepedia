@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserSelections } from "./useUserSelections";
 import ProfessionSelection from "./ProfessionSelection";
@@ -9,32 +9,14 @@ import styled from "styled-components";
 function WellcomeD() {
   const navigate = useNavigate();
   const { state, dispatch } = useUserSelections(); // dispatch fonksiyonunu kullanmak için hook'u çağırın
-  const [selectedProfession, setSelectedProfession] = useState(state.profession);
-
-  // Anonim kullanıcı kontrolü için localStorage
-  const isAnonymous = localStorage.getItem("isAnonymous") === "true";
+  const [selectedProfession, setSelectedProfession] = useState(
+    state.profession
+  );
 
   const handleProfessionChange = (profession) => {
     setSelectedProfession(profession);
-
-    // Eğer anonim kullanıcı ise meslek seçimini localStorage'a kaydet
-    if (isAnonymous) {
-      localStorage.setItem("selectedProfession", profession);
-    } else {
-      // Kayıtlı kullanıcılar için state'i güncelle
-      dispatch({ type: "SET_PROFESSION", payload: profession });
-    }
+    dispatch({ type: "SET_PROFESSION", payload: profession }); // Global state'i güncelleyin
   };
-
-  useEffect(() => {
-    // Eğer anonim kullanıcı ise localStorage'dan meslek seçimini yükleyin
-    if (isAnonymous) {
-      const savedProfession = localStorage.getItem("selectedProfession");
-      if (savedProfession) {
-        setSelectedProfession(savedProfession);
-      }
-    }
-  }, [isAnonymous]);
 
   const QuestionContainer = styled.div`
     display: flex;

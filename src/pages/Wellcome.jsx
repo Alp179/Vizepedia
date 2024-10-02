@@ -14,7 +14,6 @@ const StyledInput = styled.input`
     width: 280px;
   }
 `;
-
 const QuestionContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -39,31 +38,20 @@ const HeadingWidth = styled.p`
 function Wellcome() {
   const navigate = useNavigate();
 
-  function handleNextStep() {
-    // Eğer kullanıcı anonimse localStorage'daki bilgiyi kontrol et
-    const isAnonymous = localStorage.getItem("isAnonymous");
-
-    if (isAnonymous === "true") {
-      // Anonim kullanıcı ise, bir sonraki soru ekranına yönlendir
-      navigate("/wellcome-1");
-    } else {
-      // Normal kullanıcılar için de ilerleme sağlanır
-      navigate("/wellcome-1");
-    }
-  }
-
   return (
-    <QuestionContainer>
-      <Heading as="h5">Vizepedia’ya hoş geldiniz</Heading>
-      <HeadingWidth>
-        Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
-        Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
-      </HeadingWidth>
-      <StyledInput placeholder="Ad (isteğe bağlı)"></StyledInput>
-      <Button variation="question" onClick={handleNextStep}>
-        Devam et
-      </Button>
-    </QuestionContainer>
+    <>
+      <QuestionContainer>
+        <Heading as="h5">Vizepedia’ya hoş geldiniz</Heading>
+        <HeadingWidth>
+          Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
+          Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
+        </HeadingWidth>
+        <StyledInput placeholder="Ad (isteğe bağlı)"></StyledInput>
+        <Button variation="question" onClick={() => navigate("/wellcome-1")}>
+          Devam et
+        </Button>
+      </QuestionContainer>
+    </>
   );
 }
 
