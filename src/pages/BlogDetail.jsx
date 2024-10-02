@@ -36,6 +36,9 @@ const BlogDetailContainer = styled.div`
   @media (max-width: 910px) {
     padding: 30px 14px;
   }
+  @media (max-width: 750px) {
+    flex-flow: column;
+  }
 `;
 
 const BlogContentWrapper = styled.div`
