@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
-
 import { styled } from "styled-components";
 import { useUser } from "../features/authentication/useUser";
 import Spinner from "./Spinner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 const FullPage = styled.div`
@@ -16,27 +15,32 @@ const FullPage = styled.div`
 
 function ProtectedRoute({ children }) {
   const navigate = useNavigate();
-  // 1 Load the authenticated user
+  const location = useLocation(); // location bilgisini alıyoruz
   const { isAuthenticated, isLoading } = useUser();
+  const isAnonymous = localStorage.getItem("isAnonymous") === "true";
 
-  //2 IF there is no authentication redirect the user
-  useEffect(
-    function () {
-      if (!isAuthenticated && !isLoading) navigate("/login");
-    },
-    [isAuthenticated, isLoading, navigate]
-  );
+  useEffect(() => {
+    if (!isAuthenticated && !isAnonymous && !isLoading) {
+      navigate("/login");
+    }
 
-  //3 While loading show a spinner
-  if (isLoading)
+    // Modalın tetiklendiği bir durumu kontrol ediyoruz
+    const modalOpen = location.state?.modalOpen;
+
+    if (isAnonymous && location.pathname.startsWith("/dashboard") && !modalOpen) {
+      navigate("/wellcome");
+    }
+  }, [isAuthenticated, isAnonymous, isLoading, navigate, location]);
+
+  if (isLoading) {
     return (
       <FullPage>
         <Spinner />
       </FullPage>
     );
-  //4 If there is a user, remder the app
+  }
 
-  if (isAuthenticated) return children;
+  return isAuthenticated || isAnonymous ? children : null;
 }
 
 export default ProtectedRoute;

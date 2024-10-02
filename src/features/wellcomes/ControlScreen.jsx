@@ -13,6 +13,7 @@ function ControlScreen() {
   const { state, dispatch } = useUserSelections();
   const navigate = useNavigate();
   const { user, isUserLoading } = useUser(); // useUser hook'unu kullanarak mevcut kullanıcıyı al
+  const isAnonymous = localStorage.getItem("isAnonymous") === "true"; // Anonim kullanıcı kontrolü
 
   useEffect(() => {
     const allSelectionsMade =
@@ -28,26 +29,39 @@ function ControlScreen() {
   }, [state, navigate]);
 
   const handleSubmit = async () => {
-    if (!user) {
-      console.error("Kullanıcı girişi yapılmamış!");
-      return;
-    }
+    if (isAnonymous) {
+      // Anonim kullanıcıların verilerini localStorage'a kaydet
+      localStorage.setItem("selectedCountry", state.country);
+      localStorage.setItem("selectedPurpose", state.purpose);
+      localStorage.setItem("selectedProfession", state.profession);
+      localStorage.setItem("selectedVehicle", state.vehicle);
+      localStorage.setItem("selectedKid", state.kid);
+      localStorage.setItem("selectedAccommodation", state.accommodation);
 
-    const { error } = await supabase.from("userAnswers").upsert({
-      userId: user.id, // useUser hook'undan alınan mevcut kullanıcı ID'si
-      ans_country: state.country,
-      ans_purpose: state.purpose,
-      ans_profession: state.profession,
-      ans_vehicle: state.vehicle,
-      ans_kid: state.kid,
-      ans_accommodation: state.accommodation,
-    });
-
-    if (error) {
-      console.error("Seçimler kaydedilirken hata oluştu:", error);
+      // Anonim kullanıcıları dashboard'a yönlendir
+      navigate("/dashboard");
     } else {
-      console.log("Kullanıcı seçimleri başarıyla kaydedildi.");
-      navigate("/dashboard"); // Seçimler başarıyla kaydedildikten sonra kullanıcıyı yönlendir
+      if (!user) {
+        console.error("Kullanıcı girişi yapılmamış!");
+        return;
+      }
+
+      const { error } = await supabase.from("userAnswers").upsert({
+        userId: user.id, // useUser hook'undan alınan mevcut kullanıcı ID'si
+        ans_country: state.country,
+        ans_purpose: state.purpose,
+        ans_profession: state.profession,
+        ans_vehicle: state.vehicle,
+        ans_kid: state.kid,
+        ans_accommodation: state.accommodation,
+      });
+
+      if (error) {
+        console.error("Seçimler kaydedilirken hata oluştu:", error);
+      } else {
+        console.log("Kullanıcı seçimleri başarıyla kaydedildi.");
+        navigate("/dashboard"); // Seçimler başarıyla kaydedildikten sonra kullanıcıyı yönlendir
+      }
     }
   };
 
@@ -112,7 +126,9 @@ function ControlScreen() {
         }
       />
 
-      <Button variation="question" size="baslayalim" onClick={handleSubmit}>Başlayalım</Button>
+      <Button variation="question" size="baslayalim" onClick={handleSubmit}>
+        Başlayalım
+      </Button>
     </ModalScreenContainer>
   );
 }
