@@ -21,15 +21,21 @@ const BlogDetailContainer = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  padding: 40px 0;
   max-width: 1200px;
   margin: 50px auto;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 60px 30px;
   backdrop-filter: blur(10px);
+  padding-bottom: 20px;
   box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  @media (max-width: 1640px) {
+    width: 70%;
+  }
+  @media (max-width: 910px) {
+    padding: 30px 14px;
+  }
 `;
 
 const BlogContentWrapper = styled.div`
@@ -45,30 +51,48 @@ const BlogTitle = styled.h1`
   font-size: 38px;
   margin-bottom: 20px;
   color: var(--color-grey-600);
+  @media (max-width: 1300px) {
+    font-size: 28px;
+  }
+  @media (max-width: 910px) {
+    font-size: 24px;
+  }
 `;
 
 const BlogDate = styled.p`
   font-size: 14px;
   color: #777;
   margin-bottom: 30px;
+  @media (max-width: 1300px) {
+    font-size: 13px;
+  }
+  @media (max-width: 910px) {
+    font-size: 10px;
+  }
 `;
 
 const BlogContent = styled.div`
   line-height: 1.8;
   font-size: 18px;
   margin-top: 20px;
-  color: #444;
+  color: var(--color-grey-600);
   img {
     max-width: 100%;
     border-radius: 10px;
     margin: 20px 0;
+  }
+  @media (max-width: 1300px) {
+    font-size: 16px;
+  }
+  @media (max-width: 910px) {
+    font-size: 14px;
   }
 `;
 
 const CategoryBadge = styled.div`
   background-color: var(--color-grey-911);
   color: var(--color-grey-600);
-  width: 55px;
+  padding: 0 16px;
   height: 40px;
   display: flex;
   justify-content: center;
@@ -77,6 +101,15 @@ const CategoryBadge = styled.div`
   font-size: 14px;
   backdrop-filter: blur(5px);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  @media (max-width: 1300px) {
+    font-size: 13px;
+    height: 35px;
+  }
+  @media (max-width: 910px) {
+    font-size: 11px;
+    height: 25px;
+    padding: 0 10px;
+  }
 `;
 
 const CategoryAndDate = styled.div`
@@ -95,13 +128,22 @@ const RelatedBlogsWrapper = styled.div`
   position: sticky;
   top: 100px;
   max-height: calc(100vh - 360px);
-  overflow-y: auto;
+  @media (max-width: 1100px) {
+    padding: 12px;
+  }
 `;
 
 const RelatedBlogTitle = styled.h2`
   font-size: 1.5rem;
   margin-bottom: 20px;
-  color: #333;
+  text-align: center;
+  color: var(--color-grey-600);
+  @media (max-width: 1100px) {
+    font-size: 14px;
+  }
+  @media (max-width: 910px) {
+    font-size: 12px;
+  }
 `;
 
 const BlogImage = styled.img`
@@ -113,8 +155,10 @@ const SmallRelatedBlogCard = styled(Link)`
   gap: 10px;
   margin-bottom: 20px;
   text-decoration: none;
+  width: 325px;
+  height: 100px;
   color: inherit;
-  background-color: #fff;
+  background: var(--color-grey-909);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -129,30 +173,84 @@ const SmallRelatedBlogCard = styled(Link)`
   &:hover {
     text-decoration: underline;
   }
+  @media (max-width: 1400px) {
+    width: 250px;
+    height: 80px;
+  }
+  @media (max-width: 1100px) {
+    width: 200px;
+    height: 65px;
+    gap: 7px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+  @media (max-width: 850px) {
+    width: 160px;
+    height: 60px;
+  }
 `;
 
 const RelatedBlogImage = styled.img`
-  width: 100px;
-  height: 80px;
+  width: 140px;
+  height: 100px;
   object-fit: cover;
   border-radius: 8px;
+  @media (max-width: 1400px) {
+    width: 100px;
+    height: 80px;
+  }
+  @media (max-width: 1100px) {
+    height: 65px;
+    width: 85px;
+  }
+  @media (max-width: 850px) {
+    height: 60px;
+    width: 70px;
+  }
+`;
+
+const RelatedBlogsScroll = styled.div`
+  max-height: calc(100vh - 450px);
+  overflow-y: auto;
+  @media (max-width: 1100px) {
+    max-height: calc(100vh - 430px);
+  }
 `;
 
 const RelatedBlogInfo = styled.div`
+  margin-top: 4px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 4px;
+  @media (max-width: 1100px) {
+    gap: 2px;
+    margin-top: 2px;
+    margin-right: 4px;
+  }
 `;
 
 const RelatedBlogDate = styled.span`
-  font-size: 0.8rem;
+  font-size: 10px;
   color: #999;
+  @media (max-width: 1400px) {
+    font-size: 9px;
+  }
+  @media (max-width: 1100px) {
+    font-size: 8px;
+  }
 `;
 
 const RelatedBlogTitleSmall = styled.h4`
-  font-size: 1rem;
-  color: #333;
+  font-size: 13px;
+  color: var(--color-grey-600);
   margin: 5px 0;
+  @media (max-width: 1400px) {
+    font-size: 11px;
+  }
+  @media (max-width: 1100px) {
+    font-size: 9px;
+  }
 `;
 
 function BlogDetail() {
@@ -200,34 +298,36 @@ function BlogDetail() {
 
       <RelatedBlogsWrapper>
         <RelatedBlogTitle>Bunları Da Beğenebilirsiniz</RelatedBlogTitle>
-        {relatedBlogs &&
-          relatedBlogs.length > 0 &&
-          relatedBlogs.map((relatedBlog) => (
-            <SmallRelatedBlogCard
-              to={`/blog/${relatedBlog.slug}`}
-              key={relatedBlog.id}
-            >
-              <RelatedBlogImage
-                src={relatedBlog.cover_image}
-                alt={relatedBlog.title}
-              />
-              <RelatedBlogInfo>
-                <RelatedBlogDate>
-                  {new Date(relatedBlog.created_at).toLocaleDateString(
-                    "tr-TR",
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    }
-                  )}
-                </RelatedBlogDate>
-                <RelatedBlogTitleSmall>
-                  {relatedBlog.title}
-                </RelatedBlogTitleSmall>
-              </RelatedBlogInfo>
-            </SmallRelatedBlogCard>
-          ))}
+        <RelatedBlogsScroll>
+          {relatedBlogs &&
+            relatedBlogs.length > 0 &&
+            relatedBlogs.map((relatedBlog) => (
+              <SmallRelatedBlogCard
+                to={`/blog/${relatedBlog.slug}`}
+                key={relatedBlog.id}
+              >
+                <RelatedBlogImage
+                  src={relatedBlog.cover_image}
+                  alt={relatedBlog.title}
+                />
+                <RelatedBlogInfo>
+                  <RelatedBlogDate>
+                    {new Date(relatedBlog.created_at).toLocaleDateString(
+                      "tr-TR",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
+                  </RelatedBlogDate>
+                  <RelatedBlogTitleSmall>
+                    {relatedBlog.title}
+                  </RelatedBlogTitleSmall>
+                </RelatedBlogInfo>
+              </SmallRelatedBlogCard>
+            ))}
+        </RelatedBlogsScroll>
       </RelatedBlogsWrapper>
     </BlogDetailContainer>
   );
