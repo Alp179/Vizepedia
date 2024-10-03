@@ -12,7 +12,7 @@ import Heading from "../../ui/Heading";
 
 // Select kutusu için stil
 const StyledSelect = styled.select`
-  padding: 6px;
+  padding: 6px 12px;
   border-radius: 16px;
   border: 1px solid transparent;
   margin: 5px 0;

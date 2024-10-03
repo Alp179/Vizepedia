@@ -5,6 +5,7 @@ import DarkModeToggle from "../ui/DarkModeToggle";
 import Button from "../ui/Button";
 import Marquee from "react-fast-marquee";
 import MailerLiteForm from "../ui/MailerLiteForm";
+import SlideShow from "../ui/SlideShow";
 
 const Navbar = styled.div`
   width: 80%;
@@ -630,6 +631,8 @@ function MainPage() {
           </Heading>
         </div>
       </RahatProfesyonelContainer>
+
+      <SlideShow />
 
       <MailerLiteForm />
 

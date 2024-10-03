@@ -35,7 +35,7 @@ const Bracket = styled.div`
 const ScrollableDiv = styled.div`
   padding: 8px 0;
   overflow-y: auto;
-  height: calc(100vh - 550px); /* You can adjust this height as needed */
+  height: calc(100vh - 370px); /* You can adjust this height as needed */
   width: 100%;
   margin: 0 auto;
   @media (max-height: 770px) {

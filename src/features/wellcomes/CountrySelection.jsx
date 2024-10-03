@@ -8,7 +8,7 @@ import Spinner from "../../ui/Spinner";
 
 // Stil tanımlamaları
 const StyledSelectContainer = styled.div`
-  z-index: 1000;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -114,8 +114,10 @@ const RadioLabel = styled.label`
 `;
 
 const Container = styled.div`
+  position: relative;
   max-height: calc(100vh - 40rem);
   overflow: auto;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -139,6 +141,7 @@ const Container = styled.div`
 `;
 
 const DropdownContainer = styled.div`
+  z-index: 9999;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -146,6 +149,7 @@ const DropdownContainer = styled.div`
 `;
 
 const DropdownButton = styled.button`
+  z-index: 9999;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -188,11 +192,24 @@ const DropdownMenu = styled(motion.ul)`
   border-radius: 10px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  z-index: 1000; /* Dropdown menüyü üstte göstermek için z-index değerini artırdık */
+  z-index: 9999; /* Dropdown menüyü üstte göstermek için z-index değerini artırdık */
   width: 170px;
-  overflow: hidden;
   max-height: 300px; /* Maksimum yükseklik */
   overflow-y: auto; /* İçerik fazla olursa kaydırma çubuğu ekler */
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-grey-54);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
+  }
 `;
 
 const DropdownItem = styled(motion.li)`
@@ -201,6 +218,7 @@ const DropdownItem = styled(motion.li)`
   cursor: pointer;
   display: flex;
   align-items: center;
+  text-align: center;
   justify-content: center;
   &:hover {
     background-color: rgba(100, 100, 255, 0.1); /* Light indigo background */
