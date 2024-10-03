@@ -35,8 +35,8 @@ const GlowButton = styled.button`
   height: 50px;
   border: none;
   outline: none;
-  color: #fff;
-  background: #111;
+  color: var(--color-grey-913);
+  background: var(--color-grey-914);
   cursor: pointer;
   position: relative;
   z-index: 0;
@@ -65,10 +65,18 @@ const GlowButton = styled.button`
     position: absolute;
     width: 100%;
     height: 100%;
-    background: #111;
+    background: var(--color-grey-914);
     left: 0;
     top: 0;
     border-radius: 10px;
+  }
+
+  &:hover {
+    color: #004466;
+  }
+
+  &:hover:after {
+    background: rgba(255, 255, 255, 0.2);
   }
 
   &:active {
@@ -78,6 +86,7 @@ const GlowButton = styled.button`
   &:active:after {
     background: transparent;
   }
+
 `;
 
 

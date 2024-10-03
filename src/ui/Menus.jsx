@@ -35,7 +35,7 @@ const StyledToggle = styled.button`
 `;
 
 const StyledList = styled.ul`
-  color: white;
+  color: var(--color-grey-600);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   z-index: 2990;
   position: fixed;
@@ -44,7 +44,7 @@ const StyledList = styled.ul`
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 
   right: ${(props) => props.position.x}px;
   top: ${(props) => props.position.y}px;
@@ -59,7 +59,6 @@ const StyledButton = styled.button`
   padding: 1.2rem 2.4rem;
   font-size: 1.4rem;
   transition: all 0.2s;
-
   display: flex;
   align-items: center;
   gap: 1.6rem;
