@@ -87,6 +87,15 @@ const GlowButton = styled.button`
     background: transparent;
   }
 
+  @media (max-width: 1300px) {
+    width: 180px;
+  }
+
+  @media (max-width: 1050px) {
+    width: 150px;
+    font-size: 14px;
+  }
+
 `;
 
 
