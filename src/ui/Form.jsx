@@ -4,9 +4,8 @@ const Form = styled.form`
   ${(props) =>
     props.type === "regular" &&
     css`
-      padding: 2.4rem 4rem;
-      height: 540px;
-      width: 420px;
+      padding: 40px 24px;
+      max-width: 420px;
       margin-left: auto;
       margin-right: auto;
       filter: var(--color-box-0);
