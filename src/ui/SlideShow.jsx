@@ -2,11 +2,25 @@ import styled from "styled-components";
 import { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Logo from "./Logo";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 // Slide Container
 
 const SlideSection = styled.div`
-  background: url("https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/blog-overview-background.png?t=2024-10-04T13%3A41%3A08.876Z");
+  background: radial-gradient(circle at 0% 20%, rgba(0, 255, 162, 0.5), transparent 20%),
+  radial-gradient(ellipse at 15% 40%, rgba(248, 24, 225, 0.6), transparent 50%),
+  radial-gradient(ellipse at 55% 80%, rgba(36, 0, 255, 0.6), transparent 40%),
+  radial-gradient(ellipse at 60% 60%, rgba(36, 0, 255, 0.6), transparent 40%),
+  radial-gradient(ellipse at 10% 30%, rgba(0, 255, 162, 0.6), transparent 40%),
+  radial-gradient(ellipse at 30% 30%, rgba(12, 230, 212, 0.6), transparent 40%),
+  radial-gradient(ellipse at 80% 30%, rgba(0, 255, 162, 0.5), transparent 20%),
+  radial-gradient(ellipse at 20% 50%, rgba(0, 68, 102, 0.6), transparent 40%),
+  radial-gradient(ellipse at 20% 80%, rgba(0, 68, 102, 0.6), transparent 40%),
+  radial-gradient(ellipse at 80% 80%, rgba(0, 145, 218, 0.5), transparent 50%),
+  radial-gradient(ellipse at 80% 10%, rgba(12, 230, 212, 0.5), transparent 40%);
+  background-size: cover;
+  margin: 0;
+  padding: 0;
   height: 750px;
   background-position: center;
   opacity: 0.92;
@@ -22,6 +36,10 @@ const SlideSection = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  @media (max-width: 710px) {
+    flex-flow: column;
+    height: 760px;
+  }
 `;
 
 const SlideExplanation = styled.div`
@@ -30,6 +48,20 @@ const SlideExplanation = styled.div`
   gap: 48px;
   margin-left: 64px;
   max-width: 450px;
+  @media (max-width: 1250px) {
+    max-width: 300px;
+    margin-left: 40px;
+  }
+  @media (max-width: 710px) {
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0;
+    text-align: center;
+  }
+  @media (max-width: 325px) {
+    max-width: 260px;
+  }
 `;
 
 const SlideText = styled.p`
@@ -43,6 +75,15 @@ const SlideText = styled.p`
   -webkit-hyphens: none;
   hyphens: none;
   font-size: 32px;
+  @media (max-width: 1250px) {
+    font-size: 28px;
+  }
+  @media (max-width: 710px) {
+    font-size: 26px;
+  }
+  @media (max-width: 325px) {
+    font-size: 22px;
+  }
 `;
 
 const SlideContainer = styled.div`
@@ -53,6 +94,9 @@ const SlideContainer = styled.div`
   width: 70%;
   position: relative;
   overflow: hidden;
+  @media (max-width: 710px) {
+    width: 100%;
+  }
 `;
 
 // Kartların bulunduğu container
@@ -74,6 +118,10 @@ const Card = styled.div`
   backdrop-filter: blur(40px);
   background: rgba(255, 255, 255, 0.5);
   box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.2);
+  @media (max-width: 325px) {
+    width: 260px;
+    height: 520px;
+  }
 `;
 
 const CardImage = styled.img`
@@ -101,9 +149,30 @@ const CardHeading = styled.p`
 `;
 
 const DevaminiGor = styled.button`
+  display: flex;
+  align-items: center;
+  color: #007bff;
+  font-weight: bold;
+  font-size: 16px;
+  text-decoration: none;
+  background: none;
+  border: none;
   position: absolute;
   left: 20px;
   bottom: 20px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  svg {
+    margin-left: 5px;
+    transition: margin-left 0.2s ease;
+  }
+
+  &:hover svg {
+    margin-left: 10px;
+  }
 `;
 
 // Sağ ve sol butonlar
@@ -150,7 +219,7 @@ function SlideShow() {
   return (
     <SlideSection>
       <SlideExplanation>
-        <Logo variant="mainpage" />
+        <Logo variant="overview" />
         <SlideText>
           Seyahat, lezzet ve kültür maceralarınızda size eşlik edecek ilham
           verici içeriklerle tanışın!
@@ -169,7 +238,10 @@ function SlideShow() {
               <CardHeading>
                 Blog Başlıkları Buraya Gelecek, Dolu Görünsün
               </CardHeading>
-              <DevaminiGor>Devamını gör</DevaminiGor>
+              <DevaminiGor>
+                Devamını gör
+                <ArrowForwardIcon />
+              </DevaminiGor>
             </Card>
           ))}
         </CardsWrapper>

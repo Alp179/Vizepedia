@@ -126,6 +126,23 @@ const StyledLogo = styled.div`
       width: 154px;
       height: 44px;
     `}
+    ${(props) =>
+      props.variant === "overview" &&
+      css`
+        width: 184px;
+        height: auto;
+        flex-shrink: 0;
+        @media (max-width: 1250px) {
+          width: 135px;
+        }
+        @media (max-width: 710px) {
+          width: 123px;
+          margin-top: 32px;
+        }
+        @media (max-width: 325px) {
+          width: 110px;
+        }
+      `}
 `;
 
 const Img = styled.img`
