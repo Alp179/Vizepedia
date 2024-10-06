@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
-
+import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Account from "./pages/Account";
@@ -16,7 +16,6 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
 import MainPage from "./pages/MainPage";
-
 import WellcomeA from "./features/wellcomes/WellcomeA";
 import WellcomeD from "./features/wellcomes/WellcomeD";
 import WellcomeC from "./features/wellcomes/WellcomeC";
@@ -141,6 +140,7 @@ function App() {
                     </Route>
 
                     <Route path="login" element={<Login />} />
+                    <Route path="sign-up" element={<SignUp />} />
                     <Route path="*" element={<PageNotFound />} />
                   </Routes>
                 </BrowserRouter>

@@ -47,30 +47,73 @@ const InputAndDarkToggleContainer = styled.div`
   }
 `;
 
+const BlogInputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: ${({ isActive }) => (isActive ? "300px" : "40px")};
+  height: 40px;
+  background-color: ${({ theme }) =>
+    theme === "dark" ? "var(--color-grey-900)" : "var(--color-grey-300)"};
+  border-radius: 50px;
+  padding: 5px;
+  transition: width 0.4s ease, background-color 0.4s ease;
+  box-shadow: ${({ theme }) =>
+    theme === "dark"
+      ? "0px 4px 8px rgba(255, 255, 255, 0.2)"
+      : "var(--shadow-sm)"};
+
+  &:focus-within,
+  &:hover {
+    width: 300px;
+    background-color: ${({ theme }) =>
+      theme === "dark" ? "var(--color-grey-800)" : "var(--color-white)"};
+    box-shadow: ${({ theme }) =>
+      theme === "dark"
+        ? "0px 4px 8px rgba(255, 255, 255, 0.2)"
+        : "0px 4px 8px rgba(0, 0, 0, 0.2)"};
+  }
+`;
+
 const BlogInput = styled.input`
-  height: 44px;
-  width: 256px;
-  border: 2px solid var(--color-grey-300);
-  background-color: var(--color-grey-0);
-  border-radius: 20px;
+  height: 100%;
+  width: 100%;
+  border: none;
   background: transparent;
-  padding: 0.8rem 1.2rem;
-  box-shadow: var(--shadow-sm);
-  @media (max-width: 1300px) {
-    width: 200px;
-    height: 36px;
+  outline: none;
+  padding: 0 25px; /* Padding'i artırdık */
+  font-size: 16px;
+  color: ${({ theme }) =>
+    theme === "dark" ? "var(--color-white)" : "var(--color-grey-900)"};
+
+  &::placeholder {
+    color: ${({ theme }) =>
+      theme === "dark" ? "var(--color-grey-500)" : "var(--color-grey-500)"};
+    opacity: 1;
   }
-  @media (max-width: 910px) {
-    width: 160px;
-  }
-  @media (max-width: 710px) {
-    width: 120px;
-    font-size: 12px;
-  }
-  @media (max-width: 550px) {
-    width: 75px;
-    padding-left: 8px;
-  }
+`;
+
+const SearchIcon = styled.div`
+  position: absolute;
+  left: 10px;
+  font-size: 1.5rem;
+  color: ${({ theme }) =>
+    theme === "dark" ? "var(--color-white)" : "var(--color-grey-600)"};
+  cursor: pointer;
+  opacity: ${({ isActive }) => (isActive ? 0 : 1)};
+  visibility: ${({ isActive }) => (isActive ? "hidden" : "visible")};
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  display: ${({ isActive }) => (isActive ? "none" : "block")};
+`;
+
+const ArrowIcon = styled.div`
+  position: absolute;
+  right: 10px;
+  font-size: 1.5rem;
+  color: ${({ theme }) =>
+    theme === "dark" ? "var(--color-white)" : "var(--color-grey-600)"};
+  cursor: pointer;
+  display: ${({ isActive }) => (isActive ? "block" : "none")};
 `;
 
 const SearchResultsContainer = styled.div`
@@ -78,9 +121,9 @@ const SearchResultsContainer = styled.div`
   top: 65px;
   right: 10%;
   width: 350px;
-  max-height: 300px; /* Maksimum yüksekliği 300 piksel olarak ayarladık */
+  max-height: 300px;
   overflow-x: hidden;
-  overflow-y: auto; /* Taşan içeriğin scroll ile erişilebilir olmasını sağladık */
+  overflow-y: auto;
   background: var(--color-grey-912);
   backdrop-filter: blur(10px);
   border-radius: 10px;
@@ -94,7 +137,6 @@ const SearchResultsContainer = styled.div`
     padding: 8px;
   }
 
-  /* Scrollbar görünümünü özelleştiriyoruz */
   ::-webkit-scrollbar {
     width: 8px;
   }
@@ -117,7 +159,7 @@ const SmallRelatedBlogCard = styled.div`
   text-decoration: none;
   color: inherit;
   z-index: 2999;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Kartlar arasına ince bir çizgi ekliyoruz */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
   @media (max-width: 910px) {
     height: 90px;
@@ -157,6 +199,7 @@ const RelatedBlogTitleSmall = styled.h4`
 function BlogHeader() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const searchInputRef = useRef(null);
   const searchResultsRef = useRef(null);
   const navigate = useNavigate();
@@ -180,6 +223,8 @@ function BlogHeader() {
         !searchResultsRef.current.contains(event.target)
       ) {
         setShowSearchResults(false);
+        setSearchTerm(""); // Search bar'ı temizle
+        setIsActive(false); // Search bar'ı küçült
       }
     }
 
@@ -188,7 +233,12 @@ function BlogHeader() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [searchTerm]);
+
+  const handleSearchClick = () => {
+    setIsActive(true);
+    searchInputRef.current.focus();
+  };
 
   const handleBlogClick = (slug) => {
     setShowSearchResults(false);
@@ -202,16 +252,24 @@ function BlogHeader() {
         <BlogLogo variant="blogpage1" />
 
         <InputAndDarkToggleContainer>
-          <BlogInput
-            ref={searchInputRef}
-            type="text"
-            placeholder="Bloglarda ara..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setShowSearchResults(true);
-            }}
-          />
+          <BlogInputWrapper isActive={isActive}>
+            <SearchIcon isActive={isActive} onClick={handleSearchClick}>
+              🔍
+            </SearchIcon>
+            <BlogInput
+              ref={searchInputRef}
+              type="text"
+              placeholder="Bloglarda ara..."
+              value={searchTerm}
+              isActive={isActive}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setIsActive(true);
+                setShowSearchResults(true);
+              }}
+            />
+            <ArrowIcon isActive={isActive}>➡️</ArrowIcon>
+          </BlogInputWrapper>
           <DarkModeToggle />
         </InputAndDarkToggleContainer>
         <SearchResultsContainer
