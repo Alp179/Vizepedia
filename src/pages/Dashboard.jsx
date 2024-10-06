@@ -15,9 +15,9 @@ import styled, { keyframes } from "styled-components";
 import "flag-icons/css/flag-icons.min.css";
 import supabase from "../services/supabase";
 import Button from "../ui/Button";
-
+import SignupForm from "../features/authentication/SignupForm";
 import Modal from "../ui/Modal";
-import SignUpForm from "../features/authentication/SignUpForm.jsx";
+
 const FlagContainer = styled.div`
   position: fixed;
   top: 0;
@@ -497,7 +497,7 @@ const Dashboard = () => {
             </Modal.Open>
             <Modal.Window name="signUpForm">
               {/* Üye olduktan sonra verileri Supabase'den çekebilmek için, kullanıcıyı signUpForm ile yönlendirme işlemi */}
-              <SignUpForm onSuccess={handleUserConversion} />
+              <SignupForm onSuccess={handleUserConversion} />
             </Modal.Window>
           </Modal>
         </div>

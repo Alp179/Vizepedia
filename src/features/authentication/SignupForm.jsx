@@ -35,7 +35,7 @@ const Bracket = styled.div`
   }
 `;
 
-function SignUpForm() {
+function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null); // Hata mesajı durumu
@@ -131,4 +131,4 @@ function SignUpForm() {
   );
 }
 
-export default SignUpForm;
+export default SignupForm;
