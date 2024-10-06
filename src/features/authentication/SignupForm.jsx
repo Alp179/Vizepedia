@@ -109,7 +109,7 @@ function SignUpForm() {
       </FormRow>
       <FormRow orientation="vertical">
         <Button size="login" variation="login" disabled={isLoading}>
-          {!isLoading ? "Tapa tap" : <SpinnerMini />}
+          {!isLoading ? "Hesap oluştur" : <SpinnerMini />}
         </Button>
       </FormRow>
       <BracketContainer>
