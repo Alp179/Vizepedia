@@ -91,3 +91,17 @@ export async function updateCurrentUser({ password, fullName, avatar }) {
 
   return updatedUser;
 }
+
+export async function signInAsGuest() {
+  const { data, error } = await supabase.auth.signIn({
+    email: 'anon@example.com',
+    password: 'anonymous-password'
+  });
+
+  if (error) {
+    console.error("Anonim oturum açma hatası:", error.message);
+    return { error };
+  }
+
+  return { data };
+}

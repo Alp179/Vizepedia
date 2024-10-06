@@ -6,6 +6,21 @@ import Button from "../../ui/Button";
 import { useState } from "react";
 import styled from "styled-components";
 
+// Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
+function saveAnonymousUserSelections(selections) {
+  const userSelections = {
+    country: selections.country,
+    purpose: selections.purpose || "", // İlerideki adımlarda eklenecek seçimler
+    profession: selections.profession || "",
+    vehicle: selections.vehicle || "",
+    kid: selections.kid || "",
+    accommodation: selections.accommodation || "",
+  };
+
+  // Seçimleri localStorage'a kaydet
+  localStorage.setItem("userSelections", JSON.stringify(userSelections));
+}
+
 function WellcomeB() {
   const navigate = useNavigate();
   const { state, dispatch } = useUserSelections();
@@ -14,6 +29,12 @@ function WellcomeB() {
   const handleCountryChange = (country) => {
     setSelectedCountry(country);
     dispatch({ type: "SET_COUNTRY", payload: country });
+    
+    // Anonim kullanıcı seçimlerini kaydet
+    saveAnonymousUserSelections({
+      ...state,
+      country,
+    });
   };
 
   const QuestionContainer = styled.div`
@@ -21,7 +42,6 @@ function WellcomeB() {
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    
   `;
 
   return (

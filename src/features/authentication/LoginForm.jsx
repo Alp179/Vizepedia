@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import supabase from "../../services/supabase";
 import { useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
@@ -7,7 +8,7 @@ import Input from "../../ui/Input";
 import FormRow from "../../ui/FormRow";
 import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
-import { signInWithGoogle } from "../../services/apiAuth";
+import { signInWithGoogle } from "../../services/apiAuth"; // Supabase'den anonim giriş
 
 const BracketContainer = styled.div`
   display: flex;
@@ -58,6 +59,34 @@ function LoginForm() {
     if (!error && data) {
       // Yönlendirme işlemi
       navigate("/dashboard");
+    }
+  }
+
+  // Anonim oturum açma butonu için event handler
+  async function handleGuestSignIn() {
+    try {
+      // Supabase anonim oturum açma fonksiyonu
+      const { data, error } = await supabase.auth.signInAnonymously();
+
+      if (error) {
+        console.error("Anonim oturum açma hatası:", error.message);
+        return;
+      }
+
+      if (data) {
+        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
+        const wellcomesAnswered = localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
+
+        if (wellcomesAnswered === "true") {
+          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
+          navigate("/dashboard");
+        } else {
+          // LocalStorage boşsa wellcome-1 (WellcomeA) sayfasına yönlendir
+          navigate("/wellcome-1");
+        }
+      }
+    } catch (error) {
+      console.error("Oturum açma sırasında hata oluştu:", error.message);
     }
   }
 
@@ -119,10 +148,17 @@ function LoginForm() {
         />
       </FormRow>
       <FormRow orientation="vertical">
+        <Button size="login" variation="guest" type="button" onClick={handleGuestSignIn}>
+          Anonim Giriş
+        </Button>
+      </FormRow>
+      <FormRow orientation="vertical">
         <Button size="login" variation="login" disabled={isLoading}>
           {!isLoading ? "Giriş yap" : <SpinnerMini />}
         </Button>
       </FormRow>
+      
+      {/* Anonim giriş butonunu ekliyoruz */}
     </Form>
   );
 }

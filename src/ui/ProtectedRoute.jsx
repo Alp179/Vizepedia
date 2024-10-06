@@ -19,24 +19,27 @@ function ProtectedRoute({ children }) {
   // 1 Load the authenticated user
   const { isAuthenticated, isLoading } = useUser();
 
-  //2 IF there is no authentication redirect the user
+  // 2 Check if user is an anonymous user
+  const isAnonymous = localStorage.getItem("isAnonymous") === "true";
+
+  //3 IF there is no authentication and not anonymous, redirect the user
   useEffect(
     function () {
-      if (!isAuthenticated && !isLoading) navigate("/login");
+      if (!isAuthenticated && !isAnonymous && !isLoading) navigate("/login");
     },
-    [isAuthenticated, isLoading, navigate]
+    [isAuthenticated, isAnonymous, isLoading, navigate]
   );
 
-  //3 While loading show a spinner
+  //4 While loading show a spinner
   if (isLoading)
     return (
       <FullPage>
         <Spinner />
       </FullPage>
     );
-  //4 If there is a user, remder the app
 
-  if (isAuthenticated) return children;
+  //5 If there is a user or anonymous access, render the children
+  if (isAuthenticated || isAnonymous) return children;
 }
 
 export default ProtectedRoute;

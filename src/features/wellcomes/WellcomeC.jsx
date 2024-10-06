@@ -6,6 +6,21 @@ import Heading from "../../ui/Heading";
 import Button from "../../ui/Button";
 import styled from "styled-components";
 
+// Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
+function saveAnonymousUserSelections(selections) {
+  const userSelections = {
+    country: selections.country || "", // Daha önceki adımda seçilen ülke
+    purpose: selections.purpose, // Bu adımda seçilen gidiş amacı
+    profession: selections.profession || "",
+    vehicle: selections.vehicle || "",
+    kid: selections.kid || "",
+    accommodation: selections.accommodation || "",
+  };
+
+  // Seçimleri localStorage'a kaydet
+  localStorage.setItem("userSelections", JSON.stringify(userSelections));
+}
+
 function WellcomeC() {
   const navigate = useNavigate();
   const { state, dispatch } = useUserSelections(); // dispatch fonksiyonunu kullanmak için hook'u çağırın
@@ -14,6 +29,12 @@ function WellcomeC() {
   const handlePurposeChange = (purpose) => {
     setSelectedPurpose(purpose);
     dispatch({ type: "SET_PURPOSE", payload: purpose }); // Global state'i güncelleyin
+    
+    // Anonim kullanıcı seçimlerini kaydet
+    saveAnonymousUserSelections({
+      ...state,
+      purpose,
+    });
   };
 
   const QuestionContainer = styled.div`
@@ -21,7 +42,6 @@ function WellcomeC() {
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    
   `;
 
   return (
