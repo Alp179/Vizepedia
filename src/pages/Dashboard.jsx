@@ -17,7 +17,7 @@ import supabase from "../services/supabase";
 import Button from "../ui/Button";
 
 import Modal from "../ui/Modal";
-import SignUpForm from "../features/authentication/SignUpForm";
+import SignUpForm from "../features/authentication/SignUpForm.jsx";
 const FlagContainer = styled.div`
   position: fixed;
   top: 0;
