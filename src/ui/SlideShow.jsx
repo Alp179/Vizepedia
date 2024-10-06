@@ -1,23 +1,13 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import Logo from "./Logo";
+import BlogLogo from "./BlogLogo";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 // Slide Container
 
 const SlideSection = styled.div`
-  background: radial-gradient(circle at 0% 20%, rgba(0, 255, 162, 0.5), transparent 20%),
-  radial-gradient(ellipse at 15% 40%, rgba(248, 24, 225, 0.6), transparent 50%),
-  radial-gradient(ellipse at 55% 80%, rgba(36, 0, 255, 0.6), transparent 40%),
-  radial-gradient(ellipse at 60% 60%, rgba(36, 0, 255, 0.6), transparent 40%),
-  radial-gradient(ellipse at 10% 30%, rgba(0, 255, 162, 0.6), transparent 40%),
-  radial-gradient(ellipse at 30% 30%, rgba(12, 230, 212, 0.6), transparent 40%),
-  radial-gradient(ellipse at 80% 30%, rgba(0, 255, 162, 0.5), transparent 20%),
-  radial-gradient(ellipse at 20% 50%, rgba(0, 68, 102, 0.6), transparent 40%),
-  radial-gradient(ellipse at 20% 80%, rgba(0, 68, 102, 0.6), transparent 40%),
-  radial-gradient(ellipse at 80% 80%, rgba(0, 145, 218, 0.5), transparent 50%),
-  radial-gradient(ellipse at 80% 10%, rgba(12, 230, 212, 0.5), transparent 40%);
+  background: var(--color-grey-907);
   background-size: cover;
   margin: 0;
   padding: 0;
@@ -219,7 +209,7 @@ function SlideShow() {
   return (
     <SlideSection>
       <SlideExplanation>
-        <Logo variant="overview" />
+        <BlogLogo variant="overview" />
         <SlideText>
           Seyahat, lezzet ve kültür maceralarınızda size eşlik edecek ilham
           verici içeriklerle tanışın!

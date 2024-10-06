@@ -22,7 +22,7 @@ const BlogDetailContainer = styled.div`
   justify-content: space-between;
   gap: 20px;
   max-width: 1200px;
-  margin: 50px auto;
+  margin: 120px auto 50px auto;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 60px 30px;
@@ -74,7 +74,7 @@ const BlogTitle = styled.h1`
 
 const BlogDate = styled.p`
   font-size: 14px;
-  color: #777;
+  color: var(--color-grey-600);
   margin-bottom: 30px;
   @media (max-width: 1300px) {
     font-size: 13px;

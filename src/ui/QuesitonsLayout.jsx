@@ -4,14 +4,23 @@ import Header from "./Header";
 import BackButton from "./BackButton";
 import ProgressBar from "@ramonak/react-progress-bar";
 
+const BackgroundColor = styled.div`
+  min-height: 100vh;
+  width: 100%;
+  background: var(--color-grey-1);
+`;
+
 const LoginLayout = styled.main`
+  background: var(--color-grey-915);
   min-height: 100vh;
   display: flex;
   width: 100%;
   flex-direction: column;
   gap: 7rem;
-  background: var(--color-grey-1);
   overflow: hidden; /* Yeni eklenen satır */
+  @media (max-width: 710px) {
+    background: transparent;
+  }
 `;
 
 const Container = styled.div`
@@ -71,46 +80,6 @@ const ProgressBarReflection = styled.div`
   animation: ${progressAnimation} 1s ease-in-out;
 `;
 
-
-
-// Elipslerin olduğu konteyner
-const EllipsesContainer = styled.div`
-  @media (max-width: 600px) {
-    display: none;
-  }
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-evenly;
-  pointer-events: none; /* Ellipslerin tıklanmasını engeller */
-`;
-
-// Elips bileşeni
-const Ellipse = styled.div`
-  @media (max-width: 600px) {
-    display: none;
-  }
-  width: 30%;
-  height: 200px;
-  background: var(--color-grey-902);
-  border-radius: 50%;
-  filter: blur(150px);
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-`;
-
-const Ellipse2 = styled.div`
-  @media (max-width: 600px) {
-    display: none;
-  }
-  width: 30%;
-  height: 200px;
-  background: var(--color-grey-901);
-  border-radius: 50%;
-  filter: blur(150px);
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-`;
-
 function QuestionsLayout() {
   const location = useLocation();
   const progressValues = {
@@ -125,34 +94,31 @@ function QuestionsLayout() {
   const progress = progressValues[location.pathname] || 0;
 
   return (
-    <LoginLayout>
-      <BackButton>Geri Dön</BackButton>
-      <Header />
-      <div className="question-progressAndContent-container">
-        <ProgressBarContainer>
-          <ProgressBarWrapper>
-            <StyledProgressBar
-              completed={progress}
-              bgColor="#00FFA2"
-              baseBgColor="#64B1AD"
-              height="20px"
-              isLabelVisible={false} // Yüzdeyi kaldırdık
-            />
-            <ProgressBarReflection
-              style={{ width: `calc(${progress}% - 20px)` }}
-            />
-          </ProgressBarWrapper>
-        </ProgressBarContainer>
-        <Container>
-          <Outlet />
-        </Container>
-      </div>
-      <EllipsesContainer>
-        <Ellipse2 />
-        <Ellipse />
-        <Ellipse2 />
-      </EllipsesContainer>
-    </LoginLayout>
+    <BackgroundColor>
+      <LoginLayout>
+        <BackButton>Geri Dön</BackButton>
+        <Header />
+        <div className="question-progressAndContent-container">
+          <ProgressBarContainer>
+            <ProgressBarWrapper>
+              <StyledProgressBar
+                completed={progress}
+                bgColor="#00FFA2"
+                baseBgColor="#64B1AD"
+                height="20px"
+                isLabelVisible={false} // Yüzdeyi kaldırdık
+              />
+              <ProgressBarReflection
+                style={{ width: `calc(${progress}% - 20px)` }}
+              />
+            </ProgressBarWrapper>
+          </ProgressBarContainer>
+          <Container>
+            <Outlet />
+          </Container>
+        </div>
+      </LoginLayout>
+    </BackgroundColor>
   );
 }
 

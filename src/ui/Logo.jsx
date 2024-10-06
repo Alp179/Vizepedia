@@ -40,47 +40,7 @@ const StyledLogo = styled.div`
         width: 98px;
       }
     `}
-      ${(props) =>
-    props.variant === "mainpage2" &&
-    css`
-      width: 165px;
-      height: auto;
-      flex-shrink: 0;
-      @media (max-width: 1200px) {
-        width: 120px;
-      }
-      @media (max-width: 870px) {
-        display: none;
-      }
-    `}
-    ${(props) =>
-    props.variant === "blogpage1" &&
-    css`
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 165px;
-      height: auto;
-      flex-shrink: 0;
-      @media (max-width: 1300px) {
-        width: 140px;
-        position: relavite;
-      }
-      @media (max-width: 910px) {
-        width: 120px;
-      }
-      @media (max-width: 710px) {
-        width: 100px;
-      }
-      @media (max-width: 380px) {
-        width: 80px;
-        left: 45%;
-      }
-      @media (max-width: 350px) {
-        left: 20%;
-      }
-    `}
+     
     ${(props) =>
       props.variant === "blogpage2" &&
       css`

@@ -5,6 +5,7 @@ import DarkModeToggle from "./DarkModeToggle";
 import { useQuery } from "@tanstack/react-query";
 import { searchBlogs } from "../services/apiBlogs";
 import { useNavigate } from "react-router-dom";
+import BlogLogo from "./BlogLogo";
 
 const StyledHeader = styled.header`
   position: fixed;
@@ -13,7 +14,7 @@ const StyledHeader = styled.header`
   width: 100%;
   padding: 20px;
   z-index: 2990;
-  background: rgba(255, 255, 255, 0.2);
+  background: transparent;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 `;
@@ -198,7 +199,7 @@ function BlogHeader() {
     <StyledHeader>
       <HeaderContents>
         <Logo variant="blogpage2" />
-        <Logo variant="blogpage1" />
+        <BlogLogo variant="blogpage1" />
 
         <InputAndDarkToggleContainer>
           <BlogInput

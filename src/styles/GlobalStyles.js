@@ -42,7 +42,17 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-904: #004466;
   --color-grey-905: #00ffa2;
   --color-grey-906: linear-gradient(to bottom right, rgba(255, 255, 255, 0.53) 70%, #004466);
-  --color-grey-907: url(https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/footer.png);
+  --color-grey-907: radial-gradient(circle at 0% 20%, rgba(0, 255, 162, 0.5), transparent 20%),
+  radial-gradient(ellipse at 15% 40%, rgba(248, 24, 225, 0.6), transparent 50%),
+  radial-gradient(ellipse at 55% 80%, rgba(36, 0, 255, 0.6), transparent 40%),
+  radial-gradient(ellipse at 60% 60%, rgba(36, 0, 255, 0.6), transparent 40%),
+  radial-gradient(ellipse at 10% 30%, rgba(0, 255, 162, 0.6), transparent 40%),
+  radial-gradient(ellipse at 30% 30%, rgba(12, 230, 212, 0.6), transparent 40%),
+  radial-gradient(ellipse at 80% 30%, rgba(0, 255, 162, 0.5), transparent 20%),
+  radial-gradient(ellipse at 20% 50%, rgba(0, 68, 102, 0.6), transparent 40%),
+  radial-gradient(ellipse at 20% 80%, rgba(0, 68, 102, 0.6), transparent 40%),
+  radial-gradient(ellipse at 80% 80%, rgba(0, 145, 218, 0.5), transparent 50%),
+  radial-gradient(ellipse at 80% 10%, rgba(12, 230, 212, 0.5), transparent 40%);
   --color-grey-908: linear-gradient(180deg, rgba(0, 255, 162, 0.4) 0%, rgba(0, 68, 102, 0.4) 15%, rgba(36, 0, 255, 0.4) 25%, rgba(248, 24, 225, 0.4) 40%, rgba(221, 251, 239, 1) 60%);
   --color-grey-909: white;
   --color-grey-910: #004466;
@@ -50,7 +60,11 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-912: white;
   --color-grey-913: #ddfbef;
   --color-grey-914: #004466;
-  --color-grey-55: rgba(255, 255, 255, 0.5);
+  --color-grey-915: radial-gradient(ellipse at 10% 85%, rgba(0, 255, 162, 0.6), transparent 30%),
+radial-gradient(ellipse at 50% 85%, rgba(0, 68, 102, 0.6), transparent 40%),
+radial-gradient(ellipse at 90% 85%, rgba(135, 249, 205, 0.6), transparent 30%);
+--color-grey-916: #32faf5;
+--color-grey-55: rgba(255, 255, 255, 0.5);
   --stroke-ham-1: #000;
 
   --color-blue-100: #e0f2fe;
@@ -105,7 +119,13 @@ const GlobalStyles = createGlobalStyle`/*
 --color-grey-904: white;
 --color-grey-905: rgba(255, 255, 255, 0.2);
 --color-grey-906: none;
---color-grey-907: rgba(255, 255, 255, 0.2);
+--color-grey-907: radial-gradient(ellipse at 60% 50%, rgba(36, 0, 255, 0.5), transparent 50%),
+radial-gradient(ellipse at 80% 40%, rgba(0, 255, 162, 0.3), transparent 50%),
+radial-gradient(circle at 20% 40%, rgba(255, 111, 241, 0.3), transparent 30%),
+radial-gradient(circle at 10% 20%, rgba(67, 255, 186, 0.2), transparent 30%),
+radial-gradient(ellipse at 15% 30%, rgba(0, 255, 162, 0.2), transparent 50%),
+radial-gradient(ellipse at 25% 80%, rgba(0, 68, 102, 0.3), transparent 40%),
+radial-gradient(circle at 80% 80%, rgba(124, 103, 255, 0.3), transparent 30%);
 --color-grey-908: #111827;
 --color-grey-909: rgba(255, 255, 255, 0.2);
 --color-grey-910: white;
@@ -113,6 +133,8 @@ const GlobalStyles = createGlobalStyle`/*
 --color-grey-912: rgba(0, 0, 0, 0.8);
 --color-grey-913: #fff;
 --color-grey-914: #111;
+--color-grey-915: transparent;
+--color-grey-916: white;
 --color-grey-55: #091522;
 --stroke-ham-1: #999;
 
@@ -599,16 +621,9 @@ Slider h2 span {
   border-radius: 100% / 40% 40% 0% 0%;
   width: 100%;
   height: 565px;
-  background: var(--color-grey-907);
+  background: var(--color-grey-907); 
   background-size: cover;
-  background-position: center;
   opacity: 0.92;
-  user-drag: none;  
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
   @media (max-width: 750px) {
     height: 100%;
     min-height: 750px;

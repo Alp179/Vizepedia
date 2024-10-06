@@ -6,6 +6,7 @@ import Button from "../ui/Button";
 import Marquee from "react-fast-marquee";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
+import BlogLogo from "../ui/BlogLogo";
 
 const Navbar = styled.div`
   width: 80%;
@@ -361,7 +362,7 @@ function MainPage() {
         <Logo variant="mainpage" />
         <Heading as="h10">Hakkımızda</Heading>
         <Heading as="h10">SSS</Heading>
-        <Logo variant="mainpage2" />
+        <BlogLogo variant="mainpage2" />
         <div style={{ display: "flex", gap: "16px", marginLeft: "auto" }}>
           <Button variation="mainpage2">Oturum Aç</Button>
           <Button variation="mainpage">Başlayalım</Button>

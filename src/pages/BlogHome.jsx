@@ -6,6 +6,8 @@ import { useRef, useState } from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Logo from "../ui/Logo";
 import MailerLiteForm from "../ui/MailerLiteForm";
+import SlideShow from "../ui/SlideShow";
+import VectorOk from "../ui/VectorOk";
 
 // Yeni kartlar için animasyon tanımlıyoruz
 const fadeInUp = keyframes`
@@ -23,7 +25,7 @@ const BlogContainer = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 50px auto;
-  padding: 20px;
+  padding: 120px 20px 20px 20px;
   position: relative;
   @media (max-width: 1300px) {
     width: 90%;
@@ -42,10 +44,38 @@ const Divider = styled.div`
   background-color: var(--color-grey-904);
 `;
 
+const BlogHeaders = styled.div`
+  margin-bottom: -60px;
+  @media (max-width: 910px) {
+    margin-bottom: -40px;
+  }
+  @media (max-width: 810px) {
+    margin-bottom: -20px;
+  }
+`;
+
+const HeaderveOk = styled.div`
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: -50px;
+  justify-content: center;
+  align-items: center;
+  @media (max-width: 550px) {
+    margin-bottom: 100px;
+  }
+  @media (max-width: 435px) {
+    margin-bottom: 60px;
+  }
+`;
+
 const BlogHeader = styled.h1`
+  text-shadow: 0px 0px 20px black;
   font-weight: 100;
+  color: var(--color-grey-916);
   margin-left: auto;
   margin-right: auto;
+  mix-blend-mode: normal;
   text-align: center;
   margin-bottom: 20px;
   font-size: 72px;
@@ -399,10 +429,15 @@ function BlogHome() {
   return (
     <>
       <BlogContainer>
-        <BlogHeader>Başlayın Keşfedin Vize Alın</BlogHeader>
-        <BlogHeader>
-          <strong>Seyahat Edin</strong>
-        </BlogHeader>
+        <HeaderveOk>
+          <BlogHeaders>
+            <BlogHeader>Başlayın Keşfedin Vize Alın</BlogHeader>
+            <BlogHeader>
+              <strong>Seyahat Edin</strong>
+            </BlogHeader>
+          </BlogHeaders>
+          <VectorOk variant="blogpage"/>
+        </HeaderveOk>
         <ArrowButton className="left" onClick={() => handleScroll("left")}>
           {"<"}
         </ArrowButton>
@@ -506,6 +541,8 @@ function BlogHome() {
       </BlogContainer>
 
       <Divider />
+
+      <SlideShow />
 
       <MailerLiteForm />
 
