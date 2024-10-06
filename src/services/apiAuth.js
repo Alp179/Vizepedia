@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import supabase, { supabaseUrl } from "./supabase";
+import supabase from "./supabase";
 
 // Yeni fonksiyon: Google ile oturum açma
 export async function signInWithGoogle() {
@@ -16,25 +16,18 @@ export async function signInWithGoogle() {
 }
 
 // Halihazırdaki fonksiyonlar
-export async function signup({ fullName, email, password }) {
+export async function signup({ email, password }) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      data: {
-        fullName,
-        avatar: "",
-      },
-    },
   });
 
   if (error) throw new Error(error.message);
-
   return data;
 }
 
 export async function login({ email, password }) {
-  let { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -59,49 +52,102 @@ export async function logout() {
   if (error) throw new Error(error.message);
 }
 
-export async function updateCurrentUser({ password, fullName, avatar }) {
-  // 1. update password or fullName
-  let updateData;
-  if (password) updateData = { password };
-  if (fullName) updateData = { data: { fullName } };
-
-  const { data, error } = await supabase.auth.updateUser(updateData);
+// Kullanıcı güncelleme fonksiyonu
+export async function updateCurrentUser({ password }) {
+  const { data, error } = await supabase.auth.updateUser({
+    password,
+  });
 
   if (error) throw new Error(error.message);
 
-  if (!avatar) return data;
-
-  // 2. Upload the avatar image
-  const fileName = `avatar-${data.user.id}-${Math.random()}`;
-
-  const { error: storageError } = await supabase.storage
-    .from("avatars")
-    .upload(fileName, avatar);
-
-  if (storageError) throw new Error(storageError.message);
-
-  // 3. Update avatar in the user
-  const { data: updatedUser, error: error2 } = await supabase.auth.updateUser({
-    data: {
-      avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
-    },
-  });
-
-  if (error2) throw new Error(error2.message);
-
-  return updatedUser;
+  return data;
 }
 
+// Anonim giriş fonksiyonu
 export async function signInAsGuest() {
-  const { data, error } = await supabase.auth.signIn({
-    email: 'anon@example.com',
-    password: 'anonymous-password'
-  });
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "anonymous",
+    });
+
+    if (error) {
+      console.error("Anonim oturum açma hatası:", error.message);
+      return;
+    }
+
+    if (data) {
+      // Anonim oturum açıldığında isAnonymous değerini localStorage'a kaydet
+      localStorage.setItem("isAnonymous", "true");
+      console.log("Anonim kullanıcı oturum açtı.");
+    }
+  } catch (error) {
+    console.error("Anonim oturum açma sırasında hata oluştu:", error.message);
+  }
+}
+
+// Anonim kullanıcıyı kayıtlı kullanıcıya çevirme fonksiyonu
+export async function convertAnonymousToUser({ email, password }) {
+  try {
+    // Supabase'den mevcut anonim kullanıcıyı alın
+    const { data: session, error: sessionError } =
+      await supabase.auth.getSession();
+
+    // Debugging: Session ve error durumunu kontrol edelim
+    console.log("Session bilgisi: ", session);
+    console.log("Session Hatası: ", sessionError);
+
+    // Eğer session veya session.user undefined ise hata fırlat
+    if (sessionError || !session || !session.session || !session.session.user) {
+      throw new Error("Anonim kullanıcı bulunamadı.");
+    }
+
+    const anonymousUserId = session.session.user.id; // Anonim kullanıcı ID'si
+
+    // E-posta ve şifre ile yeni bir hesap oluşturun
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+      {
+        email,
+        password,
+      }
+    );
+
+    if (signUpError) {
+      throw new Error(signUpError.message);
+    }
+
+    // Anonim kullanıcıya ait olan yerel verileri yeni kullanıcıya aktarın
+    const localAnswers = JSON.parse(localStorage.getItem("userSelections"));
+
+    if (localAnswers) {
+      await syncAnonymousDataToUser(
+        anonymousUserId,
+        signUpData.user.id,
+        localAnswers
+      );
+    }
+
+    // LocalStorage'dan anonim kullanıcı bilgilerini temizleyin
+    localStorage.removeItem("isAnonymous");
+    localStorage.removeItem("userSelections");
+
+    return signUpData;
+  } catch (error) {
+    // Hata durumunda hata mesajını yakala ve döndür
+    console.error("Kullanıcı dönüşümü sırasında hata:", error.message);
+    throw new Error(error.message);
+  }
+}
+
+// Anonim verilerin yeni kullanıcı ile eşleştirilmesi
+async function syncAnonymousDataToUser(anonymousId, newUserId, answers) {
+  const { data, error } = await supabase
+    .from("userAnswers")
+    .update({ userId: newUserId }) // user_id yerine "userId" kullanıyoruz
+    .eq("userId", anonymousId); // Anonim kullanıcının "userId" sini güncelliyoruz
 
   if (error) {
-    console.error("Anonim oturum açma hatası:", error.message);
-    return { error };
+    throw new Error(error.message);
   }
 
-  return { data };
+  // Gerekirse, answers gibi diğer anonim verileri de buradan işleyebilirsiniz
 }

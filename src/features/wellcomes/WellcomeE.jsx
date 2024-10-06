@@ -9,6 +9,21 @@ import { useUserSelections } from "./useUserSelections";
 import Modal from "../../ui/Modal";
 import styled from "styled-components";
 
+// Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
+function saveAnonymousUserSelections(selections) {
+  const userSelections = {
+    country: selections.country || "", // Önceki adımlarda seçilen ülke
+    purpose: selections.purpose || "", // Önceki adımlarda seçilen gidiş amacı
+    profession: selections.profession || "", // Önceki adımlarda seçilen meslek
+    vehicle: selections.vehicle, // Bu adımda seçilen seyahat aracı
+    kid: selections.kid, // Bu adımda seçilen çocuk durumu
+    accommodation: selections.accommodation, // Bu adımda seçilen konaklama türü
+  };
+
+  // Seçimleri localStorage'a kaydet
+  localStorage.setItem("userSelections", JSON.stringify(userSelections));
+}
+
 const StyledNavLink = styled(NavLink)`
   &:link,
   &:visited {
@@ -22,7 +37,6 @@ const StyledNavLink = styled(NavLink)`
     transition: all 0.3s;
   }
 
-  /* This works because react-router places the active class on the active NavLink */
   &:hover,
   &:active,
   &.active:link,
@@ -72,16 +86,34 @@ function WellcomeE() {
   const handleVehicleChange = (vehicle) => {
     setSelectedVehicle(vehicle);
     dispatch({ type: "SET_VEHICLE", payload: vehicle });
+
+    // Anonim kullanıcı seçimlerini kaydet
+    saveAnonymousUserSelections({
+      ...state,
+      vehicle,
+    });
   };
 
   const handleKidChange = (kid) => {
     setSelectedKid(kid);
     dispatch({ type: "SET_KID", payload: kid });
+
+    // Anonim kullanıcı seçimlerini kaydet
+    saveAnonymousUserSelections({
+      ...state,
+      kid,
+    });
   };
 
   const handleAccommodationChange = (accommodation) => {
     setSelectedAccommodation(accommodation);
     dispatch({ type: "SET_ACCOMMODATION", payload: accommodation });
+
+    // Anonim kullanıcı seçimlerini kaydet
+    saveAnonymousUserSelections({
+      ...state,
+      accommodation,
+    });
   };
 
   return (

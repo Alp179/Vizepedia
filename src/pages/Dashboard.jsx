@@ -14,7 +14,10 @@ import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import styled, { keyframes } from "styled-components";
 import "flag-icons/css/flag-icons.min.css";
 import supabase from "../services/supabase";
+import Button from "../ui/Button";
 
+import Modal from "../ui/Modal";
+import SignUpForm from "../features/authentication/SignUpForm";
 const FlagContainer = styled.div`
   position: fixed;
   top: 0;
@@ -61,9 +64,6 @@ const FlagContainer = styled.div`
   }
 `;
 
-
-
-
 // Sürekli ve kesintisiz yukarıdan aşağıya akan animasyon
 const moveFlagAnimation = keyframes`
   0% {
@@ -106,7 +106,7 @@ const BlurredFlagBackground = styled.div`
   position: absolute;
   top: -50%;
   left: 25%;
-  width: 60vw;  // %50 daralma
+  width: 60vw; // %50 daralma
   height: 45vw; // %50 daralma
   filter: blur(190px);
   z-index: 0;
@@ -142,7 +142,6 @@ const BlurredFlagBackground = styled.div`
     height: 70px !important;
   }
 `;
-
 
 const CreatedAtContainer = styled.div`
   font-size: 1.4rem;
@@ -246,7 +245,7 @@ const InfoDetails = styled.div`
   gap: 10px;
 `;
 
-function Dashboard() {
+const Dashboard = () => {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
@@ -257,11 +256,23 @@ function Dashboard() {
     dispatch,
   } = useDocuments();
   const [countryCode, setCountryCode] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState(
+    localStorage.getItem("isAnonymous") === "true"
+  );
 
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id);
+
+        // Kullanıcı üye olmuşsa, anonim verileri temizleyin
+        if (!isAnonymous) {
+          localStorage.removeItem("isAnonymous");
+          localStorage.removeItem("userAnswers");
+          localStorage.removeItem("userSelections");
+        }
+
+        // Kullanıcı verilerini Supabase'den çek
         fetchCompletedDocuments(user.id, applicationId).then((data) => {
           const completedDocsMap = data.reduce((acc, doc) => {
             if (!acc[applicationId]) {
@@ -277,7 +288,15 @@ function Dashboard() {
         });
       }
     });
-  }, [applicationId, dispatch]);
+  }, [applicationId, dispatch, isAnonymous]);
+
+  // Anonim kullanıcıdan normal kullanıcıya geçişte local storage ile bağı koparma
+  const handleUserConversion = () => {
+    // Üye olduktan sonra yerel depolama temizlenmiş oluyor
+    setIsAnonymous(false);
+    // Üye olan kullanıcıları dashboard'a yönlendiriyoruz
+    navigate("/dashboard");
+  };
 
   const {
     data: userSelections,
@@ -460,8 +479,31 @@ function Dashboard() {
           </InfoDetails>
         </InfoContainer>
       )}
+
+      {/* Anonim kullanıcıysa Üye Olarak Devam Et butonunu göster */}
+      {isAnonymous && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20px",
+          }}
+        >
+          <Modal>
+            <Modal.Open opens="signUpForm">
+              <Button size="large" variation="primary">
+                Üye Olarak Devam Et
+              </Button>
+            </Modal.Open>
+            <Modal.Window name="signUpForm">
+              {/* Üye olduktan sonra verileri Supabase'den çekebilmek için, kullanıcıyı signUpForm ile yönlendirme işlemi */}
+              <SignUpForm onSuccess={handleUserConversion} />
+            </Modal.Window>
+          </Modal>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default Dashboard;

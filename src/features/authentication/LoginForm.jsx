@@ -67,6 +67,7 @@ function LoginForm() {
     try {
       // Supabase anonim oturum açma fonksiyonu
       const { data, error } = await supabase.auth.signInAnonymously();
+      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
 
       if (error) {
         console.error("Anonim oturum açma hatası:", error.message);
@@ -75,7 +76,8 @@ function LoginForm() {
 
       if (data) {
         // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
-        const wellcomesAnswered = localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
+        const wellcomesAnswered =
+          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
 
         if (wellcomesAnswered === "true") {
           // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
@@ -148,7 +150,12 @@ function LoginForm() {
         />
       </FormRow>
       <FormRow orientation="vertical">
-        <Button size="login" variation="guest" type="button" onClick={handleGuestSignIn}>
+        <Button
+          size="login"
+          variation="guest"
+          type="button"
+          onClick={handleGuestSignIn}
+        >
           Anonim Giriş
         </Button>
       </FormRow>
@@ -157,7 +164,7 @@ function LoginForm() {
           {!isLoading ? "Giriş yap" : <SpinnerMini />}
         </Button>
       </FormRow>
-      
+
       {/* Anonim giriş butonunu ekliyoruz */}
     </Form>
   );

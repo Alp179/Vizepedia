@@ -6,6 +6,21 @@ import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import styled from "styled-components";
 
+// Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
+function saveAnonymousUserSelections(selections) {
+  const userSelections = {
+    country: selections.country || "", // Daha önceki adımda seçilen ülke
+    purpose: selections.purpose || "", // Daha önceki adımda seçilen gidiş amacı
+    profession: selections.profession, // Bu adımda seçilen meslek
+    vehicle: selections.vehicle || "",
+    kid: selections.kid || "",
+    accommodation: selections.accommodation || "",
+  };
+
+  // Seçimleri localStorage'a kaydet
+  localStorage.setItem("userSelections", JSON.stringify(userSelections));
+}
+
 function WellcomeD() {
   const navigate = useNavigate();
   const { state, dispatch } = useUserSelections(); // dispatch fonksiyonunu kullanmak için hook'u çağırın
@@ -16,6 +31,12 @@ function WellcomeD() {
   const handleProfessionChange = (profession) => {
     setSelectedProfession(profession);
     dispatch({ type: "SET_PROFESSION", payload: profession }); // Global state'i güncelleyin
+
+    // Anonim kullanıcı seçimlerini kaydet
+    saveAnonymousUserSelections({
+      ...state,
+      profession,
+    });
   };
 
   const QuestionContainer = styled.div`

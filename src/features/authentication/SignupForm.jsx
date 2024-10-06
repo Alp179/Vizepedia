@@ -1,93 +1,134 @@
-/* eslint-disable no-unused-vars */
-import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
-import FormRow from "../../ui/FormRow";
+import styled from "styled-components";
 import Input from "../../ui/Input";
+import FormRow from "../../ui/FormRow";
+import SpinnerMini from "../../ui/SpinnerMini";
+import {
+  signInWithGoogle,
+  convertAnonymousToUser,
+} from "../../services/apiAuth";
 import { useSignup } from "./useSignup";
 
-// Email regex: /\S+@\S+\.\S+/
+const BracketContainer = styled.div`
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  @media (max-width: 370px) {
+    gap: 8px;
+  }
+`;
 
-function SignupForm() {
-  const { signUp, isLoading } = useSignup();
-  const { register, formState, getValues, handleSubmit, reset } = useForm();
-  const { errors } = formState;
+const Bracket = styled.div`
+  height: 1px;
+  border: 1px solid var(--color-grey-300);
+  width: 135px;
+  @media (max-width: 450px) {
+    width: 100px;
+  }
+  @media (max-width: 370px) {
+    width: 70px;
+  }
+`;
 
-  function onSubmit({ fullName, email, password }) {
-    signUp({ fullName, email, password }, { onSettled: () => reset });
+function SignUpForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null); // Hata mesajı durumu
+  const { isLoading } = useSignup(); // useSignup hook'u çağrılıyor
+  const navigate = useNavigate(); // Yönlendirme fonksiyonu
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!email || !password) {
+      setErrorMessage("Lütfen tüm alanları doldurun.");
+      return;
+    }
+
+    // Anonim kullanıcıyı güncelleme fonksiyonunu çağırıyoruz
+    convertAnonymousToUser({ email, password })
+      .then(() => {
+        // Başarılı olursa localStorage temizle ve yönlendirme yap
+        localStorage.removeItem("isAnonymous");
+        localStorage.removeItem("userSelections");
+        setErrorMessage(null);
+        navigate("/dashboard"); // Başarılı olursa kullanıcıyı yönlendiriyoruz
+      })
+      .catch((error) => {
+        console.log("Hata Detayı:", error); // Hata detayını görmek için log ekliyoruz
+        setErrorMessage(error.message || "Üye olurken bir hata oluştu."); // Hata mesajını kullanıcıya göster
+      });
+  }
+
+  // Google oturum açma butonu için event handler
+  async function handleGoogleSignIn() {
+    const { data, error } = await signInWithGoogle();
+    if (!error && data) {
+      localStorage.removeItem("isAnonymous");
+      localStorage.removeItem("userSelections");
+      navigate("/dashboard"); // Google ile giriş yapıldığında yönlendirme
+    } else {
+      setErrorMessage("Google ile giriş sırasında bir hata oluştu.");
+    }
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <FormRow label="Full name" error={errors?.fullName?.message}>
-        <Input
-          type="text"
-          id="fullName"
-          disabled={isLoading}
-          {...register("fullName", { required: "This field is required" })}
-        />
-      </FormRow>
-
-      <FormRow label="Email address" error={errors?.email?.message}>
+    <Form onSubmit={handleSubmit}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <p className="hosgeldiniz">Vizepedia`ya Hoş geldiniz</p>
+        <p className="subtext">
+          Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
+          Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
+        </p>
+      </div>
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}{" "}
+      {/* Hata mesajı göstergesi */}
+      <FormRow orientation="vertical" label="E-posta Adresi">
         <Input
           type="email"
           id="email"
+          autoComplete="username"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           disabled={isLoading}
-          {...register("email", {
-            required: "This field is required",
-            pattern: {
-              value: /\S+@\S+\.\S+/,
-              message: "Please provide a valid email",
-            },
-          })}
         />
       </FormRow>
-
-      <FormRow
-        label="Password (min 8 characters)"
-        error={errors?.password?.message}
-      >
+      <FormRow orientation="vertical" label="Şifre">
         <Input
           type="password"
           id="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           disabled={isLoading}
-          {...register("password", {
-            required: "This field is required",
-            minLength: {
-              value: 8,
-              message: "Password needs a minimum of 8 characters",
-            },
-          })}
         />
       </FormRow>
-
-      <FormRow label="Repeat password" error={errors?.passwordConfirm?.message}>
-        <Input
-          type="password"
-          id="passwordConfirm"
-          disabled={isLoading}
-          {...register("passwordConfirm", {
-            required: "This field is required",
-            validate: (value) =>
-              value === getValues().password || "Passwords need to match",
-          })}
-        />
-      </FormRow>
-
-      <FormRow>
-        {/* type is an HTML attribute! */}
-        <Button
-          variation="secondary"
-          type="reset"
-          disabled={isLoading}
-          onClick={reset}
-        >
-          Cancel
+      <FormRow orientation="vertical">
+        <Button size="login" variation="login" disabled={isLoading}>
+          {!isLoading ? "Hesap Oluştur" : <SpinnerMini />}
         </Button>
-        <Button disabled={isLoading}>Create new user</Button>
+      </FormRow>
+      <BracketContainer>
+        <Bracket />
+        <p style={{ color: "var(--color-grey-700)" }}>ya da</p>
+        <Bracket />
+      </BracketContainer>
+      <FormRow orientation="vertical">
+        <Button
+          size="login"
+          variation="googleauth"
+          type="button"
+          onClick={handleGoogleSignIn}
+        >
+          Google ile Giriş Yap
+        </Button>
       </FormRow>
     </Form>
   );
 }
 
-export default SignupForm;
+export default SignUpForm;
