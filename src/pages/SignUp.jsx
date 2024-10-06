@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import SignUpForm from "../features/authentication/SignUpForm";
+
 import Logo from "../ui/Logo";
+import SignupForm from "../features/authentication/SignupForm";
 
 const LoginLayout = styled.main`
   min-height: 100vh;
@@ -30,7 +31,7 @@ function SignUp() {
     <LoginLayout>
       <Container>
         <Logo variant="login" />
-        <SignUpForm />
+        <SignupForm />
       </Container>
     </LoginLayout>
   );
