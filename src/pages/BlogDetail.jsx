@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBlogBySlug, fetchRelatedBlogs } from "../services/apiBlogs";
 import Spinner from "../ui/Spinner";
+import Logo from "../ui/Logo";
 import styled, { keyframes } from "styled-components";
 
 // Fade-in animasyonu tanımlıyoruz
@@ -360,6 +361,7 @@ function BlogDetail() {
   if (isError) return <p>Blog içeriği yüklenirken bir hata oluştu.</p>;
 
   return (
+    <div>
     <BlogDetailContainer>
       <BlogContentWrapper>
         <CategoryAndDate>
@@ -415,6 +417,52 @@ function BlogDetail() {
         </RelatedBlogsScroll>
       </RelatedBlogsWrapper>
     </BlogDetailContainer>
+
+    <div className="footer">
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "34px",
+          }}
+        >
+          <div className="footer-header">
+            Vize başvurusu yapmak hiç bu kadar kolay olmamıştı.
+          </div>
+          <div className="ceper">
+            <div className="footer-buton">Hemen başlayın</div>
+          </div>
+        </div>
+        <div className="footer-divider"></div>
+        <div
+          className="footer-wrap"
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            maxWidth: "80%",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
+          <Logo variant="footer" />
+          <div style={{ display: "flex", gap: "30px" }}>
+            <div className="footer-links">Ana Sayfa</div>
+            <div className="footer-links">Hakkında</div>
+            <div className="footer-links">Blog</div>
+          </div>
+          <div style={{ display: "flex", gap: "25px" }}>
+            <img src="images/linkedin.png" />
+            <img src="images/Facebook.png" />
+            <img src="images/Instagram.png" />
+            <img src="images/Youtube.png" />
+          </div>
+        </div>
+      </div>
+    
+    </div>
   );
 }
 
