@@ -28,8 +28,34 @@ const HeaderContents = styled.div`
   @media (max-width: 1200px) {
     gap: 32px;
   }
+  @media (max-width: 870px) {
+    width: 90%;
+  }
+  @media (max-width: 480px) {
+    width: 100%;
+  }
   @media (max-width: 360px) {
     gap: 16px;
+  }
+`;
+
+const LogoContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  @media (max-width: 870px) {
+    justify-content: space-between;
+    flex-flow: row-reverse;
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 16px;
+  margin-left: auto;
+  @media (max-width: 870px) {
+    gap: 4px;
   }
 `;
 
@@ -38,15 +64,17 @@ function MainPageHeader() {
     <>
       <StyledMainPageHeader>
         <HeaderContents>
-          <Logo variant="mainpage" />
-          <Heading as="h10">Hakkımızda</Heading>
-          <Heading as="h10">SSS</Heading>
-          <BlogLogo variant="mainpage2" />
-          <div style={{ display: "flex", gap: "16px", marginLeft: "auto" }}>
+          <LogoContainer>
+            <Logo variant="mainpage" />
+            <Heading as="h10">Hakkımızda</Heading>
+            <Heading as="h10">SSS</Heading>
+            <BlogLogo variant="mainpage2" />
+          </LogoContainer>
+          <ButtonContainer>
             <Button variation="mainpage2">Oturum Aç</Button>
             <Button variation="mainpage">Başlayalım</Button>
             <DarkModeToggle />
-          </div>
+          </ButtonContainer>
         </HeaderContents>
       </StyledMainPageHeader>
     </>

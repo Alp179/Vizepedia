@@ -45,8 +45,9 @@ const StyledBlogLogo = styled.div`
         width: 120px;
       }
       @media (max-width: 870px) {
-        display: none;
+        width: 100px;
       }
+      
     `}
 
         ${(props) =>

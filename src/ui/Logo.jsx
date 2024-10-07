@@ -36,6 +36,12 @@ const StyledLogo = styled.div`
       @media (max-width: 1200px) {
         width: 120px;
       }
+      @media (max-width: 870px) {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
       @media (max-width: 732px) {
         width: 98px;
       }
