@@ -445,40 +445,42 @@ const Dashboard = () => {
           <span className={`fi fi-${countryCode}`}></span>
         </FlagContainer>
       )}
-      {isFirmLocationSuccess && firmLocation && (
-        <InfoContainer>
-          <MapContainer
-            dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
-          />
-          <InfoDetails>
-            <div>
-              <strong>Firma Adı: </strong>
-              {firmLocation.firm_name}
-            </div>
-            <div>
-              <strong>Vize Ücreti: </strong>
-              {firmLocation.visa_fee} €
-            </div>
-            <div>
-              <strong>Servis Ücreti: </strong>
-              {firmLocation.service_fee} €
-            </div>
-            <div>
-              <strong>Ofis Saatleri: </strong>
-              {firmLocation.office_hours}
-            </div>
-            <div>
-              <a
-                href={firmLocation.firm_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                İstanbul harici başvuru merkezleri için tıklayın
-              </a>
-            </div>
-          </InfoDetails>
-        </InfoContainer>
-      )}
+      <div style={{marginBottom: "100px"}}>
+        {isFirmLocationSuccess && firmLocation && (
+          <InfoContainer>
+            <MapContainer
+              dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
+            />
+            <InfoDetails>
+              <div>
+                <strong>Firma Adı: </strong>
+                {firmLocation.firm_name}
+              </div>
+              <div>
+                <strong>Vize Ücreti: </strong>
+                {firmLocation.visa_fee} €
+              </div>
+              <div>
+                <strong>Servis Ücreti: </strong>
+                {firmLocation.service_fee} €
+              </div>
+              <div>
+                <strong>Ofis Saatleri: </strong>
+                {firmLocation.office_hours}
+              </div>
+              <div>
+                <a
+                  href={firmLocation.firm_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  İstanbul harici başvuru merkezleri için tıklayın
+                </a>
+              </div>
+            </InfoDetails>
+          </InfoContainer>
+        )}
+      </div>
 
       {/* Anonim kullanıcıysa Üye Olarak Devam Et butonunu göster */}
       {isAnonymous && (
