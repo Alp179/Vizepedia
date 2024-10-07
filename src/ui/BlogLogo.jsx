@@ -17,6 +17,9 @@ const StyledBlogLogo = styled.div`
         width: 140px;
         position: relavite;
       }
+      @media (max-width: 1050px) {
+        transform: translate(-50%, -50%);
+      }
       @media (max-width: 910px) {
         width: 120px;
       }

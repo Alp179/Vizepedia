@@ -1,11 +1,72 @@
 import { useState, useRef, useEffect } from "react";
 import { styled } from "styled-components";
-import Logo from "./Logo";
 import DarkModeToggle from "./DarkModeToggle";
 import { useQuery } from "@tanstack/react-query";
 import { searchBlogs } from "../services/apiBlogs";
 import { useNavigate } from "react-router-dom";
-import BlogLogo from "./BlogLogo";
+import { useDarkMode } from "../context/DarkModeContext";
+
+const BlogLogo = styled.img`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 165px;
+  transform: translate(-50%, -50%);
+  height: auto;
+  transition: transform 0.4s ease;
+  flex-shrink: 0;
+  @media (max-width: 1300px) {
+    width: 140px;
+  }
+  @media (max-width: 1050px) {
+    transform: ${({ isHovered, isActive }) =>
+      isHovered || isActive ? "translate(-120%, -50%)" : "translate(-50%, -50%)"};
+  }
+  @media (max-width: 910px) {
+    width: 120px;
+  }
+  @media (max-width: 710px) {
+    width: 100px;
+  }
+  @media (max-width: 470px) {
+    transform: ${({ isHovered, isActive }) =>
+      isHovered || isActive ? "translate(-150%, -50%)" : "translate(-50%, -50%)"};
+  }
+  @media (max-width: 380px) {
+    transform: ${({ isHovered, isActive }) =>
+      isHovered || isActive ? "translate(-170%, -50%)" : "translate(-50%, -50%)"};
+    width: 80px;
+  }
+  @media (max-width: 300px) {
+    transform: ${({ isHovered, isActive }) =>
+      isHovered || isActive ? "translate(-170%, -50%)" : "translate(-50%, -50%)"};
+  }
+`;
+
+const Logo = styled.img`
+  transition: transform 0.4s ease;
+  width: 165px;
+  transform: translate(0, 0);
+  height: auto;
+  flex-shrink: 0;
+  @media (max-width: 1300px) {
+    width: 140px;
+    position: relavite;
+  }
+  @media (max-width: 910px) {
+    width: 120px;
+  }
+  @media (max-width: 710px) {
+    width: 75px;
+  }
+  @media (max-width: 470px) {
+    transform: ${({ isHovered, isActive }) =>
+      isHovered || isActive ? "translate(-150%, 0%)" : "translate(0%, 0%)"};
+  }
+  @media (max-width: 380px) {
+    width: 60px;
+  }
+`;
 
 const StyledHeader = styled.header`
   position: fixed;
@@ -14,7 +75,7 @@ const StyledHeader = styled.header`
   width: 100%;
   padding: 20px;
   z-index: 2990;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 `;
@@ -57,6 +118,17 @@ const BlogInputWrapper = styled.div`
     theme === "dark" ? "var(--color-grey-900)" : "var(--color-grey-300)"};
   border-radius: 50px;
   padding: 5px;
+  @media (max-width: 780px) {
+    font-size: 14px;
+    width: ${({ isActive }) => (isActive ? "250px" : "40px")};
+  }
+  @media (max-width: 650px) {
+    width: ${({ isActive }) => (isActive ? "200px" : "40px")};
+  }
+  @media (max-width: 470px) {
+    width: ${({ isActive }) => (isActive ? "180px" : "30px")};
+    height: 30px;
+  }
   transition: width 0.4s ease, background-color 0.4s ease;
   box-shadow: ${({ theme }) =>
     theme === "dark"
@@ -66,6 +138,18 @@ const BlogInputWrapper = styled.div`
   &:focus-within,
   &:hover {
     width: 300px;
+    @media (max-width: 780px) {
+      width: 250px;
+    }
+    @media (max-width: 650px) {
+      width: 200px;
+    }
+    @media (max-width: 470px) {
+      width: 180px;
+    }
+    @media (max-width: 350px) {
+      width: 140px;
+    }
     background-color: ${({ theme }) =>
       theme === "dark" ? "var(--color-grey-800)" : "var(--color-white)"};
     box-shadow: ${({ theme }) =>
@@ -83,6 +167,12 @@ const BlogInput = styled.input`
   outline: none;
   padding: 0 25px; /* Padding'i artırdık */
   font-size: 16px;
+  @media (max-width: 470px) {
+    font-size: 13px;
+  }
+  @media (max-width: 350px) {
+    font-size: 12px;
+  }
   color: ${({ theme }) =>
     theme === "dark" ? "var(--color-white)" : "var(--color-grey-900)"};
 
@@ -104,6 +194,9 @@ const SearchIcon = styled.div`
   visibility: ${({ isActive }) => (isActive ? "hidden" : "visible")};
   transition: opacity 0.3s ease, visibility 0.3s ease;
   display: ${({ isActive }) => (isActive ? "none" : "block")};
+  @media (max-width: 470px) {
+    left: 7px;
+  }
 `;
 
 const ArrowIcon = styled.div`
@@ -133,19 +226,41 @@ const SearchResultsContainer = styled.div`
   display: ${({ show }) => (show ? "block" : "none")};
 
   @media (max-width: 910px) {
-    width: 200px;
+    width: 320px;
     padding: 8px;
   }
+  @media (max-width: 780px) {
+    width: 280px;
+  }
+  @media (max-width: 650px) {
+    width: 250px;
+  }
+  @media (max-width: 470px) {
+    width: 200px;
+    top: 53px;
+  }
 
-  ::-webkit-scrollbar {
-    width: 8px;
+  &::-webkit-scrollbar {
+    width: 12px;
+    @media (max-width: 780px) {
+      width: 10px;
+    }
+    @media (max-width: 470px) {
+      width: 8px;
+    }
   }
-  ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-grey-54);
     border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.4);
+    border: 3px solid var(--color-grey-2);
+    @media (max-width: 470px) {
+      border: 2px solid var(--color-grey-2); 
+    }
   }
 `;
 
@@ -160,9 +275,12 @@ const SmallRelatedBlogCard = styled.div`
   color: inherit;
   z-index: 2999;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-
-  @media (max-width: 910px) {
-    height: 90px;
+  @media (max-width: 650px) {
+    height: 80px;
+  }
+  @media (max-width: 470px) {
+    height: 70px;
+    gap: 8px;
   }
 
   &:hover {
@@ -175,10 +293,15 @@ const RelatedBlogImage = styled.img`
   height: 80px;
   object-fit: cover;
   border-radius: 8px;
-  @media (max-width: 910px) {
-    width: 60px;
-    height: 48px;
+  @media (max-width:650px) {
+    width: 80px;
+    height: 65px;
   }
+  @media (max-width: 470px) {
+    width: 70px;
+    height: 60px;
+  }
+
 `;
 
 const RelatedBlogInfo = styled.div`
@@ -191,8 +314,11 @@ const RelatedBlogTitleSmall = styled.h4`
   font-size: 13px;
   color: var(--color-grey-600);
   margin: 5px 0;
-  @media (max-width: 910px) {
-    font-size: 11px;
+  @media (max-width: 780px) {
+    font-size: 12px;
+  }
+  @media (max-width: 470px) {
+    font-size: 10px;
   }
 `;
 
@@ -201,9 +327,18 @@ function BlogHeader() {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const searchInputRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
   const searchResultsRef = useRef(null);
   const navigate = useNavigate();
+  const { isDarkMode } = useDarkMode();
 
+  const srcBlog = isDarkMode
+    ? "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/vblog-darkmode.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL3ZibG9nLWRhcmttb2RlLnBuZyIsImlhdCI6MTcyODE0MTExNSwiZXhwIjo0NDI4OTY5NjM1NTE1fQ.DJfCjO8CPxbxmTwr9wacpvI3XFBcmFvjO-jvWVQfp9k&t=2024-10-05T15%3A11%3A56.016Z"
+    : "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/vblog-lightmode.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL3ZibG9nLWxpZ2h0bW9kZS5wbmciLCJpYXQiOjE3MjgxNDExMzIsImV4cCI6MzU2NDk2OTYzNTUzMn0.o5K7iHOeB2PbLuq24iVqbukYV2MLEjOXbCfECMLj20w&t=2024-10-05T15%3A12%3A13.053Z";
+
+  const srcLogo = isDarkMode
+    ? "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/Varl_k_20_light_8x.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL1Zhcmxfa18yMF9saWdodF84eC5wbmciLCJpYXQiOjE3MjA5ODI4MjQsImV4cCI6NjgwNzk1NTYyNH0.q3TYM9XCjpsVsD7gQxFaQfRHTKqxhjHwLDzagSY1YY8&t=2024-07-14T18%3A47%3A05.607Z"
+    : "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/Varl_k_20_8x.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL1Zhcmxfa18yMF84eC5wbmciLCJpYXQiOjE3MjA5ODIzNjUsImV4cCI6NzU2ODI3NTE2NX0.uo2NgeaGhKZjiNKp5qq4ikIZTlDCkRCZ21ENwcwldLE&t=2024-07-14T18%3A39%3A25.590Z";
   const {
     data: filteredBlogs = [],
     isLoading,
@@ -248,8 +383,8 @@ function BlogHeader() {
   return (
     <StyledHeader>
       <HeaderContents>
-        <Logo variant="blogpage2" />
-        <BlogLogo variant="blogpage1" />
+        <Logo src={srcLogo} isHovered={isHovered} isActive={isActive} />
+        <BlogLogo src={srcBlog} isHovered={isHovered} isActive={isActive} />
 
         <InputAndDarkToggleContainer>
           <BlogInputWrapper isActive={isActive}>
@@ -257,6 +392,8 @@ function BlogHeader() {
               🔍
             </SearchIcon>
             <BlogInput
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
               ref={searchInputRef}
               type="text"
               placeholder="Bloglarda ara..."
