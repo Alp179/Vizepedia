@@ -16,7 +16,7 @@ const FormContainer = styled.div`
   margin-bottom: 92px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 10px;
+  margin-top: 100px;
   width: 1111px;
   height: 400px;
   background: rgba(255, 255, 255, 0.2);
