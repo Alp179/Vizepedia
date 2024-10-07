@@ -1,27 +1,10 @@
 import styled from "styled-components";
 import Heading from "../ui/Heading";
 import Logo from "../ui/Logo";
-import DarkModeToggle from "../ui/DarkModeToggle";
-import Button from "../ui/Button";
 import Marquee from "react-fast-marquee";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
-import BlogLogo from "../ui/BlogLogo";
 
-const Navbar = styled.div`
-  width: 80%;
-  margin: 0 auto 0 auto;
-  display: flex;
-  gap: 52px;
-  justify-content: space-around;
-  align-items: center;
-  @media (max-width: 1200px) {
-    gap: 32px;
-  }
-  @media (max-width: 360px) {
-    gap: 16px;
-  }
-`;
 
 const BigTexts = styled.div`
   justify-content: center;
@@ -358,17 +341,6 @@ const RahatProfesyonelMobileHeading = styled.p`
 function MainPage() {
   return (
     <>
-      <Navbar>
-        <Logo variant="mainpage" />
-        <Heading as="h10">Hakkımızda</Heading>
-        <Heading as="h10">SSS</Heading>
-        <BlogLogo variant="mainpage2" />
-        <div style={{ display: "flex", gap: "16px", marginLeft: "auto" }}>
-          <Button variation="mainpage2">Oturum Aç</Button>
-          <Button variation="mainpage">Başlayalım</Button>
-          <DarkModeToggle />
-        </div>
-      </Navbar>
       <BigTexts>
         <Heading as="h11">
           Düşlerinizdeki Seyahate Doğru İlk Adımı Vizepedia ile Atın!

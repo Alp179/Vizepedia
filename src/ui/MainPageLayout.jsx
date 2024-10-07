@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
+import MainPageHeader from "./MainPageHeader";
 
 const StyledMainPage = styled.div`
   min-height: 100vh;
@@ -11,6 +12,7 @@ const StyledMainPage = styled.div`
 `;
 
 const Main = styled.main`
+  min-height: 100vh;
   &::-webkit-scrollbar {
     width: 16px;
   }
@@ -43,9 +45,12 @@ const Main = styled.main`
 
 const Container = styled.div`
   max-width: 100vw;
-  margin-top: 50px;
+  padding-top: 100px;
   @media (max-width: 1225px) {
     margin: 32px 0 0 0;
+  }
+  @media (max-width: 870px) {
+    padding-top: 50px;
   }
 `;
 
@@ -54,6 +59,7 @@ function AppLayout() {
   return (
     <StyledMainPage>
       <Main>
+        <MainPageHeader />
         <Container>
           <Outlet />
         </Container>
