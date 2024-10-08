@@ -183,6 +183,9 @@ const variations = {
       font-size: 16px;
       height: 50px;
     }
+    @media (max-width: 870px) {
+      display: none;
+    }
     @media (max-width: 732px) {
       width: 102px;
       height: 34px;

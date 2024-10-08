@@ -4,6 +4,8 @@ import Logo from "./Logo";
 import Heading from "./Heading";
 import Button from "./Button";
 import DarkModeToggle from "./DarkModeToggle";
+import PropTypes from 'prop-types';
+import MainPageHamburger from "./MainPageHamburger";
 
 const StyledMainPageHeader = styled.div`
   position: fixed;
@@ -59,7 +61,7 @@ const ButtonContainer = styled.div`
   }
 `;
 
-function MainPageHeader() {
+function MainPageHeader( {setMenuOpen}) {
   return (
     <>
       <StyledMainPageHeader>
@@ -73,6 +75,7 @@ function MainPageHeader() {
           <ButtonContainer>
             <Button variation="mainpage2">Oturum Aç</Button>
             <Button variation="mainpage">Başlayalım</Button>
+            <MainPageHamburger setMenuOpen={setMenuOpen} />
             <DarkModeToggle />
           </ButtonContainer>
         </HeaderContents>
@@ -80,5 +83,9 @@ function MainPageHeader() {
     </>
   );
 }
+
+MainPageHeader.propTypes = {
+  setMenuOpen: PropTypes.func.isRequired, // setMenuOpen'ın fonksiyon olduğunu belirtin
+};
 
 export default MainPageHeader;

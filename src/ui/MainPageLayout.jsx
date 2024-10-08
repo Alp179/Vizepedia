@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import MainPageHeader from "./MainPageHeader";
+import { useState } from "react";
 
 const StyledMainPage = styled.div`
   min-height: 100vh;
@@ -54,13 +55,13 @@ const Container = styled.div`
   }
 `;
 
-
 function AppLayout() {
+  const [isMenuOpen, setMenuOpen] = useState(false); // Menü açık mı kontrol et
   return (
     <StyledMainPage>
       <Main>
-        <MainPageHeader />
-        <Container>
+        <MainPageHeader setMenuOpen={setMenuOpen} />
+        <Container style={{ filter: isMenuOpen ? "blur(5px)" : "none" }}>
           <Outlet />
         </Container>
       </Main>
