@@ -60,24 +60,24 @@ const MenuIcon = styled.div`
 const MenuContainer = styled.div`
   z-index: 3000;
   position: fixed;
-  top: 100%; /* MainPageHeader yüksekliği ile uyumlu */
+  top: 100%; /* MainPageHeader'ın altından başlat */
   right: 0;
   width: 60%;
   max-width: 230px;
-  height: 390px; /* MainPageHeader yüksekliğini çıkar */
+  height: 390px; 
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-bottom-left-radius: 16px;
-  visibility: ${({ isOpen }) => (isOpen ? "visible" : "hidden")};
-  opacity: ${({ isOpen }) => (isOpen ? "1" : "0")};
-  transform: ${({ isOpen }) => (isOpen ? "translateY(0)" : "translateY(0)")};
-  transition: all 0.3s ease-in-out;
+  visibility: ${({ isOpen, hasTransitionEnded }) => (isOpen || !hasTransitionEnded ? "visible" : "hidden")}; /* visibility kapanma animasyonu bittikten sonra */
+  opacity: ${({ isOpen }) => (isOpen ? "1" : "0")}; /* Opaklık kapanma sırasında */
+  transform: ${({ isOpen }) => (isOpen ? "scaleY(1)" : "scaleY(0)")}; /* scale efekti */
+  transform-origin: top; /* Animasyonun üstten başlaması */
+  transition: transform 0.2s ease-in-out, opacity 0.3s ease-in-out;
   @media (min-width: 870px) {
     display: none;
   }
 `;
-
 
 const MenuContents = styled.div`
   padding: 32px;
@@ -129,10 +129,14 @@ const OturumAc = styled.button`
 
 const MainPageHamburger = ({ setMenuOpen }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasTransitionEnded, setHasTransitionEnded] = useState(true); // Animasyonun bittiğini kontrol eden state
   const menuRef = useRef();
   const iconRef = useRef();
 
   const toggleMenu = () => {
+    if (!isOpen) {
+      setHasTransitionEnded(false); // Açılırken görünür yap
+    }
     setIsOpen(!isOpen); // Menü açıkken tıklandığında kapanacak
     setMenuOpen(!isOpen);
   };
@@ -156,6 +160,15 @@ const MainPageHamburger = ({ setMenuOpen }) => {
     };
   }, [setMenuOpen]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      const timeout = setTimeout(() => {
+        setHasTransitionEnded(true); // Kapanma animasyonu tamamlanınca görünürlüğü kapat
+      }, 300); // Animasyon süresiyle aynı olmalı
+      return () => clearTimeout(timeout);
+    }
+  }, [isOpen]);
+
   return (
     <>
       <MenuIcon ref={iconRef} isOpen={isOpen} onClick={toggleMenu}>
@@ -175,7 +188,7 @@ const MainPageHamburger = ({ setMenuOpen }) => {
           />
         </svg>
       </MenuIcon>
-      <MenuContainer isOpen={isOpen} ref={menuRef}>
+      <MenuContainer isOpen={isOpen} hasTransitionEnded={hasTransitionEnded} ref={menuRef}>
         <MenuContents>
           <Baslayalim>Başlayalım</Baslayalim>
           <OturumAc>Oturum aç</OturumAc>
