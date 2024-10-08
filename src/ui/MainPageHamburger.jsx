@@ -63,32 +63,52 @@ const MenuContainer = styled.div`
   top: 100%; /* MainPageHeader'ın altından başlat */
   right: 0;
   width: 60%;
+  border: 1px solid white;
+  border-top: none;
+  border-right: none;
   max-width: 230px;
-  height: 390px; 
+  height: 410px;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-bottom-left-radius: 16px;
-  visibility: ${({ isOpen, hasTransitionEnded }) => (isOpen || !hasTransitionEnded ? "visible" : "hidden")}; /* visibility kapanma animasyonu bittikten sonra */
-  opacity: ${({ isOpen }) => (isOpen ? "1" : "0")}; /* Opaklık kapanma sırasında */
-  transform: ${({ isOpen }) => (isOpen ? "scaleY(1)" : "scaleY(0)")}; /* scale efekti */
+  visibility: ${({ isOpen, hasTransitionEnded }) =>
+    isOpen || !hasTransitionEnded
+      ? "visible"
+      : "hidden"}; /* visibility kapanma animasyonu bittikten sonra */
+  opacity: ${({ isOpen }) =>
+    isOpen ? "1" : "0"}; /* Opaklık kapanma sırasında */
+  transform: ${({ isOpen }) =>
+    isOpen ? "scaleY(1)" : "scaleY(0)"}; /* scale efekti */
   transform-origin: top; /* Animasyonun üstten başlaması */
   transition: transform 0.2s ease-in-out, opacity 0.3s ease-in-out;
   @media (min-width: 870px) {
     display: none;
   }
+  @media (max-width: 600px) {
+    width: 200px;
+    height: 320px;
+  }
 `;
 
 const MenuContents = styled.div`
   padding: 32px;
-  gap: 32px;
+  gap: 24px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  @media (max-width: 600px) {
+    padding: 16px;
+    gap: 16px;
+  }
 `;
 
 const HakkimizdaveSSS = styled.p`
   font-size: 20px;
+  color: var(--color-grey-600);
+  @media (max-width: 600px) {
+    font-size: 16px;
+  }
 `;
 
 const Baslayalim = styled.button`
@@ -103,6 +123,11 @@ const Baslayalim = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 600px) {
+    width: 160px;
+    height: 53px;
+    font-size: 16px;
+  }
   &:hover {
     background: #87f9cd;
     color: #004466;
@@ -121,10 +146,25 @@ const OturumAc = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 600px) {
+    width: 160px;
+    height: 53px;
+    font-size: 16px;
+  }
   &:hover {
     background: #004466;
     color: #87f9cd;
   }
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  width: 90%;
+  background: white;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const MainPageHamburger = ({ setMenuOpen }) => {
@@ -188,10 +228,15 @@ const MainPageHamburger = ({ setMenuOpen }) => {
           />
         </svg>
       </MenuIcon>
-      <MenuContainer isOpen={isOpen} hasTransitionEnded={hasTransitionEnded} ref={menuRef}>
+      <MenuContainer
+        isOpen={isOpen}
+        hasTransitionEnded={hasTransitionEnded}
+        ref={menuRef}
+      >
         <MenuContents>
           <Baslayalim>Başlayalım</Baslayalim>
           <OturumAc>Oturum aç</OturumAc>
+          <Divider />
           <HakkimizdaveSSS>Blog sayfamız</HakkimizdaveSSS>
           <HakkimizdaveSSS>Hakkımızda</HakkimizdaveSSS>
           <HakkimizdaveSSS>SSS</HakkimizdaveSSS>
