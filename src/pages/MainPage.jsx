@@ -4,7 +4,7 @@ import Logo from "../ui/Logo";
 import Marquee from "react-fast-marquee";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
-
+import Faq from "../ui/Faq";
 
 const BigTexts = styled.div`
   justify-content: center;
@@ -338,6 +338,45 @@ const RahatProfesyonelMobileHeading = styled.p`
   }
 `;
 
+const FaqSection = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+  max-width: 1200px;
+  width: 90%;
+  @media (max-width: 450px) {
+    margin-top: 150px;
+  }
+`;
+
+const FaqTitle = styled.p`
+  font-size: 40px;
+  font-weight: bold;
+  color: var(--color-grey-600);
+  text-align: center;
+  @media (max-width: 1000px) {
+    font-size: 32px;
+  }
+  @media (max-width: 450px) {
+    font-size: 28px;
+  }
+`;
+
+const FaqSmallTitle = styled.p`
+  margin-top: 20px;
+  margin-bottom: 50px;
+  font-size: 24px;
+  color: var(--color-grey-600);
+  text-align: center;
+  @media (max-width: 1000px) {
+    font-size: 20px;
+  }
+  @media (max-width: 450px) {
+    font-size: 18px;
+    margin-bottom: 30px;
+  }
+`;
+
 function MainPage() {
   return (
     <>
@@ -606,6 +645,34 @@ function MainPage() {
       </RahatProfesyonelContainer>
 
       <SlideShow />
+
+      <FaqSection>
+        <FaqTitle>Sıkça Sorulan Sorular</FaqTitle>
+        <FaqSmallTitle>Sizler için buradayız!</FaqSmallTitle>
+
+        <Faq
+          title={"Vizepedia ile hangi ülkelerin vize sürecini yönetebilirim?"}
+        >
+          <p>
+            Vizepedia kullanıcıları, platformumuzun rehberliğinde aşağıdaki
+            ülkelerin vize başvurularını tamamlayabilir ve bu ülkelerin vize
+            işlemlerini gerçekleştirebilirler...
+          </p>
+        </Faq>
+        <Faq
+          title={`Vizepedia'nın sunduğu bilgiler için herhangi bir ücret ödemem gerekiyor mu?`}
+        >
+          <p>
+            Hayır, Vizepedia&apos;nın sunduğu bilgiler tamamen ücretsizdir...
+          </p>
+        </Faq>
+        <Faq title={`Vizepedia'nın Sunduğu Bilgilerin Kaynağı Nedir?`}>
+          <p>
+            Vizepedia&apos;nın sunduğu bilgiler, bir dizi resmi ve güvenilir
+            kaynaklardan toplanmıştır...
+          </p>
+        </Faq>
+      </FaqSection>
 
       <MailerLiteForm />
 

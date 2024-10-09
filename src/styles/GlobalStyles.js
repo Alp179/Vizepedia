@@ -721,6 +721,9 @@ Slider h2 span {
     flex-flow: column-reverse;
     gap: 33px;
 }
+
+
+
 }
 
 /*
