@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Heading from "../ui/Heading";
-import Footer from "./Footer";
+import Footer from "../ui/Footer";
 import Marquee from "react-fast-marquee";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";

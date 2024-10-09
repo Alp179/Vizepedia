@@ -6,6 +6,7 @@ import Button from "./Button";
 import DarkModeToggle from "./DarkModeToggle";
 import PropTypes from "prop-types";
 import MainPageHamburger from "./MainPageHamburger";
+import { useNavigate } from "react-router-dom";
 
 const StyledMainPageHeader = styled.div`
   position: fixed;
@@ -62,12 +63,21 @@ const ButtonContainer = styled.div`
 `;
 
 function MainPageHeader({ setMenuOpen }) {
+  const navigate = useNavigate();
   const handleFaqClick = () => {
     const faqSection = document.getElementById("faq-section");
     if (faqSection) {
       faqSection.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const handleSignUpClick = () => {
+    navigate("/sign-up"); // /sign-up yoluna yönlendir
+  };
+  const handleLogInClick = () => {
+    navigate("/login"); // /sign-up yoluna yönlendir
+  };
+
   return (
     <>
       <StyledMainPageHeader>
@@ -75,12 +85,16 @@ function MainPageHeader({ setMenuOpen }) {
           <LogoContainer>
             <Logo variant="mainpage" />
             <Heading as="h10">Hakkımızda</Heading>
-            <Heading as="h10" onClick={handleFaqClick}>SSS</Heading>
+            <Heading as="h10" onClick={handleFaqClick}>
+              SSS
+            </Heading>
             <BlogLogo variant="mainpage2" />
           </LogoContainer>
           <ButtonContainer>
-            <Button variation="mainpage2">Oturum Aç</Button>
-            <Button variation="mainpage">Başlayalım</Button>
+            <Button variation="mainpage2" onClick={handleLogInClick}>Oturum Aç</Button>
+            <Button variation="mainpage" onClick={handleSignUpClick}>
+              Başlayalım
+            </Button>
             <MainPageHamburger setMenuOpen={setMenuOpen} />
             <DarkModeToggle />
           </ButtonContainer>

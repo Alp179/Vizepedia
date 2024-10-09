@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBlogBySlug, fetchRelatedBlogs } from "../services/apiBlogs";
 import Spinner from "../ui/Spinner";
-import Footer from "./Footer";
+import Footer from "../ui/Footer";
 import styled, { keyframes } from "styled-components";
 
 // Fade-in animasyonu tanımlıyoruz

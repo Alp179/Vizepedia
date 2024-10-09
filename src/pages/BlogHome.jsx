@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { useRef, useState } from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import Footer from "./Footer";
+import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
 import VectorOk from "../ui/VectorOk";

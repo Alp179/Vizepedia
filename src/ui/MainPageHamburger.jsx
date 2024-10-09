@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import BlogLogo from "./BlogLogo";
@@ -181,6 +182,7 @@ const MainPageHamburger = ({ setMenuOpen }) => {
   const [hasTransitionEnded, setHasTransitionEnded] = useState(true); // Animasyonun bittiğini kontrol eden state
   const menuRef = useRef();
   const iconRef = useRef();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     if (!isOpen) {
@@ -227,6 +229,18 @@ const MainPageHamburger = ({ setMenuOpen }) => {
     }
   };
 
+  const handleSignUpClick = () => {
+    navigate("/sign-up"); // /sign-up yoluna yönlendir
+    setIsOpen(false); // Menü kapanacak
+    setMenuOpen(false); // Menü blur kaldırılacak
+  };
+
+  const handleLogInClick = () => {
+    navigate("/login"); // /sign-up yoluna yönlendir
+    setIsOpen(false); // Menü kapanacak
+    setMenuOpen(false); // Menü blur kaldırılacak
+  };
+
   return (
     <>
       <MenuIcon ref={iconRef} isOpen={isOpen} onClick={toggleMenu}>
@@ -252,8 +266,8 @@ const MainPageHamburger = ({ setMenuOpen }) => {
         ref={menuRef}
       >
         <MenuContents>
-          <Baslayalim>Başlayalım</Baslayalim>
-          <OturumAc>Oturum aç</OturumAc>
+          <Baslayalim onClick={handleSignUpClick}>Başlayalım</Baslayalim>
+          <OturumAc onClick={handleLogInClick}>Oturum aç</OturumAc>
           <Divider />
           <BlogLogo variant="mainpage3" />
           <HakkimizdaveSSS>Hakkımızda</HakkimizdaveSSS>
