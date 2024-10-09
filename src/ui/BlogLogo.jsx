@@ -67,6 +67,19 @@ const StyledBlogLogo = styled.div`
         width: 110px;
       }
     `}
+
+    ${(props) =>
+      props.variant === "mainpage3" &&
+      css`
+        width: 140px;
+        margin-left: auto;
+        margin-right: auto;
+        height: auto;
+        @media (max-width: 600px) {
+          width: 120px;
+        }
+        
+      `}
 `;
 
 const Img = styled.img`

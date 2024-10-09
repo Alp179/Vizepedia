@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import BlogLogo from "./BlogLogo";
 
 const MenuIcon = styled.div`
   border-radius: 6px;
@@ -96,18 +97,27 @@ const MenuContents = styled.div`
   gap: 24px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-around;
+  align-items: center;
   @media (max-width: 600px) {
     padding: 16px;
     gap: 16px;
   }
 `;
 
-const HakkimizdaveSSS = styled.p`
+const HakkimizdaveSSS = styled.button`
   font-size: 20px;
+  margin-top: -4px;
+  background: transparent;
+  border: none;
+  width: 220px;
   color: var(--color-grey-600);
   @media (max-width: 600px) {
     font-size: 16px;
+  }
+
+  &:hover {
+    background: red;
   }
 `;
 
@@ -162,7 +172,7 @@ const Divider = styled.div`
   width: 90%;
   background: white;
   margin-top: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   margin-left: auto;
   margin-right: auto;
 `;
@@ -237,7 +247,7 @@ const MainPageHamburger = ({ setMenuOpen }) => {
           <Baslayalim>Başlayalım</Baslayalim>
           <OturumAc>Oturum aç</OturumAc>
           <Divider />
-          <HakkimizdaveSSS>Blog sayfamız</HakkimizdaveSSS>
+          <BlogLogo variant="mainpage3" />
           <HakkimizdaveSSS>Hakkımızda</HakkimizdaveSSS>
           <HakkimizdaveSSS>SSS</HakkimizdaveSSS>
         </MenuContents>
