@@ -176,7 +176,12 @@ const Button = styled.button`
   border: none;
   cursor: pointer;
   font-size: 5rem;
-  color: #3498db;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  &:hover {
+    background-color: #004466;
+    color: #00ffa2;
+  }
 `;
 
 const LeftButton = styled(Button)`
