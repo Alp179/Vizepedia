@@ -88,7 +88,7 @@ const MenuContainer = styled.div`
   }
   @media (max-width: 600px) {
     width: 200px;
-    height: 320px;
+    height: 325px;
   }
 `;
 

@@ -156,14 +156,18 @@ const LargeBlogItem = styled(BlogItem)`
   display: flex;
   flex-direction: column;
   height: 360px;
-  background: var(--color-grey-909);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 `;
 
 const SmallBlogItem = styled(BlogItem)`
   height: 120px;
   display: flex;
   align-items: center;
-  background: var(--color-grey-909);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   animation: ${fadeInUp} 0.5s ease both;
 `;
 

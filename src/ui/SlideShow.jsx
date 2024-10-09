@@ -105,8 +105,9 @@ const Card = styled.div`
   margin: 10px;
   border-radius: 16px;
   flex-shrink: 0;
-  backdrop-filter: blur(40px);
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.2);
   @media (max-width: 325px) {
     width: 260px;
