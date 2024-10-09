@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
+import { useNavigate } from 'react-router-dom';
 import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledLogo = styled.div`
@@ -121,14 +122,18 @@ const Img = styled.img`
 `;
 
 function Logo({ variant }) {
+  const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
+  const handleLogoClick = () => {
+    navigate('/mainpage');  // Logo'ya tıklandığında /mainpage'e yönlendiriyoruz
+  };
 
   const src = isDarkMode
     ? "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/Varl_k_20_light_8x.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL1Zhcmxfa18yMF9saWdodF84eC5wbmciLCJpYXQiOjE3MjA5ODI4MjQsImV4cCI6NjgwNzk1NTYyNH0.q3TYM9XCjpsVsD7gQxFaQfRHTKqxhjHwLDzagSY1YY8&t=2024-07-14T18%3A47%3A05.607Z"
     : "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/Varl_k_20_8x.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL1Zhcmxfa18yMF84eC5wbmciLCJpYXQiOjE3MjA5ODIzNjUsImV4cCI6NzU2ODI3NTE2NX0.uo2NgeaGhKZjiNKp5qq4ikIZTlDCkRCZ21ENwcwldLE&t=2024-07-14T18%3A39%3A25.590Z";
 
   return (
-    <StyledLogo variant={variant}>
+    <StyledLogo onClick={handleLogoClick} variant={variant}>
       <Img src={src} alt="Logo" />
     </StyledLogo>
   );

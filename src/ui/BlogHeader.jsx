@@ -20,7 +20,9 @@ const BlogLogo = styled.img`
   }
   @media (max-width: 1050px) {
     transform: ${({ isHovered, isActive }) =>
-      isHovered || isActive ? "translate(-120%, -50%)" : "translate(-50%, -50%)"};
+      isHovered || isActive
+        ? "translate(-120%, -50%)"
+        : "translate(-50%, -50%)"};
   }
   @media (max-width: 910px) {
     width: 120px;
@@ -30,16 +32,22 @@ const BlogLogo = styled.img`
   }
   @media (max-width: 470px) {
     transform: ${({ isHovered, isActive }) =>
-      isHovered || isActive ? "translate(-150%, -50%)" : "translate(-50%, -50%)"};
+      isHovered || isActive
+        ? "translate(-150%, -50%)"
+        : "translate(-50%, -50%)"};
   }
   @media (max-width: 380px) {
     transform: ${({ isHovered, isActive }) =>
-      isHovered || isActive ? "translate(-170%, -50%)" : "translate(-50%, -50%)"};
+      isHovered || isActive
+        ? "translate(-170%, -50%)"
+        : "translate(-50%, -50%)"};
     width: 80px;
   }
   @media (max-width: 300px) {
     transform: ${({ isHovered, isActive }) =>
-      isHovered || isActive ? "translate(-170%, -50%)" : "translate(-50%, -50%)"};
+      isHovered || isActive
+        ? "translate(-170%, -50%)"
+        : "translate(-50%, -50%)"};
   }
 `;
 
@@ -259,7 +267,7 @@ const SearchResultsContainer = styled.div`
     border-radius: 10px;
     border: 3px solid var(--color-grey-2);
     @media (max-width: 470px) {
-      border: 2px solid var(--color-grey-2); 
+      border: 2px solid var(--color-grey-2);
     }
   }
 `;
@@ -293,7 +301,7 @@ const RelatedBlogImage = styled.img`
   height: 80px;
   object-fit: cover;
   border-radius: 8px;
-  @media (max-width:650px) {
+  @media (max-width: 650px) {
     width: 80px;
     height: 65px;
   }
@@ -301,7 +309,6 @@ const RelatedBlogImage = styled.img`
     width: 70px;
     height: 60px;
   }
-
 `;
 
 const RelatedBlogInfo = styled.div`
@@ -331,6 +338,12 @@ function BlogHeader() {
   const searchResultsRef = useRef(null);
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
+  const handleLogoClick = () => {
+    navigate("/mainpage");
+  };
+  const handleBlogLogoClick = () => {
+    navigate("/blog");
+  };
 
   const srcBlog = isDarkMode
     ? "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/vblog-darkmode.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL3ZibG9nLWRhcmttb2RlLnBuZyIsImlhdCI6MTcyODE0MTExNSwiZXhwIjo0NDI4OTY5NjM1NTE1fQ.DJfCjO8CPxbxmTwr9wacpvI3XFBcmFvjO-jvWVQfp9k&t=2024-10-05T15%3A11%3A56.016Z"
@@ -383,8 +396,8 @@ function BlogHeader() {
   return (
     <StyledHeader>
       <HeaderContents>
-        <Logo src={srcLogo} isHovered={isHovered} isActive={isActive} />
-        <BlogLogo src={srcBlog} isHovered={isHovered} isActive={isActive} />
+        <Logo onClick={handleLogoClick} src={srcLogo} isHovered={isHovered} isActive={isActive} />
+        <BlogLogo onClick={handleBlogLogoClick} src={srcBlog} isHovered={isHovered} isActive={isActive} />
 
         <InputAndDarkToggleContainer>
           <BlogInputWrapper isActive={isActive}>

@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
+import { useNavigate } from 'react-router-dom'; 
 import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledBlogLogo = styled.div`
@@ -93,13 +94,17 @@ const Img = styled.img`
 
 function BlogLogo({ variant }) {
   const { isDarkMode } = useDarkMode();
+  const navigate = useNavigate();
+  const handleLogoClick = () => {
+    navigate('/blog');  // Logo'ya tıklandığında /mainpage'e yönlendiriyoruz
+  };
 
   const src = isDarkMode
     ? "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/vblog-darkmode.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL3ZibG9nLWRhcmttb2RlLnBuZyIsImlhdCI6MTcyODE0MTExNSwiZXhwIjo0NDI4OTY5NjM1NTE1fQ.DJfCjO8CPxbxmTwr9wacpvI3XFBcmFvjO-jvWVQfp9k&t=2024-10-05T15%3A11%3A56.016Z"
     : "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/vblog-lightmode.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL3ZibG9nLWxpZ2h0bW9kZS5wbmciLCJpYXQiOjE3MjgxNDExMzIsImV4cCI6MzU2NDk2OTYzNTUzMn0.o5K7iHOeB2PbLuq24iVqbukYV2MLEjOXbCfECMLj20w&t=2024-10-05T15%3A12%3A13.053Z";
 
   return (
-    <StyledBlogLogo variant={variant}>
+    <StyledBlogLogo  onClick={handleLogoClick} variant={variant}>
       <Img src={src} alt="Blog-Logo" />
     </StyledBlogLogo>
   );
