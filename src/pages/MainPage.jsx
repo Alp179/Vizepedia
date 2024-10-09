@@ -646,7 +646,7 @@ function MainPage() {
 
       <SlideShow />
 
-      <FaqSection>
+      <FaqSection id="faq-section">
         <FaqTitle>Sıkça Sorulan Sorular</FaqTitle>
         <FaqSmallTitle>Sizler için buradayız!</FaqSmallTitle>
 

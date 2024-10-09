@@ -110,7 +110,6 @@ const HakkimizdaveSSS = styled.button`
   margin-top: -4px;
   background: transparent;
   border: none;
-  width: 220px;
   color: var(--color-grey-600);
   @media (max-width: 600px) {
     font-size: 16px;
@@ -219,6 +218,15 @@ const MainPageHamburger = ({ setMenuOpen }) => {
     }
   }, [isOpen]);
 
+  const handleFaqClick = () => {
+    const faqSection = document.getElementById("faq-section");
+    if (faqSection) {
+      faqSection.scrollIntoView({ behavior: "smooth" });
+      setIsOpen(false); // Menü kapanacak
+      setMenuOpen(false); // Blur'u kaldır
+    }
+  };
+
   return (
     <>
       <MenuIcon ref={iconRef} isOpen={isOpen} onClick={toggleMenu}>
@@ -249,7 +257,7 @@ const MainPageHamburger = ({ setMenuOpen }) => {
           <Divider />
           <BlogLogo variant="mainpage3" />
           <HakkimizdaveSSS>Hakkımızda</HakkimizdaveSSS>
-          <HakkimizdaveSSS>SSS</HakkimizdaveSSS>
+          <HakkimizdaveSSS onClick={handleFaqClick}>SSS</HakkimizdaveSSS>
         </MenuContents>
       </MenuContainer>
     </>

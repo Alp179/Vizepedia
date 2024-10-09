@@ -4,7 +4,7 @@ import Logo from "./Logo";
 import Heading from "./Heading";
 import Button from "./Button";
 import DarkModeToggle from "./DarkModeToggle";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import MainPageHamburger from "./MainPageHamburger";
 
 const StyledMainPageHeader = styled.div`
@@ -61,7 +61,13 @@ const ButtonContainer = styled.div`
   }
 `;
 
-function MainPageHeader( {setMenuOpen}) {
+function MainPageHeader({ setMenuOpen }) {
+  const handleFaqClick = () => {
+    const faqSection = document.getElementById("faq-section");
+    if (faqSection) {
+      faqSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   return (
     <>
       <StyledMainPageHeader>
@@ -69,7 +75,7 @@ function MainPageHeader( {setMenuOpen}) {
           <LogoContainer>
             <Logo variant="mainpage" />
             <Heading as="h10">Hakkımızda</Heading>
-            <Heading as="h10">SSS</Heading>
+            <Heading as="h10" onClick={handleFaqClick}>SSS</Heading>
             <BlogLogo variant="mainpage2" />
           </LogoContainer>
           <ButtonContainer>
