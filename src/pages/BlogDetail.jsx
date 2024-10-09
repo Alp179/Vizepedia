@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBlogBySlug, fetchRelatedBlogs } from "../services/apiBlogs";
 import Spinner from "../ui/Spinner";
-import Logo from "../ui/Logo";
+import Footer from "./Footer";
 import styled, { keyframes } from "styled-components";
 
 // Fade-in animasyonu tanımlıyoruz
@@ -247,7 +247,6 @@ const SmallRelatedBlogCard = styled(Link)`
     height: 100px;
     margin-bottom: 20px;
   }
-
 `;
 
 const RelatedBlogImage = styled.img`
@@ -283,7 +282,7 @@ const RelatedBlogsScroll = styled.div`
     max-height: 500px;
   }
   @media (max-width: 750px) {
-    height: 400px!important;
+    height: 400px !important;
   }
 `;
 
@@ -362,106 +361,63 @@ function BlogDetail() {
 
   return (
     <div>
-    <BlogDetailContainer>
-      <BlogContentWrapper>
-        <CategoryAndDate>
-          <CategoryBadge>{blog.category}</CategoryBadge>
-          <BlogDate>
-            {new Date(blog.created_at).toLocaleDateString("tr-TR", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </BlogDate>
-        </CategoryAndDate>
-        <GlassContainer>
-          <BlogTitle>{blog.title}</BlogTitle>
-          {blog.cover_image && (
-            <BlogImage src={blog.cover_image} alt={blog.title} />
-          )}
-          <BlogContent dangerouslySetInnerHTML={{ __html: blog.content }} />
-        </GlassContainer>
-      </BlogContentWrapper>
+      <BlogDetailContainer>
+        <BlogContentWrapper>
+          <CategoryAndDate>
+            <CategoryBadge>{blog.category}</CategoryBadge>
+            <BlogDate>
+              {new Date(blog.created_at).toLocaleDateString("tr-TR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </BlogDate>
+          </CategoryAndDate>
+          <GlassContainer>
+            <BlogTitle>{blog.title}</BlogTitle>
+            {blog.cover_image && (
+              <BlogImage src={blog.cover_image} alt={blog.title} />
+            )}
+            <BlogContent dangerouslySetInnerHTML={{ __html: blog.content }} />
+          </GlassContainer>
+        </BlogContentWrapper>
 
-      <RelatedBlogsWrapper>
-        <RelatedBlogTitle>Bunları Da Beğenebilirsiniz</RelatedBlogTitle>
-        <RelatedBlogsScroll>
-          {relatedBlogs &&
-            relatedBlogs.length > 0 &&
-            relatedBlogs.map((relatedBlog) => (
-              <SmallRelatedBlogCard
-                to={`/blog/${relatedBlog.slug}`}
-                key={relatedBlog.id}
-              >
-                <RelatedBlogImage
-                  src={relatedBlog.cover_image}
-                  alt={relatedBlog.title}
-                />
-                <RelatedBlogInfo>
-                  <RelatedBlogDate>
-                    {new Date(relatedBlog.created_at).toLocaleDateString(
-                      "tr-TR",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      }
-                    )}
-                  </RelatedBlogDate>
-                  <RelatedBlogTitleSmall>
-                    {relatedBlog.title}
-                  </RelatedBlogTitleSmall>
-                </RelatedBlogInfo>
-              </SmallRelatedBlogCard>
-            ))}
-        </RelatedBlogsScroll>
-      </RelatedBlogsWrapper>
-    </BlogDetailContainer>
+        <RelatedBlogsWrapper>
+          <RelatedBlogTitle>Bunları Da Beğenebilirsiniz</RelatedBlogTitle>
+          <RelatedBlogsScroll>
+            {relatedBlogs &&
+              relatedBlogs.length > 0 &&
+              relatedBlogs.map((relatedBlog) => (
+                <SmallRelatedBlogCard
+                  to={`/blog/${relatedBlog.slug}`}
+                  key={relatedBlog.id}
+                >
+                  <RelatedBlogImage
+                    src={relatedBlog.cover_image}
+                    alt={relatedBlog.title}
+                  />
+                  <RelatedBlogInfo>
+                    <RelatedBlogDate>
+                      {new Date(relatedBlog.created_at).toLocaleDateString(
+                        "tr-TR",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }
+                      )}
+                    </RelatedBlogDate>
+                    <RelatedBlogTitleSmall>
+                      {relatedBlog.title}
+                    </RelatedBlogTitleSmall>
+                  </RelatedBlogInfo>
+                </SmallRelatedBlogCard>
+              ))}
+          </RelatedBlogsScroll>
+        </RelatedBlogsWrapper>
+      </BlogDetailContainer>
 
-    <div className="footer">
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "34px",
-          }}
-        >
-          <div className="footer-header">
-            Vize başvurusu yapmak hiç bu kadar kolay olmamıştı.
-          </div>
-          <div className="ceper">
-            <div className="footer-buton">Hemen başlayın</div>
-          </div>
-        </div>
-        <div className="footer-divider"></div>
-        <div
-          className="footer-wrap"
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            alignItems: "center",
-            maxWidth: "80%",
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}
-        >
-          <Logo variant="footer" />
-          <div style={{ display: "flex", gap: "30px" }}>
-            <div className="footer-links">Ana Sayfa</div>
-            <div className="footer-links">Hakkında</div>
-            <div className="footer-links">Blog</div>
-          </div>
-          <div style={{ display: "flex", gap: "25px" }}>
-            <img src="images/linkedin.png" />
-            <img src="images/Facebook.png" />
-            <img src="images/Instagram.png" />
-            <img src="images/Youtube.png" />
-          </div>
-        </div>
-      </div>
-    
+      <Footer />
     </div>
   );
 }
