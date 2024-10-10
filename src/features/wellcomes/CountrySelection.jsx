@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { useCountries } from "./useCountries";
 import Spinner from "../../ui/Spinner";
+import ReactDOM from 'react-dom';
 
 // Stil tanımlamaları
 const StyledSelectContainer = styled.div`
@@ -184,19 +185,19 @@ const DropdownButton = styled.button`
 `;
 
 const DropdownMenu = styled(motion.ul)`
-  position: absolute;
-  top: 100%;
-  transform: translateX(-50%);
+  position: absolute; /* Konumu sabitle */
+  top: 50%; /* Butonun hemen altında açılmasını sağlar */
+  left: 50%;
+  transform: translateX(-50%); /* Ortalar */
   border: 1px solid white;
   background: var(--color-grey-51);
   border-radius: 10px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  z-index: 9999; /* Dropdown menüyü üstte göstermek için z-index değerini artırdık */
+  z-index: 9999; /* Üstte görünmesini sağlar */
   width: 170px;
   max-height: 300px; /* Maksimum yükseklik */
   overflow-y: auto; /* İçerik fazla olursa kaydırma çubuğu ekler */
-
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -262,7 +263,7 @@ const itemVariants = {
   },
 };
 
-function CountrySelection({ selectedCountry, onCountryChange }) {
+const CountrySelection = ({ selectedCountry, onCountryChange }) => {
   const { isLoading, schCounData, mainCounData } = useCountries();
   const [flags, setFlags] = useState({});
   const [schengenFlag, setSchengenFlag] = useState(
@@ -270,9 +271,11 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
   );
   const [schengenSelected, setSchengenSelected] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [hasOverflow, setHasOverflow] = useState(false); // Yeni state
-  const containerRef = useRef(null); // Yeni ref
-  const dropdownRef = useRef(null); // Dropdown ref'i ekledik
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const containerRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const dropdownButtonRef = useRef(null); // Button için ref ekledik
 
   useEffect(() => {
     if (!schCounData || !mainCounData) return;
@@ -311,11 +314,23 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
   };
 
   const toggleDropdown = () => {
+    if (!dropdownOpen && dropdownButtonRef.current) {
+      const buttonRect = dropdownButtonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: buttonRect.bottom + window.scrollY,
+        left: buttonRect.left + window.scrollX,
+        width: buttonRect.width,
+      });
+    }
     setDropdownOpen((prev) => !prev);
   };
 
   const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target) &&
+      !dropdownButtonRef.current.contains(event.target)
+    ) {
       setDropdownOpen(false);
     }
   };
@@ -348,7 +363,7 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
 
   return (
     <Container ref={containerRef} hasOverflow={hasOverflow}>
-      <DropdownContainer ref={dropdownRef}>
+      <DropdownContainer ref={dropdownButtonRef}>
         <StyledSelectContainer
           isSelected={schengenSelected}
           onClick={toggleDropdown}
@@ -368,24 +383,33 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
               </motion.span>
             </div>
           </DropdownButton>
-          {dropdownOpen && (
-            <DropdownMenu
-              initial="closed"
-              animate="open"
-              exit="closed"
-              variants={menuVariants}
-            >
-              {schCounData.map((country) => (
-                <DropdownItem
-                  key={country.id}
-                  variants={itemVariants}
-                  onClick={() => handleChange(country.schCountryNames)}
-                >
-                  {country.schCountryNames}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          )}
+          {dropdownOpen &&
+            ReactDOM.createPortal(
+              <DropdownMenu
+                ref={dropdownRef}
+                initial="closed"
+                animate="open"
+                exit="closed"
+                variants={menuVariants}
+                style={{
+                  position: "absolute",
+                  top: `calc(${dropdownPosition.top}px - 10px)`,
+                  left: `${dropdownPosition.left}px`,
+                  width: `${dropdownPosition.width}px`,
+                }}
+              >
+                {schCounData.map((country) => (
+                  <DropdownItem
+                    key={country.id}
+                    variants={itemVariants}
+                    onClick={() => handleChange(country.schCountryNames)}
+                  >
+                    {country.schCountryNames}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>,
+              document.body
+            )}
         </StyledSelectContainer>
       </DropdownContainer>
 
@@ -412,7 +436,8 @@ function CountrySelection({ selectedCountry, onCountryChange }) {
       })}
     </Container>
   );
-}
+};
+
 
 // Ülke adlarının bayrak kodlarına dönüştürülmesi
 const countryToCode = {

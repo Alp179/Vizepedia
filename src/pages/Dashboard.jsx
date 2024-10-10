@@ -16,7 +16,7 @@ import "flag-icons/css/flag-icons.min.css";
 import supabase from "../services/supabase";
 import Button from "../ui/Button";
 import SignupForm from "../features/authentication/SignupForm";
-import Modal from "../ui/Modal";
+import ModalSignup from "../ui/ModalSignup";
 
 const FlagContainer = styled.div`
   position: fixed;
@@ -491,17 +491,17 @@ const Dashboard = () => {
             marginTop: "20px",
           }}
         >
-          <Modal>
-            <Modal.Open opens="signUpForm">
+          <ModalSignup>
+            <ModalSignup.Open opens="signUpForm">
               <Button size="large" variation="primary">
                 Üye Olarak Devam Et
               </Button>
-            </Modal.Open>
-            <Modal.Window name="signUpForm">
+            </ModalSignup.Open>
+            <ModalSignup.Window name="signUpForm">
               {/* Üye olduktan sonra verileri Supabase'den çekebilmek için, kullanıcıyı signUpForm ile yönlendirme işlemi */}
               <SignupForm onSuccess={handleUserConversion} />
-            </Modal.Window>
-          </Modal>
+            </ModalSignup.Window>
+          </ModalSignup>
         </div>
       )}
     </div>
