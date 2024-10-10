@@ -263,9 +263,8 @@ const ContinueReading = styled(Link)`
 
 const ArrowButton = styled.button`
   position: absolute;
-  margin: -10px;
-  top: 41%; /* Butonu büyük kartların ortasına kaydırıyoruz */
-  transform: translateY(-50%);
+  top: 50%; /* Butonu her zaman ortada konumlandırıyoruz */
+  transform: translateY(-50%); /* Butonu tam ortalamak için kullanıyoruz */
   background-color: var(--color-grey-905);
   color: var(--color-grey-910);
   border: none;
@@ -278,6 +277,7 @@ const ArrowButton = styled.button`
   align-items: center;
   justify-content: center;
   transition: background-color 0.3s ease;
+
   @media (max-width: 610px) {
     margin: 0;
   }
@@ -295,6 +295,7 @@ const ArrowButton = styled.button`
     right: -20px;
   }
 `;
+
 
 const LoadMoreButton = styled.button`
   background-color: #007bff;

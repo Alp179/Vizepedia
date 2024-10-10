@@ -12,14 +12,14 @@ const StyledModal = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: var(--color-grey-51);
+  background-color: white;
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
   display: flex
   flex-direction: column;
-  width: 500px;
-  height: 650px;
+  max-width: 500px;
+  width: 100%;
   justify-content: space-between;
   transition: all 0.5s;
 `;
@@ -47,6 +47,7 @@ const Button = styled.button`
   position: absolute;
   top: 1.2rem;
   right: 1.9rem;
+  z-index: 9999;
 
   &:hover {
     background-color: var(--color-grey-100);
