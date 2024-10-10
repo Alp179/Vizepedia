@@ -263,7 +263,7 @@ const ContinueReading = styled(Link)`
 
 const ArrowButton = styled.button`
   position: absolute;
-  top: 50%; /* Butonu her zaman ortada konumlandırıyoruz */
+  top: 55%; /* Butonu her zaman ortada konumlandırıyoruz */
   transform: translateY(-50%); /* Butonu tam ortalamak için kullanıyoruz */
   background-color: var(--color-grey-905);
   color: var(--color-grey-910);
