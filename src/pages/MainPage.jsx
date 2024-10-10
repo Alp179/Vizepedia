@@ -64,8 +64,15 @@ const WhyCardsContainer = styled.div`
   }
 `;
 
+const BackgroundContainer = styled.div`
+margin-left: auto;
+margin-right: auto;
+`;
+
 const WhyCards = styled.div`
   background: var(--color-grey-905);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   border-radius: 20px;
   width: 265px;
   height: 565px;
@@ -377,6 +384,38 @@ const FaqSmallTitle = styled.p`
   }
 `;
 
+const BackgroundContainer2 = styled.div`
+  position: absolute;
+  display: flex;
+  height: 1100px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const Background1 = styled.div`
+  margin-top: -620px;
+  width: 50%;
+  height: 100%;
+  background: conic-gradient(
+    from 90deg,
+    rgba(0, 68, 102, 0.4) 0%,
+    transparent 55%
+  );
+`;
+
+const Background2 = styled.div`
+  margin-top: -620px;
+  background: conic-gradient(
+    from 90deg,
+    rgba(0, 68, 102, 0.4) 0%,
+    transparent 55%
+  );
+  transform: scaleX(-1);
+  width: 50%;
+  height: 100%;
+`;
+
 function MainPage() {
   return (
     <>
@@ -393,59 +432,65 @@ function MainPage() {
           alt="hero-image"
         />
       </BigTexts>
-      <Why>Neden Vizepedia</Why>
-      <WhyCardsContainer>
-        <WhyCards>
-          <WhyCardsHeading>Tamamen Ücretsiz</WhyCardsHeading>
-          <WhyCardsContext>
-            Vizepedia, size ücretsiz bir hizmet sunarak, vize başvuru
-            sürecindeki danışmanlık giderlerinden tasarruf etmenize yardımcı
-            olur ve seyahat bütçenizi optimize eder.
-          </WhyCardsContext>
-          <WhyCardsImagesSavings
-            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-savings.png?t=2024-10-01T13%3A58%3A51.889Z"
-            alt="bonbon-savings"
-          />
-        </WhyCards>
-        <WhyCards>
-          <WhyCardsHeading>Zaman Tasarrufu</WhyCardsHeading>
-          <WhyCardsContext>
-            Vizepedia, vize başvuru sürecine ilişkin bilgilere kolay ve hızlı
-            bir şekilde erişimenizi sağlayarak, süreç yönetimini daha verimli
-            hale getirir. Böylece, süreci daha rahat ve keyifli bir deneyime
-            dönüştürebilirsiniz.
-          </WhyCardsContext>
-          <WhyCardsImagesWatch
-            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-watch.png?t=2024-10-01T13%3A59%3A14.116Z"
-            alt="bonbon-watch"
-          />
-        </WhyCards>
-        <WhyCards>
-          <WhyCardsHeading>Ferah Arayüz</WhyCardsHeading>
-          <WhyCardsContext>
-            Vizepedia, kullanıcıların ihtiyaçlarına göre tasarlanmış kullanıcı
-            dostu bir arayüz sunarak, vize başvuru süreci boyunca rahat ve
-            sorunsuz bir deneyim yaşamanıza yardımcı olur.
-          </WhyCardsContext>
-          <WhyCardsImagesHappy
-            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-happy.png?t=2024-10-01T13%3A59%3A27.902Z"
-            alt="bonbon-happy"
-          />
-        </WhyCards>
-        <WhyCards>
-          <WhyCardsHeading>Güncel ve Doğru</WhyCardsHeading>
-          <WhyCardsContext>
-            Vizepedia, vize başvuru süreçlerindeki değişiklikleri ve
-            güncellemeleri yakından takip ederek, size her zaman en güncel ve
-            doğru bilgileri sunar. Bu sayede, güncel bilgilere güvenerek
-            başvurularınızı gerçekleştirin.
-          </WhyCardsContext>
-          <WhyCardsImagesPhone
-            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-phone.png?t=2024-10-01T14%3A00%3A19.108Z"
-            alt="bonbon-phone"
-          />
-        </WhyCards>
-      </WhyCardsContainer>
+      <BackgroundContainer>
+        <BackgroundContainer2>
+          <Background1 />
+          <Background2 />
+        </BackgroundContainer2>
+        <Why>Neden Vizepedia</Why>
+        <WhyCardsContainer>
+          <WhyCards>
+            <WhyCardsHeading>Tamamen Ücretsiz</WhyCardsHeading>
+            <WhyCardsContext>
+              Vizepedia, size ücretsiz bir hizmet sunarak, vize başvuru
+              sürecindeki danışmanlık giderlerinden tasarruf etmenize yardımcı
+              olur ve seyahat bütçenizi optimize eder.
+            </WhyCardsContext>
+            <WhyCardsImagesSavings
+              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-savings.png?t=2024-10-01T13%3A58%3A51.889Z"
+              alt="bonbon-savings"
+            />
+          </WhyCards>
+          <WhyCards>
+            <WhyCardsHeading>Zaman Tasarrufu</WhyCardsHeading>
+            <WhyCardsContext>
+              Vizepedia, vize başvuru sürecine ilişkin bilgilere kolay ve hızlı
+              bir şekilde erişimenizi sağlayarak, süreç yönetimini daha verimli
+              hale getirir. Böylece, süreci daha rahat ve keyifli bir deneyime
+              dönüştürebilirsiniz.
+            </WhyCardsContext>
+            <WhyCardsImagesWatch
+              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-watch.png?t=2024-10-01T13%3A59%3A14.116Z"
+              alt="bonbon-watch"
+            />
+          </WhyCards>
+          <WhyCards>
+            <WhyCardsHeading>Ferah Arayüz</WhyCardsHeading>
+            <WhyCardsContext>
+              Vizepedia, kullanıcıların ihtiyaçlarına göre tasarlanmış kullanıcı
+              dostu bir arayüz sunarak, vize başvuru süreci boyunca rahat ve
+              sorunsuz bir deneyim yaşamanıza yardımcı olur.
+            </WhyCardsContext>
+            <WhyCardsImagesHappy
+              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-happy.png?t=2024-10-01T13%3A59%3A27.902Z"
+              alt="bonbon-happy"
+            />
+          </WhyCards>
+          <WhyCards>
+            <WhyCardsHeading>Güncel ve Doğru</WhyCardsHeading>
+            <WhyCardsContext>
+              Vizepedia, vize başvuru süreçlerindeki değişiklikleri ve
+              güncellemeleri yakından takip ederek, size her zaman en güncel ve
+              doğru bilgileri sunar. Bu sayede, güncel bilgilere güvenerek
+              başvurularınızı gerçekleştirin.
+            </WhyCardsContext>
+            <WhyCardsImagesPhone
+              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-phone.png?t=2024-10-01T14%3A00%3A19.108Z"
+              alt="bonbon-phone"
+            />
+          </WhyCards>
+        </WhyCardsContainer>
+      </BackgroundContainer>
       <WhyCardsContainer2>
         <WhyCards2>
           <WhyCards2Inner>
@@ -676,7 +721,7 @@ function MainPage() {
 
       <MailerLiteForm />
 
-     <Footer />
+      <Footer />
     </>
   );
 }
