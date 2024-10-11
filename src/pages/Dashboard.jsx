@@ -494,7 +494,7 @@ const Dashboard = () => {
           <ModalSignup>
             <ModalSignup.Open opens="signUpForm">
               <Button size="large" variation="primary">
-                Üye Olarak Devam Et
+                Üye Olarak Devamm Et
               </Button>
             </ModalSignup.Open>
             <ModalSignup.Window name="signUpForm">
