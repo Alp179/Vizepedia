@@ -40,7 +40,7 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-902: #004466;
   --color-grey-903: #2ecc71;
   --color-grey-904: #004466;
-  --color-grey-905: #00ffa2;
+  --color-grey-905: #ddfbef;
   --color-grey-906: linear-gradient(to bottom right, rgba(255, 255, 255, 0.53) 70%, #004466);
   --color-grey-907: radial-gradient(circle at 0% 20%, rgba(0, 255, 162, 0.5), transparent 20%),
   radial-gradient(ellipse at 15% 40%, rgba(248, 24, 225, 0.6), transparent 50%),
@@ -64,6 +64,16 @@ const GlobalStyles = createGlobalStyle`/*
 radial-gradient(ellipse at 50% 85%, rgba(0, 68, 102, 0.6), transparent 40%),
 radial-gradient(ellipse at 90% 85%, rgba(135, 249, 205, 0.6), transparent 30%);
 --color-grey-916: #32faf5;
+--color-grey-917:conic-gradient(
+  from 90deg,
+  rgba(0, 68, 102, 0.4) 0%,
+  transparent 55%
+);
+--color-grey-918:conic-gradient(
+  from 90deg,
+  rgba(0, 68, 102, 0.4) 0%,
+  transparent 55%
+);
 --color-grey-55: rgba(255, 255, 255, 0.5);
   --stroke-ham-1: #000;
 
@@ -117,7 +127,7 @@ radial-gradient(ellipse at 90% 85%, rgba(135, 249, 205, 0.6), transparent 30%);
 --color-grey-902: transparent;
 --color-grey-903: rgba(255, 255, 255, 0.2);
 --color-grey-904: white;
---color-grey-905: rgba(255, 255, 255, 0.2);
+--color-grey-905: rgba(64, 70, 82, 1);
 --color-grey-906: none;
 --color-grey-907: radial-gradient(ellipse at 60% 50%, rgba(36, 0, 255, 0.5), transparent 50%),
 radial-gradient(ellipse at 80% 40%, rgba(0, 255, 162, 0.3), transparent 50%),
@@ -135,6 +145,16 @@ radial-gradient(circle at 80% 80%, rgba(124, 103, 255, 0.3), transparent 30%);
 --color-grey-914: #111;
 --color-grey-915: transparent;
 --color-grey-916: white;
+--color-grey-917: conic-gradient(
+  from 90deg,
+  rgba(255, 255, 255, 0.6) 0%,
+  transparent 55%
+);
+--color-grey-918: conic-gradient(
+  from 90deg,
+  rgba(255, 255, 255, 0.6) 0%,
+  transparent 55%
+);
 --color-grey-55: #091522;
 --stroke-ham-1: #999;
 

@@ -65,16 +65,19 @@ const WhyCardsContainer = styled.div`
 `;
 
 const BackgroundContainer = styled.div`
-margin-left: auto;
-margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 const WhyCards = styled.div`
+  mix-blend-mode: normal;
   background: var(--color-grey-905);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-radius: 20px;
   width: 265px;
+  box-shadow: 0px 26px 35px 6px rgba(0, 0, 0, 0.2);
+
   height: 565px;
   display: flex;
   flex-direction: column;
@@ -208,6 +211,7 @@ const WhyCardsContainer2 = styled.div`
 
 const WhyCards2 = styled.div`
   background: var(--color-grey-905);
+  box-shadow: 0px 26px 35px 6px rgba(0, 0, 0, 0.2);
   border-radius: 20px;
   height: 265px;
   width: 565px;
@@ -397,20 +401,12 @@ const Background1 = styled.div`
   margin-top: -620px;
   width: 50%;
   height: 100%;
-  background: conic-gradient(
-    from 90deg,
-    rgba(0, 68, 102, 0.4) 0%,
-    transparent 55%
-  );
+  background: var(--color-grey-917);
 `;
 
 const Background2 = styled.div`
   margin-top: -620px;
-  background: conic-gradient(
-    from 90deg,
-    rgba(0, 68, 102, 0.4) 0%,
-    transparent 55%
-  );
+  background: var(--color-grey-918);
   transform: scaleX(-1);
   width: 50%;
   height: 100%;

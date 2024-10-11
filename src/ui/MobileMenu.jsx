@@ -15,7 +15,8 @@ import { fetchDocumentDetails } from "../utils/documentFetch";
 import UserAvatar from "../features/authentication/UserAvatar";
 import AllDocs from "./AllDocs";
 import DarkModeToggle from "./DarkModeToggle";
-
+import Logo from "./Logo";
+import BlogLogo from "./BlogLogo";
 import toast from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 
@@ -93,7 +94,8 @@ const MenuContainer = styled.div`
   }
   height: 100vh;
   background: var(--color-grey-55);
-  border-radius: 16px;
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(20px);
@@ -209,6 +211,22 @@ const CloseButton = styled.button`
   font-size: 36px;
   cursor: pointer;
 `;
+
+const Divider = styled.div`
+  height: 1px;
+  width: 95%;
+  background: var(--color-grey-600);
+  margin: 8px auto 8px auto;
+`;
+
+const LogoContainer = styled.div`
+margin-top: 12px;
+margin-left: 12px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+gap: 16px;
+`
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -480,6 +498,11 @@ const MobileMenu = () => {
             <HiPlus /> Yeni
           </StyledNavLink>
           <StyledNavLink onClick={handleLogout}>Oturumu Kapat</StyledNavLink>
+          <Divider />
+          <LogoContainer>
+            <Logo variant="mobilemenu" />
+            <BlogLogo variant="mobilemenu" />
+          </LogoContainer>
         </MenuContent>
       </MenuContainer>
       {isDocsOpen && (

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledBlogLogo = styled.div`
@@ -48,7 +48,6 @@ const StyledBlogLogo = styled.div`
       @media (max-width: 870px) {
         width: 100px;
       }
-      
     `}
 
         ${(props) =>
@@ -70,17 +69,30 @@ const StyledBlogLogo = styled.div`
     `}
 
     ${(props) =>
-      props.variant === "mainpage3" &&
-      css`
-        width: 140px;
-        margin-left: auto;
-        margin-right: auto;
-        height: auto;
-        @media (max-width: 600px) {
-          width: 120px;
-        }
-        
-      `}
+    props.variant === "mainpage3" &&
+    css`
+      width: 140px;
+      margin-left: auto;
+      margin-right: auto;
+      height: auto;
+      @media (max-width: 600px) {
+        width: 120px;
+      }
+    `}
+      ${(props) =>
+    props.variant === "dashdropdown" &&
+    css`
+      width: 105px;
+      margin: 0 auto 4px auto;
+      height: auto;
+      flex-shrink: 0;
+    `}
+    ${(props) =>
+    props.variant === "mobilemenu" &&
+    css`
+      width: 130px;
+      height: auto;
+    `}
 `;
 
 const Img = styled.img`
@@ -96,7 +108,7 @@ function BlogLogo({ variant }) {
   const { isDarkMode } = useDarkMode();
   const navigate = useNavigate();
   const handleLogoClick = () => {
-    navigate('/blog');  // Logo'ya tıklandığında /mainpage'e yönlendiriyoruz
+    navigate("/blog"); // Logo'ya tıklandığında /mainpage'e yönlendiriyoruz
   };
 
   const src = isDarkMode
@@ -104,7 +116,7 @@ function BlogLogo({ variant }) {
     : "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/vblog-lightmode.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL3ZibG9nLWxpZ2h0bW9kZS5wbmciLCJpYXQiOjE3MjgxNDExMzIsImV4cCI6MzU2NDk2OTYzNTUzMn0.o5K7iHOeB2PbLuq24iVqbukYV2MLEjOXbCfECMLj20w&t=2024-10-05T15%3A12%3A13.053Z";
 
   return (
-    <StyledBlogLogo  onClick={handleLogoClick} variant={variant}>
+    <StyledBlogLogo onClick={handleLogoClick} variant={variant}>
       <Img src={src} alt="Blog-Logo" />
     </StyledBlogLogo>
   );

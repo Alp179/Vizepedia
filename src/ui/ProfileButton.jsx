@@ -7,6 +7,8 @@ import Menus from "./Menus";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../features/authentication/useLogout";
 import toast from "react-hot-toast"; // React Hot Toast import
+import Logo from "./Logo";
+import BlogLogo from "./BlogLogo";
 
 const StyledProfileButton = styled.button`
   font-size: 1.6rem;
@@ -22,6 +24,13 @@ const StyledProfileButton = styled.button`
   }
 `;
 
+const Divider = styled.div`
+  height: 1px;
+  width: 80%;
+  margin: 12px auto 12px auto;
+  background: var(--color-grey-600);
+  `;
+
 function ProfileButton({ cabin }) {
   const navigate = useNavigate();
   const { logout, isLoading } = useLogout();
@@ -35,7 +44,7 @@ function ProfileButton({ cabin }) {
               Oturumu kapatmak istediğinizden emin misiniz?
             </p>
             <br />
-            <div style={{display:"flex", flexWrap: "wrap", gap: "4px"}}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
               <button
                 onClick={() => {
                   toast.dismiss(t.id);
@@ -43,7 +52,7 @@ function ProfileButton({ cabin }) {
                 }}
                 style={{
                   display: "flex",
-                  
+
                   borderRadius: "8px",
                   marginRight: "8px",
                   color: "white",
@@ -97,6 +106,10 @@ function ProfileButton({ cabin }) {
         >
           Profil Ayarları
         </Menus.Button>
+        <Divider />
+        <Logo variant="dashdropdown"/>
+        <BlogLogo variant="dashdropdown"/>
+        
       </Menus.List>
     </Menus>
   );

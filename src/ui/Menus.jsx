@@ -46,11 +46,23 @@ const StyledList = styled.ul`
   -webkit-backdrop-filter: blur(5px);
   border: 2px solid rgba(255, 255, 255, 0.3);
 
-  right: ${(props) => props.position.x}px;
+  @media (max-width: 710px) {
+    display: none;
+  }
+
+  right: calc(${(props) => props.position.x}px - 30px);
   top: ${(props) => props.position.y}px;
+
+  /* Scale down animasyonu */
+  transform: scaleY(${(props) => (props.isOpen ? 1 : 0)});
+  transform-origin: top;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: ${(props) => (props.isOpen ? 1 : 0)};
+  visibility: ${(props) => (props.isOpen ? "visible" : "hidden")};
 `;
 
 const StyledButton = styled.button`
+  mix-blend-mode: difference;
   z-index: 2990;
   width: 100%;
   text-align: left;
@@ -156,11 +168,10 @@ function Toggle({ id, onProfile }) {
 function List({ id, children }) {
   const { openId, position, close } = useContext(MenusContext);
   const ref = useOutsideClick(close, false);
-
-  if (openId !== id) return null;
+  const isOpen = openId === id; // Menünün açık olup olmadığını kontrol ediyoruz.
 
   return createPortal(
-    <StyledList position={position} ref={ref}>
+    <StyledList position={position} ref={ref} isOpen={isOpen}>
       {children}
     </StyledList>,
     document.body
