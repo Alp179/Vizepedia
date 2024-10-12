@@ -25,17 +25,17 @@ const StyledModal = styled.div`
 `;
 
 const Overlay = styled.div`
-  position: fixed;
-  z-index: 3000;
+  position: fixed; /* Sayfanın tamamını kapsaması için fixed yapıyoruz */
+  z-index: 9999; /* En üstte görünecek şekilde ayarlanıyor */
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--backdrop-color);
-  backdrop-filter: blur(4px);
-  z-index: 3000;
+  width: 100vw; /* Tüm genişliği kapla */
+  height: 100vh; /* Tüm yüksekliği kapla */
+  background-color: var(--backdrop-color); /* Arka plan rengini ayarla */
+  backdrop-filter: blur(4px); /* Tüm arka planı blur yap */
   transition: all 0.5s;
 `;
+
 
 const Button = styled.button`
   background: none;
@@ -70,6 +70,7 @@ function ModalSignup({ children }) {
 
   const close = () => setOpenName("");
   const open = setOpenName;
+
   return (
     <ModalContext.Provider value={{ openName, close, open }}>
       {children}
@@ -88,7 +89,8 @@ function Window({ children, name }) {
   const ref = useOutsideClick(close);
   if (name !== openName) return null;
 
-  return (
+  // Using createPortal to render the modal at the root level
+  return createPortal(
     <Overlay>
       <StyledModal ref={ref}>
         <Button onClick={close}>
@@ -96,7 +98,8 @@ function Window({ children, name }) {
         </Button>
         <div>{cloneElement(children, { onCloseModal: close })}</div>
       </StyledModal>
-    </Overlay>
+    </Overlay>,
+    document.getElementById('modal-root') // Make sure there's a div with this id in your HTML
   );
 }
 
