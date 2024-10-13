@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import MobileMenu from "./MobileMenu"; // Yeni hamburger menü komponenti
 import styled from "styled-components";
+import DashboardMobileHeader from "./DashboardMobileHeader";
 
 const StyledAppLayout = styled.div`
   overflow: clip;
@@ -21,7 +21,8 @@ const StyledAppLayout = styled.div`
     grid-template-columns: 17rem 1fr;
   }
   @media (max-width: 710px) {
-    grid-template-columns: 0 1fr;
+    grid-template-columns: none;
+    grid-template-rows: none;
   }
 `;
 
@@ -55,17 +56,20 @@ const Main = styled.main`
     &::-webkit-scrollbar {
       width: 0;
     }
-  
+
     &::-webkit-scrollbar-track {
       background: none;
     }
-  
+
     &::-webkit-scrollbar-thumb {
       background-color: var(--color-brand-600);
       border-radius: 10px;
       border: 3px solid var(--color-grey-2);
     }
-
+  }
+  @media (max-width: 520px) {
+    width: 100vw;
+    padding: 20px 0 20px 0;
   }
 `;
 
@@ -77,12 +81,11 @@ const Container = styled.div`
   gap: 3.2rem;
   @media (max-width: 710px) {
     height: 100vh;
+    margin-left: auto;
+    margin-right: auto;
   }
-`;
-
-const MobileMenuContainer = styled.div`
-  @media (min-width: 710px) {
-    display: none;
+  @media (max-width: 520px) {
+    width: 100vw;
   }
 `;
 
@@ -91,9 +94,7 @@ function AppLayout() {
     <StyledAppLayout>
       <Header />
       <Sidebar />
-      <MobileMenuContainer>
-        <MobileMenu /> {/* Hamburger menü komponenti */}
-      </MobileMenuContainer>
+      <DashboardMobileHeader />
       <Main>
         <Container>
           <Outlet />

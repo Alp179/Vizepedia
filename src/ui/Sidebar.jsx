@@ -1,6 +1,7 @@
 import { styled } from "styled-components";
 import Logo from "./Logo";
 import MainNav from "./MainNav";
+import BlogLogo from "./BlogLogo";
 // import Uploader from "../data/Uploader";
 
 const StyledSidebar = styled.aside`
@@ -13,8 +14,16 @@ const StyledSidebar = styled.aside`
   flex-direction: column;
   gap: 3.2rem;
   @media (max-width: 710px) {
+    display: none;
     z-index: -1;
   }
+`;
+
+const Divider = styled.div`
+  height: 1px;
+  width: 80%;
+  margin: 20px auto 10px auto;
+  background: var(--color-grey-600);
 `;
 
 function Sidebar() {
@@ -23,6 +32,8 @@ function Sidebar() {
       <Logo variant="dash" />
       <MainNav />
       {/* <Uploader /> */}
+      <Divider />
+      <BlogLogo variant="sidebar"/>
     </StyledSidebar>
   );
 }

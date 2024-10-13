@@ -15,15 +15,12 @@ const Heading = styled.h1`
         margin-left: -100px;
       }
       @media (max-width: 710px) {
+        margin-left: 0;
         mix-blend-mode: difference;
-        margin-left: -100px;
         width: 250px;
         @media (max-height: 830px) {
           font-size: 2.6rem;
         }
-      }
-      @media (max-width: 360px) {
-        margin-left: -120px;
       }
     `}
 

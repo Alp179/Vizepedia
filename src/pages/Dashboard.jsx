@@ -150,15 +150,15 @@ const CreatedAtContainer = styled.div`
     margin-left: -100px;
   }
   @media (max-width: 710px) {
+    margin-left: 0;
+    margin-top: 40px;
     mix-blend-mode: difference;
     width: 200px;
     @media (max-height: 830px) {
       font-size: 1.3rem;
     }
   }
-  @media (max-width: 360px) {
-    margin-left: -120px;
-  }
+ 
 `;
 
 const CustomRow = styled(Row)`
@@ -173,6 +173,15 @@ const CustomRow = styled(Row)`
       margin-bottom: -30px;
       gap: 8px;
     }
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  @media (max-width: 520px) {
+    width: 80%;
+  }
+  @media (max-width: 350px) {
+    width: 95%;
   }
 `;
 
@@ -201,16 +210,15 @@ const InfoContainer = styled.div`
     width: 400px;
   }
   @media (max-width: 710px) {
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 50px;
   }
-  @media (max-width: 500px) {
-    width: 300px;
+  @media (max-width: 520px) {
+    width: 80%;
   }
-  @media (max-width: 389px) {
-    width: 250px;
-  }
-  @media (max-width: 360px) {
-    margin-left: -130px;
+  @media (max-width: 350px) {
+    width: 95%;
   }
 `;
 
@@ -243,6 +251,20 @@ const InfoDetails = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+`;
+
+const DashboardContainer = styled.div`
+  position: relative;
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  @media (max-width: 710px) {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
 `;
 
 const Dashboard = () => {
@@ -406,16 +428,7 @@ const Dashboard = () => {
   const stepLabels = documents?.map((doc) => doc.docName) || [];
 
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        gap: "50px",
-      }}
-    >
+    <DashboardContainer>
       {countryCode && (
         <BlurredFlagBackground
           style={{
@@ -445,7 +458,7 @@ const Dashboard = () => {
           <span className={`fi fi-${countryCode}`}></span>
         </FlagContainer>
       )}
-      <div style={{marginBottom: "100px"}}>
+      <div style={{ marginBottom: "100px" }}>
         {isFirmLocationSuccess && firmLocation && (
           <InfoContainer>
             <MapContainer
@@ -504,7 +517,7 @@ const Dashboard = () => {
           </ModalSignup>
         </div>
       )}
-    </div>
+    </DashboardContainer>
   );
 };
 

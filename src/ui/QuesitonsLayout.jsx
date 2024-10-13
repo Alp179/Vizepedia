@@ -1,6 +1,9 @@
 import styled, { keyframes } from "styled-components";
 import { Outlet, useLocation } from "react-router-dom";
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 import BackButton from "./BackButton";
 import ProgressBar from "@ramonak/react-progress-bar";
 
@@ -97,7 +100,10 @@ function QuestionsLayout() {
     <BackgroundColor>
       <LoginLayout>
         <BackButton>Geri Dön</BackButton>
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         <div className="question-progressAndContent-container">
           <ProgressBarContainer>
             <ProgressBarWrapper>

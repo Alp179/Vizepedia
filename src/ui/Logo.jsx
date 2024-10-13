@@ -119,11 +119,21 @@ const StyledLogo = styled.div`
       flex-shrink: 0;
     `}
     ${(props) =>
-      props.variant === "mobilemenu" &&
-      css`
-        width: 120px;
-        height: auto;
-      `}
+    props.variant === "mobilemenu" &&
+    css`
+      width: 120px;
+      height: auto;
+    `}
+      ${(props) =>
+    props.variant === "dashmobile" &&
+    css`
+      flex-shrink: 0;
+      width: 120px;
+      height: auto;
+      @media (max-width: 550px) {
+        width: 100px;
+      }
+    `}
 `;
 
 const Img = styled.img`

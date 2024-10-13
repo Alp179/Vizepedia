@@ -93,6 +93,27 @@ const StyledBlogLogo = styled.div`
       width: 130px;
       height: auto;
     `}
+    ${(props) =>
+    props.variant === "sidebar" &&
+    css`
+      margin-left: auto;
+      margin-right: auto;
+      width: 80%;
+      height: auto;
+    `}
+    ${(props) =>
+      props.variant === "dashmobile" &&
+      css`
+        width: 130px;
+        height: auto;
+        flex-shrink: 0;
+        @media (max-width: 550px) {
+          width: 110px;
+        }
+        @media (max-width: 450px) {
+          width: 85px;
+        }
+      `}
 `;
 
 const Img = styled.img`

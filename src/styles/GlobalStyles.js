@@ -74,6 +74,7 @@ radial-gradient(ellipse at 90% 85%, rgba(135, 249, 205, 0.6), transparent 30%);
   rgba(0, 68, 102, 0.4) 0%,
   transparent 55%
 );
+--color-grey-919: #ddfbef;
 --color-grey-55: rgba(255, 255, 255, 0.5);
   --stroke-ham-1: #000;
 
@@ -103,7 +104,7 @@ radial-gradient(ellipse at 90% 85%, rgba(135, 249, 205, 0.6), transparent 30%);
 
   &.dark-mode{
     --color-box-0: none;
-    --color-box-1: none;
+    --color-box-1: 42px 10px 140px -7px rgba(64, 70, 82, 1);
     --color-grey-0: #18212f;
 --color-grey-50: #111827;
 --color-grey-51: #414652;
@@ -155,6 +156,7 @@ radial-gradient(circle at 80% 80%, rgba(124, 103, 255, 0.3), transparent 30%);
   rgba(255, 255, 255, 0.6) 0%,
   transparent 55%
 );
+--color-grey-919: rgba(64, 70, 82, 1);
 --color-grey-55: #091522;
 --stroke-ham-1: #999;
 

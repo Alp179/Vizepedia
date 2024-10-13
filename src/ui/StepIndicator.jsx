@@ -29,15 +29,20 @@ const StepAndContinueContainer = styled.div`
     max-width: 500px !important;
   }
   @media (max-width: 710px) {
+    margin-left: auto;
+    margin-right: auto;
     gap: 8px;
     flex-flow: column;
-    width: 250px;
+    width: 400px;
     justify-content: flex-start;
     align-item: flex-start;
     padding-bottom: 16px;
   }
-  @media (max-width: 360px) {
-    margin-left: -130px;
+  @media (max-width: 520px) {
+    width: 80%;
+  }
+  @media (max-width: 350px) {
+    width: 95%;
   }
 `;
 
@@ -140,7 +145,7 @@ const StepName = styled.div`
     &:hover {
       max-width: 200px;
     }
-    max-width: 150px;
+    max-width: 300px;
     font-size: 18px;
     text-overflow: ellipsis !important;
   }
