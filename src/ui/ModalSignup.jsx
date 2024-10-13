@@ -16,7 +16,7 @@ const StyledModal = styled.div`
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
-  display: flex
+  display: flex;
   flex-direction: column;
   max-width: 500px;
   width: 100%;
@@ -35,7 +35,6 @@ const Overlay = styled.div`
   backdrop-filter: blur(4px); /* Tüm arka planı blur yap */
   transition: all 0.5s;
 `;
-
 
 const Button = styled.button`
   background: none;
@@ -96,10 +95,11 @@ function Window({ children, name }) {
         <Button onClick={close}>
           <HiXMark />
         </Button>
-        <div>{cloneElement(children, { onCloseModal: close })}</div>
+        <div>{cloneElement(children, { onCloseModal: close })}</div>{" "}
+        {/* onCloseModal prop'u burada geçiliyor */}
       </StyledModal>
     </Overlay>,
-    document.getElementById('modal-root') // Make sure there's a div with this id in your HTML
+    document.getElementById("modal-root") // Make sure there's a div with this id in your HTML
   );
 }
 

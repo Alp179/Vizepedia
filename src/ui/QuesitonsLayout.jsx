@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { Outlet, useLocation } from "react-router-dom";
-import Header from "./Header";
+
 import BackButton from "./BackButton";
 import ProgressBar from "@ramonak/react-progress-bar";
 
@@ -97,7 +97,7 @@ function QuestionsLayout() {
     <BackgroundColor>
       <LoginLayout>
         <BackButton>Geri Dön</BackButton>
-        <Header />
+
         <div className="question-progressAndContent-container">
           <ProgressBarContainer>
             <ProgressBarWrapper>

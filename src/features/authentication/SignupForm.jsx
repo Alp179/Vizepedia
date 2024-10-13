@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
@@ -11,6 +12,7 @@ import {
   convertAnonymousToUser,
 } from "../../services/apiAuth";
 import { useSignup } from "./useSignup";
+import { useUser } from "./useUser";
 
 const BracketContainer = styled.div`
   display: flex;
@@ -35,12 +37,13 @@ const Bracket = styled.div`
   }
 `;
 
-function SignupForm() {
+function SignupForm({ onCloseModal }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null); // Hata mesajı durumu
   const { isLoading } = useSignup(); // useSignup hook'u çağrılıyor
   const navigate = useNavigate(); // Yönlendirme fonksiyonu
+  const { refetchUser } = useUser(); // refetchUser fonksiyonu eklendi
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -52,10 +55,12 @@ function SignupForm() {
     // Anonim kullanıcıyı güncelleme fonksiyonunu çağırıyoruz
     convertAnonymousToUser({ email, password })
       .then(() => {
-        // Başarılı olursa localStorage temizle ve yönlendirme yap
+        // Başarılı olursa localStorage temizle, modalı kapat ve refetch yap
         localStorage.removeItem("isAnonymous");
         localStorage.removeItem("userSelections");
         setErrorMessage(null);
+        onCloseModal(); // Modalı kapatma işlemi
+        refetchUser(); // Kullanıcı sorgusunu tekrar çalıştır
         navigate("/dashboard"); // Başarılı olursa kullanıcıyı yönlendiriyoruz
       })
       .catch((error) => {
@@ -70,6 +75,8 @@ function SignupForm() {
     if (!error && data) {
       localStorage.removeItem("isAnonymous");
       localStorage.removeItem("userSelections");
+      onCloseModal(); // Google ile giriş yapıldıktan sonra modalı kapatma
+      refetchUser(); // Kullanıcı sorgusunu tekrar çalıştır
       navigate("/dashboard"); // Google ile giriş yapıldığında yönlendirme
     } else {
       setErrorMessage("Google ile giriş sırasında bir hata oluştu.");
