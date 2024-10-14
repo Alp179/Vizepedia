@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 import styled from "styled-components";
 import DashboardMobileHeader from "./DashboardMobileHeader";
+import MobileMenu from "./MobileMenu";
 
 const StyledAppLayout = styled.div`
   overflow: clip;
@@ -30,7 +31,7 @@ const Main = styled.main`
   min-height: 100vh;
   overflow-y: auto;
   overflow-x: clip;
-  z-index: 1000;
+  z-index: 1;
   backdrop-filter: blur(0px);
   padding: 10rem 4.8rem 6.4rem;
   background: rgba(255, 255, 255, 0.2);
@@ -89,12 +90,21 @@ const Container = styled.div`
   }
 `;
 
+const MobileMenuContainer = styled.div`
+  @media (min-width: 710px) {
+    display: none;
+  }
+`;
+
 function AppLayout() {
   return (
     <StyledAppLayout>
       <Header />
       <Sidebar />
       <DashboardMobileHeader />
+      <MobileMenuContainer>
+        <MobileMenu />
+      </MobileMenuContainer>
       <Main>
         <Container>
           <Outlet />

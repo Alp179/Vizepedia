@@ -113,6 +113,9 @@ const StyledBlogLogo = styled.div`
         @media (max-width: 450px) {
           width: 85px;
         }
+        @media (max-width: 380px) {
+          width: 80px;
+        }
       `}
 `;
 

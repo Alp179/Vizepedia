@@ -71,7 +71,9 @@ const Divider = styled.div`
   }
 `;
 
-const ControlLayout = styled.div``;
+const ControlLayout = styled.div`
+
+`;
 
 function ControlScreenDropdowns({
   onPurposeChange,

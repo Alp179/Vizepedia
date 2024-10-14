@@ -129,6 +129,7 @@ const Heading = styled.h1`
           ${(props) =>
     props.as === "h9" &&
     css`
+    text-overflow: ellipsis;
       color: var(--color-grey-904);
       text-align: center;
       font-size: 16px;

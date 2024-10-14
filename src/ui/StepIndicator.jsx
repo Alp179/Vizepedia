@@ -150,7 +150,7 @@ const StepName = styled.div`
     text-overflow: ellipsis !important;
   }
   @media (max-height: 830px) {
-    font-size: 14px !important;
+    font-size: 16px !important;
     margin-top: 0px;
   }
 `;

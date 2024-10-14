@@ -74,6 +74,11 @@ function ControlScreen() {
     @media (max-height: 770px) {
       height: 450px;
     }
+    @media (max-width: 380px) {
+      margin-left: auto;
+      margin-right: auto;
+      width: 80vw;
+    }
     @media (max-width: 300px) {
       position: fixed;
       top: 50%;

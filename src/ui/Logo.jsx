@@ -128,10 +128,17 @@ const StyledLogo = styled.div`
     props.variant === "dashmobile" &&
     css`
       flex-shrink: 0;
+      position: absolute;
+      top 50%;
+      right: 50%;
+      transform: translateX(50%);
       width: 120px;
       height: auto;
       @media (max-width: 550px) {
-        width: 100px;
+        width: 90px;
+      }
+      @media (max-width: 380px) {
+        width: 80px;
       }
     `}
 `;
