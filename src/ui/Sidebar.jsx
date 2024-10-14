@@ -24,6 +24,9 @@ const Divider = styled.div`
   width: 80%;
   margin: 20px auto 10px auto;
   background: var(--color-grey-600);
+  @media (max-height: 800px) {
+    margin: 10px auto 0 auto;
+  }
 `;
 
 function Sidebar() {

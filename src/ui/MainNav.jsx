@@ -137,11 +137,13 @@ const StyledNavLink = styled(NavLink)`
     position: relative;
     @media (max-width: 1300px) {
       gap: 0.6rem;
+      font-size: 14px;
       width: 150px;
     }
     @media (max-width: 1050px) {
       width: 130px;
-      font-size: 14px;
+      gap: 8px;
+      font-size: 13px;
     }
   }
 
@@ -255,7 +257,12 @@ const ScrollableDiv = styled.div`
   @media (max-width: 1050px) {
     gap: 4px;
   }
-
+  @media (max-height: 830px) {
+    max-height: 250px;
+  }
+  @media (max-height: 700px) {
+    max-height: 150px;
+  }
   /* Scrollbar styling */
   &::-webkit-scrollbar {
     width: 8px;
