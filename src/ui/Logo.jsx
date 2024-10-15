@@ -4,6 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledLogo = styled.div`
+cursor: pointer;
+transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
+
+&:hover {
+  filter: ${(props) =>
+    props.isDarkMode
+      ? "hue-rotate(360deg)"  /* Dark Mode: Renk tonu değişimi */
+      : "hue-rotate(30deg)"}; /* Light Mode: Farklı renk tonu değişimi */
+  transform: scale(1.05); /* Hafif büyütme efekti */
+}
   ${(props) =>
     props.variant === "login" &&
     css`

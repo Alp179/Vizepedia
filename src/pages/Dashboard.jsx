@@ -196,7 +196,7 @@ const InfoContainer = styled.div`
   padding: 22px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   gap: 32px;
-  z-index: 1000;
+  z-index: 3000;
   @media (max-width: 1425px) {
     margin-left: -100px;
   }
@@ -249,6 +249,7 @@ const InfoDetails = styled.div`
   flex: 1;
   color: var(--color-grey-800);
   display: flex;
+  z-index: 3000;
   flex-direction: column;
   gap: 10px;
 `;

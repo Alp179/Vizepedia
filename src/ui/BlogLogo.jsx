@@ -4,6 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledBlogLogo = styled.div`
+cursor: pointer;
+transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
+
+&:hover {
+  filter: ${(props) =>
+    props.isDarkMode
+      ? "hue-rotate(280deg)"  /* Dark Mode: Renk tonu değişimi */
+      : "hue-rotate(360deg)"}; /* Light Mode: Farklı renk tonu değişimi */
+  transform: scale(1.05); /* Hafif büyütme efekti */
+}
   ${(props) =>
     props.variant === "blogpage1" &&
     css`
@@ -102,24 +112,25 @@ const StyledBlogLogo = styled.div`
       height: auto;
     `}
     ${(props) =>
-      props.variant === "dashmobile" &&
-      css`
-        width: 130px;
-        height: auto;
-        flex-shrink: 0;
-        @media (max-width: 550px) {
-          width: 110px;
-        }
-        @media (max-width: 450px) {
-          width: 85px;
-        }
-        @media (max-width: 380px) {
-          width: 80px;
-        }
-      `}
+    props.variant === "dashmobile" &&
+    css`
+      width: 130px;
+      height: auto;
+      flex-shrink: 0;
+      @media (max-width: 550px) {
+        width: 110px;
+      }
+      @media (max-width: 450px) {
+        width: 85px;
+      }
+      @media (max-width: 380px) {
+        width: 80px;
+      }
+    `}
 `;
 
 const Img = styled.img`
+
   user-drag: none;
   user-select: none;
   -moz-user-select: none;

@@ -680,6 +680,7 @@ Slider h2 span {
 }
 
 .footer-buton {
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -714,6 +715,12 @@ Slider h2 span {
 }
 
 .footer-links {
+  &:hover {
+    filter: ${(props) =>
+      props.isDarkMode ? "brightness(1.8)" : "brightness(0.8)"};
+    /* Dark Mode'da logo daha parlak, Light Mode'da daha karanlık olacak */
+  }
+  cursor: pointer;
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
@@ -743,7 +750,6 @@ Slider h2 span {
     flex-flow: column-reverse;
     gap: 33px;
 }
-
 
 
 }

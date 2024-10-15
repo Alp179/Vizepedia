@@ -84,8 +84,8 @@ function MainPageHeader({ setMenuOpen }) {
         <HeaderContents>
           <LogoContainer>
             <Logo variant="mainpage" />
-            <Heading as="h10">Hakkımızda</Heading>
-            <Heading as="h10" onClick={handleFaqClick}>
+            <Heading className="header-link1" as="h10">Hakkımızda</Heading>
+            <Heading className="header-link1" as="h10" onClick={handleFaqClick}>
               SSS
             </Heading>
             <BlogLogo variant="mainpage2" />
