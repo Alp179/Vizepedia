@@ -40,7 +40,7 @@ const GlobalStyles = createGlobalStyle`/*
   --color-grey-902: #004466;
   --color-grey-903: #2ecc71;
   --color-grey-904: #004466;
-  --color-grey-905: #ddfbef;
+  --color-grey-905: #00ffa2;
   --color-grey-906: linear-gradient(to bottom right, rgba(255, 255, 255, 0.53) 70%, #004466);
   --color-grey-907: radial-gradient(circle at 0% 20%, rgba(0, 255, 162, 0.5), transparent 20%),
   radial-gradient(ellipse at 15% 40%, rgba(248, 24, 225, 0.6), transparent 50%),

@@ -14,7 +14,6 @@ import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import styled, { keyframes } from "styled-components";
 import "flag-icons/css/flag-icons.min.css";
 import supabase from "../services/supabase";
-import Button from "../ui/Button";
 import SignupForm from "../features/authentication/SignupForm";
 import ModalSignup from "../ui/ModalSignup";
 
@@ -27,7 +26,7 @@ const FlagContainer = styled.div`
   transform: translate(23%, -20%) rotate(31deg);
   border-radius: 10%;
   overflow: hidden;
-  z-index: 1000;
+  z-index: 0;
   pointer-events: none;
 
   & > span {
@@ -146,7 +145,7 @@ const BlurredFlagBackground = styled.div`
 const CreatedAtContainer = styled.div`
   font-size: 1.4rem;
   color: var(--color-grey-700);
-  @media (max-width: 1425px) {
+  @media (max-width: 1550px) {
     margin-left: -100px;
   }
   @media (max-width: 710px) {
@@ -158,7 +157,6 @@ const CreatedAtContainer = styled.div`
       font-size: 1.3rem;
     }
   }
- 
 `;
 
 const CustomRow = styled(Row)`
@@ -189,7 +187,9 @@ const InfoContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  @media (min-width: 1285px) {
+    width: 1000px;
+  }
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(10px);
   border-radius: 12px;
@@ -197,10 +197,10 @@ const InfoContainer = styled.div`
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   gap: 32px;
   z-index: 3000;
-  @media (max-width: 1425px) {
+  @media (max-width: 1550px) {
     margin-left: -100px;
   }
-  @media (max-width: 1285px) {
+  @media (max-width: 1350px) {
     flex-flow: column;
     gap: 22px;
     width: 500px;
@@ -210,9 +210,9 @@ const InfoContainer = styled.div`
     width: 400px;
   }
   @media (max-width: 710px) {
+    margin-bottom: -125px;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 50px;
   }
   @media (max-width: 520px) {
     width: 80%;
@@ -227,7 +227,7 @@ const MapContainer = styled.div`
   flex-shrink: 0;
   overflow: hidden;
   border-radius: 10px;
-  @media (max-width: 1285px) {
+  @media (max-width: 1350px) {
     width: 420px;
     height: 420px;
   }
@@ -265,6 +265,51 @@ const DashboardContainer = styled.div`
     width: 100%;
     margin-left: auto;
     margin-right: auto;
+  }
+`;
+
+const Ceper = styled.div`
+  position: absolute;
+  left: 100px;
+  bottom: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 283px;
+  height: 127px;
+  border: 3px solid #00ffa2;
+  filter: drop-shadow(0px 20px 40px rgba(0, 0, 0, 0.11));
+  border-radius: 82px;
+  @media (max-width: 1350px) {
+    left: 0px;
+  }
+  @media (max-width: 710px) {
+   position: relative;
+   margin-bottom: 70px;
+
+  }
+  &:hover{
+    border-color: #004466;
+  }
+`;
+
+const UyeDevam = styled.button`
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 248.6px;
+  height: 89px;
+  background: #004466;
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.11);
+  border-radius: 49px;
+  font-weight: 700;
+  font-size: 18px;
+  text-align: center;
+  color: #00ffa2;
+  &:hover {
+    background-color: #00ffa2;
+    color: #004466;
   }
 `;
 
@@ -507,9 +552,9 @@ const Dashboard = () => {
         >
           <ModalSignup>
             <ModalSignup.Open opens="signUpForm">
-              <Button size="large" variation="primary">
-                Üye Olarak Devamm Et
-              </Button>
+              <Ceper>
+                <UyeDevam>Üye Olarak Devam et</UyeDevam>
+              </Ceper>
             </ModalSignup.Open>
             <ModalSignup.Window name="signUpForm">
               {/* Üye olduktan sonra verileri Supabase'den çekebilmek için, kullanıcıyı signUpForm ile yönlendirme işlemi */}

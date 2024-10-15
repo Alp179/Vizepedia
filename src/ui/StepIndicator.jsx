@@ -13,6 +13,7 @@ import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 const StepAndContinueContainer = styled.div`
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   max-width: 740px;
   align-items: center;
   display: flex;
@@ -22,7 +23,8 @@ const StepAndContinueContainer = styled.div`
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-radius: 16px;
-  @media (max-width: 1425px) {
+  border-bottom-left-radius: 8px;
+  @media (max-width: 1550px) {
     margin-left: -100px;
   }
   @media (max-width: 1050px) {
@@ -152,6 +154,12 @@ const StepName = styled.div`
   @media (max-height: 830px) {
     font-size: 16px !important;
     margin-top: 0px;
+  }
+  @media (max-width: 415px) {
+    max-width: 230px;
+  }
+  @media (max-width: 360px) {
+    max-width: 180px;
   }
 `;
 

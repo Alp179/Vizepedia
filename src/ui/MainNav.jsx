@@ -122,6 +122,7 @@ const fadeIn = keyframes`
 `;
 
 const StyledNavLink = styled(NavLink)`
+  min-height: 65px;
   width: 90%;
   &:link,
   &:visited {
@@ -147,10 +148,13 @@ const StyledNavLink = styled(NavLink)`
     }
   }
 
-  &:hover,
-  &:active,
-  &.active:link,
   &.active:visited {
+    color: var(--color-grey-904);
+    background-color: var(--color-grey-50);
+    border-radius: var(--border-radius-sm);
+  }
+
+  &.active:link {
     color: var(--color-grey-904);
     background-color: var(--color-grey-50);
     border-radius: var(--border-radius-sm);

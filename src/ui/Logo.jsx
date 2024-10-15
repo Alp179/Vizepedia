@@ -137,6 +137,7 @@ transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animas
       ${(props) =>
     props.variant === "dashmobile" &&
     css`
+      mix-blend-mode: difference;
       flex-shrink: 0;
       position: absolute;
       top 50%;
