@@ -306,7 +306,7 @@ const UyeDevam = styled.button`
   font-weight: 700;
   font-size: 18px;
   text-align: center;
-  color: #00ffa2;
+  color: white;
   &:hover {
     background-color: #00ffa2;
     color: #004466;

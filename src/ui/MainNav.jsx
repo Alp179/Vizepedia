@@ -35,6 +35,7 @@ const GlowButton = styled.button`
   height: 50px;
   border: none;
   outline: none;
+  font-weight: bold;
   color: var(--color-grey-913);
   background: var(--color-grey-914);
   cursor: pointer;
@@ -134,7 +135,7 @@ const StyledNavLink = styled(NavLink)`
     font-weight: 500;
     padding: 1.2rem 2.4rem;
     transition: all 0.3s;
-    background-color: transparent !important;
+    background-color: transparent;
     position: relative;
     @media (max-width: 1300px) {
       gap: 0.6rem;
@@ -148,18 +149,14 @@ const StyledNavLink = styled(NavLink)`
     }
   }
 
-  &.active:visited {
-    color: var(--color-grey-904);
-    background-color: var(--color-grey-50);
-    border-radius: var(--border-radius-sm);
-  }
-
+  &.active:visited,
   &.active:link {
-    color: var(--color-grey-904);
-    background-color: var(--color-grey-50);
-    border-radius: var(--border-radius-sm);
+    width: 100%;
+    background: var(--color-grey-905);
+    border-radius: 16px;
   }
 
+  
   & svg {
     width: 2.4rem;
     height: 2.4rem;

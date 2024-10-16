@@ -168,7 +168,7 @@ const ContinueButton = styled.button`
   height: 50px;
   background-color: #004466;
   font-size: 14px;
-  color: #00ffa2;
+  color: white;
   font-weight: bold;
   border: 2px solid #87f9cd;
   margin-right: 8px;

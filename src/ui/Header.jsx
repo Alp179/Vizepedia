@@ -35,6 +35,7 @@ const HemenUyeOl = styled.button`
   width: 220px;
   height: 50px;
   border: none;
+  font-weight: bold;
   outline: none;
   color: var(--color-grey-913);
   background: var(--color-grey-914);
