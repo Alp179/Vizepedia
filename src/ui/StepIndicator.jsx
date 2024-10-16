@@ -170,7 +170,7 @@ const ContinueButton = styled.button`
   font-size: 14px;
   color: #00ffa2;
   font-weight: bold;
-  border: 4px solid #87f9cd;
+  border: 2px solid #87f9cd;
   margin-right: 8px;
   width: 100px;
   border-radius: 12px;

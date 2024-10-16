@@ -247,6 +247,10 @@ const SmallRelatedBlogCard = styled(Link)`
     height: 100px;
     margin-bottom: 20px;
   }
+  @media (max-width: 360px) {
+    width: 240px;
+    height: 90px;
+  }
 `;
 
 const RelatedBlogImage = styled.img`
@@ -270,11 +274,16 @@ const RelatedBlogImage = styled.img`
     width: 140px;
     height: 100px;
   }
+  @media (max-width: 360px) {
+    height: 90px;
+    width: 120px;
+  } 
 `;
 
 const RelatedBlogsScroll = styled.div`
   max-height: calc(100vh - 450px);
   overflow-y: auto;
+  overflow-x: hidden;
   @media (max-width: 1100px) {
     max-height: calc(100vh - 430px);
   }
@@ -283,6 +292,23 @@ const RelatedBlogsScroll = styled.div`
   }
   @media (max-width: 750px) {
     height: 400px !important;
+  }
+  &::-webkit-scrollbar {
+    width: 12px;
+    @media (max-width: 1000px) {
+      width: 8px;
+    }
+   
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-grey-54);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
   }
 `;
 
@@ -335,6 +361,9 @@ const RelatedBlogTitleSmall = styled.h4`
   }
   @media (max-width: 750px) {
     font-size: 13px;
+  }
+  @media (max-width: 360px) {
+    font-size: 11px;
   }
 `;
 

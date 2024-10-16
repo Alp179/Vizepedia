@@ -139,6 +139,23 @@ const Container = styled.div`
   @media (max-width: 450px) {
     gap: 0;
   }
+
+  &::-webkit-scrollbar {
+    width: 16px;
+    @media (max-width: 710px) {
+      width: 12px;
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-grey-54);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
+  }
 `;
 
 const DropdownContainer = styled.div`

@@ -71,7 +71,7 @@ const BackgroundContainer = styled.div`
 
 const WhyCards = styled.div`
   mix-blend-mode: normal;
-  background: var(--color-grey-905);
+  background: var(--color-grey-919);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-radius: 20px;
@@ -210,7 +210,7 @@ const WhyCardsContainer2 = styled.div`
 `;
 
 const WhyCards2 = styled.div`
-  background: var(--color-grey-905);
+  background: var(--color-grey-919);
   box-shadow: 0px 26px 35px 6px rgba(0, 0, 0, 0.2);
   border-radius: 20px;
   height: 265px;

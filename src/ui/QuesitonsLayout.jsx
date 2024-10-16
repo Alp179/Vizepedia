@@ -1,6 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import { Outlet, useLocation } from "react-router-dom";
 import BackButton from "./BackButton";
+import DarkModeToggle from "./DarkModeToggle";
 import ProgressBar from "@ramonak/react-progress-bar";
 
 const BackgroundColor = styled.div`
@@ -79,6 +80,16 @@ const ProgressBarReflection = styled.div`
   animation: ${progressAnimation} 1s ease-in-out;
 `;
 
+const DarkModeContainer = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 10%;
+  z-index: 3000;
+  @media (max-width: 450px) {
+    top: 10px;
+  }
+`;
+
 function QuestionsLayout() {
   const location = useLocation();
   const progressValues = {
@@ -96,6 +107,9 @@ function QuestionsLayout() {
     <BackgroundColor>
       <LoginLayout>
         <BackButton>Geri Dön</BackButton>
+        <DarkModeContainer>
+          <DarkModeToggle />
+        </DarkModeContainer>
         <div className="question-progressAndContent-container">
           <ProgressBarContainer>
             <ProgressBarWrapper>
