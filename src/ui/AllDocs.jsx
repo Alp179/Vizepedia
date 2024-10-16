@@ -21,7 +21,7 @@ const DocumentItem = styled.li`
   margin: 0; /* Boşluğu sıfırladık */
   cursor: pointer;
   &:hover {
-    background-color: ${(props) => (props.isCompleted ? "#cde0d9" : "#f0f0f0")};
+    background-color: ${(props) => (props.isCompleted ? "#cde0d9" : "var(--color-grey-920)")};
   }
 `;
 

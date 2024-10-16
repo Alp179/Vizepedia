@@ -75,6 +75,7 @@ radial-gradient(ellipse at 90% 85%, rgba(135, 249, 205, 0.6), transparent 30%);
   transparent 55%
 );
 --color-grey-919: #ddfbef;
+--color-grey-920: white;
 --color-grey-55: rgba(255, 255, 255, 0.5);
   --stroke-ham-1: #000;
 
@@ -157,6 +158,7 @@ radial-gradient(circle at 80% 80%, rgba(124, 103, 255, 0.3), transparent 30%);
   transparent 55%
 );
 --color-grey-919: rgba(64, 70, 82, 1);
+--color-grey-920: black;
 --color-grey-55: #091522;
 --stroke-ham-1: #999;
 
@@ -218,6 +220,8 @@ radial-gradient(circle at 80% 80%, rgba(124, 103, 255, 0.3), transparent 30%);
 }
 
 html {
+  overflow: hidden;
+  height: 100%;
   font-size: 62.5%;
 }
 
