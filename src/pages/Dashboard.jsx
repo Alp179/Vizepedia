@@ -538,7 +538,7 @@ const Dashboard = () => {
           <ModalSignup>
             <ModalSignup.Open opens="signUpForm">
               <Ceper>
-                <UyeDevam>Üye Olarak Devamm et</UyeDevam>
+                <UyeDevam>Üye Olarak Devam et</UyeDevam>
               </Ceper>
             </ModalSignup.Open>
             <ModalSignup.Window name="signUpForm">
