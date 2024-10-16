@@ -355,7 +355,6 @@ ul {
 }
 
 
-
 @media (max-width: 1050px) {
   .sidebartext {
     font-size: 16px;

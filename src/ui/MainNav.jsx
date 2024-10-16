@@ -283,6 +283,51 @@ const ScrollableDiv = styled.div`
   }
 `;
 
+
+const AllDocsButton = styled(NavLink)`
+  min-height: 65px;
+  width: 90%;
+  &:link,
+  &:visited {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    color: var(--color-grey-600);
+    font-size: 1.6rem;
+    font-weight: 500;
+    padding: 1.2rem 2.4rem;
+    transition: all 0.3s;
+    background-color: transparent !important;
+    position: relative;
+    @media (max-width: 1300px) {
+      gap: 0.6rem;
+      font-size: 14px;
+      width: 150px;
+    }
+    @media (max-width: 1050px) {
+      width: 130px;
+      gap: 8px;
+      font-size: 13px;
+    }
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  & svg {
+    width: 2.4rem;
+    height: 2.4rem;
+    color: var(--color-grey-400);
+    transition: all 0.3s;
+  }
+
+  &:hover svg {
+    color: #00ffa2; /* İconun hover durumunda sarı renge dönüşmesi */
+  }
+`;
+
+
 function MainNav() {
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
@@ -415,9 +460,9 @@ function MainNav() {
         <li>
           <Modal>
             <Modal.Open opens="allDocs">
-              <StyledNavLink style={{ width: "100%" }}>
+              <AllDocsButton style={{ width: "100%" }}>
                 <HiDocument /> <span className="sidebartext">Tüm belgeler</span>
-              </StyledNavLink>
+              </AllDocsButton>
             </Modal.Open>
             <Modal.Window name="allDocs">
               <AllDocs />
