@@ -147,6 +147,7 @@ const StyledNavLink = styled(NavLink)`
       gap: 8px;
       font-size: 13px;
     }
+    
   }
 
   &.active:visited,
@@ -249,13 +250,17 @@ const ScrollableDiv = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 115%;
+  background: var(--color-grey-920);
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  width: 110%;
   margin: 0 auto;
   margin-left: -10px;
   @media (max-width: 1300px) {
-    width: 120%;
+    width: 112%;
   }
   @media (max-width: 1050px) {
+    width: 117%;
     gap: 4px;
   }
   @media (max-height: 830px) {
@@ -270,7 +275,7 @@ const ScrollableDiv = styled.div`
   }
 
   &::-webkit-scrollbar-track {
-    background: var(--color-grey-2);
+    background: var(--color-grey-920);
   }
 
   &::-webkit-scrollbar-thumb {
