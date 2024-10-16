@@ -318,7 +318,7 @@ const AllDocsButton = styled(NavLink)`
   & svg {
     width: 2.4rem;
     height: 2.4rem;
-    color: var(--color-grey-400);
+    color: #004466;
     transition: all 0.3s;
   }
 
@@ -491,9 +491,9 @@ function MainNav() {
           ))}
         </ScrollableDiv>
         <li>
-          <StyledNavLink to="/wellcome-2">
+          <AllDocsButton to="/wellcome-2">
             <HiPlus /> <span className="sidebartext">Yeni</span>
-          </StyledNavLink>
+          </AllDocsButton>
         </li>
       </NavList>
     </nav>
