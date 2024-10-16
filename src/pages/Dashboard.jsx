@@ -102,43 +102,29 @@ const moveFlagAnimation = keyframes`
 `;
 
 const BlurredFlagBackground = styled.div`
-  position: absolute;
-  top: -50%;
-  left: 25%;
-  width: 60vw; // %50 daralma
-  height: 45vw; // %50 daralma
-  filter: blur(190px);
+  position: fixed;
+  top: -10%;
+  right: -10%;
+  width: 1000px; // %50 daralma
+  height: 642px; // %50 daralma
+  filter: blur(150px);
   z-index: 0;
   animation: ${moveFlagAnimation} 14s linear infinite; // Akış alanı daraltıldı ve süre ayarlandı
 
-  @media (max-width: 1625px) {
-    top: -50%;
-  }
-
   @media (max-width: 1450px) {
-    top: -40%;
+    width: 800px;
+    height: 514px;
   }
 
-  @media (max-width: 1150px) {
-    top: -30%;
-  }
-
-  @media (max-width: 990px) {
-    top: -20%;
-  }
-
-  @media (max-width: 710px) {
-    width: 150px !important; // Daraltılmış genişlik
-    height: 85px !important; // Daraltılmış yükseklik
-  }
-
-  @media (max-width: 530px) {
-    right: -30%;
+  @media (max-width: 1200px) {
+    width: 600px;
+    height: 385px;
   }
 
   @media (max-width: 450px) {
-    width: 120px !important;
-    height: 70px !important;
+    width: 400px !important;
+    right: -20%;
+    height: 400px !important;
   }
 `;
 
@@ -284,11 +270,10 @@ const Ceper = styled.div`
     left: 0px;
   }
   @media (max-width: 710px) {
-   position: relative;
-   margin-bottom: 70px;
-
+    position: relative;
+    margin-bottom: 70px;
   }
-  &:hover{
+  &:hover {
     border-color: #004466;
   }
 `;
