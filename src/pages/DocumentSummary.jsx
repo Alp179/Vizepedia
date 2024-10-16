@@ -10,29 +10,26 @@ import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
+import PropTypes from "prop-types";
 
 const ReviewButton = styled.button`
   margin-top: auto;
   padding: 12px 36px;
   justify-self: self-end;
   background-color: #004466;
-  color: #87f9cd;
+  border: 1px solid #00ffa2;
+  box-shadow: 0px 3px 0px 0px #004466;
+  color: white;
   font-weight: bold;
-  border: none;
   border-radius: 12px;
   cursor: pointer;
   &:hover {
-    background-color: #2980b9;
+    background-color: #00ffa2;
+    color: #004466;
   }
   @media (max-width: 450px) {
     padding: 12px 24px;
   }
-`;
-
-const DocImage = styled.img`
-  height: 45px;
-  width: 36px;
-  margin-left: 16px;
 `;
 
 const VerifiedIcon = styled.img`
@@ -43,7 +40,7 @@ const VerifiedIcon = styled.img`
 
 const DocumentCard = styled.div`
   background: ${(props) =>
-    props.isCompleted ? "#87F9CD" : "rgba(255, 255, 255, 0.37)"};
+    props.isCompleted ? "#87F9CD" : "var(--color-grey-919)"};
   border-radius: 16px;
   -webkit-backdrop-filter: blur(6.3px);
   border: 1px solid rgba(255, 255, 255, 0.52);
@@ -53,7 +50,7 @@ const DocumentCard = styled.div`
   width: 90%;
   height: 180px;
   position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 26px 35px 6px rgba(0, 0, 0, 0.2);
   @media (max-width: 650px) {
     width: 100%;
   }
@@ -69,7 +66,8 @@ const DocumentInner = styled.div`
 
 const DocumentTitle = styled.h3`
   margin: 0;
-  color: #004466;
+  color: ${(props) =>
+    props.isCompleted ? "#4b5563" : "var(--color-grey-600)"};
   font-weight: bold;
   @media (max-width: 550px) {
     font-size: 16px;
@@ -90,7 +88,8 @@ const MetaContainer = styled.div`
 `;
 
 const DocumentMeta = styled.p`
-  color: black;
+  color: ${(props) =>
+    props.isCompleted ? "#4b5563" : "var(--color-grey-600)"};
   margin: 0;
   @media (max-width: 550px) {
     font-size: 14px;
@@ -99,6 +98,30 @@ const DocumentMeta = styled.p`
     font-size: 12px;
   }
 `;
+
+const DocImage = styled.svg`
+  height: 45px;
+  width: 36px;
+  margin-left: 16px;
+  fill: ${(props) =>
+    props.isCompleted
+      ? "#004466"
+      : "var(--color-grey-600)"}; /* Rengi dinamik olarak belirliyoruz */
+`;
+
+const DocumentIcon = ({ isCompleted }) => (
+  <DocImage
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    isCompleted={isCompleted} /* Bu prop, rengi değiştirecek */
+  >
+    <path d="M6 2h7.586c.52 0 1.02.2 1.414.586l4.414 4.414c.386.394.586.894.586 1.414v11.586c0 1.104-.896 2-2 2H6c-1.104 0-2-.896-2-2V4c0-1.104.896-2 2-2zm8 0v5h5l-5-5zM6 22h12v-6H6v6zm0-8h12V9h-6V3H6v11z" />
+  </DocImage>
+);
+
+DocumentIcon.propTypes = {
+  isCompleted: PropTypes.bool.isRequired, // isCompleted bir boolean ve zorunlu bir prop
+};
 
 const DocumentSummary = () => {
   const { id: applicationId } = useParams();
@@ -183,16 +206,34 @@ const DocumentSummary = () => {
                 justifyContent: "space-between",
                 height: "90%",
                 marginTop: "auto",
-                gap: "12px"
+                gap: "12px",
               }}
             >
-              <DocImage src="../public/Vector.png" />
+              <DocumentIcon
+                isCompleted={
+                  completedDocuments[applicationId]?.[document.docName]
+                }
+              />
               <MetaContainer>
-                <DocumentTitle>{document.docName}</DocumentTitle>
-                <DocumentMeta>
+                <DocumentTitle
+                  isCompleted={
+                    completedDocuments[applicationId]?.[document.docName]
+                  }
+                >
+                  {document.docName}
+                </DocumentTitle>
+                <DocumentMeta
+                  isCompleted={
+                    completedDocuments[applicationId]?.[document.docName]
+                  }
+                >
                   Tür: {document.docType || "Not specified"}
                 </DocumentMeta>
-                <DocumentMeta>
+                <DocumentMeta
+                  isCompleted={
+                    completedDocuments[applicationId]?.[document.docName]
+                  }
+                >
                   Tahmini Tamamlanma Süresi:{" "}
                   {document.estimatedCompletionTime || "Unknown"}
                 </DocumentMeta>

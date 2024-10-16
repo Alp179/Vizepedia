@@ -138,8 +138,8 @@ const SourceButton = styled.button`
   text-align: center;
   padding: 15px 20px;
   background-color: #004466;
-  color: #00ffa2;
-  border: 5px solid #00ffa2;
+  color: white;
+  border: 2px solid #00ffa2;
   border-radius: 16px;
   width: 150px;
   &:hover {

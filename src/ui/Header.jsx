@@ -48,6 +48,11 @@ const HemenUyeOl = styled.button`
     font-size: 14px;
   }
 
+  &:hover {
+    background: #00ffa2;
+    color: #004466;
+  }
+
 `;
 
 function Header() {
