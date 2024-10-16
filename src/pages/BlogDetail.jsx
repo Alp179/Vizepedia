@@ -273,7 +273,6 @@ const RelatedBlogImage = styled.img`
 `;
 
 const RelatedBlogsScroll = styled.div`
-overflow-x: hidden;
   max-height: calc(100vh - 450px);
   overflow-y: auto;
   @media (max-width: 1100px) {
@@ -285,24 +284,6 @@ overflow-x: hidden;
   @media (max-width: 750px) {
     height: 400px !important;
   }
-
-  &::-webkit-scrollbar {
-    width: 8px;
-    @media (max-width: 710px) {
-      margin-left: -100px;
-    }
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--color-grey-2);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--color-grey-54);
-    border-radius: 4px;
-    border: 3px solid var(--color-grey-2);
-  }
-
 `;
 
 const RelatedBlogInfo = styled.div`

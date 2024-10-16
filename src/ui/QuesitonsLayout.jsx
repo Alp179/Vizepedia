@@ -20,20 +20,6 @@ const LoginLayout = styled.main`
   @media (max-width: 710px) {
     background: transparent;
   }
-
-  &::-webkit-scrollbar {
-    width: 16px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: var(--color-grey-2);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--color-grey-54);
-    border-radius: 10px;
-    border: 3px solid var(--color-grey-2);
-  }
 `;
 
 const Container = styled.div`

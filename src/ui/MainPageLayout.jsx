@@ -4,17 +4,15 @@ import MainPageHeader from "./MainPageHeader";
 import { useState } from "react";
 
 const StyledMainPage = styled.div`
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   max-width: 100vw;
   display: flex;
+  max-width: 100vw;
   flex-direction: column;
   background: var(--color-grey-1);
 `;
 
 const Main = styled.main`
-  overflow-y: auto;
-  overflow-x: hidden;
   min-height: 100vh;
   &::-webkit-scrollbar {
     width: 16px;
@@ -61,8 +59,8 @@ function AppLayout() {
   const [isMenuOpen, setMenuOpen] = useState(false); // Menü açık mı kontrol et
   return (
     <StyledMainPage>
-      <MainPageHeader setMenuOpen={setMenuOpen} />
       <Main>
+        <MainPageHeader setMenuOpen={setMenuOpen} />
         <Container style={{ filter: isMenuOpen ? "blur(5px)" : "none" }}>
           <Outlet />
         </Container>
