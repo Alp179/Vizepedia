@@ -1,4 +1,4 @@
-import { styled, keyframes } from "styled-components";
+import { styled } from "styled-components";
 import HeaderMenu from "./HeaderMenu";
 import ProfileButton from "./ProfileButton";
 import ModalSignup from "../ui/ModalSignup";
@@ -25,70 +25,20 @@ const StyledHeader = styled.header`
   }
 `;
 
-const glowing = keyframes`
-  0% { background-position: 0 0; }
-  50% { background-position: 400% 0; }
-  100% { background-position: 0 0; }
-`;
-
 const HemenUyeOl = styled.button`
   width: 220px;
   height: 50px;
-  border: none;
-  font-weight: bold;
+  border: 2px solid #00ffa2;
   outline: none;
+  font-weight: bold;
   color: var(--color-grey-913);
-  background: var(--color-grey-914);
+  background: #004466;
   cursor: pointer;
   position: relative;
   z-index: 0;
-  border-radius: 10px;
+  border-radius: 16px;
 
-  &:before {
-    content: '';
-    background: linear-gradient(-45deg, #004466,#004466, #87F9CD, #87F9CD, #87F9CD,   #004466, #004466 );
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    background-size: 400%;
-    z-index: -1;
-    filter: blur(5px);
-    width: calc(100% + 8px);
-    height: calc(100% + 8px);
-    animation: ${glowing} 20s linear infinite ;
-    opacity: 1;  // Opacity'yi 1 yaparak pasif durumda da animasyonu aktif hale getirdik
-    transition: opacity 0.3s ease-in-out;
-    border-radius: 10px;
-  }
-
-  &:after {
-    z-index: -1;
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: var(--color-grey-914);
-    left: 0;
-    top: 0;
-    border-radius: 10px;
-  }
-
-  &:hover {
-    color: #004466;
-  }
-
-  &:hover:after {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  &:active {
-    color: #000;
-  }
-
-  &:active:after {
-    background: transparent;
-  }
-
+  
   @media (max-width: 1300px) {
     width: 180px;
   }
