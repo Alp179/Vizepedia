@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import styled from "styled-components";
 import { useUser } from "./useUser";
-import Button from "../../ui/Button";
 
 const StyledUserAvatar = styled.div`
   display: flex;
@@ -9,18 +8,19 @@ const StyledUserAvatar = styled.div`
   align-items: center;
   font-weight: 500;
   font-size: 1.4rem;
-  /* color: var(--color-grey-600); */
 `;
 
-const Avatar = styled.img`
-  display: flexbox;
-  width: 4rem;
+const Avatar = styled.div`
   width: 3.6rem;
-  aspect-ratio: 1;
-  object-fit: cover;
-  object-position: center;
+  height: 3.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
-  outline: 2px solid var(--color-grey-100);
+  background-color: var(--color-grey-200);
+  color: var(--color-grey-700);
+  font-size: 1.8rem;
+  font-weight: 700;
 `;
 
 const UserName = styled.span`
@@ -29,17 +29,18 @@ const UserName = styled.span`
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);  /* Siyah gölge */
 `;
 
-
 function UserAvatar() {
   const { user } = useUser();
-  const { fullName, avatar } = user.user_metadata;
+  const { user_metadata, email } = user || {};
+  const fullName = user_metadata?.fullName;
+
+  // Kullanıcının isminin ilk harfi, yoksa email'in ilk harfi alınır
+  const initial = fullName ? fullName.charAt(0).toUpperCase() : email.charAt(0).toUpperCase();
+
   return (
     <StyledUserAvatar>
-      <Avatar
-        src={avatar || "default-user.jpg"}
-        alt={`Avatar of ${fullName}`}
-      />
-      <UserName>{fullName}</UserName>
+      <Avatar>{initial}</Avatar> {/* Artık sadece ismin veya email'in ilk harfi gösteriliyor */}
+      <UserName>{fullName || email}</UserName> {/* Eğer kullanıcı adı varsa, yoksa e-posta göster */}
     </StyledUserAvatar>
   );
 }
