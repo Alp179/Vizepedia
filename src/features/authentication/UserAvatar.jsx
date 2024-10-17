@@ -32,7 +32,7 @@ const UserName = styled.span`
 function UserAvatar() {
   const { user } = useUser();
   const { user_metadata, email } = user || {};
-  const fullName = user_metadata?.fullName;
+  const fullName = user_metadata?.full_name;
 
   // Kullanıcının isminin ilk harfi, yoksa email'in ilk harfi alınır
   const initial = fullName ? fullName.charAt(0).toUpperCase() : email.charAt(0).toUpperCase();
