@@ -474,7 +474,7 @@ const Dashboard = () => {
           </CreatedAtContainer>
         )}
         <Heading style={{ zIndex: "3000" }} as="h1">
-          Hoş geldin Loko
+          Hoş geldiniz 
         </Heading>
       </CustomRow>
       <StepIndicator

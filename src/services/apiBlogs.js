@@ -60,3 +60,14 @@ export async function searchBlogs(searchTerm) {
   if (error) throw new Error(error.message);
   return data;
 }
+   
+export async function fetchVisaBlogs() {
+  const { data, error } = await supabase
+    .from("blogs")
+    .select("*")
+    .eq("category", "Vize") // Yalnızca "Vize" kategorisindeki blogları al
+    .order("created_at", { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
