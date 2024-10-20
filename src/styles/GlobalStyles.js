@@ -306,18 +306,30 @@ ul {
 }
 
 .mobile-scrolldiv {
-  padding: 4px 0;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   display: flex;
   border: 1px solid white;
   flex-direction: column;
-  gap: 2px;
   border-radius: 16px;
   max-height: 250px;
   overflow: auto;
- 
+}
+
+.mobile-navlink {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  min-height: 80px;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+}
+
+.mobile-navlink-active {
+  background-color: red!important;
 }
 
 .question-progressAndContent-container {

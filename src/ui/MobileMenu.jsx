@@ -19,6 +19,7 @@ import Logo from "./Logo";
 import BlogLogo from "./BlogLogo";
 import toast from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
+import { NavLink } from "react-router-dom";
 
 const MenuIcon = styled.div.attrs((props) => ({
   style: { display: props.isDocsOpen ? "none" : "block" },
@@ -128,17 +129,17 @@ const MenuContent = styled.div`
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 4px;
 `;
 
 const StyledNavLink = styled.div`
   width: 86%;
+  gap: 8px;
+  min-height: 50px;
   z-index: 3000;
   border-radius: 16px;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
   cursor: pointer;
   &:hover {
     background-color: var(--color-grey-3);
@@ -220,13 +221,13 @@ const Divider = styled.div`
 `;
 
 const LogoContainer = styled.div`
-margin-top: 12px;
-margin-left: 12px;
-display: flex;
-flex-direction: column;
-justify-content: center;
-gap: 16px;
-`
+  margin-top: 12px;
+  margin-left: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+`;
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -459,6 +460,7 @@ const MobileMenu = () => {
         </MenuHeader>
         <MenuContent>
           <StyledNavLink
+            style={{ marginLeft: "12px" }}
             onClick={() => {
               setIsDocsOpen(true);
               setIsOpen(false);
@@ -472,24 +474,27 @@ const MobileMenu = () => {
                 key={app.id}
                 style={{ display: "flex", alignItems: "center" }}
               >
-                <StyledNavLink
+                <NavLink
+                  to={`/dashboard/${app.id}`}
+                  className={({ isActive }) =>
+                  isActive ? "mobile-navlink mobile-navlink-active" : "mobile-navlink"
+                }
                   onClick={() => {
-                    navigate(`/dashboard/${app.id}`);
                     setIsOpen(false);
                   }}
                 >
-                  {app.ans_country} Visa - {app.ans_purpose} -{" "}
-                  {app.ans?.profession}
-                </StyledNavLink>
-                {applications.length > 1 && (
-                  <DeleteButton onClick={() => handleDelete(app.id)}>
-                    <MdClose size={20} />
-                  </DeleteButton>
-                )}
+                  {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
+                  {applications.length > 1 && (
+                    <DeleteButton onClick={() => handleDelete(app.id)}>
+                      <MdClose size={20} />
+                    </DeleteButton>
+                  )}
+                </NavLink>
               </div>
             ))}
           </div>
           <StyledNavLink
+            style={{ marginLeft: "12px" }}
             onClick={() => {
               navigate("/wellcome-2");
               setIsOpen(false);
@@ -497,7 +502,9 @@ const MobileMenu = () => {
           >
             <HiPlus /> Yeni
           </StyledNavLink>
-          <StyledNavLink onClick={handleLogout}>Oturumu Kapat</StyledNavLink>
+          <StyledNavLink style={{ marginLeft: "12px" }} onClick={handleLogout}>
+            Oturumu Kapat
+          </StyledNavLink>
           <Divider />
           <LogoContainer>
             <Logo variant="mobilemenu" />
