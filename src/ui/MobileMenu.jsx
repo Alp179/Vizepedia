@@ -119,8 +119,11 @@ const MenuHeader = styled.div`
   justify-content: flex-start;
   gap: 42px;
   align-items: center;
-  @media (max-width: 330px) {
+  @media (max-width: 370px) {
     gap: 16px;
+  }
+  @media (max-width: 350px) {
+    gap: 8px;
   }
 `;
 
@@ -227,6 +230,14 @@ const LogoContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 16px;
+`;
+
+const DarkModeToggleContainer = styled.div`
+  @media (max-width: 350px) {
+    position: absolute;
+    top: 50px;
+    right: 5%;
+  }
 `;
 
 const MobileMenu = () => {
@@ -456,7 +467,9 @@ const MobileMenu = () => {
       <MenuContainer isOpen={isOpen} ref={menuRef}>
         <MenuHeader>
           <UserAvatar />
-          <DarkModeToggle />
+          <DarkModeToggleContainer>
+            <DarkModeToggle />
+          </DarkModeToggleContainer>
         </MenuHeader>
         <MenuContent>
           <StyledNavLink
@@ -477,8 +490,10 @@ const MobileMenu = () => {
                 <NavLink
                   to={`/dashboard/${app.id}`}
                   className={({ isActive }) =>
-                  isActive ? "mobile-navlink mobile-navlink-active" : "mobile-navlink"
-                }
+                    isActive
+                      ? "mobile-navlink mobile-navlink-active"
+                      : "mobile-navlink"
+                  }
                   onClick={() => {
                     setIsOpen(false);
                   }}
