@@ -54,6 +54,9 @@ const StyledLogo = styled.div`
       @media (max-width: 732px) {
         width: 98px;
       }
+      @media (max-width: 380px) {
+        width: 80px;
+      }
     `}
      
     ${(props) =>

@@ -58,6 +58,9 @@ transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animas
       @media (max-width: 870px) {
         width: 100px;
       }
+      @media (max-width: 380px) {
+        width: 75px;
+      }
     `}
 
         ${(props) =>
