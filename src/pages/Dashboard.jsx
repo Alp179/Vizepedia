@@ -256,7 +256,7 @@ const DashboardContainer = styled.div`
 
 const Ceper = styled.div`
   position: absolute;
-  left: 100px;
+  left: 20vw;
   bottom: 0px;
   display: flex;
   justify-content: center;
@@ -266,8 +266,14 @@ const Ceper = styled.div`
   border: 3px solid #00ffa2;
   filter: drop-shadow(0px 20px 40px rgba(0, 0, 0, 0.11));
   border-radius: 82px;
-  @media (max-width: 1350px) {
-    left: 0px;
+  @media (max-width: 1300px) {
+    left: 15%;
+  }
+  @media (max-width: 1000px) {
+    left: 10%;  
+  }
+  @media (max-width: 875px) {
+    left: 0%;
   }
   @media (max-width: 710px) {
     position: relative;
@@ -538,7 +544,7 @@ const Dashboard = () => {
           <ModalSignup>
             <ModalSignup.Open opens="signUpForm">
               <Ceper>
-                <UyeDevam>Üye Olarak Devamm et</UyeDevam>
+                <UyeDevam>Üye Olarak Devam et</UyeDevam>
               </Ceper>
             </ModalSignup.Open>
             <ModalSignup.Window name="signUpForm">

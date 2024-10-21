@@ -4,16 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledLogo = styled.div`
-cursor: pointer;
-transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
+  cursor: pointer;
+  transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
 
-&:hover {
-  filter: ${(props) =>
-    props.isDarkMode
-      ? "hue-rotate(360deg)"  /* Dark Mode: Renk tonu değişimi */
-      : "hue-rotate(30deg)"}; /* Light Mode: Farklı renk tonu değişimi */
-  transform: scale(1.05); /* Hafif büyütme efekti */
-}
+  &:hover {
+    filter: ${(props) =>
+      props.isDarkMode ? "hue-rotate(360deg)" : "hue-rotate(30deg)"};
+    transform: scale(1.05);
+  }
   ${(props) =>
     props.variant === "login" &&
     css`
@@ -167,7 +165,7 @@ function Logo({ variant }) {
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
   const handleLogoClick = () => {
-    navigate("/mainpage"); // Logo'ya tıklandığında /mainpage'e yönlendiriyoruz
+    navigate("/mainpage");
   };
 
   const src = isDarkMode
@@ -182,7 +180,7 @@ function Logo({ variant }) {
 }
 
 Logo.propTypes = {
-  variant: PropTypes.string, // Define the expected type for `variant`
+  variant: PropTypes.string,
 };
 
 export default Logo;

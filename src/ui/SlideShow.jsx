@@ -7,17 +7,18 @@ import { fetchVisaBlogs } from "../services/apiBlogs";
 import { useNavigate } from "react-router-dom";
 
 const SlideSection = styled.div`
-  margin: 0;
+  margin: 100px 0 50px 0;
   padding: 0;
   height: 750px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  background-color: var(--color-grey-907);
+  background: var(--color-grey-907);
   @media (max-width: 710px) {
+    margin-top: 50px;
     flex-flow: column;
-    height: 760px;
+    height: 800px;
   }
 `;
 
@@ -32,6 +33,8 @@ const SlideExplanation = styled.div`
     margin-left: 40px;
   }
   @media (max-width: 710px) {
+    gap: 32px;
+    margin-bottom: 10px;
     justify-content: center;
     align-items: center;
     margin-left: 0;
@@ -52,6 +55,9 @@ const SlideText = styled.p`
   @media (max-width: 710px) {
     font-size: 26px;
   }
+  @media (max-width: 320px) {
+    font-size: 22px;
+  }
 `;
 
 const SlideContainer = styled.div`
@@ -68,14 +74,18 @@ const SlideContainer = styled.div`
 `;
 
 const CardsWrapper = styled.div`
+  width: 100%;
   display: flex;
   transition: transform 0.5s ease;
-  transform: ${({ currentIndex }) => `translateX(-${currentIndex * 335}px)`};
+  transform: ${({ currentIndex }) => `translateX(-${currentIndex * 325}px)`};
+  @media (max-width: 320px) {
+    transform: ${({ currentIndex }) => `translateX(-${currentIndex * 280}px)`};
+  }
 `;
 
 const Card = styled.div`
-  width: 325px;
-  height: 500px;
+  width: 305px;
+  height: 489px;
   margin: 10px;
   border-radius: 16px;
   flex-shrink: 0;
@@ -86,6 +96,10 @@ const Card = styled.div`
   transition: transform 0.4s;
   &:hover {
     transform: scale(1.05);
+  }
+  @media (max-width: 320px) {
+    width: 260px;
+    height: 520px;
   }
 `;
 
@@ -109,6 +123,7 @@ const CardHeading = styled.p`
   color: var(--color-grey-600);
   margin-left: 20px;
   margin-top: 5px;
+  margin-right: 10px;
 `;
 
 const DevaminiGor = styled.div`
@@ -163,6 +178,11 @@ function SlideShow() {
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
   const slideContainerRef = useRef(null);
+  
+  // Mouse and touch states
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [translateX, setTranslateX] = useState(0);
 
   useEffect(() => {
     async function loadBlogs() {
@@ -188,6 +208,50 @@ function SlideShow() {
     navigate(`/blog/${slug}`);
   };
 
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX);
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      const difference = startX - e.pageX;
+      setTranslateX(difference);
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (translateX > 50) {
+      handleNextClick();
+    } else if (translateX < -50) {
+      handlePrevClick();
+    }
+    setIsDragging(false);
+    setTranslateX(0);
+  };
+
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX);
+  };
+
+  const handleTouchMove = (e) => {
+    if (isDragging) {
+      const difference = startX - e.touches[0].pageX;
+      setTranslateX(difference);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (translateX > 50) {
+      handleNextClick();
+    } else if (translateX < -50) {
+      handlePrevClick();
+    }
+    setIsDragging(false);
+    setTranslateX(0);
+  };
+
   return (
     <SlideSection>
       <SlideExplanation>
@@ -197,7 +261,16 @@ function SlideShow() {
           verici içeriklerle tanışın!
         </SlideText>
       </SlideExplanation>
-      <SlideContainer ref={slideContainerRef}>
+      <SlideContainer
+        ref={slideContainerRef}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         <LeftButton onClick={handlePrevClick}>
           <FiChevronLeft />
         </LeftButton>
@@ -206,7 +279,9 @@ function SlideShow() {
           {blogs.map((blog) => (
             <Card key={blog.id} onClick={() => handleCardClick(blog.slug)}>
               <CardImage src={blog.cover_image || "default-image.jpg"} />
-              <CardDate>{new Date(blog.created_at).toLocaleDateString()}</CardDate>
+              <CardDate>
+                {new Date(blog.created_at).toLocaleDateString()}
+              </CardDate>
               <CardHeading>{blog.title}</CardHeading>
               <DevaminiGor>
                 Devamını gör

@@ -335,25 +335,31 @@ function BlogHome() {
   const containerRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const [translateX, setTranslateX] = useState(0);
 
   // Touch events for mobile scrolling
   const handleTouchStart = (e) => {
     setIsDragging(true);
     setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
-    setScrollLeft(containerRef.current.scrollLeft);
   };
 
   const handleTouchMove = (e) => {
     if (!isDragging) return;
     const x = e.touches[0].pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    containerRef.current.scrollLeft = scrollLeft - walk;
+    const difference = startX - x;
+    setTranslateX(difference);
   };
 
   const handleTouchEnd = () => {
+    if (translateX > 50) {
+      handleScroll("right");
+    } else if (translateX < -50) {
+      handleScroll("left");
+    }
     setIsDragging(false);
+    setTranslateX(0);
   };
+  
 
   // Her kategori için küçük kartların sayısını yönetmek için state tutuyoruz
   const [visibleCounts, setVisibleCounts] = useState({});
@@ -369,18 +375,22 @@ function BlogHome() {
   const handleMouseDown = (e) => {
     setIsDragging(true);
     setStartX(e.pageX - containerRef.current.offsetLeft);
-    setScrollLeft(containerRef.current.scrollLeft);
   };
 
   const handleMouseMove = (e) => {
     if (!isDragging) return;
     const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5; // Sürükleme hızı
-    containerRef.current.scrollLeft = scrollLeft - walk;
+    const difference = startX - x;
+    setTranslateX(difference);
   };
-
   const handleMouseUpOrLeave = () => {
+    if (translateX > 50) {
+      handleScroll("right");
+    } else if (translateX < -50) {
+      handleScroll("left");
+    }
     setIsDragging(false);
+    setTranslateX(0);
   };
 
   if (isLoading) return <p>Yükleniyor...</p>;
@@ -397,7 +407,7 @@ function BlogHome() {
     initializeVisibleCounts(Object.keys(groupedBlogs));
   }
 
-  const handleScroll = (direction) => {
+   const handleScroll = (direction) => {
     const container = containerRef.current;
     const scrollAmount = window.innerWidth <= 910 ? 260 : 320;
     const maxScrollLeft = container.scrollWidth - container.clientWidth;
