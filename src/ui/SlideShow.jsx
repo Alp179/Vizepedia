@@ -48,6 +48,7 @@ const SlideText = styled.p`
   background: linear-gradient(180deg, #1500ff 4.17%, #5900ff 100%);
   background-clip: text;
   -webkit-background-clip: text;
+  hyphens: none;
   -webkit-text-fill-color: transparent;
   @media (max-width: 1250px) {
     font-size: 28px;
@@ -178,7 +179,7 @@ function SlideShow() {
   const [blogs, setBlogs] = useState([]);
   const navigate = useNavigate();
   const slideContainerRef = useRef(null);
-  
+
   // Mouse and touch states
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);

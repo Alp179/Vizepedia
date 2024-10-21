@@ -10,8 +10,8 @@ const StyledLogo = styled.div`
   &:hover {
     filter: ${(props) =>
       props.isDarkMode ? "hue-rotate(360deg)" : "hue-rotate(30deg)"};
-    transform: scale(1.05);
   }
+  
   ${(props) =>
     props.variant === "login" &&
     css`
