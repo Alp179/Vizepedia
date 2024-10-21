@@ -154,7 +154,8 @@ const StyledNavLink = styled(NavLink)`
   &.active:link {
     width: 100%;
     background: var(--color-grey-905);
-    border-radius: 16px;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
   }
 
   

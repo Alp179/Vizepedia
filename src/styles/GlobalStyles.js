@@ -306,7 +306,7 @@ ul {
 }
 
 .mobile-scrolldiv {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   display: flex;
@@ -323,13 +323,12 @@ ul {
   padding: 8px;
   min-height: 80px;
   align-items: center;
-  background: white;
   border-radius: 16px;
   width: 100%;
 }
 
 .mobile-navlink-active {
-  background-color: red!important;
+  background-color: var(--color-grey-905)!important;
 }
 
 .question-progressAndContent-container {

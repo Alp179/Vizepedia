@@ -12,16 +12,16 @@ const StyledModal = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: var(--color-grey-919);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
-  padding: 3.2rem 4rem;
   display: flex;
   flex-direction: column;
-  max-width: 500px;
-  width: 100%;
+  width: max-content;
   justify-content: space-between;
   transition: all 0.5s;
+  @media (max-width: 370px) {
+    width: 100%;
+  }
 `;
 
 const Overlay = styled.div`
