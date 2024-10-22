@@ -396,17 +396,29 @@ function BlogHeader() {
   return (
     <StyledHeader>
       <HeaderContents>
-        <Logo onClick={handleLogoClick} src={srcLogo} isHovered={isHovered} isActive={isActive} />
-        <BlogLogo onClick={handleBlogLogoClick} src={srcBlog} isHovered={isHovered} isActive={isActive} />
+        <Logo
+          onClick={handleLogoClick}
+          src={srcLogo}
+          isHovered={isHovered}
+          isActive={isActive}
+        />
+        <BlogLogo
+          onClick={handleBlogLogoClick}
+          src={srcBlog}
+          isHovered={isHovered}
+          isActive={isActive}
+        />
 
         <InputAndDarkToggleContainer>
-          <BlogInputWrapper isActive={isActive}>
+          <BlogInputWrapper
+            isActive={isActive}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             <SearchIcon isActive={isActive} onClick={handleSearchClick}>
               🔍
             </SearchIcon>
             <BlogInput
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
               ref={searchInputRef}
               type="text"
               placeholder="Bloglarda ara..."
