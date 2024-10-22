@@ -8,8 +8,7 @@ const StyledLogo = styled.div`
   transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
 
   &:hover {
-    filter: ${(props) =>
-      props.isDarkMode ? "hue-rotate(360deg)" : "hue-rotate(30deg)"};
+    filter: brightness(0) invert(0.4); /* Logo hoverlandığında beyaza döner */
   }
   
   ${(props) =>

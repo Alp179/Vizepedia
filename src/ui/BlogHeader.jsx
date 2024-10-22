@@ -7,13 +7,21 @@ import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const BlogLogo = styled.img`
+  cursor: pointer;
+  transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
+
+  &:hover {
+    filter: ${(props) =>
+      props.isDarkMode
+        ? "hue-rotate(280deg)"  /* Dark Mode: Renk tonu değişimi */
+        : "hue-rotate(360deg)"};
+  }
   position: absolute;
   top: 50%;
   left: 50%;
   width: 165px;
   transform: translate(-50%, -50%);
   height: auto;
-  transition: transform 0.4s ease;
   flex-shrink: 0;
   @media (max-width: 1300px) {
     width: 140px;
@@ -52,7 +60,12 @@ const BlogLogo = styled.img`
 `;
 
 const Logo = styled.img`
-  transition: transform 0.4s ease;
+  cursor: pointer;
+  transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
+
+  &:hover {
+    filter: brightness(0) invert(0.4); /* Logo hoverlandığında beyaza döner */
+  }
   width: 165px;
   transform: translate(0, 0);
   height: auto;
@@ -396,8 +409,18 @@ function BlogHeader() {
   return (
     <StyledHeader>
       <HeaderContents>
-        <Logo onClick={handleLogoClick} src={srcLogo} isHovered={isHovered} isActive={isActive} />
-        <BlogLogo onClick={handleBlogLogoClick} src={srcBlog} isHovered={isHovered} isActive={isActive} />
+        <Logo
+          onClick={handleLogoClick}
+          src={srcLogo}
+          isHovered={isHovered}
+          isActive={isActive}
+        />
+        <BlogLogo
+          onClick={handleBlogLogoClick}
+          src={srcBlog}
+          isHovered={isHovered}
+          isActive={isActive}
+        />
 
         <InputAndDarkToggleContainer>
           <BlogInputWrapper isActive={isActive}>

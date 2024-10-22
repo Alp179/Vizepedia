@@ -6,6 +6,43 @@ import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
 import Faq from "../ui/Faq";
 
+const CountryList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Ekrana sığacak şekilde sütunları oluştur */
+  gap: 20px;
+  padding: 10px 0;
+  @media (max-width: 850px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  @media (max-width: 470px) {
+    gap: 4px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  @media (max-width: 337px) {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+`;
+
+const CountryItem = styled.div`
+  font-size: 20px;
+  @media (max-width: 1000px) {
+    font-size: 18px;
+  }
+  @media (max-width: 450px) {
+    font-size: 16px;
+  }
+  color: var(--color-grey-600);
+  display: flex;
+  align-items: center; /* Nokta ve metnin aynı hizaya gelmesi için */
+  
+  &::before {
+    content: "•"; /* Madde işareti olarak nokta ekler */
+    color: var(--color-grey-600);
+    margin-right: 8px; /* Nokta ile metin arasında boşluk */
+    font-size: 24px;
+  }
+`;
+
 const BigTexts = styled.div`
   justify-content: center;
   align-items: center;
@@ -413,6 +450,40 @@ const Background2 = styled.div`
 `;
 
 function MainPage() {
+  const countries = [
+    "Almanya",
+    "Avusturya",
+    "Belçika",
+    "Çek Cumhuriyeti",
+    "Danimarka",
+    "Estonya",
+    "Finlandiya",
+    "Fransa",
+    "Yunanistan",
+    "Hollanda",
+    "Hırvatistan",
+    "İtalya",
+    "Letonya",
+    "Litvanya",
+    "Lüksemburg",
+    "Malta",
+    "Polonya",
+    "Portekiz",
+    "Slovakya",
+    "Slovenya",
+    "İspanya",
+    "İsveç",
+    "İsviçre",
+    "Norveç",
+    "İzlanda",
+    "Lihtenştayn",
+    "Çin",
+    "Amerika Birleşik Devletleri",
+    "Birleşik Arap Emirlikleri",
+    "Rusya",
+    "Birleşik Krallık",
+    "Kanada",
+  ];
   return (
     <>
       <BigTexts>
@@ -697,20 +768,41 @@ function MainPage() {
           <p>
             Vizepedia kullanıcıları, platformumuzun rehberliğinde aşağıdaki
             ülkelerin vize başvurularını tamamlayabilir ve bu ülkelerin vize
-            işlemlerini gerçekleştirebilirler...
+            işlemlerini gerçekleştirebilirler:
+          </p>
+          <CountryList>
+            {countries.map((country, index) => (
+              <CountryItem key={index}>{country}</CountryItem>
+            ))}
+          </CountryList>
+          <p>
+            Vizepedia, bu ülkelerin vize süreçlerini yönetmekle ilgili tüm
+            gerekli bilgileri sunarak kullanıcıların vize başvurularını
+            tamamlamalarına yardımcı olur. Hangi belgelerin gerekeceğini, nasıl
+            bir başvuru formu doldurulması gerektiğini, ne tür bir vizeye
+            ihtiyaç duyulduğunu ve başvuru sürecinin nasıl ilerleyeceğini içeren
+            kapsamlı bilgiler sağlarız.
           </p>
         </Faq>
         <Faq
           title={`Vizepedia'nın sunduğu bilgiler için herhangi bir ücret ödemem gerekiyor mu?`}
         >
           <p>
-            Hayır, Vizepedia&apos;nın sunduğu bilgiler tamamen ücretsizdir...
+            Hayır, Vizepedia&apos;nın sunduğu bilgiler tamamen ücretsizdir. Platformumuz, vize başvuru sürecinde size
+                  rehberlik etmek için gerekli tüm bilgileri sağlar ve bu hizmetten yararlanmak için herhangi bir ücret talep
+                  etmez. Amacımız, vize başvurularınızı daha kolay ve anlaşılır hale getirmektir.
           </p>
         </Faq>
-        <Faq title={`Vizepedia'nın Sunduğu Bilgilerin Kaynağı Nedir?`}>
+        <Faq title={`Vizepedia'nın sunduğu bilgilerin kaynağı nedir?`}>
           <p>
             Vizepedia&apos;nın sunduğu bilgiler, bir dizi resmi ve güvenilir
-            kaynaklardan toplanmıştır...
+            kaynaklardan toplanmıştır. Bunlar arasında hükümet web siteleri,
+            büyükelçilikler ve konsolosluklar, uluslararası göçmenlik ve vize
+            politikaları üzerine resmi yayınlar bulunmaktadır. Bilgiler ayrıca,
+            vize süreçleri ve gereklilikleri konusunda geniş bir deneyime sahip
+            olan Vizepedia&apos;nın uzman ekibinin derinlemesine araştırmaları
+            ve analizleri ile de desteklenmektedir. Bu şekilde,
+            kullanıcılarımıza en doğru ve güncel bilgileri sunabilmekteyiz.
           </p>
         </Faq>
       </FaqSection>
