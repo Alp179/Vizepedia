@@ -5,12 +5,12 @@ import { getCurrentUser } from "../services/apiAuth";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import styled from "styled-components";
+import { HiDocument } from "react-icons/hi2"; // İkonun importu
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
-import PropTypes from "prop-types";
 
 const ReviewButton = styled.button`
   margin-top: auto;
@@ -99,30 +99,6 @@ const DocumentMeta = styled.p`
   }
 `;
 
-const DocImage = styled.svg`
-  height: 45px;
-  width: 36px;
-  margin-left: 16px;
-  fill: ${(props) =>
-    props.isCompleted
-      ? "#004466"
-      : "var(--color-grey-600)"}; /* Rengi dinamik olarak belirliyoruz */
-`;
-
-const DocumentIcon = ({ isCompleted }) => (
-  <DocImage
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    isCompleted={isCompleted} /* Bu prop, rengi değiştirecek */
-  >
-    <path d="M6 2h7.586c.52 0 1.02.2 1.414.586l4.414 4.414c.386.394.586.894.586 1.414v11.586c0 1.104-.896 2-2 2H6c-1.104 0-2-.896-2-2V4c0-1.104.896-2 2-2zm8 0v5h5l-5-5zM6 22h12v-6H6v6zm0-8h12V9h-6V3H6v11z" />
-  </DocImage>
-);
-
-DocumentIcon.propTypes = {
-  isCompleted: PropTypes.bool.isRequired, // isCompleted bir boolean ve zorunlu bir prop
-};
-
 const DocumentSummary = () => {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
@@ -209,10 +185,15 @@ const DocumentSummary = () => {
                 gap: "12px",
               }}
             >
-              <DocumentIcon
-                isCompleted={
+              {/* HiDocument icon with conditional color */}
+              <HiDocument
+                size={32}
+                color={
                   completedDocuments[applicationId]?.[document.docName]
+                    ? "#004466"
+                    : "currentColor"
                 }
+                style={{ flexShrink: "0" }}
               />
               <MetaContainer>
                 <DocumentTitle

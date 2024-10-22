@@ -3,7 +3,6 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi2";
 import { MdClose } from "react-icons/md"; // Çarpı işareti için icon import
-import Button from "./Button";
 import Modal from "./Modal";
 import AllDocs from "./AllDocs";
 import { useContext, useEffect, useState } from "react";
