@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
-import { styled, keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
@@ -11,245 +11,13 @@ import Spinner from "./Spinner";
 import { getCurrentUser } from "../services/apiAuth";
 import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
-
-const StepAndContinueContainer = styled.div`
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  max-width: 740px;
-  align-items: center;
-  display: flex;
-  gap: 16px;
-  background: rgba(255, 255, 255, 0.2);
-  z-index: 3000;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border-radius: 16px;
-  border-bottom-left-radius: 8px;
-  @media (max-width: 1550px) {
-    margin-left: -100px;
-  }
-  @media (max-width: 1050px) {
-    max-width: 500px !important;
-  }
-  @media (max-width: 710px) {
-    margin-left: auto;
-    margin-right: auto;
-    gap: 8px;
-    flex-flow: column;
-    width: 400px;
-    justify-content: flex-start;
-    align-item: flex-start;
-    padding-bottom: 16px;
-  }
-  @media (max-width: 520px) {
-    width: 80%;
-  }
-  @media (max-width: 350px) {
-    width: 95%;
-  }
-`;
-
-const StepsContainer = styled.div`
-  width: 600px;
-  overflow-x: auto; /* Yatay kaydırma */
-  padding: 14px;
-  position: relative;
-  @media (max-width: 1050px) {
-    width: 370px;
-  }
-  @media (max-width: 710px) {
-    overflow: visible;
-    margin-right: auto;
-    flex-flow: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
-
-  &::-webkit-scrollbar {
-    border-radius: 16px;
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    border-radius: 16px;
-    background: var(--color-grey-2);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--color-grey-54);
-    border-radius: 10px;
-    border: 3px solid var(--color-grey-2);
-  }
-`;
-
-const StepCircleContainer = styled.div`
-  display: flex;
-  gap: 10px; /* Circle'lar arasındaki boşluk */
-  @media (max-width: 710px) {
-    flex-flow: column;
-    gap: 12px;
-  }
-`;
-
-const StepCircle = styled.div`
-  z-index: 2000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  width: 35px;
-  height: 35px;
-  line-height: 35px;
-  flex-shrink: 0;
-  border: 2px solid;
-  border-radius: 50%;
-  text-align: center;
-  margin-bottom: 5px;
-  background-color: ${(props) =>
-    props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "white"};
-  color: ${(props) =>
-    props.isActive || props.isCompleted ? "white" : "black"};
-  border-color: ${(props) =>
-    props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "#ccc"};
-  @media (max-height: 830px) {
-    width: 25px;
-    height: 25px;
-    font-size: 14px;
-    justify-content: center;
-    align-items: center;
-  }
-`;
-
-const StepName = styled.div`
-  z-index: 3000;
-  font-size: 14px;
-  margin-top: 5px;
-  max-width: 80px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: max-width 0.6s ease;
-
-  &:hover {
-    max-width: 160px;
-  }
-
-  @media (max-width: 1270px) {
-    max-width: 70px;
-  }
-  @media (max-width: 990px) {
-    max-width: 60px;
-  }
-  @media (max-width: 820px) {
-    max-width: 50px;
-  }
-  @media (max-width: 710px) {
-    &:hover {
-      max-width: 200px;
-    }
-    max-width: 300px;
-    font-size: 18px;
-    text-overflow: ellipsis !important;
-  }
-  @media (max-height: 830px) {
-    font-size: 16px !important;
-    margin-top: 0px;
-  }
-  @media (max-width: 415px) {
-    max-width: 230px;
-  }
-  @media (max-width: 360px) {
-    max-width: 180px;
-  }
-`;
-
-const glowing = keyframes`
-  0% { background-position: 0 0; }
-  50% { background-position: 400% 0; }
-  100% { background-position: 0 0; }
-`;
-
-const ContinueButton = styled.button`
-  flex-shrink: 0;
-  font-size: 14px;
-  font-weight: bold;
-  height: 50px;
-  margin-right: 8px;
-  width: 100px;
-  color: var(--color-grey-913);
-  background: var(--color-grey-914);
-  cursor: pointer;
-  position: relative;
-  z-index: 0;
-  border-radius: 10px;
-
-  &:before {
-    content: "";
-    background: linear-gradient(
-      -45deg,
-      #004466,
-      #004466,
-      #87f9cd,
-      #87f9cd,
-      #87f9cd,
-      #004466,
-      #004466
-    );
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    background-size: 400%;
-    z-index: -1;
-    filter: blur(5px);
-    width: calc(100% + 8px);
-    height: calc(100% + 8px);
-    animation: ${glowing} 20s linear infinite;
-    opacity: 1; // Opacity'yi 1 yaparak pasif durumda da animasyonu aktif hale getirdik
-    transition: opacity 0.3s ease-in-out;
-    border-radius: 10px;
-  }
-
-  &:after {
-    z-index: -1;
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: var(--color-grey-914);
-    left: 0;
-    top: 0;
-    border-radius: 10px;
-  }
-
-  &:hover {
-    color: #004466;
-  }
-
-  &:hover:after {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  &:active {
-    color: #000;
-  }
-
-  &:active:after {
-    background: transparent;
-  }
-  @media (max-width: 830px) {
-    height: 50px;
-  }
-  @media (max-width: 710px) {
-    width: 60%;
-    @media (max-height: 830px) {
-      width: 40%;
-      height: 42px;
-      font-size: 13px;
-    }
-  }
-
-  z-index: 4000; /* Butonun her zaman üstte olmasını sağlar */
-`;
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
 
 const StepIndicator = () => {
   const [userId, setUserId] = useState(null);
@@ -261,8 +29,10 @@ const StepIndicator = () => {
     state: { completedDocuments },
     dispatch,
   } = useContext(DocumentsContext);
-
   const [currentStep, setCurrentStep] = useState(null);
+
+  // `mouseX` koşulsuz olarak tanımlandı
+  const mouseX = useMotionValue(Infinity);
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -270,9 +40,7 @@ const StepIndicator = () => {
         setUserId(user.id);
         fetchCompletedDocuments(user.id, applicationId).then((data) => {
           const completedDocsMap = data.reduce((acc, doc) => {
-            if (!acc[applicationId]) {
-              acc[applicationId] = {};
-            }
+            if (!acc[applicationId]) acc[applicationId] = {};
             acc[applicationId][doc.document_name] = true;
             return acc;
           }, {});
@@ -323,11 +91,7 @@ const StepIndicator = () => {
     return <div>Error loading data.</div>;
 
   const handleContinue = () => {
-    if (!documents || documents.length === 0 || currentStep === -1) {
-      console.error("No documents found or all documents are completed.");
-      return;
-    }
-
+    if (!documents || documents.length === 0 || currentStep === -1) return;
     const selectedDocument = documents[currentStep];
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
@@ -342,43 +106,281 @@ const StepIndicator = () => {
   };
 
   return (
-    <>
-      <StepAndContinueContainer>
-        <StepsContainer>
-          <StepCircleContainer>
-            {documents &&
-              documents.map((doc, index) => {
-                const isActive = index === currentStep;
-                const isCompleted =
-                  completedDocuments[applicationId]?.[doc.docName];
+    <StepAndContinueContainer>
+      <StepsContainer
+        onMouseMove={(e) => mouseX.set(e.pageX)}
+        onMouseLeave={() => mouseX.set(Infinity)}
+      >
+        <StepCircleContainer>
+          {documents.map((doc, index) => {
+            const isActive = index === currentStep;
+            const isCompleted =
+              completedDocuments[applicationId]?.[doc.docName];
 
-                return (
-                  <div
-                    className="stepsAndNames"
-                    key={doc.id}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <StepCircle
-                      isActive={isActive}
-                      isCompleted={isCompleted}
-                      onClick={() => handleStepClick(index)}
-                    >
-                      {index + 1}
-                    </StepCircle>
-                    <StepName title={doc.docName}>{doc.docName}</StepName>
-                  </div>
-                );
-              })}
-          </StepCircleContainer>
-        </StepsContainer>
-        <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
-      </StepAndContinueContainer>
-    </>
+            return (
+              <IconContainer
+                key={doc.id}
+                isActive={isActive}
+                isCompleted={isCompleted}
+                onClick={() => handleStepClick(index)}
+                title={doc.docName}
+                mouseX={mouseX} // mouseX değerini burada prop olarak geçiyoruz
+                stepNumber={index + 1} // Daire içerisine numara eklemek için numarayı props olarak geçiriyoruz
+              />
+            );
+          })}
+        </StepCircleContainer>
+      </StepsContainer>
+      <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
+    </StepAndContinueContainer>
   );
 };
 
 export default StepIndicator;
+
+// Styled components
+const StepAndContinueContainer = styled.div`
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  max-width: 740px;
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 3000;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 16px;
+  border-bottom-left-radius: 8px;
+  @media (max-width: 1550px) {
+    margin-left: -100px;
+  }
+  @media (max-width: 1050px) {
+    max-width: 500px !important;
+  }
+  @media (max-width: 710px) {
+    margin-left: auto;
+    margin-right: auto;
+    gap: 8px;
+    flex-flow: column;
+    width: 400px;
+    justify-content: flex-start;
+    padding-bottom: 16px;
+  }
+  @media (max-width: 520px) {
+    width: 80%;
+  }
+  @media (max-width: 350px) {
+    width: 95%;
+  }
+`;
+
+const StepsContainer = styled.div`
+  width: 600px;
+  overflow-x: auto;
+  padding: 14px;
+  position: relative;
+  @media (max-width: 1050px) {
+    width: 370px;
+  }
+  @media (max-width: 710px) {
+    overflow: visible;
+    flex-flow: column;
+    align-items: flex-start;
+  }
+
+  &::-webkit-scrollbar {
+    border-radius: 16px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 16px;
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-grey-54);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
+  }
+`;
+
+const StepCircleContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  @media (max-width: 710px) {
+    flex-flow: column;
+    gap: 12px;
+  }
+`;
+
+const IconContainer = ({
+  isActive,
+  isCompleted,
+  onClick,
+  title,
+  mouseX,
+  stepNumber,
+}) => {
+  const ref = useRef(null);
+  const [hovered, setHovered] = useState(false);
+
+  const distance = useTransform(mouseX, (val) => {
+    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+    return val - bounds.x - bounds.width / 2;
+  });
+
+  const size = useSpring(useTransform(distance, [-150, 0, 150], [40, 80, 40]), {
+    mass: 0.1,
+    stiffness: 150,
+    damping: 12,
+  });
+
+  return (
+    <IconWrapper
+      ref={ref}
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        width: size,
+        height: size,
+        backgroundColor: isActive
+          ? "#3498db"
+          : isCompleted
+          ? "#2ecc71"
+          : "white",
+      }}
+    >
+      <div>{stepNumber}</div> {/* Daire içerisine numara ekleniyor */}
+      <AnimatePresence>
+        {hovered && (
+          <TooltipContainer
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+          >
+            {title}
+          </TooltipContainer>
+        )}
+      </AnimatePresence>
+    </IconWrapper>
+  );
+};
+
+const IconWrapper = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid;
+  border-radius: 50%;
+  position: relative;
+  transition: border-color 0.3s ease;
+  background-color: ${(props) =>
+    props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "white"};
+  color: ${(props) =>
+    props.isActive || props.isCompleted ? "white" : "black"};
+  border-color: ${(props) =>
+    props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "#ccc"};
+`;
+
+const TooltipContainer = styled(motion.div)`
+  position: absolute;
+  top: -35px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  white-space: nowrap;
+`;
+
+const glowing = keyframes`
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+`;
+
+const ContinueButton = styled.button`
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: bold;
+  height: 50px;
+  margin-right: 8px;
+  width: 100px;
+  color: var(--color-grey-913);
+  background: var(--color-grey-914);
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+
+  &:before {
+    content: "";
+    background: linear-gradient(
+      -45deg,
+      #004466,
+      #004466,
+      #87f9cd,
+      #87f9cd,
+      #87f9cd,
+      #004466,
+      #004466
+    );
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    animation: ${glowing} 20s linear infinite;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 10px;
+  }
+
+  &:after {
+    z-index: -1;
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--color-grey-914);
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+  }
+
+  &:hover {
+    color: #004466;
+  }
+
+  &:hover:after {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  &:active {
+    color: #000;
+  }
+
+  &:active:after {
+    background: transparent;
+  }
+  @media (max-width: 830px) {
+    height: 50px;
+  }
+  @media (max-width: 710px) {
+    width: 60%;
+    @media (max-height: 830px) {
+      width: 40%;
+      height: 42px;
+      font-size: 13px;
+    }
+  }
+
+  z-index: 4000;
+`;
