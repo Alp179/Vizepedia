@@ -35,7 +35,7 @@ import BlogDetail from "./pages/BlogDetail"; // Blog detay sayfası
 import { useEffect } from "react";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
-
+//sakso
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
