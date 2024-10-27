@@ -3,7 +3,6 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi2";
 import { MdClose } from "react-icons/md"; // Çarpı işareti için icon import
-import Modal from "./Modal";
 import AllDocs from "./AllDocs";
 import { useContext, useEffect, useState } from "react";
 import { useDocuments } from "../context/DocumentsContext";
@@ -20,6 +19,7 @@ import { useVisaApplications } from "../context/VisaApplicationContext";
 
 import toast, { Toaster } from "react-hot-toast"; // React Hot Toast import
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
+import ModalDocs from "./ModalDocs";
 
 // Glow Button animasyonu için gerekli keyframes
 const glowing = keyframes`
@@ -43,8 +43,17 @@ const GlowButton = styled.button`
   border-radius: 10px;
 
   &:before {
-    content: '';
-    background: linear-gradient(-45deg, #004466,#004466, #87F9CD, #87F9CD, #87F9CD,   #004466, #004466 );
+    content: "";
+    background: linear-gradient(
+      -45deg,
+      #004466,
+      #004466,
+      #87f9cd,
+      #87f9cd,
+      #87f9cd,
+      #004466,
+      #004466
+    );
     position: absolute;
     top: -2px;
     left: -2px;
@@ -53,15 +62,15 @@ const GlowButton = styled.button`
     filter: blur(5px);
     width: calc(100% + 8px);
     height: calc(100% + 8px);
-    animation: ${glowing} 20s linear infinite ;
-    opacity: 1;  // Opacity'yi 1 yaparak pasif durumda da animasyonu aktif hale getirdik
+    animation: ${glowing} 20s linear infinite;
+    opacity: 1; // Opacity'yi 1 yaparak pasif durumda da animasyonu aktif hale getirdik
     transition: opacity 0.3s ease-in-out;
     border-radius: 10px;
   }
 
   &:after {
     z-index: -1;
-    content: '';
+    content: "";
     position: absolute;
     width: 100%;
     height: 100%;
@@ -95,9 +104,7 @@ const GlowButton = styled.button`
     width: 150px;
     font-size: 14px;
   }
-
 `;
-
 
 const NavList = styled.ul`
   width: 100%;
@@ -146,7 +153,6 @@ const StyledNavLink = styled(NavLink)`
       gap: 8px;
       font-size: 13px;
     }
-    
   }
 
   &.active:visited,
@@ -157,7 +163,6 @@ const StyledNavLink = styled(NavLink)`
     border-bottom-left-radius: 16px;
   }
 
-  
   & svg {
     width: 2.4rem;
     height: 2.4rem;
@@ -183,13 +188,9 @@ const DeleteButton = styled.button`
   border: none;
   color: red;
   cursor: pointer;
-  margin-left: 10px;
   position: absolute;
   right: 10px;
   display: none;
-  margin-right: -10px;
-  align-items: center;
-  justify-content: center;
   width: 2.4rem;
   height: 2.4rem;
 
@@ -246,6 +247,7 @@ const Tooltip = styled.span`
 
 const ScrollableDiv = styled.div`
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: 320px;
   display: flex;
   flex-direction: column;
@@ -285,8 +287,8 @@ const ScrollableDiv = styled.div`
   }
 `;
 
-
 const AllDocsButton = styled(NavLink)`
+  flex-shrink: 0;
   min-height: 65px;
   width: 90%;
   &:link,
@@ -307,7 +309,8 @@ const AllDocsButton = styled(NavLink)`
       width: 150px;
     }
     @media (max-width: 1050px) {
-      width: 130px;
+      width: 200px !important;
+      margin-left: -10px;
       gap: 8px;
       font-size: 13px;
     }
@@ -328,7 +331,6 @@ const AllDocsButton = styled(NavLink)`
     color: #00ffa2; /* İconun hover durumunda sarı renge dönüşmesi */
   }
 `;
-
 
 function MainNav() {
   const [userId, setUserId] = useState(null);
@@ -455,21 +457,19 @@ function MainNav() {
   return (
     <nav className="navbar-dash">
       <Toaster />
-      <GlowButton onClick={continueToDocument}>
-        Devam et
-      </GlowButton>
+      <GlowButton onClick={continueToDocument}>Devam et</GlowButton>
       <NavList>
         <li>
-          <Modal>
-            <Modal.Open opens="allDocs">
+          <ModalDocs>
+            <ModalDocs.Open opens="allDocs">
               <AllDocsButton style={{ width: "100%" }}>
                 <HiDocument /> <span className="sidebartext">Tüm belgeler</span>
               </AllDocsButton>
-            </Modal.Open>
-            <Modal.Window name="allDocs">
+            </ModalDocs.Open>
+            <ModalDocs.Window name="allDocs">
               <AllDocs />
-            </Modal.Window>
-          </Modal>
+            </ModalDocs.Window>
+          </ModalDocs>
         </li>
         <ScrollableDiv>
           {applications.map((app) => (
@@ -478,7 +478,9 @@ function MainNav() {
                 style={{ justifyContent: "flex-start" }}
                 to={`/dashboard/${app.id}`}
               >
-                {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
+                <div style={{ maxWidth: "130px" }}>
+                  {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
+                </div>
                 {applications.length > 1 && (
                   <DeleteButton
                     className="delete-button"

@@ -178,38 +178,26 @@ const FullScreenModal = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90% !important;
+  max-height: calc(100vh - 300px);
   background-color: var(--color-grey-51);
   border-radius: 20px;
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
-  display: flex;
-  flex-direction: column;
-  width: calc(100vw - 100px);
-  max-width: 450px;
-  height: calc(100vh - 200px);
-  max-height: 720px;
+  width: fit-content;
   justify-content: space-between;
-  transform: ${(props) =>
-    props.isClosing ? "translate(100%, -50%)" : "translate(-50%, -50%)"};
-  transition: transform 0.3s ease-in-out;
-  @media (max-width: 450px) {
-    width: 90% !important;
-    height: 75% !important;
-  }
-  @media (max-height: 700px) {
-    height: 75%;
-  }
-  @media (max-width: 450px) {
-    @media (max-height: 675px) {
-      height: 80% !important;
-    }
+  transition: all 0.5s;
+
+  @media (max-width: 380px) {
+    width: calc(100vw);
   }
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 20px;
   background: none;
   border: none;
   font-size: 36px;
@@ -276,7 +264,7 @@ const MobileMenu = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [isDocsOpen]);
 
   useEffect(() => {
     const handleBackButton = (event) => {

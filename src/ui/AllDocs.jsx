@@ -18,10 +18,17 @@ const DocumentItem = styled.li`
   border-radius: 8px;
   background-color: ${(props) => (props.isCompleted ? "#00ffa2" : "none")};
   padding: 8px;
+  font-size: 18px;
   margin: 0; /* Boşluğu sıfırladık */
   cursor: pointer;
   &:hover {
     background-color: ${(props) => (props.isCompleted ? "#cde0d9" : "#f0f0f0")};
+  }
+  @media (max-width: 970px) {
+    font-size: 16px;
+  }
+  @media (max-width: 450px) {
+    font-size: 14px;
   }
 `;
 
@@ -35,12 +42,10 @@ const Bracket = styled.div`
 const ScrollableDiv = styled.div`
   padding: 8px 0;
   overflow-y: auto;
-  height: calc(100vh - 370px); /* You can adjust this height as needed */
   width: 100%;
   margin: 0 auto;
-  @media (max-height: 770px) {
-    height: 380px;
-  }
+  max-height: calc(100vh - 300px);
+  
 
   /* Scrollbar styling */
   &::-webkit-scrollbar {
@@ -55,6 +60,29 @@ const ScrollableDiv = styled.div`
     background-color: var(--color-grey-54);
     border-radius: 10px;
     border: 3px solid var(--color-grey-2);
+  }
+`;
+
+const HeadingBig = styled.p`
+  font-size: 28px;
+  font-weight: bold;
+  @media (max-width: 970px) {
+    font-size: 24px;
+  }
+  @media (max-width: 450px) {
+    font-size: 20px;
+  }
+`;
+
+const HeadingSmall = styled.p`
+  hyphens: none;
+  font-size: 20px;
+  margin-bottom: 12px;
+  @media (max-width: 970px) {
+    font-size: 18px;
+  }
+  @media (max-width: 450px) {
+    font-size: 16px;
   }
 `;
 
@@ -135,14 +163,18 @@ function AllDocs() {
         zIndex: "3000",
       }}
     >
-      <h2>Tüm Belgeler</h2>
-      <div>Başvurunuzda gerekli olan tüm belgeleri aşağıda görebilirsiniz</div>
+      <HeadingBig>Tüm Belgeler</HeadingBig>
+      <HeadingSmall>
+        Başvurunuzda gerekli olan tüm belgeleri aşağıda görebilirsiniz
+      </HeadingSmall>
 
       <ScrollableDiv>
         {documents?.map((document, index) => (
           <div key={document.id}>
             <DocumentItem
-              isCompleted={completedDocuments[applicationId]?.[document.docName]}
+              isCompleted={
+                completedDocuments[applicationId]?.[document.docName]
+              }
               onClick={() => handleDocumentClick(document)}
             >
               {document.docName}

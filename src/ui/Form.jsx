@@ -19,12 +19,20 @@ const Form = styled.form`
       align-items: center;
       @media (max-width: 450px) {
         width: 358px;
-        height: 540px;
+        height: 600px;
       }
       @media (max-width: 370px) {
         width: 100%!important;
         height: auto;
 
+      }
+      @media (max-height: 725px) {
+        height: 500px;
+        width: 300px;
+        @media (max-width: 270px) {
+          width: 100vw!important;
+          height: auto;
+        }
       }
     `}
 

@@ -28,22 +28,33 @@ const sizes = {
     @media (max-width: 450px) {
       width: 306px !important;
     }
+    @media (max-height: 725px) {
+      width: 250px !important;
+      height: 36px !important;
+      font-size: 13px !important;
+    }
   `,
   back: css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: #0f8d97 !important;
     color: #87f9cd !important;
     font-weight: bold;
-    height: 7rem;
-    width: 160px;
+    height: 60px;
+    font-size: 18px;
+    width: 120px;
+    border-radius: 0px 16px 16px 16px;
     position: fixed;
     z-index: 2991;
     @media (max-width: 710px) {
       height: 60px;
+      font-size: 16px;
       width: 100px;
     }
     @media (max-width: 450px) {
       height: 40px;
-      font-size: 16px;
+      font-size: 14px;
       width: 80px;
     }
   `,
@@ -103,9 +114,20 @@ const variations = {
       width: calc(100vw - 20px) !important;
     }
   `,
+  guest: css`
+    background-color: var(--color-grey-921);
+    border: 1px solid var(--color-grey-905);
+    color: var(--color-grey-600);
+    @media (max-width: 370px) {
+      width: calc(100vw - 20px) !important;
+    }
+  `,
   googleauth: css`
-    background: white;
-    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-grey-909);
     font-weight: bold;
     border: 1px solid var(--color-grey-300);
     @media (max-width: 370px) {

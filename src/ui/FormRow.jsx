@@ -12,6 +12,9 @@ const StyledFormRow = styled.div`
   gap: ${(props) => (props.orientation === "vertical" ? "0.8rem" : "2.4rem")};
 
   padding: 1.2rem 0;
+  @media (max-height: 725px) {
+    padding: 8px;
+  }
 
   &:first-child {
     padding-top: 0;
@@ -42,6 +45,9 @@ const StyledFormRow = styled.div`
 
 const Label = styled.label`
   font-weight: 500;
+  @media (max-height: 725px) {
+    font-size: 13px;
+  }
 `;
 
 const Error = styled.span`

@@ -12,8 +12,12 @@ export const Input = styled.input`
     width: 306px;
     height: 44px;
   }
+  @media (max-height: 725px) {
+    width: 250px!important;
+    height: 38px!important;
+  }
   @media (max-width: 370px) {
-    width: calc(100vw - 20px);
+    width: calc(100vw - 20px)!important;
   }
 `;
 

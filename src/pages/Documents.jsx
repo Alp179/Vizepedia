@@ -238,7 +238,8 @@ const NavigationButton = styled.button`
   font-size: 20px;
 
   &:hover {
-    background-color: #2980b9;
+    background-color: #004466;
+    color: #00ffa2;
   }
 
   &.left {

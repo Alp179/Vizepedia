@@ -76,6 +76,7 @@ radial-gradient(ellipse at 90% 85%, rgba(135, 249, 205, 0.6), transparent 30%);
 );
 --color-grey-919: #ddfbef;
 --color-grey-920: #A3FFD9;
+--color-grey-921: #A3FFD9;
 --color-grey-55: rgba(255, 255, 255, 0.5);
   --stroke-ham-1: #000;
 
@@ -159,6 +160,7 @@ radial-gradient(circle at 80% 80%, rgba(124, 103, 255, 0.3), transparent 30%);
 );
 --color-grey-919: rgba(64, 70, 82, 1);
 --color-grey-920: rgba(255, 255, 255, 0.1);
+--color-grey-921:  rgba(255, 255, 255, 0.2);
 --color-grey-55: #091522;
 --stroke-ham-1: #999;
 
@@ -277,31 +279,29 @@ ul {
   list-style: none;
 }
 
-.hosgeldiniz {
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-}
 
+.hosgeldiniz {
+  hyphens: none;
+  font-size: 24px;
+  text-align: center;
+  font-weight: bold;
+  @media (max-width: 450px) {
+    font-size: 20px;
+  }
+  @media (max-height: 725px) {
+    font-size: 18px;
+  }
+}
 
 .subtext {
+  hyphens: none;
+  font-size: 17px;
   text-align: center;
-  font-size: 16px;
-}
-@media (max-width: 450px) {
-  .subtext {
-    font-size: 16px;
-  }
-  .hosgeldiniz {
-    font-size: 22px;
-  }
-}
-@media (max-width: 370px) {
-  .subtext {
+  @media (max-width: 450px) {
     font-size: 14px;
   }
-  .hosgeldiniz {
-    font-size: 18px!important;
+  @media (max-height: 725px) {
+    font-size: 13px;
   }
 }
 
@@ -341,12 +341,6 @@ ul {
 }
 
 .handle-delete {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 0px;
-  width: 100%;
   border-radius: 16px;
 }
 
@@ -366,7 +360,7 @@ ul {
 
 @media (max-width: 1050px) {
   .sidebartext {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 @media (max-width: 830px) {
