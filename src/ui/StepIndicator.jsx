@@ -106,8 +106,8 @@ const StepIndicator = () => {
   };
 
   return (
-    <StepAndContinueContainer>
-      <StepsContainer
+    <StepPageCont>
+      <StepAndContinueContainer
         onMouseMove={(e) => mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
       >
@@ -130,18 +130,18 @@ const StepIndicator = () => {
             );
           })}
         </StepCircleContainer>
-      </StepsContainer>
-      <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
-    </StepAndContinueContainer>
+        <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
+      </StepAndContinueContainer>
+    </StepPageCont>
   );
 };
 
 export default StepIndicator;
 
-// Styled components
 const StepAndContinueContainer = styled.div`
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  max-width: 740px;
+  width: fit-content;
+  padding: 8px;
   align-items: center;
   display: flex;
   gap: 16px;
@@ -150,12 +150,8 @@ const StepAndContinueContainer = styled.div`
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-radius: 16px;
-  border-bottom-left-radius: 8px;
   @media (max-width: 1550px) {
     margin-left: -100px;
-  }
-  @media (max-width: 1050px) {
-    max-width: 500px !important;
   }
   @media (max-width: 710px) {
     margin-left: auto;
@@ -174,40 +170,10 @@ const StepAndContinueContainer = styled.div`
   }
 `;
 
-const StepsContainer = styled.div`
-  width: 600px;
-  overflow-x: auto;
-  padding: 14px;
-  position: relative;
-  @media (max-width: 1050px) {
-    width: 370px;
-  }
-  @media (max-width: 710px) {
-    overflow: visible;
-    flex-flow: column;
-    align-items: flex-start;
-  }
-
-  &::-webkit-scrollbar {
-    border-radius: 16px;
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    border-radius: 16px;
-    background: var(--color-grey-2);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--color-grey-54);
-    border-radius: 10px;
-    border: 3px solid var(--color-grey-2);
-  }
-`;
-
 const StepCircleContainer = styled.div`
   display: flex;
   gap: 10px;
+  height: 40px;
   @media (max-width: 710px) {
     flex-flow: column;
     gap: 12px;
@@ -277,6 +243,8 @@ const IconWrapper = styled(motion.div)`
   border-radius: 50%;
   position: relative;
   transition: border-color 0.3s ease;
+  width: ${(props) => props.size || "40px"};
+  height: 40px;
   background-color: ${(props) =>
     props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "white"};
   color: ${(props) =>
@@ -301,6 +269,13 @@ const glowing = keyframes`
   0% { background-position: 0 0; }
   50% { background-position: 400% 0; }
   100% { background-position: 0 0; }
+`;
+
+const StepPageCont = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100px;
+  justify-content: flex-start;
 `;
 
 const ContinueButton = styled.button`
