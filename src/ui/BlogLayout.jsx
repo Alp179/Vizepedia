@@ -13,7 +13,8 @@ const BackgroundColor = styled.div`
 
 const ContentWrapper = styled.div`
   position: relative;
-  z-index: 1; /* İçeriğin her zaman Aurora arka planının üstünde olması için */
+  z-index: 1;
+  padding-top: 300px; /* AuroraBackground yüksekliği kadar boşluk bırak */
 `;
 
 function BlogLayout() {
@@ -36,12 +37,12 @@ function BlogLayout() {
           `,
           backgroundSize: "cover",
           backgroundAttachment: "local",
-          position: "fixed",
+          position: "absolute",
           top: 0,
           left: 0,
           width: "100%",
-          height: "100%",
-          zIndex: 0, // Arka planın içerikten daha geride olmasını sağlıyor
+          height: "300px", // Üst kısımda sabitlenmesini istediğimiz yükseklik
+          zIndex: 0,
         }}
       />
       <ContentWrapper>
