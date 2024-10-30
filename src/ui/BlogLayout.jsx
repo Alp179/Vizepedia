@@ -26,9 +26,12 @@ const StyledBlogLayout = styled.div`
   z-index: 0; /* Arka plan renginin üzerinde olacak şekilde z-index ayarı */
   position: absolute;
   top: 0;
+  inset: -10px;
   left: 0;
+  filter: blur(10px);
+  opacity: 0.6;
   width: 100vw;
-  height: 40vh; /* Ekranın üst %20'sini kaplayacak */
+  height: 400px; /* Ekranın üst %20'sini kaplayacak */
   background-image: repeating-linear-gradient(
       100deg,
       rgba(255, 255, 255, 0.7) 0%,
@@ -47,7 +50,7 @@ const StyledBlogLayout = styled.div`
     );
   background-size: 300%, 200%;
   background-position: 50% 0;
-  animation: ${auroraAnimation} 20s infinite linear;
+  animation: ${auroraAnimation} 30s infinite linear;
   pointer-events: none;
 `;
 
