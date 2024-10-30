@@ -1,54 +1,62 @@
 import { Outlet } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import BlogHeader from "./BlogHeader";
-import AuroraBackground from "./AuroraBackground";
 
 const BackgroundColor = styled.div`
   background: var(--color-grey-1);
   width: 100vw;
   height: 100vh;
   overflow-x: hidden;
-  position: relative;
+  position: relative; /* Üst katmanın konumlandırmasını sağlamak için relative */
 `;
 
-const ContentWrapper = styled.div`
-  position: relative;
-  z-index: 1;
-  padding-top: 300px; /* AuroraBackground yüksekliği kadar boşluk bırak */
+const auroraAnimation = keyframes`
+  0% {
+    background-position: 0% 50%, 50% 50%;
+  }
+  50% {
+    background-position: 100% 50%, 50% 50%;
+  }
+  100% {
+    background-position: 0% 50%, 50% 50%;
+  }
+`;
+
+const StyledBlogLayout = styled.div`
+  z-index: 0; /* Arka plan renginin üzerinde olacak şekilde z-index ayarı */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 40vh; /* Ekranın üst %20'sini kaplayacak */
+  background-image: repeating-linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.7) 7%,
+      transparent 10%,
+      transparent 12%,
+      rgba(255, 255, 255, 0.7) 16%
+    ),
+    repeating-linear-gradient(
+      100deg,
+      #3b82f6 10%,
+      #818cf8 15%,
+      #60a5fa 20%,
+      #a5b4fc 25%,
+      #2563eb 30%
+    );
+  background-size: 300%, 200%;
+  background-position: 50% 0;
+  animation: ${auroraAnimation} 20s infinite linear;
+  pointer-events: none;
 `;
 
 function BlogLayout() {
   return (
     <BackgroundColor>
-      <AuroraBackground
-        showRadialGradient={true}
-        style={{
-          background: `
-            radial-gradient(circle at 20% 10%, rgba(248, 24, 225, 0.3), transparent 10%),
-            radial-gradient(circle at 35% 10%, rgba(248, 24, 225, 0.3), transparent 10%),
-            radial-gradient(circle at 5% 5%, rgba(0, 255, 162, 0.3), transparent 10%),
-            radial-gradient(circle at 60% 25%, rgba(36, 0, 255, 0.3), transparent 10%),
-            radial-gradient(circle at 60% 18%, rgba(36, 0, 255, 0.3), transparent 20%),
-            radial-gradient(circle at 20% 5%, rgba(0, 255, 162, 0.3), transparent 10%),
-            radial-gradient(circle at 50% 5%, rgba(0, 255, 162, 0.3), transparent 20%),
-            radial-gradient(circle at 85% 3%, rgba(0, 255, 162, 0.3), transparent 20%),
-            radial-gradient(circle at 20% 15%, rgba(0, 68, 102, 0.3), transparent 20%),
-            radial-gradient(circle at 85% 8%, rgba(0, 68, 102, 0.3), transparent 20%)
-          `,
-          backgroundSize: "cover",
-          backgroundAttachment: "local",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "300px", // Üst kısımda sabitlenmesini istediğimiz yükseklik
-          zIndex: 0,
-        }}
-      />
-      <ContentWrapper>
-        <BlogHeader />
-        <Outlet />
-      </ContentWrapper>
+      <StyledBlogLayout />
+      <BlogHeader />
+      <Outlet />
     </BackgroundColor>
   );
 }
