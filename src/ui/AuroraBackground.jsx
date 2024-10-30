@@ -25,7 +25,7 @@ const Main = styled.main`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f8fafc;
+
   color: #1e293b;
   transition: background-color 0.3s;
   position: relative;
