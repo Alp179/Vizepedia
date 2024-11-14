@@ -25,7 +25,7 @@ const BlogContainer = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 50px auto;
-  padding: 120px 20px 20px 20px;
+  padding: 120px 40px 20px 20px;
   position: relative;
   @media (max-width: 1300px) {
     width: 90%;
@@ -114,6 +114,7 @@ const CategoriesWrapper = styled.div`
   display: flex;
   overflow-x: hidden;
   position: relative;
+  padding-top: 10px;
   @media (max-width: 550px) {
     margin-top: 30px;
   }

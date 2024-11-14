@@ -69,29 +69,9 @@ const StyledBlogLayout = styled.div`
 function BlogLayout() {
   return (
     <BackgroundColor>
-<<<<<<< HEAD
       <StyledBlogLayout />
       <BlogHeader />
       <Outlet />
-=======
-      <AuroraBackground
-        showRadialGradient={true}
-        style={{
-          backgroundSize: "cover",
-          backgroundAttachment: "local",
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "900px", // Üst kısımda sabitlenmesini istediğimiz yükseklik
-          zIndex: 0,
-        }}
-      />
-      <ContentWrapper>
-        <BlogHeader />
-        <Outlet />
-      </ContentWrapper>
->>>>>>> 4936bd3 (ÇUPAÇUP)
     </BackgroundColor>
   );
 }
