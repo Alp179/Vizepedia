@@ -113,6 +113,10 @@ const variations = {
     @media (max-width: 370px) {
       width: calc(100vw - 20px) !important;
     }
+    &:hover{
+      background: #004466;
+      color: #00ffa2;
+    }
   `,
   guest: css`
     background-color: var(--color-grey-921);
@@ -121,17 +125,26 @@ const variations = {
     @media (max-width: 370px) {
       width: calc(100vw - 20px) !important;
     }
+    &:hover{
+      background: var(--color-grey-922);
+      color: var(--color-grey-923);
+    }
   `,
   googleauth: css`
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    background: var(--color-grey-909);
+    background-color: var(--color-grey-921);
+    color: var(--color-grey-600);
     font-weight: bold;
     border: 1px solid var(--color-grey-300);
     @media (max-width: 370px) {
       width: calc(100vw - 20px) !important;
+    }
+    &:hover{
+      background: var(--color-grey-922);
+      color: var(--color-grey-923);
     }
   `,
   question: css`

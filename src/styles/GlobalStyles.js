@@ -161,6 +161,8 @@ radial-gradient(circle at 80% 80%, rgba(124, 103, 255, 0.3), transparent 30%);
 --color-grey-919: rgba(64, 70, 82, 1);
 --color-grey-920: rgba(255, 255, 255, 0.1);
 --color-grey-921:  rgba(255, 255, 255, 0.2);
+--color-grey-922: rgba(255, 255, 255, 0.5);
+--color-grey-923: black;
 --color-grey-55: #091522;
 --stroke-ham-1: #999;
 

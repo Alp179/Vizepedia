@@ -86,7 +86,7 @@ function SignupForm({ onCloseModal }) {
   return (
     <Form onSubmit={handleSubmit}>
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        <p className="hosgeldiniz">Vizepedia`ya Hoş geldiniz</p>
+        <p className="hosgeldiniz">Vizepedia&apos;ya Hoş geldiniz</p>
         <p className="subtext">
           Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
           Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
