@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
 import GlobalStyles from "./styles/GlobalStyles";
 import AppLayout from "./ui/AppLayout";
-import BlogLayout from "./ui/BlogLayout"; // BlogLayout bileşeni
+import BlogLayout from "./ui/BlogLayout";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
@@ -30,12 +30,12 @@ import DocumentSummary from "./pages/DocumentSummary";
 import { VisaApplicationProvider } from "./context/VisaApplicationContext";
 import QuestionsLayout from "./ui/QuesitonsLayout";
 import MainPageLayout from "./ui/MainPageLayout";
-import BlogHome from "./pages/BlogHome"; // Blog anasayfası
-import BlogDetail from "./pages/BlogDetail"; // Blog detay sayfası
+import BlogHome from "./pages/BlogHome";
+import BlogDetail from "./pages/BlogDetail";
 import { useEffect } from "react";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
-//saksoo
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -43,28 +43,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-function RedirectDashboard() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    async function handleRedirect() {
-      const currentUser = await getCurrentUser();
-      if (currentUser) {
-        const latestApplication = await fetchLatestApplication(currentUser.id);
-        if (latestApplication) {
-          localStorage.setItem("latestApplicationId", latestApplication.id);
-          navigate(`/dashboard/${latestApplication.id}`);
-        } else {
-          navigate("/wellcome-2"); // İlk başvuru yoksa welcome sayfasına yönlendirin
-        }
-      }
-    }
-    handleRedirect();
-  }, [navigate]);
-
-  return null;
-}
 
 function App() {
   return (
@@ -75,17 +53,12 @@ function App() {
             <UserSelectionsProvider>
               <DarkModeProvider>
                 <ReactQueryDevtools initialIsOpen={false} />
-
                 <GlobalStyles />
                 <BrowserRouter>
                   <Routes>
-                    <Route
-                      element={
-                        <ProtectedRoute>
-                          <MainPageLayout />
-                        </ProtectedRoute>
-                      }
-                    >
+                    {/* MainPage as Default Landing Page */}
+                    <Route element={<MainPageLayout />}>
+                      <Route index element={<MainPage />} />
                       <Route path="mainpage" element={<MainPage />} />
                     </Route>
 
@@ -96,7 +69,6 @@ function App() {
                         </ProtectedRoute>
                       }
                     >
-                      <Route index element={<RedirectDashboard />} />
                       <Route path="dashboard" element={<RedirectDashboard />} />
                       <Route path="dashboard/:id" element={<Dashboard />} />
                       <Route path="settings" element={<Settings />} />
@@ -132,9 +104,7 @@ function App() {
                     </Route>
 
                     {/* Blog Routes */}
-                    <Route
-                      element={<BlogLayout />} // ProtectedRoute kaldırıldı
-                    >
+                    <Route element={<BlogLayout />}>
                       <Route path="blog" element={<BlogHome />} />
                       <Route path="blog/:slug" element={<BlogDetail />} />
                     </Route>
@@ -150,9 +120,7 @@ function App() {
                   containerStyle={{ margin: "8px" }}
                   toastOptions={{
                     success: { duration: 3000 },
-                    error: {
-                      duration: 5000,
-                    },
+                    error: { duration: 5000 },
                     style: {
                       fontSize: "16px",
                       maxWidth: "500px",
@@ -169,6 +137,28 @@ function App() {
       </VisaApplicationProvider>
     </QueryClientProvider>
   );
+}
+
+function RedirectDashboard() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function handleRedirect() {
+      const currentUser = await getCurrentUser();
+      if (currentUser) {
+        const latestApplication = await fetchLatestApplication(currentUser.id);
+        if (latestApplication) {
+          localStorage.setItem("latestApplicationId", latestApplication.id);
+          navigate(`/dashboard/${latestApplication.id}`);
+        } else {
+          navigate("/wellcome-2");
+        }
+      }
+    }
+    handleRedirect();
+  }, [navigate]);
+
+  return null;
 }
 
 export default App;
