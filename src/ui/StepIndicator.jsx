@@ -1,4 +1,3 @@
-
 /* eslint-disable react/prop-types */
 import { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -32,6 +31,7 @@ const StepAndContinueContainer = styled.div`
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-radius: 16px;
+  margin-bottom: 20px; /* İki container arasında mesafe */
   @media (max-width: 1550px) {
     margin-left: -100px;
   }
@@ -54,7 +54,6 @@ const StepAndContinueContainer = styled.div`
     width: 95%;
   }
 `;
-
 
 const StepCircleContainer = styled.div`
   display: flex;
@@ -85,9 +84,9 @@ const IconWrapper = styled(motion.div)`
     props.isActive || props.isCompleted ? "white" : "black"};
   border-color: ${(props) =>
     props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "#ccc"};
-    @media (max-width: 1400px) {
-      font-size: 15px;
-    }
+  @media (max-width: 1400px) {
+    font-size: 15px;
+  }
 `;
 
 const TooltipContainer = styled(motion.div)`
@@ -114,7 +113,6 @@ const StepPageCont = styled.div`
   height: 100px;
   justify-content: flex-start;
 `;
-
 
 const ContinueButton = styled.button`
   flex-shrink: 0;
@@ -183,7 +181,7 @@ const ContinueButton = styled.button`
   &:active:after {
     background: transparent;
   }
-  
+
   @media (max-width: 830px) {
     height: 50px;
   }
@@ -217,15 +215,15 @@ const IconContainer = ({
       if (window.innerWidth <= 710){
         setBaseSize(40)
       } else if (window.innerWidth <= 1200) {
-        setBaseSize(30); // 1000px'den küçük ekranlar
+        setBaseSize(30);
       } else if (window.innerWidth <= 1400) {
-        setBaseSize(35); // 1400px'den küçük ekranlar
+        setBaseSize(35);
       } else {
-        setBaseSize(40); // Varsayılan boyut
+        setBaseSize(40);
       }
     };
 
-    handleResize(); // İlk yüklemede çalıştır
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -260,7 +258,7 @@ const IconContainer = ({
           : "white",
       }}
     >
-      <div>{stepNumber}</div> {/* Daire içerisine numara ekleniyor */}
+      <div>{stepNumber}</div>
       <AnimatePresence>
         {hovered && (
           <TooltipContainer
@@ -276,7 +274,6 @@ const IconContainer = ({
   );
 };
 
-
 const StepIndicator = () => {
   const [userId, setUserId] = useState(null);
   const { id: applicationId } = useParams();
@@ -288,8 +285,19 @@ const StepIndicator = () => {
     dispatch,
   } = useContext(DocumentsContext);
   const [currentStep, setCurrentStep] = useState(null);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   const mouseX = useMotionValue(Infinity);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 1450);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -362,6 +370,9 @@ const StepIndicator = () => {
     navigate(`/summary/${applicationId}`);
   };
 
+  const firstSteps = documents.slice(0, 10);
+  const remainingSteps = documents.slice(10);
+
   return (
     <StepPageCont>
       <StepAndContinueContainer
@@ -369,7 +380,7 @@ const StepIndicator = () => {
         onMouseLeave={() => mouseX.set(Infinity)}
       >
         <StepCircleContainer>
-          {documents.map((doc, index) => {
+          {(isSmallScreen ? firstSteps : documents).map((doc, index) => {
             const isActive = index === currentStep;
             const isCompleted =
               completedDocuments[applicationId]?.[doc.docName];
@@ -389,6 +400,32 @@ const StepIndicator = () => {
         </StepCircleContainer>
         <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
       </StepAndContinueContainer>
+      {isSmallScreen && remainingSteps.length > 0 && (
+        <StepAndContinueContainer
+          onMouseMove={(e) => mouseX.set(e.pageX)}
+          onMouseLeave={() => mouseX.set(Infinity)}
+        >
+          <StepCircleContainer>
+            {remainingSteps.map((doc, index) => {
+              const isActive = index + 10 === currentStep;
+              const isCompleted =
+                completedDocuments[applicationId]?.[doc.docName];
+
+              return (
+                <IconContainer
+                  key={doc.id}
+                  isActive={isActive}
+                  isCompleted={isCompleted}
+                  onClick={() => handleStepClick(index + 10)}
+                  title={doc.docName}
+                  mouseX={mouseX}
+                  stepNumber={index + 11}
+                />
+              );
+            })}
+          </StepCircleContainer>
+        </StepAndContinueContainer>
+      )}
     </StepPageCont>
   );
 };
