@@ -197,6 +197,7 @@ const InfoContainer = styled.div`
   }
   @media (max-width: 710px) {
     margin-bottom: -125px;
+    margin-top: 100px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -243,13 +244,16 @@ const InfoDetails = styled.div`
 const DashboardContainer = styled.div`
   position: relative;
   width: 100vw;
-  height: 100%;
+  height: auto;
   display: flex;
   flex-direction: column;
   gap: 50px;
   @media (max-width: 710px) {
+    height: 100%;
     width: 100%;
     margin-left: auto;
+    flex-flow: column;
+    justify-content: flex-start;
     margin-right: auto;
   }
 `;
@@ -270,7 +274,7 @@ const Ceper = styled.div`
     left: 15%;
   }
   @media (max-width: 1000px) {
-    left: 10%;  
+    left: 10%;
   }
   @media (max-width: 875px) {
     left: 0%;
@@ -301,6 +305,22 @@ const UyeDevam = styled.button`
   &:hover {
     background-color: #00ffa2;
     color: #004466;
+  }
+`;
+
+const StepIndicatorWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 100px; /* InfoContainer ile araya boşluk ekliyoruz */
+  @media (max-width: 710px) {
+    margin-bottom: 0; /* Küçük ekranlarda aralığı sıfırlıyoruz */
+  }
+`;
+
+const InfoContainerWrapper = styled.div`
+  width: 100%;
+  margin-top: 100px; /* StepIndicator ile araya boşluk ekliyoruz */
+  @media (max-width: 710px) {
+    margin-top: 0; /* Küçük ekranlarda aralığı sıfırlıyoruz */
   }
 `;
 
@@ -480,22 +500,24 @@ const Dashboard = () => {
           </CreatedAtContainer>
         )}
         <Heading style={{ zIndex: "3000" }} as="h1">
-          Hoş geldiniz 
+          Hoş geldiniz
         </Heading>
       </CustomRow>
-      <StepIndicator
-        steps={stepLabels}
-        currentStep={currentStep}
-        onStepClick={handleStepClick}
-        completedDocuments={completedDocuments}
-        documents={documents}
-      />
+      <StepIndicatorWrapper>
+        <StepIndicator
+          steps={stepLabels}
+          currentStep={currentStep}
+          onStepClick={handleStepClick}
+          completedDocuments={completedDocuments}
+          documents={documents}
+        />
+      </StepIndicatorWrapper>
       {countryCode && (
         <FlagContainer>
           <span className={`fi fi-${countryCode}`}></span>
         </FlagContainer>
       )}
-      <div style={{ marginBottom: "100px" }}>
+      <InfoContainerWrapper>
         {isFirmLocationSuccess && firmLocation && (
           <InfoContainer>
             <MapContainer
@@ -530,7 +552,7 @@ const Dashboard = () => {
             </InfoDetails>
           </InfoContainer>
         )}
-      </div>
+      </InfoContainerWrapper>
 
       {/* Anonim kullanıcıysa Üye Olarak Devam Et butonunu göster */}
       {isAnonymous && (

@@ -5,10 +5,14 @@ import Marquee from "react-fast-marquee";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
 import Faq from "../ui/Faq";
+import HeroScrollDemo from "../ui/HeroScrollDemo";
 
 const CountryList = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Ekrana sığacak şekilde sütunları oluştur */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(240px, 1fr)
+  ); /* Ekrana sığacak şekilde sütunları oluştur */
   gap: 20px;
   padding: 10px 0;
   @media (max-width: 850px) {
@@ -34,39 +38,12 @@ const CountryItem = styled.div`
   color: var(--color-grey-600);
   display: flex;
   align-items: center; /* Nokta ve metnin aynı hizaya gelmesi için */
-  
+
   &::before {
     content: "•"; /* Madde işareti olarak nokta ekler */
     color: var(--color-grey-600);
     margin-right: 8px; /* Nokta ile metin arasında boşluk */
     font-size: 24px;
-  }
-`;
-
-const BigTexts = styled.div`
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin-top: 100px;
-  @media (max-width: 732px) {
-    margin: 48px auto 0 auto;
-    width: 95%;
-  }
-`;
-
-const HeroImage = styled.img`
-  z-index: 1;
-  user-drag: none;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  @media (max-width: 1200px) {
-    width: 90%;
   }
 `;
 
@@ -435,14 +412,14 @@ const BackgroundContainer2 = styled.div`
 `;
 
 const Background1 = styled.div`
-  margin-top: -620px;
+  margin-top: -600px;
   width: 50%;
   height: 100%;
   background: var(--color-grey-917);
 `;
 
 const Background2 = styled.div`
-  margin-top: -620px;
+  margin-top: -600px;
   background: var(--color-grey-918);
   transform: scaleX(-1);
   width: 50%;
@@ -486,19 +463,7 @@ function MainPage() {
   ];
   return (
     <>
-      <BigTexts>
-        <Heading as="h11">
-          Düşlerinizdeki Seyahate Doğru İlk Adımı Vizepedia ile Atın!
-        </Heading>
-        <Heading as="h12">
-          Size özel hazırlanmış belge listesi ve adım adım rehberle başvuru
-          sürecinizi kolayca yönetin ve dünyayı keşfetmeye başlayın!
-        </Heading>
-        <HeroImage
-          src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/hero-image.png?t=2024-10-01T13%3A58%3A37.493Z"
-          alt="hero-image"
-        />
-      </BigTexts>
+      <HeroScrollDemo/>
       <BackgroundContainer>
         <BackgroundContainer2>
           <Background1 />
@@ -788,9 +753,11 @@ function MainPage() {
           title={`Vizepedia'nın sunduğu bilgiler için herhangi bir ücret ödemem gerekiyor mu?`}
         >
           <p>
-            Hayır, Vizepedia&apos;nın sunduğu bilgiler tamamen ücretsizdir. Platformumuz, vize başvuru sürecinde size
-                  rehberlik etmek için gerekli tüm bilgileri sağlar ve bu hizmetten yararlanmak için herhangi bir ücret talep
-                  etmez. Amacımız, vize başvurularınızı daha kolay ve anlaşılır hale getirmektir.
+            Hayır, Vizepedia&apos;nın sunduğu bilgiler tamamen ücretsizdir.
+            Platformumuz, vize başvuru sürecinde size rehberlik etmek için
+            gerekli tüm bilgileri sağlar ve bu hizmetten yararlanmak için
+            herhangi bir ücret talep etmez. Amacımız, vize başvurularınızı daha
+            kolay ve anlaşılır hale getirmektir.
           </p>
         </Faq>
         <Faq title={`Vizepedia'nın sunduğu bilgilerin kaynağı nedir?`}>

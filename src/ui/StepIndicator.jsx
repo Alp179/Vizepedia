@@ -31,7 +31,7 @@ const StepAndContinueContainer = styled.div`
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border-radius: 16px;
-  margin-bottom: 20px; /* İki container arasında mesafe */
+  margin-bottom: 20px;
   @media (max-width: 1550px) {
     margin-left: -100px;
   }
@@ -41,10 +41,12 @@ const StepAndContinueContainer = styled.div`
   @media (max-width: 710px) {
     margin-left: auto;
     margin-right: auto;
-    gap: 8px;
+    gap: 12px;
     flex-flow: column;
     width: 400px;
+    padding: 12px;
     justify-content: flex-start;
+    align-items: flex-start;
     padding-bottom: 16px;
   }
   @media (max-width: 520px) {
@@ -64,7 +66,10 @@ const StepCircleContainer = styled.div`
     height: 40px;
   }
   @media (max-width: 710px) {
+    height: 100%;
     flex-flow: column;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
   }
 `;
@@ -84,10 +89,16 @@ const IconWrapper = styled(motion.div)`
     props.isActive || props.isCompleted ? "white" : "black"};
   border-color: ${(props) =>
     props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "#ccc"};
-  @media (max-width: 1400px) {
-    font-size: 15px;
+  width: 40px; /* Varsayılan genişlik */
+  height: 40px; /* Varsayılan yükseklik */
+
+  @media (max-width: 710px) {
+    width: 40px; /* 710px altında sabit genişlik */
+    height: 40px; /* 710px altında sabit yükseklik */
+    flex-shrink: 0; /* Küçülmeyi tamamen engelle */
   }
 `;
+
 
 const TooltipContainer = styled(motion.div)`
   position: absolute;
@@ -188,6 +199,8 @@ const ContinueButton = styled.button`
 
   @media (max-width: 710px) {
     width: 60%;
+    margin-left: auto;
+    margin-right: auto;
     @media (max-height: 830px) {
       width: 40%;
       height: 42px;
@@ -198,6 +211,16 @@ const ContinueButton = styled.button`
   z-index: 4000;
 `;
 
+const StepLabel = styled.span`
+  font-size: 14px;
+  cursor: pointer;
+  color: ${(props) => (props.isCompleted ? "#2ecc71" : "#ccc")};
+  margin-left: 8px;
+  @media (max-width: 710px) {
+    font-size: 16px;
+  }
+`;
+
 const IconContainer = ({
   isActive,
   isCompleted,
@@ -205,15 +228,31 @@ const IconContainer = ({
   title,
   mouseX,
   stepNumber,
+  isExtraSmallScreen,
 }) => {
   const ref = useRef(null);
   const [hovered, setHovered] = useState(false);
   const [baseSize, setBaseSize] = useState(40);
 
+  // Transform ve spring işlemleri koşulsuz olarak tanımlandı.
+  const distance = useTransform(mouseX, (val) => {
+    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+    return val - bounds.x - bounds.width / 2;
+  });
+
+  const size = useSpring(
+    useTransform(distance, [-150, 0, 150], [baseSize, baseSize * 2, baseSize]),
+    {
+      mass: 0.1,
+      stiffness: 150,
+      damping: 12,
+    }
+  );
+
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 710){
-        setBaseSize(40)
+      if (window.innerWidth <= 710) {
+        setBaseSize(40);
       } else if (window.innerWidth <= 1200) {
         setBaseSize(30);
       } else if (window.innerWidth <= 1400) {
@@ -228,19 +267,22 @@ const IconContainer = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const distance = useTransform(mouseX, (val) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-    return val - bounds.x - bounds.width / 2;
-  });
-
-  const size = useSpring(
-    useTransform(distance, [-150, 0, 150], [baseSize, baseSize * 2, baseSize]),
-    {
-      mass: 0.1,
-      stiffness: 150,
-      damping: 12,
-    }
-  );
+  if (isExtraSmallScreen) {
+    return (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <IconWrapper
+          onClick={onClick}
+          isActive={isActive}
+          isCompleted={isCompleted}
+        >
+          <div>{stepNumber}</div>
+        </IconWrapper>
+        <StepLabel onClick={onClick} isCompleted={isCompleted}>
+          {title}
+        </StepLabel>
+      </div>
+    );
+  }
 
   return (
     <IconWrapper
@@ -274,28 +316,29 @@ const IconContainer = ({
   );
 };
 
+
 const StepIndicator = () => {
   const [userId, setUserId] = useState(null);
   const { id: applicationId } = useParams();
   const navigate = useNavigate();
   const { setSelectedDocument } = useSelectedDocument();
-
   const {
     state: { completedDocuments },
     dispatch,
   } = useContext(DocumentsContext);
   const [currentStep, setCurrentStep] = useState(null);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-
-  const mouseX = useMotionValue(Infinity);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const isExtraSmallScreen = screenWidth < 710;
+  const mouseXContainer1 = useMotionValue(Infinity);
+  const mouseXContainer2 = useMotionValue(Infinity);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 1450);
+      setScreenWidth(window.innerWidth);
     };
 
-    handleResize();
     window.addEventListener("resize", handleResize);
+    handleResize(); // İlk yüklemede ekran genişliğini kontrol et
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -373,58 +416,92 @@ const StepIndicator = () => {
   const firstSteps = documents.slice(0, 10);
   const remainingSteps = documents.slice(10);
 
+  const isSmallScreen = screenWidth < 1450;
+
+
   return (
     <StepPageCont>
-      <StepAndContinueContainer
-        onMouseMove={(e) => mouseX.set(e.pageX)}
-        onMouseLeave={() => mouseX.set(Infinity)}
-      >
-        <StepCircleContainer>
-          {(isSmallScreen ? firstSteps : documents).map((doc, index) => {
-            const isActive = index === currentStep;
-            const isCompleted =
-              completedDocuments[applicationId]?.[doc.docName];
-
-            return (
-              <IconContainer
-                key={doc.id}
-                isActive={isActive}
-                isCompleted={isCompleted}
-                onClick={() => handleStepClick(index)}
-                title={doc.docName}
-                mouseX={mouseX}
-                stepNumber={index + 1}
-              />
-            );
-          })}
-        </StepCircleContainer>
-        <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
-      </StepAndContinueContainer>
-      {isSmallScreen && remainingSteps.length > 0 && (
+      {isExtraSmallScreen || !isSmallScreen ? (
         <StepAndContinueContainer
-          onMouseMove={(e) => mouseX.set(e.pageX)}
-          onMouseLeave={() => mouseX.set(Infinity)}
+          onMouseMove={(e) => mouseXContainer1.set(e.pageX)}
+          onMouseLeave={() => mouseXContainer1.set(Infinity)}
         >
           <StepCircleContainer>
-            {remainingSteps.map((doc, index) => {
-              const isActive = index + 10 === currentStep;
+            {documents.map((doc, index) => {
+              const isActive = index === currentStep;
               const isCompleted =
                 completedDocuments[applicationId]?.[doc.docName];
 
               return (
                 <IconContainer
+                isExtraSmallScreen={isExtraSmallScreen}
                   key={doc.id}
                   isActive={isActive}
                   isCompleted={isCompleted}
-                  onClick={() => handleStepClick(index + 10)}
+                  onClick={() => handleStepClick(index)}
                   title={doc.docName}
-                  mouseX={mouseX}
-                  stepNumber={index + 11}
+                  mouseX={mouseXContainer1}
+                  stepNumber={index + 1}
                 />
               );
             })}
           </StepCircleContainer>
+          <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
         </StepAndContinueContainer>
+      ) : (
+        <>
+          <StepAndContinueContainer
+            onMouseMove={(e) => mouseXContainer1.set(e.pageX)}
+            onMouseLeave={() => mouseXContainer1.set(Infinity)}
+          >
+            <StepCircleContainer>
+              {firstSteps.map((doc, index) => {
+                const isActive = index === currentStep;
+                const isCompleted =
+                  completedDocuments[applicationId]?.[doc.docName];
+
+                return (
+                  <IconContainer
+                    key={doc.id}
+                    isActive={isActive}
+                    isCompleted={isCompleted}
+                    onClick={() => handleStepClick(index)}
+                    title={doc.docName}
+                    mouseX={mouseXContainer1}
+                    stepNumber={index + 1}
+                  />
+                );
+              })}
+            </StepCircleContainer>
+            <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
+          </StepAndContinueContainer>
+          {remainingSteps.length > 0 && (
+            <StepAndContinueContainer
+              onMouseMove={(e) => mouseXContainer2.set(e.pageX)}
+              onMouseLeave={() => mouseXContainer2.set(Infinity)}
+            >
+              <StepCircleContainer>
+                {remainingSteps.map((doc, index) => {
+                  const isActive = index + 10 === currentStep;
+                  const isCompleted =
+                    completedDocuments[applicationId]?.[doc.docName];
+
+                  return (
+                    <IconContainer
+                      key={doc.id}
+                      isActive={isActive}
+                      isCompleted={isCompleted}
+                      onClick={() => handleStepClick(index + 10)}
+                      title={doc.docName}
+                      mouseX={mouseXContainer2}
+                      stepNumber={index + 11}
+                    />
+                  );
+                })}
+              </StepCircleContainer>
+            </StepAndContinueContainer>
+          )}
+        </>
       )}
     </StepPageCont>
   );

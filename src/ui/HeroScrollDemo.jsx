@@ -2,6 +2,65 @@
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
+// Styled Components
+const HeroContainer = styled.div`
+  margin-top: 200px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  @media (prefers-color-scheme: dark) {
+    background-color: #121212;
+  }
+`;
+
+const ScrollContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  height: 100vh;
+`;
+
+const TitleWrapper = styled.div`
+  text-align: center;
+  z-index: 10;
+  margin-bottom: -80px;
+`;
+
+const Title = styled.h1`
+  font-weight: 600;
+  text-align: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  font-size: 70px;
+`;
+
+const HighlightText = styled.span`
+  font-size: 70px;
+  font-weight: 800;
+  line-height: 1;
+  display: block;
+  mix-blend-mode: difference;
+`;
+
+const ImageWrapper = styled.div`
+  width: 100%;
+  height: auto;
+  perspective: 1000px; /* Perspektif efekti için */
+`;
+
+const HeroImage = styled.img`
+  width: 90%;
+  max-width: 1400px;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  transition: transform 0.2s ease;
+`;
+
 export function HeroScrollDemo() {
   return (
     <HeroContainer>
@@ -74,79 +133,5 @@ const ContainerScroll = ({ titleComponent, children }) => {
     </ScrollContainer>
   );
 };
-
-// Styled Components
-const HeroContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  height: 2000vh; /* Daha uzun bir scroll efekti için */
-  background-color: #f9f9f9;
-
-  @media (prefers-color-scheme: dark) {
-    background-color: #121212;
-  }
-`;
-
-const ScrollContainer = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  height: 100vh;
-`;
-
-const TitleWrapper = styled.div`
-  position: absolute;
-  top: 20%;
-  text-align: center;
-  z-index: 10;
-`;
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  color: white;
-  font-weight: 600;
-  mix-blend-mode: difference;
-  text-align: center;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-
-  @media (prefers-color-scheme: dark) {
-  }
-
-  @media (min-width: 768px) {
-    font-size: 4rem;
-  }
-`;
-
-const HighlightText = styled.span`
-  font-size: 4rem;
-  font-weight: 800;
-  line-height: 1;
-  display: block;
-
-  @media (min-width: 768px) {
-    font-size: 6rem;
-  }
-`;
-
-const ImageWrapper = styled.div`
-  width: 100%;
-  height: auto;
-  perspective: 1000px; /* Perspektif efekti için */
-`;
-
-const HeroImage = styled.img`
-  width: 90%;
-  max-width: 1400px;
-  border-radius: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-  transition: transform 0.2s ease;
-`;
 
 export default HeroScrollDemo;
