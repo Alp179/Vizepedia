@@ -44,6 +44,23 @@ const queryClient = new QueryClient({
   },
 });
 
+// Yeni bileşen: Kullanıcı oturum açmışsa dashboard'a yönlendirir
+function RedirectIfLoggedIn({ children }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function checkUser() {
+      const currentUser = await getCurrentUser();
+      if (currentUser) {
+        navigate("/dashboard");
+      }
+    }
+    checkUser();
+  }, [navigate]);
+
+  return children;
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -109,8 +126,24 @@ function App() {
                       <Route path="blog/:slug" element={<BlogDetail />} />
                     </Route>
 
-                    <Route path="login" element={<Login />} />
-                    <Route path="sign-up" element={<SignUp />} />
+                    {/* Login and Sign-Up Routes */}
+                    <Route
+                      path="login"
+                      element={
+                        <RedirectIfLoggedIn>
+                          <Login />
+                        </RedirectIfLoggedIn>
+                      }
+                    />
+                    <Route
+                      path="sign-up"
+                      element={
+                        <RedirectIfLoggedIn>
+                          <SignUp />
+                        </RedirectIfLoggedIn>
+                      }
+                    />
+
                     <Route path="*" element={<PageNotFound />} />
                   </Routes>
                 </BrowserRouter>
