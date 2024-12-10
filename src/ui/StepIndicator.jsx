@@ -409,9 +409,12 @@ const StepIndicator = () => {
 
   const handleStepClick = (index) => {
     const selectedDocument = documents[index];
-    setSelectedDocument(selectedDocument);
-    navigate(`/summary/${applicationId}`);
+    if (selectedDocument) {
+      setSelectedDocument(selectedDocument); // Belgeyi seç
+      navigate(`/documents/${applicationId}`); // /documents URL'sine yönlendir
+    }
   };
+  
 
   const firstSteps = documents.slice(0, 10);
   const remainingSteps = documents.slice(10);
