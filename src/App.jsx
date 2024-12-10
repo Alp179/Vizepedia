@@ -4,7 +4,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
-import Settings from "./pages/Settings";
 import Account from "./pages/Account";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
@@ -88,7 +87,7 @@ function App() {
                     >
                       <Route path="dashboard" element={<RedirectDashboard />} />
                       <Route path="dashboard/:id" element={<Dashboard />} />
-                      <Route path="settings" element={<Settings />} />
+                      
                       <Route path="account" element={<Account />} />
                     </Route>
 
