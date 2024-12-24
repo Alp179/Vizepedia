@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation,  } from "react-router-dom";
 import BackButton from "./BackButton";
 import DarkModeToggle from "./DarkModeToggle";
 import ProgressBar from "@ramonak/react-progress-bar";
@@ -17,7 +18,7 @@ const LoginLayout = styled.main`
   width: 100%;
   flex-direction: column;
   gap: 7rem;
-  overflow: hidden; /* Yeni eklenen satır */
+  overflow: hidden;
   @media (max-width: 710px) {
     background: transparent;
   }
@@ -33,13 +34,11 @@ const Container = styled.div`
 `;
 
 const ProgressBarContainer = styled.div`
-  width: 80%; /* Progress bar uzunluğunu %20 kısalttık */
+  width: 80%;
   padding: 4rem 1rem;
   padding-top: 150px;
   margin: -60px auto 0 auto;
-
   position: relative;
-
   @media (max-width: 710px) {
     padding-top: 70px;
     width: 95%;
@@ -55,7 +54,7 @@ const ProgressBarWrapper = styled.div`
 `;
 
 const StyledProgressBar = styled(ProgressBar)`
-  border-radius: 50px; /* Köşeleri yuvarlatmak için */
+  border-radius: 50px;
 `;
 
 const progressAnimation = keyframes`
@@ -65,17 +64,12 @@ const progressAnimation = keyframes`
 
 const ProgressBarReflection = styled.div`
   position: absolute;
-  top: 5px; /* Çizginin barın üstünde konumlanmasını sağlar (2px + 4px) */
-  left: 10px; /* Soldan içeri girme miktarı */
-  height: 6px; /* Çizginin kalınlığı */
+  top: 5px;
+  left: 10px;
+  height: 6px;
   border-radius: 50px;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.5
-  ); /* Yansıma efekti için açık renk */
-  z-index: 1; /* Çizginin barın üstünde yer almasını sağlar */
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 1;
   transition: width 1s ease-in-out;
   animation: ${progressAnimation} 1s ease-in-out;
 `;
@@ -92,6 +86,42 @@ const DarkModeContainer = styled.div`
 
 function QuestionsLayout() {
   const location = useLocation();
+  
+  const [previousPath, setPreviousPath] = useState(null);
+
+  // Tüm localStorage ve çerezleri temizleyen işlev
+  const clearAllStorageAndCookies = () => {
+    localStorage.clear();
+
+    const cookies = document.cookie.split("; ");
+    for (let cookie of cookies) {
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+    }
+
+    sessionStorage.clear();
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (location.pathname === "/wellcome-2" && previousPath !== "/wellcome-1") {
+        clearAllStorageAndCookies();
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [location.pathname, previousPath]);
+
+  useEffect(() => {
+    // Şu anki URL'yi bir önceki URL olarak kaydet
+    setPreviousPath(location.pathname);
+  }, [location.pathname]);
+
   const progressValues = {
     "/wellcome": 0,
     "/wellcome-1": 20,
@@ -118,7 +148,7 @@ function QuestionsLayout() {
                 bgColor="#00FFA2"
                 baseBgColor="#64B1AD"
                 height="20px"
-                isLabelVisible={false} // Yüzdeyi kaldırdık
+                isLabelVisible={false}
               />
               <ProgressBarReflection
                 style={{ width: `calc(${progress}% - 20px)` }}

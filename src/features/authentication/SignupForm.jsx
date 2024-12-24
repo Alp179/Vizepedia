@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import supabase from "../../services/supabase";
+
 import { useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
@@ -44,6 +46,35 @@ function SignupForm({ onCloseModal }) {
   const { isLoading } = useSignup(); // useSignup hook'u çağrılıyor
   const navigate = useNavigate(); // Yönlendirme fonksiyonu
   const { refetchUser } = useUser(); // refetchUser fonksiyonu eklendi
+
+  async function handleGuestSignIn() {
+    try {
+      // Supabase anonim oturum açma fonksiyonu
+      const { data, error } = await supabase.auth.signInAnonymously();
+      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+
+      if (error) {
+        console.error("Anonim oturum açma hatası:", error.message);
+        return;
+      }
+
+      if (data) {
+        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
+        const wellcomesAnswered =
+          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
+
+        if (wellcomesAnswered === "true") {
+          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
+          navigate("/dashboard");
+        } else {
+          // LocalStorage boşsa wellcome-1 (WellcomeA) sayfasına yönlendir
+          navigate("/wellcome-1");
+        }
+      }
+    } catch (error) {
+      console.error("Oturum açma sırasında hata oluştu:", error.message);
+    }
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -119,6 +150,7 @@ function SignupForm({ onCloseModal }) {
           {!isLoading ? "Hesap oluştur" : <SpinnerMini />}
         </Button>
       </FormRow>
+     
       <BracketContainer>
         <Bracket />
         <p style={{ color: "var(--color-grey-700)" }}>ya da</p>
@@ -144,6 +176,17 @@ function SignupForm({ onCloseModal }) {
           Google ile Giriş Yap
         </Button>
       </FormRow>
+      <FormRow orientation="vertical">
+        <Button
+          size="login"
+          variation="guest"
+          type="button"
+          onClick={handleGuestSignIn}
+        >
+          Anonim Giriş
+        </Button>
+      </FormRow>
+      
     </Form>
   );
 }
