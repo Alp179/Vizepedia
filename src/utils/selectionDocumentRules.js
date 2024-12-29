@@ -5,6 +5,7 @@ const selectionDocumentRules = {
     "Nüfus Kaydı Örneği",
     "Sağlık Sigortası",
     "İkametgah Belgesi",
+    "Pasaport",
   ],
 
   // Kullanıcı seçim türleri (ans_country, ans_purpose, vs.) ile uyumlu yapı
@@ -41,7 +42,7 @@ const selectionDocumentRules = {
       "Sponsor Evrakları",
       "Son 3 Aylık Banka Hesap Dökümü",
     ],
-    "İs&nbsp;Veren": [
+    "İş Veren": [
       "Ticaret Sicil Gazetesi Fotokopisi",
       "Şirket İmza Sirküleri",
       "Faaliyet Belgesi",
