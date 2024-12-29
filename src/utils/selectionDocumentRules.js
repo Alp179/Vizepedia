@@ -12,11 +12,7 @@ const selectionDocumentRules = {
     Almanya: [], // Eğer belirli ülkeler için özel belgeler gerekiyorsa buraya ekleyin
   },
   purpose: {
-    Ticari: [
-      "Faaliyet Belgesi",
-      "Ticaret Sicil Gazetesi Fotokopisi",
-      "Ticari Davetiye Belgesi",
-    ],
+    Ticari: ["Ticari Davetiye Belgesi"],
     Turistik: [], // Örnek amaçlar
     AileArkadasZiyareti: ["Davetiye Mektubu"],
     Egitim: [], // Eğitim amaçlı seyahatler için belgeler
@@ -29,20 +25,28 @@ const selectionDocumentRules = {
     ],
     Öğrenci: ["Öğrenci Belgesi", "Sponsor Evrakları"],
     Çalışan: [
+      "Faaliyet Belgesi",
       "SGK İşe Giriş Belgesi",
+      "Ticaret Sicil Gazetesi Fotokopisi",
       "SGK Tescil ve Hizmet Dökümü",
       "Son 3 Aylık Maaş Bordrosu",
       "Vergi Levhası",
       "Şirket İmza Sirküleri",
       "Son 3 Aylık Banka Hesap Dökümü",
       "Ekonomik Gösterge Belgeleri",
+      "Şirket Dilekçesi",
     ],
     Calismayan: [
       "Ekonomik Gösterge Belgeleri",
       "Sponsor Evrakları",
       "Son 3 Aylık Banka Hesap Dökümü",
     ],
-    "İs&nbsp;Veren": [], // İş verenler için gerekli belgeler
+    "İs&nbsp;Veren": [
+      "Ticaret Sicil Gazetesi Fotokopisi",
+      "Şirket İmza Sirküleri",
+      "Faaliyet Belgesi",
+      "Şirket Dilekçesi",
+    ], // İş verenler için gerekli belgeler
   },
   vehicle: {
     Uçak: ["Uçak Rezervasyonu"],
