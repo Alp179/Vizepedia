@@ -20,12 +20,16 @@ const selectionDocumentRules = {
   },
   profession: {
     Emekli: [
+      "4A Emekli Aylık Bilgisi",
+      "Malvarlık Belgeleri",
       "Emeklilik Belgesi",
-      "Ekonomik Gösterge Belgeleri",
+      "SGK Tescil ve Hizmet Dökümü",
       "Son 3 Aylık Banka Hesap Dökümü",
+      "Emekli Maaşı Hesabı Dökümü",
     ],
     Öğrenci: ["Öğrenci Belgesi", "Sponsor Evrakları"],
     Çalışan: [
+      "Malvarlık Belgeleri",
       "Faaliyet Belgesi",
       "SGK İşe Giriş Belgesi",
       "Ticaret Sicil Gazetesi Fotokopisi",
@@ -34,15 +38,18 @@ const selectionDocumentRules = {
       "Vergi Levhası",
       "Şirket İmza Sirküleri",
       "Son 3 Aylık Banka Hesap Dökümü",
-      "Ekonomik Gösterge Belgeleri",
+
       "Şirket Dilekçesi",
     ],
-    Calismayan: [
-      "Ekonomik Gösterge Belgeleri",
+    "Çalışmayan kişi": [
       "Sponsor Evrakları",
+      "SGK Tescil ve Hizmet Dökümü",
       "Son 3 Aylık Banka Hesap Dökümü",
     ],
-    "İş Veren": [
+    "İş veren": [
+      "Malvarlık Belgeleri",
+      "Son 3 Aylık Banka Hesap Dökümü",
+      "Şirket Vergi Levhası",
       "Ticaret Sicil Gazetesi Fotokopisi",
       "Şirket İmza Sirküleri",
       "Faaliyet Belgesi",
@@ -51,10 +58,10 @@ const selectionDocumentRules = {
   },
   vehicle: {
     Uçak: ["Uçak Rezervasyonu"],
-    Otobus: ["Otobüs Rezervasyonu"],
-    Tren: [],
-    Gemi: [],
-    Otomobil: [],
+    Otobüs: ["Otobüs Rezervasyonu"],
+    "Tren/Interrail": ["Tren Rezervasyonu"],
+    Gemi: ["Gemi Rezervasyonu"],
+    Otomobil: [""],
   },
   accommodation: {
     Davetiye: ["Davetiye Mektubu"],

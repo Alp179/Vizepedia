@@ -85,7 +85,7 @@ function ControlScreen() {
       left: 50%;
       transform: translate(-50%, -50%);
       width: calc(100vw - 50px);
-      margin 0 auto;
+      margin: 0 auto;
     }
   `;
 
@@ -117,7 +117,9 @@ function ControlScreen() {
         }
       />
 
-      <Button variation="question" size="baslayalim" onClick={handleSubmit}>Başlayalım</Button>
+      <Button variation="question" size="baslayalim" onClick={handleSubmit}>
+        Başlayalım
+      </Button>
     </ModalScreenContainer>
   );
 }
