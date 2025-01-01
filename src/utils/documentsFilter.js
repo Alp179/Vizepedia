@@ -7,23 +7,31 @@ export function getDocumentsForSelections(userSelections) {
     return [];
   }
 
-  let requiredDocuments = new Set([...selectionDocumentRules.all]); // Herkes için gerekli olan belgeleri ekleyin
+  let requiredDocuments = new Set([...selectionDocumentRules.all]); // Genel belgeleri ekle
 
-  // Kullanıcı seçimlerine göre ek belgeleri belirleyin
   userSelections.forEach((selection) => {
     Object.entries(selection).forEach(([key, value]) => {
-      const selectionKey = key.replace("ans_", ""); // 'ans_country' gibi bir anahtarı 'country' olarak düzeltilir
-
+      const selectionKey = key.replace("ans_", ""); // 'ans_country' -> 'country'
       if (
         selectionDocumentRules[selectionKey] &&
         selectionDocumentRules[selectionKey][value]
       ) {
-        selectionDocumentRules[selectionKey][value].forEach((document) =>
-          requiredDocuments.add(document)
+        selectionDocumentRules[selectionKey][value].forEach((doc) =>
+          requiredDocuments.add(doc)
         );
+      }
+    });
+
+    // Kombinasyon kontrolü
+    selectionDocumentRules.combinations.forEach((combination) => {
+      if (
+        selection.ans_country === combination.country &&
+        selection.ans_purpose === combination.purpose
+      ) {
+        combination.documents.forEach((doc) => requiredDocuments.add(doc));
       }
     });
   });
 
-  return Array.from(requiredDocuments); // Set'i diziye dönüştürüp döndürün
+  return Array.from(requiredDocuments); // Set'i diziye dönüştür
 }

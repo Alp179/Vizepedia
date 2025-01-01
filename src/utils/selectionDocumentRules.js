@@ -68,9 +68,17 @@ const selectionDocumentRules = {
     Otel: ["Otel Rezervasyonu"],
   },
   kid: {
-    Evet: [], // Çocuklu seyahatler için ekstra belgeler
+    Evet: [],
     Hayir: [],
   },
+  // Belirli kombinasyonlar için özel kurallar
+  combinations: [
+    {
+      country: "Almanya",
+      purpose: "Ziyaret",
+      documents: ["Sarı Davetiye"], // Kombinasyon için gerekli belgeler
+    },
+  ],
 };
 
 export default selectionDocumentRules;
