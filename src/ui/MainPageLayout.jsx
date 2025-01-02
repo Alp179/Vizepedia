@@ -45,14 +45,8 @@ const Main = styled.main`
 `;
 
 const Container = styled.div`
+  padding-top: 200px;
   max-width: 100vw;
-  padding-top: 100px;
-  @media (max-width: 1225px) {
-    margin: 32px 0 0 0;
-  }
-  @media (max-width: 870px) {
-    padding-top: 50px;
-  }
 `;
 
 function AppLayout() {

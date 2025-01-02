@@ -4,9 +4,8 @@ import styled from "styled-components";
 
 // Styled Components
 const HeroContainer = styled.div`
-  margin-top: 200px;
-  display: flex;
-  flex-direction: column;
+  padding-top: 200px;
+  padding-bottom: 65px;
   overflow: hidden;
   @media (prefers-color-scheme: dark) {
     background-color: #121212;
@@ -14,34 +13,59 @@ const HeroContainer = styled.div`
 `;
 
 const ScrollContainer = styled.div`
-  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  overflow: hidden;
-  height: 100vh;
+  align-items: center;
 `;
 
 const TitleWrapper = styled.div`
+  margin-bottom: -420px;
   text-align: center;
   z-index: 10;
-  margin-bottom: -80px;
+  mix-blend-mode: luminosity;
+  @media (max-width: 1000px) {
+    margin-bottom: -380px;
+  }
+  @media (max-width: 900px) {
+    margin-bottom: -320px;
+  }
 `;
 
 const Title = styled.h1`
+  max-width: 100%;
   font-weight: 600;
   text-align: center;
   transition: transform 0.2s ease, opacity 0.2s ease;
   font-size: 70px;
+  @media (max-width: 1410px) {
+    font-size: 60px;
+  }
+  @media (max-width: 1200px) {
+    font-size: 55px;
+  }
+  @media (max-width: 1050px) {
+    font-size: 50px;
+  }
+  @media (max-width: 930px) {
+    font-size: 45px;
+  }
 `;
 
 const HighlightText = styled.span`
   font-size: 70px;
   font-weight: 800;
   line-height: 1;
-  display: block;
   mix-blend-mode: difference;
+  @media (max-width: 1410px) {
+    font-size: 65px;
+  }
+  @media (max-width: 1200px) {
+    font-size: 60px;
+  }
+  @media (max-width: 1050px) {
+    font-size: 55px;
+  }
 `;
 
 const ImageWrapper = styled.div`
@@ -61,30 +85,6 @@ const HeroImage = styled.img`
   transition: transform 0.2s ease;
 `;
 
-export function HeroScrollDemo() {
-  return (
-    <HeroContainer>
-      <ContainerScroll
-        titleComponent={
-          <>
-            <Title>
-              Düşlerinizdeki Seyahatin İlk Adımı: <br />
-              <HighlightText>Vizepedia </HighlightText>
-            </Title>
-          </>
-        }
-      >
-        <HeroImage
-          src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/hero-image.png?t=2024-10-01T13%3A58%3A37.493Z"
-          alt="hero"
-          draggable={false}
-        />
-      </ContainerScroll>
-    </HeroContainer>
-  );
-}
-
-// `ContainerScroll` Component
 const ContainerScroll = ({ titleComponent, children }) => {
   const titleRef = useRef(null);
   const imageRef = useRef(null);
@@ -133,5 +133,28 @@ const ContainerScroll = ({ titleComponent, children }) => {
     </ScrollContainer>
   );
 };
+
+export function HeroScrollDemo() {
+  return (
+    <HeroContainer>
+      <ContainerScroll
+        titleComponent={
+          <>
+            <Title>
+              Düşlerinizdeki Seyahatin İlk Adımı: <br />
+              <HighlightText>Vizepedia </HighlightText>
+            </Title>
+          </>
+        }
+      >
+        <HeroImage
+          src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/hero-image.png?t=2024-10-01T13%3A58%3A37.493Z"
+          alt="hero"
+          draggable={false}
+        />
+      </ContainerScroll>
+    </HeroContainer>
+  );
+}
 
 export default HeroScrollDemo;
