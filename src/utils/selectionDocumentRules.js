@@ -9,6 +9,7 @@ const selectionDocumentRules = {
     "Malvarlık Belgeleri",
   ],
   sponsorAll: [
+    "Sponsor Nüfus Kaydı Örneği",
     "Sponsor Malvarlık Belgeleri",
     "Sponsor Kimlik Fotokopisi",
     "Sponsor İkametgah Belgesi",
