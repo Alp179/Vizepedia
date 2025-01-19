@@ -13,7 +13,7 @@ const selectionDocumentRules = {
     "Sponsor Malvarlık Belgeleri",
     "Sponsor Kimlik Fotokopisi",
     "Sponsor İkametgah Belgesi",
-    "Sponsor SGK Tescil ve Hizmet Dökümü",
+    
     "Sponsor Son 3 Aylık Banka Hesap Dökümü",
   ],
 
@@ -65,6 +65,7 @@ const selectionDocumentRules = {
   },
   sponsorProfession: {
     Emekli: [
+      "Sponsor SGK Tescil ve Hizmet Dökümü",
       "Sponsor Emeklilik Belgesi",
       "Sponsor 4A Emekli Aylık Bilgisi",
       "Sponsor SGK Tescil ve Hizmet Dökümü",
@@ -73,6 +74,7 @@ const selectionDocumentRules = {
 
     ],
     Çalışan: [
+      
       "Sponsor SGK İşe Giriş Belgesi",
       "Sponsor Son 3 Aylık Maaş Bordrosu",
       "Sponsor İşyerinden Dilekçe",
@@ -90,6 +92,11 @@ const selectionDocumentRules = {
       "Sponsor Şirket İmza Sirküleri",
       "Sponsor Faaliyet Belgesi",
       "Sponsor Şirket Dilekçesi",
+
+    ],
+    "Çalışmayan kişi": [
+      "Sponsor SGK Tescil ve Hizmet Dökümü",
+      
 
     ],
   },
