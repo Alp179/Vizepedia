@@ -12,7 +12,7 @@ import Heading from "../../ui/Heading";
 function ControlScreen() {
   const { state, dispatch } = useUserSelections();
   const navigate = useNavigate();
-  const { user, isUserLoading } = useUser(); // useUser hook'unu kullanarak mevcut kullanıcıyı al
+  const { user, isUserLoading } = useUser();
 
   useEffect(() => {
     const allSelectionsMade =
@@ -21,7 +21,8 @@ function ControlScreen() {
       state.profession &&
       state.vehicle &&
       state.kid &&
-      state.accommodation;
+      state.accommodation &&
+      (state.hasSponsor === false || state.sponsorProfession); // Sponsor kontrolü
     if (!allSelectionsMade) {
       navigate("/wellcome");
     }
@@ -34,20 +35,22 @@ function ControlScreen() {
     }
 
     const { error } = await supabase.from("userAnswers").upsert({
-      userId: user.id, // useUser hook'undan alınan mevcut kullanıcı ID'si
+      userId: user.id, // Mevcut kullanıcı ID'si
       ans_country: state.country,
       ans_purpose: state.purpose,
       ans_profession: state.profession,
       ans_vehicle: state.vehicle,
       ans_kid: state.kid,
       ans_accommodation: state.accommodation,
+      ans_hassponsor: state.hasSponsor,
+      ans_sponsor_profession: state.sponsorProfession || null, // Sponsor mesleği
     });
 
     if (error) {
       console.error("Seçimler kaydedilirken hata oluştu:", error);
     } else {
       console.log("Kullanıcı seçimleri başarıyla kaydedildi.");
-      navigate("/dashboard"); // Seçimler başarıyla kaydedildikten sonra kullanıcıyı yönlendir
+      navigate("/dashboard"); // Kullanıcıyı yönlendir
     }
   };
 
@@ -114,6 +117,11 @@ function ControlScreen() {
         onKidChange={(kid) => dispatch({ type: "SET_KID", payload: kid })}
         onAccommodationChange={(accommodation) =>
           dispatch({ type: "SET_ACCOMMODATION", payload: accommodation })
+        }
+        hasSponsor={state.hasSponsor}
+        sponsorProfession={state.sponsorProfession}
+        onSponsorProfessionChange={(sponsorProfession) =>
+          dispatch({ type: "SET_SPONSOR_PROFESSION", payload: sponsorProfession })
         }
       />
 

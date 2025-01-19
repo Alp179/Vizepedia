@@ -24,7 +24,7 @@ const StyledSelect = styled.select`
   transition: all 0.3s;
 
   @media (max-width: 825px) {
-    font-size: 14px!important;
+    font-size: 14px !important;
   }
   @media (max-height: 770px) {
     padding: 4px;
@@ -71,9 +71,7 @@ const Divider = styled.div`
   }
 `;
 
-const ControlLayout = styled.div`
-
-`;
+const ControlLayout = styled.div``;
 
 function ControlScreenDropdowns({
   onPurposeChange,
@@ -88,6 +86,9 @@ function ControlScreenDropdowns({
   onVehicleChange,
   onKidChange,
   onAccommodationChange,
+  hasSponsor,
+  sponsorProfession,
+  onSponsorProfessionChange,
 }) {
   const { state } = useUserSelections();
 
@@ -120,6 +121,10 @@ function ControlScreenDropdowns({
 
   const handleAccommodationChange = (e) => {
     onAccommodationChange(e.target.value);
+  };
+
+  const handleSponsorProfessionChange = (e) => {
+    onSponsorProfessionChange(e.target.value);
   };
 
   const combinedCountries = [
@@ -239,6 +244,27 @@ function ControlScreenDropdowns({
             ))}
           </StyledSelect>
         </Section>
+        <Divider />
+        {hasSponsor && (
+          <Section>
+            <Heading as="h9">Sponsor Mesleği</Heading>
+            <StyledSelect
+              value={sponsorProfession}
+              onChange={handleSponsorProfessionChange}
+            >
+              <option value="">{state.sponsorProfession}</option>
+              {professionsData &&
+                professionsData.map((profession, index) => (
+                  <option
+                    key={`sponsor-profession-${index}`}
+                    value={profession.professionName}
+                  >
+                    {profession.professionName}
+                  </option>
+                ))}
+            </StyledSelect>
+          </Section>
+        )}
       </ControlLayout>
     </>
   );

@@ -6,6 +6,14 @@ const selectionDocumentRules = {
     "Sağlık Sigortası",
     "İkametgah Belgesi",
     "Pasaport",
+    "Malvarlık Belgeleri",
+  ],
+  sponsorAll: [
+    "Sponsor Malvarlık Belgeleri",
+    "Sponsor Kimlik Fotokopisi",
+    "Sponsor İkametgah Belgesi",
+    "Sponsor SGK Tescil ve Hizmet Dökümü",
+    "Sponsor Son 3 Aylık Banka Hesap Dökümü",
   ],
 
   // Kullanıcı seçim türleri (ans_country, ans_purpose, vs.) ile uyumlu yapı
@@ -21,15 +29,14 @@ const selectionDocumentRules = {
   profession: {
     Emekli: [
       "4A Emekli Aylık Bilgisi",
-      "Malvarlık Belgeleri",
-      "Emeklilik Belgesi",
       "SGK Tescil ve Hizmet Dökümü",
       "Son 3 Aylık Banka Hesap Dökümü",
       "Emekli Maaşı Hesabı Dökümü",
+      "Emeklilik Belgesi",
     ],
-    Öğrenci: ["Öğrenci Belgesi", "Sponsor Evrakları"],
+    Öğrenci: ["Öğrenci Belgesi"],
     Çalışan: [
-      "Malvarlık Belgeleri",
+
       "Faaliyet Belgesi",
       "SGK İşe Giriş Belgesi",
       "Ticaret Sicil Gazetesi Fotokopisi",
@@ -38,23 +45,52 @@ const selectionDocumentRules = {
       "Vergi Levhası",
       "Şirket İmza Sirküleri",
       "Son 3 Aylık Banka Hesap Dökümü",
-
       "Şirket Dilekçesi",
     ],
     "Çalışmayan kişi": [
-      "Sponsor Evrakları",
+
       "SGK Tescil ve Hizmet Dökümü",
       "Son 3 Aylık Banka Hesap Dökümü",
     ],
-    "İş veren": [
-      "Malvarlık Belgeleri",
+    "İş Veren/Şirket Ortağı": [
+
       "Son 3 Aylık Banka Hesap Dökümü",
       "Şirket Vergi Levhası",
       "Ticaret Sicil Gazetesi Fotokopisi",
       "Şirket İmza Sirküleri",
       "Faaliyet Belgesi",
       "Şirket Dilekçesi",
-    ], // İş verenler için gerekli belgeler
+    ],
+  },
+  sponsorProfession: {
+    Emekli: [
+      "Sponsor Emeklilik Belgesi",
+      "Sponsor 4A Emekli Aylık Bilgisi",
+      "Sponsor SGK Tescil ve Hizmet Dökümü",
+      
+      "Sponsor Emekli Maaşı Hesabı Dökümü",
+
+    ],
+    Çalışan: [
+      "Sponsor SGK İşe Giriş Belgesi",
+      "Sponsor Son 3 Aylık Maaş Bordrosu",
+      "Sponsor İşyerinden Dilekçe",
+      "Sponsor Faaliyet Belgesi",
+      "Sponsor Ticaret Sicil Gazetesi Fotokopisi",
+      "Sponsor SGK Tescil ve Hizmet Dökümü",
+      "Sponsor Şirket Vergi Levhası",
+      "Sponsor Şirket İmza Sirküleri",
+      
+      
+    ],
+    "İş Veren/Şirket Ortağı": [
+      "Sponsor Şirket Vergi Levhası",
+      "Sponsor Ticaret Sicil Gazetesi Fotokopisi",
+      "Sponsor Şirket İmza Sirküleri",
+      "Sponsor Faaliyet Belgesi",
+      "Sponsor Şirket Dilekçesi",
+
+    ],
   },
   vehicle: {
     Uçak: ["Uçak Rezervasyonu"],

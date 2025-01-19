@@ -34,6 +34,7 @@ import BlogDetail from "./pages/BlogDetail";
 import { useEffect } from "react";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
+import WellcomeDa from "./features/wellcomes/WellcomeDa";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -103,6 +104,7 @@ function App() {
                       <Route path="wellcome-2" element={<WellcomeB />} />
                       <Route path="wellcome-3" element={<WellcomeC />} />
                       <Route path="wellcome-4" element={<WellcomeD />} />
+                      <Route path="wellcome-4a" element={<WellcomeDa />} />
                       <Route path="wellcome-5" element={<WellcomeE />} />
                       <Route path="test" element={<ControlScreen />} />
                     </Route>

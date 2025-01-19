@@ -5,6 +5,7 @@ import ProfessionSelection from "./ProfessionSelection";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import styled from "styled-components";
+import { toast } from "react-hot-toast";
 
 // Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
 function saveAnonymousUserSelections(selections) {
@@ -15,6 +16,7 @@ function saveAnonymousUserSelections(selections) {
     vehicle: selections.vehicle || "",
     kid: selections.kid || "",
     accommodation: selections.accommodation || "",
+    hasSponsor: selections.hasSponsor || false,
   };
 
   // Seçimleri localStorage'a kaydet
@@ -37,6 +39,53 @@ function WellcomeD() {
       ...state,
       profession,
     });
+
+    // Eğer seçilen meslek "İş veren" değilse sponsor durumu sor
+    if (profession !== "İş veren") {
+      toast((t) => (
+        <div>
+          <p>Seyahat masraflarınızı karşılayan bir sponsorunuz var mı?</p>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "16px",
+            }}
+          >
+            <Button
+              variation="primary"
+              size="small"
+              onClick={() => {
+                toast.dismiss(t.id);
+                dispatch({ type: "SET_HAS_SPONSOR", payload: true });
+                saveAnonymousUserSelections({
+                  ...state,
+                  hasSponsor: true,
+                });
+                navigate("/wellcome-4a"); // Sponsor mesleği sayfasına yönlendir
+              }}
+            >
+              Evet
+            </Button>
+            <Button
+              variation="secondary"
+              size="small"
+              onClick={() => {
+                toast.dismiss(t.id);
+                dispatch({ type: "SET_HAS_SPONSOR", payload: false });
+                saveAnonymousUserSelections({
+                  ...state,
+                  hasSponsor: false,
+                });
+                navigate("/wellcome-5"); // Sürece devam
+              }}
+            >
+              Hayır
+            </Button>
+          </div>
+        </div>
+      ));
+    }
   };
 
   const QuestionContainer = styled.div`

@@ -3,7 +3,7 @@ import supabase from "../services/supabase";
 export async function fetchUserSelectionsNav(userId) {
   const { data, error } = await supabase
     .from("userAnswers")
-    .select("*") // Tüm sütunları seç
+    .select("id, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession") // Yeni alanlar eklendi
     .eq("userId", userId);
 
   if (error) {
@@ -17,9 +17,10 @@ export async function fetchUserSelectionsNav(userId) {
 export async function fetchUserSelectionsDash(userId, applicationId) {
   const { data, error } = await supabase
     .from("userAnswers")
-    .select("*") // Tüm sütunları seç
+    .select("id, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession") // Yeni alanlar eklendi
     .eq("userId", userId)
     .eq("id", applicationId);
+
   if (error) {
     console.error("Error fetching user selections:", error);
     return [];
@@ -31,7 +32,7 @@ export async function fetchUserSelectionsDash(userId, applicationId) {
 export async function fetchLatestApplication(userId) {
   const { data, error } = await supabase
     .from("userAnswers")
-    .select("*")
+    .select("id, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession") // Yeni alanlar eklendi
     .eq("userId", userId)
     .order("created_at", { ascending: false })
     .limit(1);

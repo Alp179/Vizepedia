@@ -31,7 +31,26 @@ export function getDocumentsForSelections(userSelections) {
         combination.documents.forEach((doc) => requiredDocuments.add(doc));
       }
     });
+
+    // Sponsor kontrolü
+    if (selection.ans_hassponsor) {
+      // Sponsor genel belgelerini ekle
+      selectionDocumentRules.sponsorAll.forEach((doc) =>
+        requiredDocuments.add(doc)
+      );
+
+      // Sponsor meslek belgelerini ekle
+      if (
+        selection.ans_sponsor_profession &&
+        selectionDocumentRules.sponsorProfession[selection.ans_sponsor_profession]
+      ) {
+        selectionDocumentRules.sponsorProfession[
+          selection.ans_sponsor_profession
+        ].forEach((doc) => requiredDocuments.add(doc));
+      }
+    }
   });
 
   return Array.from(requiredDocuments); // Set'i diziye dönüştür
 }
+  

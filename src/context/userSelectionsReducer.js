@@ -1,4 +1,3 @@
-// src/context/userSelectionsReducer.js
 const initialState = {
   country: "",
   purpose: "",
@@ -6,6 +5,8 @@ const initialState = {
   vehicle: "",
   kid: "",
   accommodation: "",
+  hasSponsor: null, // Yeni alan: Sponsor var mı? (true/false)
+  sponsorProfession: "", // Yeni alan: Sponsorun mesleği
 };
 
 function userSelectionsReducer(state, action) {
@@ -22,6 +23,10 @@ function userSelectionsReducer(state, action) {
       return { ...state, kid: action.payload };
     case "SET_ACCOMMODATION":
       return { ...state, accommodation: action.payload };
+    case "SET_HAS_SPONSOR":
+      return { ...state, hasSponsor: action.payload }; // Sponsor var mı alanını güncelle
+    case "SET_SPONSOR_PROFESSION":
+      return { ...state, sponsorProfession: action.payload }; // Sponsorun mesleğini güncelle
     default:
       return state;
   }

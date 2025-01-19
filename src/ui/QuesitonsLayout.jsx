@@ -128,6 +128,7 @@ function QuestionsLayout() {
     "/wellcome-2": 20,
     "/wellcome-3": 40,
     "/wellcome-4": 60,
+    "/wellcome-4a": 80,
     "/wellcome-5": 90,
   };
 
