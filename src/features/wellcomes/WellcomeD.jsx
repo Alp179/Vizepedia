@@ -5,95 +5,93 @@ import ProfessionSelection from "./ProfessionSelection";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import styled from "styled-components";
-import { toast } from "react-hot-toast";
+import { toast,  } from "react-hot-toast";
 
-// Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
-function saveAnonymousUserSelections(selections) {
-  const userSelections = {
-    country: selections.country || "", // Daha önceki adımda seçilen ülke
-    purpose: selections.purpose || "", // Daha önceki adımda seçilen gidiş amacı
-    profession: selections.profession, // Bu adımda seçilen meslek
-    vehicle: selections.vehicle || "",
-    kid: selections.kid || "",
-    accommodation: selections.accommodation || "",
-    hasSponsor: selections.hasSponsor || false,
-  };
+// Styled components
+const QuestionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+`;
 
-  // Seçimleri localStorage'a kaydet
-  localStorage.setItem("userSelections", JSON.stringify(userSelections));
-}
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+`;
 
 function WellcomeD() {
   const navigate = useNavigate();
-  const { state, dispatch } = useUserSelections(); // dispatch fonksiyonunu kullanmak için hook'u çağırın
-  const [selectedProfession, setSelectedProfession] = useState(
-    state.profession
-  );
+  const { state, dispatch } = useUserSelections();
+  const [selectedProfession, setSelectedProfession] = useState(state.profession);
+  const [isToastVisible, setIsToastVisible] = useState(false);
 
   const handleProfessionChange = (profession) => {
     setSelectedProfession(profession);
-    dispatch({ type: "SET_PROFESSION", payload: profession }); // Global state'i güncelleyin
+    dispatch({ type: "SET_PROFESSION", payload: profession });
 
-    // Anonim kullanıcı seçimlerini kaydet
-    saveAnonymousUserSelections({
-      ...state,
-      profession,
-    });
+    // Önceki toast'ı temizle ve yeni toast göster
+    toast.dismiss("sponsor-toast");
+    setIsToastVisible(false);
 
-    // Eğer seçilen meslek "İş veren" değilse sponsor durumu sor
     if (profession !== "İş veren") {
-      toast((t) => (
-        <div>
-          <p>Seyahat masraflarınızı karşılayan bir sponsorunuz var mı?</p>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginTop: "16px",
-            }}
-          >
-            <Button
-              variation="primary"
-              size="small"
-              onClick={() => {
-                toast.dismiss(t.id);
-                dispatch({ type: "SET_HAS_SPONSOR", payload: true });
-                saveAnonymousUserSelections({
-                  ...state,
-                  hasSponsor: true,
-                });
-                navigate("/wellcome-4a"); // Sponsor mesleği sayfasına yönlendir
+      setIsToastVisible(true);
+      toast(
+        (t) => (
+          <div>
+            <p>Seyahat masraflarınızı karşılayan bir sponsorunuz var mı?</p>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "16px",
               }}
             >
-              Evet
-            </Button>
-            <Button
-              variation="secondary"
-              size="small"
-              onClick={() => {
-                toast.dismiss(t.id);
-                dispatch({ type: "SET_HAS_SPONSOR", payload: false });
-                saveAnonymousUserSelections({
-                  ...state,
-                  hasSponsor: false,
-                });
-                navigate("/wellcome-5"); // Sürece devam
-              }}
-            >
-              Hayır
-            </Button>
+              <Button
+                variation="primary"
+                size="small"
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  setIsToastVisible(false);
+                  dispatch({ type: "SET_HAS_SPONSOR", payload: true });
+                  navigate("/wellcome-4a");
+                }}
+              >
+                Evet
+              </Button>
+              <Button
+                variation="secondary"
+                size="small"
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  setIsToastVisible(false);
+                  dispatch({ type: "SET_HAS_SPONSOR", payload: false });
+                  navigate("/wellcome-5");
+                }}
+              >
+                Hayır
+              </Button>
+            </div>
           </div>
-        </div>
-      ));
+        ),
+        {
+          id: "sponsor-toast", // Tekil bir toast için ID tanımla
+          duration: Infinity, // Toast süresiz olarak ekranda kalır
+        }
+      );
     }
   };
 
-  const QuestionContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  `;
+  const handleOverlayClick = () => {
+    toast.dismiss("sponsor-toast"); // Belirli ID'ye sahip toast'ı kapat
+    setIsToastVisible(false);
+  };
 
   return (
     <>
@@ -111,6 +109,8 @@ function WellcomeD() {
           Devam et
         </Button>
       </QuestionContainer>
+      {isToastVisible && <Overlay onClick={handleOverlayClick} />}
+     
     </>
   );
 }
