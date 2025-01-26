@@ -505,6 +505,9 @@ const Dashboard = () => {
         </Heading>
       </CustomRow>
       <StepIndicatorWrapper>
+        <Heading as="h3" style={{ marginBottom: "16px", zIndex: "3000" }}>
+          Başvuru Sahibinin Belgeleri
+        </Heading>
         <StepIndicator
           steps={stepLabels}
           currentStep={currentStep}
@@ -513,7 +516,11 @@ const Dashboard = () => {
           documents={documents}
         />
       </StepIndicatorWrapper>
+
       <StepIndicatorWrapper>
+        <Heading as="h3" style={{ marginBottom: "16px", zIndex: "3000" }}>
+          Sponsorun Belgeleri
+        </Heading>
         <SponsorStepIndicator
           steps={stepLabels}
           currentStep={currentStep}
