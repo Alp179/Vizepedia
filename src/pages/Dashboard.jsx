@@ -260,6 +260,26 @@ const InfoDetails = styled.div`
   gap: 10px;
 `;
 
+<<<<<<< Updated upstream
+=======
+const DashboardContainer = styled.div`
+  position: relative;
+  width: 100vw;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 710px) {
+    height: 100%;
+    width: 100%;
+    margin-left: auto;
+    flex-flow: column;
+    justify-content: flex-start;
+    margin-right: auto;
+  }
+`;
+
+>>>>>>> Stashed changes
 const Ceper = styled.div`
   position: absolute;
   left: 20vw;
@@ -312,13 +332,20 @@ const UyeDevam = styled.button`
 
 const StepIndicatorWrapper = styled.div`
   width: 100%;
+<<<<<<< Updated upstream
+=======
+  margin-bottom: 40px; /* Mesafeyi kısalttık */
+  @media (max-width: 710px) {
+    margin-bottom: 20px; /* Küçük ekranlarda daha da kısalttık */
+  }
+>>>>>>> Stashed changes
 `;
 
 const InfoContainerWrapper = styled.div`
   width: 100%;
-  margin-top: 100px; /* StepIndicator ile araya boşluk ekliyoruz */
+  margin-top: 40px; /* InfoContainer ile mesafeyi kısalttık */
   @media (max-width: 710px) {
-    margin-top: 0; /* Küçük ekranlarda aralığı sıfırlıyoruz */
+    margin-top: 20px; /* Küçük ekranlarda daha da kısalttık */
   }
 `;
 
@@ -514,18 +541,23 @@ const Dashboard = () => {
         />
       </StepIndicatorWrapper>
 
-      <StepIndicatorWrapper>
-        <Heading as="h3" style={{ marginBottom: "16px", zIndex: "3000" }}>
-          Sponsorun Belgeleri
-        </Heading>
-        <SponsorStepIndicator
-          steps={stepLabels}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-          completedDocuments={completedDocuments}
-          documents={documents}
-        />
-      </StepIndicatorWrapper>
+      {/* SponsorStepIndicator'ü sadece kullanıcının sponsoru varsa göster */}
+      {userSelections?.find(
+        (selection) => selection.ans_hassponsor === true
+      ) && (
+        <StepIndicatorWrapper>
+          <Heading as="h3" style={{ marginBottom: "16px", zIndex: "3000" }}>
+            Sponsorun Belgeleri
+          </Heading>
+          <SponsorStepIndicator
+            steps={stepLabels}
+            currentStep={currentStep}
+            onStepClick={handleStepClick}
+            completedDocuments={completedDocuments}
+            documents={documents}
+          />
+        </StepIndicatorWrapper>
+      )}
       {countryCode && (
         <FlagContainer>
           <span className={`fi fi-${countryCode}`}></span>
