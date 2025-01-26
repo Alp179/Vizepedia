@@ -16,6 +16,7 @@ import "flag-icons/css/flag-icons.min.css";
 import supabase from "../services/supabase";
 import SignupForm from "../features/authentication/SignupForm";
 import ModalSignup from "../ui/ModalSignup";
+import SponsorStepIndicator from "../ui/SponsorStepIndicator";
 
 const FlagContainer = styled.div`
   position: fixed;
@@ -505,6 +506,15 @@ const Dashboard = () => {
       </CustomRow>
       <StepIndicatorWrapper>
         <StepIndicator
+          steps={stepLabels}
+          currentStep={currentStep}
+          onStepClick={handleStepClick}
+          completedDocuments={completedDocuments}
+          documents={documents}
+        />
+      </StepIndicatorWrapper>
+      <StepIndicatorWrapper>
+        <SponsorStepIndicator
           steps={stepLabels}
           currentStep={currentStep}
           onStepClick={handleStepClick}

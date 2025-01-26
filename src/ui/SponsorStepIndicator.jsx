@@ -315,7 +315,7 @@ const IconContainer = ({
   );
 };
 
-const StepIndicator = () => {
+const SponsorStepIndicator = () => {
   const [userId, setUserId] = useState(null);
   const { id: applicationId } = useParams();
   const navigate = useNavigate();
@@ -370,7 +370,9 @@ const StepIndicator = () => {
   });
 
   const documentNames = userSelections
-    ? getDocumentsForSelections(userSelections)
+    ? getDocumentsForSelections(userSelections).filter((doc) =>
+        doc.startsWith("Sponsor")
+      )
     : [];
 
   const {
@@ -379,10 +381,7 @@ const StepIndicator = () => {
     isError: isErrorDocuments,
   } = useQuery({
     queryKey: ["documentDetailsStep", documentNames],
-    queryFn: () =>
-      fetchDocumentDetails(documentNames).then((docs) =>
-        docs.filter((doc) => !doc.docName.startsWith("Sponsor"))
-      ),
+    queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !!documentNames.length,
   });
 
@@ -509,4 +508,4 @@ const StepIndicator = () => {
   );
 };
 
-export default StepIndicator;
+export default SponsorStepIndicator;
