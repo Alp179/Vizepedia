@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserSelections } from "./useUserSelections";
-import ProfessionSelection from "./ProfessionSelection";
+
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import styled from "styled-components";
+import SponsorProfessionSelection from "./SponsorProfessionSelection";
 
 // Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
 function saveAnonymousUserSelections(selections) {
@@ -52,13 +53,21 @@ function WellcomeDa() {
     gap: 12px;
   `;
 
+  // Kaldırılacak meslekler listesi
+  const excludedProfessions = ["Çocuk (0-6 yaş)", "Öğrenci"];
+
   return (
     <>
       <QuestionContainer>
         <Heading as="h5">Sponsorunuzun Mesleği</Heading>
-        <ProfessionSelection
+        <SponsorProfessionSelection
           selectedProfession={selectedSponsorProfession}
           onProfessionChange={handleSponsorProfessionChange}
+          filterProfessions={(professions) =>
+            professions.filter(
+              (profession) => !excludedProfessions.includes(profession)
+            )
+          }
         />
         <Button
           variation="question"

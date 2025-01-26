@@ -5,7 +5,7 @@ import ProfessionSelection from "./ProfessionSelection";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import styled from "styled-components";
-import { toast,  } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 // Styled components
 const QuestionContainer = styled.div`
@@ -13,6 +13,7 @@ const QuestionContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  z-index: 1;
 `;
 
 const Overlay = styled.div`
@@ -23,13 +24,15 @@ const Overlay = styled.div`
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
-  z-index: 999;
+  z-index: 10;
 `;
 
 function WellcomeD() {
   const navigate = useNavigate();
   const { state, dispatch } = useUserSelections();
-  const [selectedProfession, setSelectedProfession] = useState(state.profession);
+  const [selectedProfession, setSelectedProfession] = useState(
+    state.profession
+  );
   const [isToastVisible, setIsToastVisible] = useState(false);
 
   const handleProfessionChange = (profession) => {
@@ -81,16 +84,25 @@ function WellcomeD() {
           </div>
         ),
         {
-          id: "sponsor-toast", // Tekil bir toast için ID tanımla
-          duration: Infinity, // Toast süresiz olarak ekranda kalır
+          id: "sponsor-toast",
+          duration: Infinity,
+          onClose: () => {
+            // Toast kapatıldığında meslek seçimini sıfırla
+            setSelectedProfession("");
+            dispatch({ type: "SET_PROFESSION", payload: "" });
+          },
         }
       );
     }
   };
 
   const handleOverlayClick = () => {
-    toast.dismiss("sponsor-toast"); // Belirli ID'ye sahip toast'ı kapat
+    toast.dismiss("sponsor-toast");
     setIsToastVisible(false);
+
+    // Overlay tıklandığında meslek seçimini sıfırla
+    setSelectedProfession("");
+    dispatch({ type: "SET_PROFESSION", payload: "" });
   };
 
   return (
@@ -105,12 +117,12 @@ function WellcomeD() {
           variation="question"
           onClick={() => navigate("/wellcome-5")}
           disabled={!selectedProfession}
+          style={{ zIndex: "1" }}
         >
           Devam et
         </Button>
       </QuestionContainer>
       {isToastVisible && <Overlay onClick={handleOverlayClick} />}
-     
     </>
   );
 }
