@@ -12,23 +12,26 @@ const HeroContainer = styled.div`
   }
 `;
 
-const ScrollContainer = styled.div`
+const PositionContainer = styled.div`
+  position: relative;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: auto;
 `;
 
 const TitleWrapper = styled.div`
-  margin-bottom: -420px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
   z-index: 10;
   mix-blend-mode: luminosity;
+
   @media (max-width: 1000px) {
-    margin-bottom: -380px;
-  }
-  @media (max-width: 900px) {
-    margin-bottom: -320px;
+    top: 45%;
   }
 `;
 
@@ -50,6 +53,12 @@ const Title = styled.h1`
   @media (max-width: 930px) {
     font-size: 45px;
   }
+  @media (max-width: 830px) {
+    font-size: 40px;
+  }
+  @media (max-width: 730px) {
+    font-size: 35px;
+  }
 `;
 
 const HighlightText = styled.span`
@@ -65,6 +74,12 @@ const HighlightText = styled.span`
   }
   @media (max-width: 1050px) {
     font-size: 55px;
+  }
+  @media (max-width: 830px) {
+    font-size: 45px;
+  }
+  @media (max-width: 730px) {
+    font-size: 40px;
   }
 `;
 
@@ -95,7 +110,7 @@ const ContainerScroll = ({ titleComponent, children }) => {
 
       // Title animation: Yukarı hareket ve opaklık azalması
       if (titleRef.current) {
-        titleRef.current.style.transform = `translateY(${scrollY * 0.3}px)`;
+        titleRef.current.style.transform = `translate(-50%, calc(-50% + ${scrollY * 0.3}px))`;
         titleRef.current.style.opacity = `${1 - scrollY / 300}`;
       }
 
@@ -127,10 +142,10 @@ const ContainerScroll = ({ titleComponent, children }) => {
   }, []);
 
   return (
-    <ScrollContainer>
+    <PositionContainer>
       <TitleWrapper ref={titleRef}>{titleComponent}</TitleWrapper>
       <ImageWrapper ref={imageRef}>{children}</ImageWrapper>
-    </ScrollContainer>
+    </PositionContainer>
   );
 };
 

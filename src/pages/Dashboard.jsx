@@ -18,6 +18,24 @@ import SignupForm from "../features/authentication/SignupForm";
 import ModalSignup from "../ui/ModalSignup";
 import SponsorStepIndicator from "../ui/SponsorStepIndicator";
 
+
+const DashboardContainer = styled.div`
+  position: relative;
+  width: 100vw;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  @media (max-width: 710px) {
+    height: 100%;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    flex-flow: column;
+    justify-content: flex-start;
+  }
+`;
+
 const FlagContainer = styled.div`
   position: fixed;
   top: 0;
@@ -242,23 +260,6 @@ const InfoDetails = styled.div`
   gap: 10px;
 `;
 
-const DashboardContainer = styled.div`
-  position: relative;
-  width: 100vw;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 50px;
-  @media (max-width: 710px) {
-    height: 100%;
-    width: 100%;
-    margin-left: auto;
-    flex-flow: column;
-    justify-content: flex-start;
-    margin-right: auto;
-  }
-`;
-
 const Ceper = styled.div`
   position: absolute;
   left: 20vw;
@@ -311,10 +312,6 @@ const UyeDevam = styled.button`
 
 const StepIndicatorWrapper = styled.div`
   width: 100%;
-  margin-bottom: 100px; /* InfoContainer ile araya boşluk ekliyoruz */
-  @media (max-width: 710px) {
-    margin-bottom: 0; /* Küçük ekranlarda aralığı sıfırlıyoruz */
-  }
 `;
 
 const InfoContainerWrapper = styled.div`
