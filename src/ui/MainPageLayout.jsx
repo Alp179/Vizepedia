@@ -45,7 +45,6 @@ const Main = styled.main`
 `;
 
 const Container = styled.div`
-  padding-top: 200px;
   max-width: 100vw;
 `;
 

@@ -127,7 +127,7 @@ transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animas
       @media (max-width: 450px) {
         width: 85px;
       }
-      @media (max-width: 380px) {
+      @media (max-width: 350px) {
         width: 80px;
       }
     `}

@@ -30,8 +30,8 @@ const MenuIcon = styled.div.attrs((props) => ({
   display: flex;
   height: 42px;
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: 20px;
+  right: 12px;
   z-index: 3000;
   @media (min-width: 710px) {
     display: none;

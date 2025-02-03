@@ -4,7 +4,8 @@ import { useUser } from "./useUser";
 
 const StyledUserAvatar = styled.div`
   display: flex;
-  gap: 1.2rem;
+  margin-right: 16px;
+  gap: 1rem;
   align-items: center;
   font-weight: 500;
   font-size: 1.4rem;
@@ -25,8 +26,8 @@ const Avatar = styled.div`
 
 const UserName = styled.span`
   z-index: 2990;
-  color: white;  /* Beyaz renk */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);  /* Siyah gölge */
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 `;
 
 function UserAvatar() {
@@ -35,12 +36,16 @@ function UserAvatar() {
   const fullName = user_metadata?.full_name;
 
   // Kullanıcının isminin ilk harfi, yoksa email'in ilk harfi alınır
-  const initial = fullName ? fullName.charAt(0).toUpperCase() : email.charAt(0).toUpperCase();
+  const initial = fullName
+    ? fullName.charAt(0).toUpperCase()
+    : email.charAt(0).toUpperCase();
 
   return (
     <StyledUserAvatar>
-      <Avatar>{initial}</Avatar> {/* Artık sadece ismin veya email'in ilk harfi gösteriliyor */}
-      <UserName>{fullName || email}</UserName> {/* Eğer kullanıcı adı varsa, yoksa e-posta göster */}
+      <Avatar>{initial}</Avatar>{" "}
+      {/* Artık sadece ismin veya email'in ilk harfi gösteriliyor */}
+      <UserName>{fullName || email}</UserName>{" "}
+      {/* Eğer kullanıcı adı varsa, yoksa e-posta göster */}
     </StyledUserAvatar>
   );
 }

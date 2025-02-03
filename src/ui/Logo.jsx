@@ -151,7 +151,7 @@ const StyledLogo = styled.div`
       @media (max-width: 550px) {
         width: 90px;
       }
-      @media (max-width: 380px) {
+      @media (max-width: 350px) {
         width: 80px;
       }
     `}

@@ -113,7 +113,7 @@ const variations = {
     @media (max-width: 370px) {
       width: calc(100vw - 20px) !important;
     }
-    &:hover{
+    &:hover {
       background: #004466;
       color: #00ffa2;
     }
@@ -125,7 +125,7 @@ const variations = {
     @media (max-width: 370px) {
       width: calc(100vw - 20px) !important;
     }
-    &:hover{
+    &:hover {
       background: var(--color-grey-922);
       color: var(--color-grey-923);
     }
@@ -142,7 +142,7 @@ const variations = {
     @media (max-width: 370px) {
       width: calc(100vw - 20px) !important;
     }
-    &:hover{
+    &:hover {
       background: var(--color-grey-922);
       color: var(--color-grey-923);
     }
@@ -227,6 +227,7 @@ const variations = {
       font-size: 14px;
     }
   `,
+
   mainpage2: css`
     color: var(--color-grey-904);
     width: 165px;
@@ -251,6 +252,55 @@ const variations = {
     @media (max-width: 870px) {
       display: none;
     }
+  `,
+  mainpage3: css`
+    width: 120px;
+    font-size: 16px;
+    height: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 20px;
+    background: #004466;
+    color: #87f9cd;
+    border: 2px solid #87f9cd;
+    font-weight: bold;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    &:hover {
+      background: #87f9cd;
+      color: #004466;
+    }
+    @media (max-width: 1020px) {
+      display: flex;
+    }
+  `,
+
+  mainpage4: css`
+    width: 165px;
+    height: 55px;
+    border-radius: 20px;
+    background: #004466;
+    color: #87f9cd;
+    border: 2px solid #87f9cd;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    &:hover {
+      background: #87f9cd;
+      color: #004466;
+    }
+    align-items: center;
+    @media (max-width: 1200px) {
+      width: 120px;
+      font-size: 16px;
+      height: 50px;
+    }
+    @media (max-width: 1020px) {
+      display: none;
+    }
+    
   `,
 };
 

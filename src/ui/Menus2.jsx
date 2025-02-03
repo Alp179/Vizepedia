@@ -18,6 +18,7 @@ const StyledToggle = styled.button`
   background: none;
   border: none;
   padding: 0.4rem;
+  flex-shrink: 0;
   border-radius: var(--border-radius-sm);
   transform: translateX(0.8rem);
   transition: all 0.2s;
@@ -45,13 +46,8 @@ const StyledList = styled.ul`
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border: 2px solid rgba(255, 255, 255, 0.3);
-
-  @media (max-width: 710px) {
-    display: none;
-  }
-
-  right: calc(${(props) => props.position.x}px - 20px);
-  top: ${(props) => props.position.y}px;
+  right: calc(${(props) => props.position.x}px);
+  top: calc(${(props) => props.position.y}px);
 
   /* Scale down animasyonu */
   transform: scaleY(${(props) => (props.isOpen ? 1 : 0)});
@@ -93,7 +89,7 @@ const MenusContext = createContext();
 function Menus({ children }) {
   const [openId, setOpenId] = useState();
   const [position, setPosition] = useState({ x: 0, y: 0 });
-
+  
   const close = () => setOpenId("");
   const open = setOpenId;
 
@@ -118,7 +114,7 @@ function Toggle({ id, onProfile }) {
       const rect = toggleRef.current.getBoundingClientRect();
       setPosition({
         x: window.innerWidth - rect.right,
-        y: rect.bottom + window.scrollY + 8,
+        y: rect.bottom,
       });
     }
   };
