@@ -391,7 +391,7 @@ function MainNav() {
               Bu vize başvurusunu silmek istediğinizden emin misiniz?
             </p>
             <br />
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", justifyContent: "center" }}>
               <button
                 onClick={() => {
                   toast.dismiss(t.id);

@@ -343,6 +343,7 @@ ul {
 }
 
 .handle-delete {
+  width: 100%;
   border-radius: 16px;
 }
 

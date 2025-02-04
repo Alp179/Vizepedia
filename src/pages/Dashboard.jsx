@@ -197,16 +197,7 @@ const InfoContainer = styled.div`
     width: 400px;
   }
   @media (max-width: 710px) {
-    margin-bottom: -125px;
-    margin-top: 100px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  @media (max-width: 520px) {
-    width: 80%;
-  }
-  @media (max-width: 350px) {
-    width: 95%;
+    margin: 0;
   }
 `;
 
@@ -235,7 +226,7 @@ const MapContainer = styled.div`
 
 const InfoDetails = styled.div`
   flex: 1;
-  color: var(--color-grey-800);
+  color: var(--color-grey-600);
   display: flex;
   z-index: 3000;
   flex-direction: column;
@@ -248,6 +239,7 @@ const DashboardContainer = styled.div`
   height: auto;
   display: flex;
   flex-direction: column;
+  gap: 32px;
 
   @media (max-width: 710px) {
     height: 100%;
@@ -310,20 +302,48 @@ const UyeDevam = styled.button`
 `;
 
 const StepIndicatorWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
-  margin-bottom: 40px; /* Mesafeyi kısalttık */
+  justify-content: flex-start;
   @media (max-width: 710px) {
     margin-bottom: 20px; /* Küçük ekranlarda daha da kısalttık */
   }
 `;
 
 const InfoContainerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
-  margin-top: 40px; /* InfoContainer ile mesafeyi kısalttık */
+`;
+
+const DashboardItems = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   @media (max-width: 710px) {
-    margin-top: 20px; /* Küçük ekranlarda daha da kısalttık */
+    flex-wrap: nowrap;
+    padding: 0 12px;
+    width: 100vw;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    overflow-x: auto;
+    min-height: 100%;
+    overflow-y: hidden; /* Yatay kaydırma açık, dikey kaydırma kapalı */
+    white-space: nowrap; /* İçeriklerin alt alta gelmesini önler */
+    -webkit-overflow-scrolling: touch;
+
+    & > * {
+      scroll-snap-align: start;
+    }
   }
 `;
+
+const DashboardItemsContainer = styled.div``;
 
 const Dashboard = () => {
   const { id: applicationId } = useParams();
@@ -504,77 +524,78 @@ const Dashboard = () => {
           Hoş geldiniz
         </Heading>
       </CustomRow>
-      <StepIndicatorWrapper>
-        <Heading as="h3" style={{ marginBottom: "16px", zIndex: "3000" }}>
-          Başvuru Sahibinin Belgeleri
-        </Heading>
-        <StepIndicator
-          steps={stepLabels}
-          currentStep={currentStep}
-          onStepClick={handleStepClick}
-          completedDocuments={completedDocuments}
-          documents={documents}
-        />
-      </StepIndicatorWrapper>
-
-      {/* SponsorStepIndicator'ü sadece kullanıcının sponsoru varsa göster */}
-      {userSelections?.find(
-        (selection) => selection.ans_hassponsor === true
-      ) && (
-        <StepIndicatorWrapper>
-          <Heading as="h3" style={{ marginBottom: "16px", zIndex: "3000" }}>
-            Sponsorun Belgeleri
-          </Heading>
-          <SponsorStepIndicator
-            steps={stepLabels}
-            currentStep={currentStep}
-            onStepClick={handleStepClick}
-            completedDocuments={completedDocuments}
-            documents={documents}
-          />
-        </StepIndicatorWrapper>
-      )}
-      {countryCode && (
-        <FlagContainer>
-          <span className={`fi fi-${countryCode}`}></span>
-        </FlagContainer>
-      )}
-      <InfoContainerWrapper>
-        {isFirmLocationSuccess && firmLocation && (
-          <InfoContainer>
-            <MapContainer
-              dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
+      <DashboardItemsContainer>
+        <DashboardItems>
+          <StepIndicatorWrapper>
+            <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
+            <StepIndicator
+              steps={stepLabels}
+              currentStep={currentStep}
+              onStepClick={handleStepClick}
+              completedDocuments={completedDocuments}
+              documents={documents}
             />
-            <InfoDetails>
-              <div>
-                <strong>Firma Adı: </strong>
-                {firmLocation.firm_name}
-              </div>
-              <div>
-                <strong>Vize Ücreti: </strong>
-                {firmLocation.visa_fee} €
-              </div>
-              <div>
-                <strong>Servis Ücreti: </strong>
-                {firmLocation.service_fee} €
-              </div>
-              <div>
-                <strong>Ofis Saatleri: </strong>
-                {firmLocation.office_hours}
-              </div>
-              <div>
-                <a
-                  href={firmLocation.firm_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  İstanbul harici başvuru merkezleri için tıklayın
-                </a>
-              </div>
-            </InfoDetails>
-          </InfoContainer>
-        )}
-      </InfoContainerWrapper>
+          </StepIndicatorWrapper>
+
+          {/* SponsorStepIndicator'ü sadece kullanıcının sponsoru varsa göster */}
+          {userSelections?.find(
+            (selection) => selection.ans_hassponsor === true
+          ) && (
+            <StepIndicatorWrapper>
+              <Heading as="h14">Sponsorun Belgeleri</Heading>
+              <SponsorStepIndicator
+                steps={stepLabels}
+                currentStep={currentStep}
+                onStepClick={handleStepClick}
+                completedDocuments={completedDocuments}
+                documents={documents}
+              />
+            </StepIndicatorWrapper>
+          )}
+          {countryCode && (
+            <FlagContainer>
+              <span className={`fi fi-${countryCode}`}></span>
+            </FlagContainer>
+          )}
+          <InfoContainerWrapper>
+            <Heading as="h14">Başvuru adresi</Heading>
+            {isFirmLocationSuccess && firmLocation && (
+              <InfoContainer>
+                <MapContainer
+                  dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
+                />
+                <InfoDetails>
+                  <div>
+                    <strong>Firma Adı: </strong>
+                    {firmLocation.firm_name}
+                  </div>
+                  <div>
+                    <strong>Vize Ücreti: </strong>
+                    {firmLocation.visa_fee} €
+                  </div>
+                  <div>
+                    <strong>Servis Ücreti: </strong>
+                    {firmLocation.service_fee} €
+                  </div>
+                  <div>
+                    <strong>Ofis Saatleri: </strong>
+                    {firmLocation.office_hours}
+                  </div>
+                  <div>
+                    <a
+                      href={firmLocation.firm_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      İstanbul harici başvuru merkezleri için tıklayın
+                    </a>
+                  </div>
+                </InfoDetails>
+              </InfoContainer>
+            )}
+          </InfoContainerWrapper>
+        </DashboardItems>
+      </DashboardItemsContainer>
 
       {/* Anonim kullanıcıysa Üye Olarak Devam Et butonunu göster */}
       {isAnonymous && (

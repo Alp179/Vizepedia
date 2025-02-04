@@ -237,6 +237,23 @@ const Heading = styled.h1`
         display: none;
       }
     `}
+    ${(props) =>
+    props.as === "h14" &&
+    css`
+      mix-blend-mode: difference;
+      font-size: 24px !important;
+      font-weight: 600;
+      max-width: 1100px;
+      @media (max-width: 1550px) {
+        margin-left: -100px;
+      }
+      @media (max-width: 1440px) {
+        font-size: 20px !important;
+      }
+      @media (max-width: 710px) {
+        margin-left: 0 !important;
+      }
+    `}
     
   
 

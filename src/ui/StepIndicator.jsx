@@ -43,17 +43,11 @@ const StepAndContinueContainer = styled.div`
     margin-right: auto;
     gap: 12px;
     flex-flow: column;
-    width: 400px;
+    width: 350px;
     padding: 12px;
     justify-content: flex-start;
     align-items: flex-start;
     padding-bottom: 16px;
-  }
-  @media (max-width: 520px) {
-    width: 80%;
-  }
-  @media (max-width: 350px) {
-    width: 95%;
   }
 `;
 
@@ -63,7 +57,6 @@ const StepCircleContainer = styled.div`
   height: 40px;
   @media (max-width: 1400px) {
     gap: 6px;
-    height: 40px;
   }
   @media (max-width: 710px) {
     height: 100%;
@@ -213,10 +206,14 @@ const ContinueButton = styled.button`
 const StepLabel = styled.span`
   font-size: 14px;
   cursor: pointer;
-  color: ${(props) => (props.isCompleted ? "#2ecc71" : "#ccc")};
+  color: ${(props) =>
+    props.isCompleted ? "#2ecc71" : "var(--color-grey-600)"};
   margin-left: 8px;
   @media (max-width: 710px) {
     font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
   }
 `;
 

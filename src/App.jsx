@@ -152,17 +152,17 @@ function App() {
                   position="top-center" // Varsayılan olarak üstte tanımlı ama containerStyle ile override ediliyor
                   containerStyle={{
                     position: "fixed",
-                    top: "50%", // Ortalamak için
+                    top: "35%", // Ortalamak için
                     left: "50%",
                     transform: "translate(-50%, -50%)", // Ekranın ortasına taşır
-                    zIndex: 1000, // Toaster'ın diğer öğelerin üstünde görünmesi için
+                    zIndex: 3000, // Toaster'ın diğer öğelerin üstünde görünmesi için
                   }}
                   toastOptions={{
                     duration: Infinity, // Toast süresiz olarak ekranda kalsın
                     style: {
                       padding: "16px",
-                      background: "#fff",
-                      color: "#000",
+                      background: "var(--color-grey-0)",
+                      color: "var(--color-grey-600)",
                       borderRadius: "8px",
                       boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Hafif gölge
                       zIndex: 1001, // Toaster'ın overlay üzerinde görünmesi için

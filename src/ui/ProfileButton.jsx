@@ -44,15 +44,13 @@ function ProfileButton({ cabin }) {
               Oturumu kapatmak istediğinizden emin misiniz?
             </p>
             <br />
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", justifyContent: "center" }}>
               <button
                 onClick={() => {
                   toast.dismiss(t.id);
                   resolve(true);
                 }}
                 style={{
-                  display: "flex",
-
                   borderRadius: "8px",
                   marginRight: "8px",
                   color: "white",
