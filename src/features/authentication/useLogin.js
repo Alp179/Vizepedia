@@ -13,19 +13,17 @@ export function useLogin() {
     onSuccess: async (user) => {
       queryClient.setQueryData(["user"], user.user);
 
-      // getUserAnswers fonksiyonunu çağırarak güncel yanıtları al
       try {
         const answers = await getUserAnswers(user.user.id);
-        // Yönlendirmeyi güncellenmiş yanıtlara göre yap
         answers?.length > 0 ? navigate("/dashboard") : navigate("/wellcome");
       } catch (error) {
         console.error("Error fetching user answers:", error);
-        // Hata durumunda kullanıcıyı bir hata sayfasına yönlendirebilirsiniz.
+        toast.error("Yanıtlar yüklenirken hata oluştu.", { duration: 4000 });
       }
     },
     onError: (err) => {
       console.log("ERROR", err);
-      toast.error("Provider email or password are incorrect");
+      toast.error("E-posta veya şifre hatalı.", { duration: 4000 });
     },
   });
 

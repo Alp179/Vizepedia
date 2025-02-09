@@ -76,28 +76,50 @@ function SignupForm({ onCloseModal }) {
     }
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    setErrorMessage(null); // Hata mesajını sıfırla
+
     if (!email || !password) {
       setErrorMessage("Lütfen tüm alanları doldurun.");
       return;
     }
 
-    // Anonim kullanıcıyı güncelleme fonksiyonunu çağırıyoruz
-    convertAnonymousToUser({ email, password })
-      .then(() => {
-        // Başarılı olursa localStorage temizle, modalı kapat ve refetch yap
-        localStorage.removeItem("isAnonymous");
-        localStorage.removeItem("userSelections");
-        setErrorMessage(null);
-        onCloseModal(); // Modalı kapatma işlemi
-        refetchUser(); // Kullanıcı sorgusunu tekrar çalıştır
-        navigate("/dashboard"); // Başarılı olursa kullanıcıyı yönlendiriyoruz
-      })
-      .catch((error) => {
-        console.log("Hata Detayı:", error); // Hata detayını görmek için log ekliyoruz
-        setErrorMessage(error.message || "Üye olurken bir hata oluştu."); // Hata mesajını kullanıcıya göster
-      });
+    const isAnonymous = localStorage.getItem("isAnonymous") === "true"; // Kullanıcı anonim mi?
+
+    try {
+      if (isAnonymous) {
+        // Kullanıcı anonimse anonim hesabı tam hesaba çevir
+        await convertAnonymousToUser({ email, password });
+      } else {
+        // Kullanıcı anonim değilse yeni bir hesap oluştur
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        // Kullanıcı başarılı şekilde oluşturulduysa localStorage temizle
+        if (data.user) {
+          localStorage.removeItem("isAnonymous");
+          localStorage.removeItem("userSelections");
+        }
+      }
+
+      // Eğer onCloseModal fonksiyonu varsa çağır
+      if (onCloseModal) {
+        onCloseModal(); // Modalı kapat
+      }
+
+      refetchUser(); // Kullanıcı verisini güncelle
+      navigate("/dashboard"); // Kullanıcıyı yönlendir
+    } catch (error) {
+      console.log("Hata Detayı:", error); // Konsola hata yazdır
+      setErrorMessage(error.message || "Üye olurken bir hata oluştu.");
+    }
   }
 
   // Google oturum açma butonu için event handler
@@ -119,7 +141,6 @@ function SignupForm({ onCloseModal }) {
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         <p className="hosgeldiniz">Vizepedia&apos;ya Hoş geldiniz</p>
         <p className="subtext">
-          Vize alma sürecindeki karmaşıklığı ortadan kaldırmak için buradayız!
           Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
         </p>
       </div>
@@ -150,7 +171,6 @@ function SignupForm({ onCloseModal }) {
           {!isLoading ? "Hesap oluştur" : <SpinnerMini />}
         </Button>
       </FormRow>
-     
       <BracketContainer>
         <Bracket />
         <p style={{ color: "var(--color-grey-700)" }}>ya da</p>
@@ -186,7 +206,6 @@ function SignupForm({ onCloseModal }) {
           Anonim Giriş
         </Button>
       </FormRow>
-      
     </Form>
   );
 }
