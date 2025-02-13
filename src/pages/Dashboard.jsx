@@ -155,7 +155,6 @@ const CustomRow = styled(Row)`
   align-items: flex-start;
   @media (max-width: 710px) {
     @media (max-height: 830px) {
-      margin-bottom: -30px;
       gap: 8px;
     }
     width: 400px;
@@ -307,9 +306,9 @@ const StepIndicatorWrapper = styled.div`
   gap: 16px;
   width: 100%;
   justify-content: flex-start;
-  @media (max-width: 710px) {
-    margin-bottom: 20px; /* Küçük ekranlarda daha da kısalttık */
-  }
+  @media (max-width: 1450px) {
+    margin-bottom: 46px;
+  
 `;
 
 const InfoContainerWrapper = styled.div`
@@ -343,7 +342,9 @@ const DashboardItems = styled.div`
   }
 `;
 
-const DashboardItemsContainer = styled.div``;
+const DashboardItemsContainer = styled.div`
+  height: 1000px;
+`;
 
 const Dashboard = () => {
   const { id: applicationId } = useParams();

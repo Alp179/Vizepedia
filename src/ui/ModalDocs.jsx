@@ -21,7 +21,6 @@ const StyledModal = styled.div`
   width: fit-content;
   justify-content: space-between;
   transition: all 0.5s;
-
   
   @media (max-width: 380px) {
     width: calc(100vw);

@@ -45,7 +45,9 @@ const ScrollableDiv = styled.div`
   width: 100%;
   margin: 0 auto;
   max-height: calc(100vh - 300px);
-  
+  @media (max-width: 710px) {
+    max-height: calc(100vh - 500px);
+  }
 
   /* Scrollbar styling */
   &::-webkit-scrollbar {

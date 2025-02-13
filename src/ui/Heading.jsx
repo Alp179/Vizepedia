@@ -224,8 +224,9 @@ const Heading = styled.h1`
     props.as === "h14" &&
     css`
       color: var(--color-grey-904);
-      font-size: 72px;
+      font-size: 24px;
       font-weight: 600;
+      mix-blend-mode: difference;
       max-width: 1100px;
       @media (max-width: 1200px) {
         font-size: 48px;
@@ -233,9 +234,7 @@ const Heading = styled.h1`
       @media (max-width: 732px) {
         font-size: 36px;
       }
-      @media (max-width: 500px) {
-        display: none;
-      }
+      
     `}
     ${(props) =>
     props.as === "h14" &&
@@ -243,6 +242,7 @@ const Heading = styled.h1`
       mix-blend-mode: difference;
       font-size: 24px !important;
       font-weight: 600;
+      z-index: 3000;
       max-width: 1100px;
       @media (max-width: 1550px) {
         margin-left: -100px;
