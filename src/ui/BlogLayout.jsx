@@ -31,7 +31,7 @@ const StyledBlogLayout = styled.div`
   filter: blur(20px);
   opacity: 0.7;
   width: 100vw;
-  height: 600px;
+  height: 1000px;
   @media (max-width: 850px) {
     height: 50vh;
   }
