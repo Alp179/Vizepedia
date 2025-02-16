@@ -2,7 +2,6 @@
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import Button from "./Button";
 
 // Styled Components
 const HeroContainer = styled.div`
@@ -118,6 +117,7 @@ const ButtonWrapper = styled.div`
   z-index: 3000;
 `;
 
+
 const ContainerScroll = ({ titleComponent, children }) => {
   const titleRef = useRef(null);
   const imageRef = useRef(null);
@@ -171,9 +171,11 @@ const ContainerScroll = ({ titleComponent, children }) => {
       <TitleWrapper ref={titleRef}>{titleComponent}</TitleWrapper>
       <ImageWrapper ref={imageRef}>{children}</ImageWrapper>
       <ButtonWrapper>
-        <Button variation="mainpage5" onClick={handleSignUpClick}>
-          Başlayalım
-        </Button>
+      <div className="ceper">
+          <div className="footer-buton" onClick={handleSignUpClick}>
+            Hemen başlayın
+          </div>
+        </div>
       </ButtonWrapper>
     </PositionContainer>
   );
