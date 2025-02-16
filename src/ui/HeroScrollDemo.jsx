@@ -148,7 +148,7 @@ const ContainerScroll = ({ titleComponent, children }) => {
     // Başlangıçta görselin yamuk görünmesini sağlıyoruz
     if (imageRef.current) {
       imageRef.current.style.transform = `
-        perspective(2000px) 
+        perspective(1500px) 
         translateY(0px) 
         rotateX(35deg)
       `;
