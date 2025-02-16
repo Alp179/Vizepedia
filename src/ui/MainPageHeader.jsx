@@ -9,7 +9,6 @@ import MainPageHamburger from "./MainPageHamburger";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/apiAuth"; // Oturum açma durumunu kontrol eden fonksiyon
-import ProfileMainPage from "./ProfileMainPage";
 
 const StyledMainPageHeader = styled.div`
   position: fixed;
@@ -100,38 +99,39 @@ function MainPageHeader({ setMenuOpen }) {
 
   return (
     <StyledMainPageHeader>
-    <HeaderContents>
-      <LogoContainer>
-        <Logo variant="mainpage" />
-        <Heading className="header-link1" as="h10">Hakkımızda</Heading>
-        <Heading className="header-link1" as="h10" onClick={handleFaqClick}>
-          SSS
-        </Heading>
-        <BlogLogo variant="mainpage2" />
-      </LogoContainer>
-      <ButtonContainer>
-        {isLoggedIn ? (
-          <>
-            <ProfileMainPage />
-            <Button variation="mainpage4" onClick={handleContinueClick}>
-              Devam Et
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button variation="mainpage2" onClick={handleLogInClick}>
-              Oturum Aç
-            </Button>
-            <Button variation="mainpage" onClick={handleSignUpClick}>
-              Başlayalım
-            </Button>
-            <MainPageHamburger setMenuOpen={setMenuOpen} />
-          </>
-        )}
-        <DarkModeToggle />
-      </ButtonContainer>
-    </HeaderContents>
-  </StyledMainPageHeader>
+      <HeaderContents>
+        <LogoContainer>
+          <Logo variant="mainpage" />
+          <Heading className="header-link1" as="h10">
+            Hakkımızda
+          </Heading>
+          <Heading className="header-link1" as="h10" onClick={handleFaqClick}>
+            SSS
+          </Heading>
+          <BlogLogo variant="mainpage2" />
+        </LogoContainer>
+        <ButtonContainer>
+          {isLoggedIn ? (
+            <>
+              <Button variation="mainpage4" onClick={handleContinueClick}>
+                Devam Et
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variation="mainpage2" onClick={handleLogInClick}>
+                Oturum Aç
+              </Button>
+              <Button variation="mainpage" onClick={handleSignUpClick}>
+                Başlayalım
+              </Button>
+              <MainPageHamburger setMenuOpen={setMenuOpen} />
+            </>
+          )}
+          <DarkModeToggle />
+        </ButtonContainer>
+      </HeaderContents>
+    </StyledMainPageHeader>
   );
 }
 

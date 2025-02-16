@@ -433,7 +433,7 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    if (isUserSelectionsSuccess && userSelections) {
+    if (isUserSelectionsSuccess && userSelections?.length > 0) {
       const countryToCode = {
         Almanya: "de",
         Avusturya: "at",
@@ -472,8 +472,27 @@ const Dashboard = () => {
 
       setCountryCode(countryToCode[ansCountry] || "");
 
-      const createdAtDate = new Date(userSelections?.[0]?.created_at);
-      setCreatedAt(createdAtDate.toLocaleDateString());
+      const rawDate = userSelections[0]?.created_at;
+
+      if (!rawDate) {
+        console.error("Tarih verisi bulunamadı.");
+        setCreatedAt("Tarih mevcut değil");
+        return;
+      }
+
+      const createdAtDate = new Date(rawDate);
+
+      if (isNaN(createdAtDate.getTime())) {
+        console.error("Geçersiz tarih formatı:", rawDate);
+        setCreatedAt("Geçersiz tarih");
+      } else {
+        const formattedDate = createdAtDate.toLocaleDateString("tr-TR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        setCreatedAt(formattedDate);
+      }
     }
   }, [userSelections, isUserSelectionsSuccess, ansCountry]);
 
