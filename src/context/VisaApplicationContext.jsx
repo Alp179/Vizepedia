@@ -10,22 +10,30 @@ import { useUser } from "../features/authentication/useUser";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelectionsNav } from "../utils/userSelectionsFetch";
 import { fetchFirmLocation } from "../services/apiVisaApplications";
+import { useParams } from "react-router-dom"; // URL değişikliklerini takip etmek için
 
 const VisaApplicationContext = createContext();
 
 const visaApplicationReducer = (state, action) => {
   switch (action.type) {
     case "SET_APPLICATIONS":
-      return { ...state, applications: action.payload }; // State'i objeye çevirip "applications" anahtarı ile güncelledik
+      return { ...state, applications: action.payload };
+
     case "ADD_NEW_APPLICATION":
-      return { ...state, applications: [...state.applications, action.payload] };
+      return {
+        ...state,
+        applications: [...state.applications, action.payload],
+      };
+
     case "REMOVE_APPLICATION":
+    case "DELETE_APPLICATION":
       return {
         ...state,
         applications: state.applications.filter(
           (application) => application.id !== action.payload
         ),
       };
+
     case "UPDATE_APPLICATION":
       return {
         ...state,
@@ -35,13 +43,7 @@ const visaApplicationReducer = (state, action) => {
             : application
         ),
       };
-    case "DELETE_APPLICATION":
-      return {
-        ...state,
-        applications: state.applications.filter(
-          (application) => application.id !== action.payload
-        ),
-      };
+
     default:
       return state;
   }
@@ -54,8 +56,13 @@ export const VisaApplicationProvider = ({ children }) => {
   const [firmLocation, setFirmLocation] = useState(null);
   const { user } = useUser();
   const userId = user?.id;
+  const { id: applicationId } = useParams(); // URL'deki başvuru ID'sini al
 
-  const { data: userAnswers, isSuccess } = useQuery({
+  const {
+    data: userAnswers,
+    isSuccess,
+    refetch, // Yeniden fetch etmek için
+  } = useQuery({
     queryKey: ["userSelectionsAtMainNav", userId],
     queryFn: () => fetchUserSelectionsNav(userId),
     enabled: !!userId,
@@ -63,14 +70,25 @@ export const VisaApplicationProvider = ({ children }) => {
 
   useEffect(() => {
     if (isSuccess && userAnswers) {
-      // Başvuruları güncelle
       dispatch({ type: "SET_APPLICATIONS", payload: userAnswers });
     }
   }, [userAnswers, isSuccess, dispatch]);
 
+  // 📌 URL değiştiğinde veya yeni başvuru eklendiğinde başvuruları güncelle
+  useEffect(() => {
+    if (applicationId) {
+      refetch();
+    }
+  }, [applicationId]); // URL değiştiğinde çalıştır
+
   const fetchFirmLocationData = async (country) => {
     const location = await fetchFirmLocation(country);
     setFirmLocation(location);
+  };
+
+  // 📌 Yeni başvuru eklendiğinde kullanılacak fonksiyon
+  const refreshApplications = async () => {
+    await refetch();
   };
 
   return (
@@ -80,6 +98,7 @@ export const VisaApplicationProvider = ({ children }) => {
         dispatch,
         firmLocation,
         fetchFirmLocation: fetchFirmLocationData,
+        refreshApplications, // MainNav'ın güncellenmesi için kullanılacak
       }}
     >
       {children}

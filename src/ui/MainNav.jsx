@@ -335,14 +335,21 @@ const AllDocsButton = styled(NavLink)`
 function MainNav() {
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id: applicationId } = useParams(); // URL'deki application ID'yi al
   const {
     state: { completedDocuments },
     dispatch: documentsDispatch,
   } = useDocuments();
   const { setSelectedDocument } = useSelectedDocument();
-  const { applications, dispatch: applicationsDispatch } =
-    useVisaApplications();
+  const {
+    applications,
+    refreshApplications,
+    dispatch: applicationsDispatch,
+  } = useVisaApplications();
+
+  useEffect(() => {
+    refreshApplications(); // Yeni başvuru oluştuğunda tekrar fetch et
+  }, [applicationId]); // applicationId değiştiğinde çalış
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -353,9 +360,9 @@ function MainNav() {
   }, []);
 
   const userSelectionsQuery = useQuery({
-    queryKey: ["userSelectionsNav", userId, id],
-    queryFn: () => fetchUserSelectionsDash(userId, id),
-    enabled: !!userId && !!id,
+    queryKey: ["userSelectionsNav", userId, applicationId],
+    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
+    enabled: !!userId && !!applicationId,
   });
 
   const documentNames = userSelectionsQuery.data
@@ -372,7 +379,9 @@ function MainNav() {
     if (!documentsQuery.data) return;
 
     const firstIncompleteIndex = documentsQuery.data.findIndex(
-      (doc) => !completedDocuments[id] || !completedDocuments[id][doc.docName]
+      (doc) =>
+        !completedDocuments[applicationId] ||
+        !completedDocuments[applicationId][doc.docName]
     );
 
     if (firstIncompleteIndex !== -1) {
@@ -391,7 +400,14 @@ function MainNav() {
               Bu vize başvurusunu silmek istediğinizden emin misiniz?
             </p>
             <br />
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", justifyContent: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "4px",
+                justifyContent: "center",
+              }}
+            >
               <button
                 onClick={() => {
                   toast.dismiss(t.id);
