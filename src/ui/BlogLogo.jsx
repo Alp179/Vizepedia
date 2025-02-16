@@ -84,12 +84,12 @@ transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animas
     ${(props) =>
     props.variant === "mainpage3" &&
     css`
-      width: 140px;
+      width: 165px;
       margin-left: auto;
       margin-right: auto;
       height: auto;
       @media (max-width: 600px) {
-        width: 120px;
+        width: 70%;
       }
     `}
       ${(props) =>

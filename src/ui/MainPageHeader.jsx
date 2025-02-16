@@ -9,6 +9,16 @@ import MainPageHamburger from "./MainPageHamburger";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/apiAuth"; // Oturum açma durumunu kontrol eden fonksiyon
+<<<<<<< Updated upstream
+=======
+
+const DarkModeContainer = styled.div`
+  display: block;
+  @media (max-width: 870px) {
+    display: none;
+  }
+`;
+>>>>>>> Stashed changes
 
 const StyledMainPageHeader = styled.div`
   position: fixed;
@@ -113,6 +123,10 @@ function MainPageHeader({ setMenuOpen }) {
         <ButtonContainer>
           {isLoggedIn ? (
             <>
+<<<<<<< Updated upstream
+=======
+              <MainPageHamburger setMenuOpen={setMenuOpen} />
+>>>>>>> Stashed changes
               <Button variation="mainpage4" onClick={handleContinueClick}>
                 Devam Et
               </Button>
@@ -128,7 +142,13 @@ function MainPageHeader({ setMenuOpen }) {
               <MainPageHamburger setMenuOpen={setMenuOpen} />
             </>
           )}
+<<<<<<< Updated upstream
           <DarkModeToggle />
+=======
+          <DarkModeContainer>
+            <DarkModeToggle />
+          </DarkModeContainer>
+>>>>>>> Stashed changes
         </ButtonContainer>
       </HeaderContents>
     </StyledMainPageHeader>

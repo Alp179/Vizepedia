@@ -12,6 +12,10 @@ const HeroContainer = styled.div`
   height: 100vh;
   padding-bottom: 65px;
   overflow: hidden;
+<<<<<<< Updated upstream
+=======
+  
+>>>>>>> Stashed changes
 `;
 
 const PositionContainer = styled.div`

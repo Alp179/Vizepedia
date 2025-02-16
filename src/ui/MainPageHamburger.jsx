@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import BlogLogo from "./BlogLogo";
+import DarkModeToggle from "./DarkModeToggle";
+
 
 const MenuIcon = styled.div`
   border-radius: 6px;
@@ -61,15 +63,14 @@ const MenuIcon = styled.div`
 
 const MenuContainer = styled.div`
   z-index: 3000;
+  width: 300px;
   position: fixed;
   top: 100%; /* MainPageHeader'ın altından başlat */
   right: 0;
-  width: 60%;
   border: 1px solid white;
   border-top: none;
   border-right: none;
-  max-width: 230px;
-  height: 410px;
+  height: 100dvh;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -80,17 +81,18 @@ const MenuContainer = styled.div`
       : "hidden"}; /* visibility kapanma animasyonu bittikten sonra */
   opacity: ${({ isOpen }) =>
     isOpen ? "1" : "0"}; /* Opaklık kapanma sırasında */
-  transform: ${({ isOpen }) =>
-    isOpen ? "scaleY(1)" : "scaleY(0)"}; /* scale efekti */
-  transform-origin: top; /* Animasyonun üstten başlaması */
-  transition: transform 0.2s ease-in-out, opacity 0.3s ease-in-out;
+
+  transform: ${(props) =>
+    props.isOpen ? "translateX(0)" : "translateX(100%)"};
+  transition: transform 0.3s ease-in-out;
   @media (min-width: 870px) {
     display: none;
   }
-  @media (max-width: 600px) {
-    width: 200px;
-    height: 325px;
+
+  @media (max-width: 350px) {
+    width: 80%;
   }
+ 
 `;
 
 const MenuContents = styled.div`
@@ -112,9 +114,7 @@ const HakkimizdaveSSS = styled.button`
   background: transparent;
   border: none;
   color: var(--color-grey-600);
-  @media (max-width: 600px) {
-    font-size: 16px;
-  }
+  
 
   &:hover {
     background: red;
@@ -133,11 +133,6 @@ const Baslayalim = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  @media (max-width: 600px) {
-    width: 160px;
-    height: 53px;
-    font-size: 16px;
-  }
   &:hover {
     background: #87f9cd;
     color: #004466;
@@ -156,11 +151,8 @@ const OturumAc = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  @media (max-width: 600px) {
-    width: 160px;
-    height: 53px;
-    font-size: 16px;
-  }
+  
+ 
   &:hover {
     background: #004466;
     color: #87f9cd;
@@ -266,12 +258,14 @@ const MainPageHamburger = ({ setMenuOpen }) => {
         ref={menuRef}
       >
         <MenuContents>
+         
           <Baslayalim onClick={handleSignUpClick}>Başlayalım</Baslayalim>
           <OturumAc onClick={handleLogInClick}>Oturum aç</OturumAc>
           <Divider />
           <BlogLogo variant="mainpage3" />
           <HakkimizdaveSSS>Hakkımızda</HakkimizdaveSSS>
           <HakkimizdaveSSS onClick={handleFaqClick}>SSS</HakkimizdaveSSS>
+          <DarkModeToggle/>
         </MenuContents>
       </MenuContainer>
     </>
