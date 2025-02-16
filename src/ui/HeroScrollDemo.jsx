@@ -6,9 +6,9 @@ import Button from "./Button";
 
 // Styled Components
 const HeroContainer = styled.div`
-@media (min-width: 710px) {
-  padding-top: 8vh;
-}
+  @media (min-width: 710px) {
+    padding-top: 8vh;
+  }
   padding-top: 80px;
   height: 100vh;
   padding-bottom: 65px;
@@ -16,7 +16,6 @@ const HeroContainer = styled.div`
   @media (prefers-color-scheme: dark) {
     background-color: #121212;
   }
-
 `;
 
 const PositionContainer = styled.div`
@@ -97,9 +96,9 @@ const ImageWrapper = styled.div`
 `;
 
 const HeroImage = styled.img`
-@media (min-width: 710px) {
-  width: 80%;
-}
+  @media (min-width: 710px) {
+    width: 80%;
+  }
   width: 1440px%;
   max-width: 1400px;
   border-radius: 1rem;
@@ -112,14 +111,21 @@ const HeroImage = styled.img`
 `;
 
 const ButtonWrapper = styled.div`
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 3000;
-  margin-top: 70px;
 `;
 
 const ContainerScroll = ({ titleComponent, children }) => {
   const titleRef = useRef(null);
   const imageRef = useRef(null);
+  const navigate = useNavigate();
 
+  const handleSignUpClick = () => {
+    navigate("/sign-up"); // /sign-up yoluna yönlendir
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -164,16 +170,16 @@ const ContainerScroll = ({ titleComponent, children }) => {
     <PositionContainer>
       <TitleWrapper ref={titleRef}>{titleComponent}</TitleWrapper>
       <ImageWrapper ref={imageRef}>{children}</ImageWrapper>
+      <ButtonWrapper>
+        <Button variation="mainpage5" onClick={handleSignUpClick}>
+          Başlayalım
+        </Button>
+      </ButtonWrapper>
     </PositionContainer>
   );
 };
 
 export function HeroScrollDemo() {
-  const navigate = useNavigate();
-
-  const handleSignUpClick = () => {
-    navigate("/sign-up"); // /sign-up yoluna yönlendir
-  };
   return (
     <HeroContainer>
       <ContainerScroll
@@ -192,11 +198,6 @@ export function HeroScrollDemo() {
           draggable={false}
         />
       </ContainerScroll>
-      <ButtonWrapper>
-        <Button variation="mainpage5" onClick={handleSignUpClick}>
-          Başlayalım
-        </Button>
-      </ButtonWrapper>
     </HeroContainer>
   );
 }
