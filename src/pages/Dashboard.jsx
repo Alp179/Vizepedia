@@ -130,7 +130,7 @@ const BlurredFlagBackground = styled.div`
 `;
 
 const CreatedAtContainer = styled.div`
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   color: var(--color-grey-700);
   @media (max-width: 1550px) {
     margin-left: -100px;
@@ -140,9 +140,7 @@ const CreatedAtContainer = styled.div`
     margin-top: 40px;
     mix-blend-mode: difference;
     width: 200px;
-    @media (max-height: 830px) {
-      font-size: 1.3rem;
-    }
+   
   }
 `;
 
@@ -158,15 +156,12 @@ const CustomRow = styled(Row)`
       gap: 8px;
     }
     width: 400px;
-    margin-left: auto;
+    margin-left: 32px;
     margin-right: auto;
   }
-  @media (max-width: 520px) {
-    width: 80%;
-  }
-  @media (max-width: 350px) {
-    width: 95%;
-  }
+}
+ 
+
 `;
 
 const InfoContainer = styled.div`
@@ -197,6 +192,7 @@ const InfoContainer = styled.div`
   }
   @media (max-width: 710px) {
     margin: 0;
+    width: 350px;
   }
 `;
 
@@ -343,7 +339,7 @@ const DashboardItems = styled.div`
 `;
 
 const DashboardItemsContainer = styled.div`
-  height: 1000px;
+  height: 100vh;
 `;
 
 const Dashboard = () => {

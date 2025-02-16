@@ -9,12 +9,13 @@ const Heading = styled.h1`
   ${(props) =>
     props.as === "h1" &&
     css`
-      font-size: 3rem;
+      font-size: 48px;
       font-weight: 600;
       @media (max-width: 1550px) {
         margin-left: -100px;
       }
       @media (max-width: 710px) {
+        font-size: 32px;
         margin-left: 0;
         mix-blend-mode: difference;
         width: 250px;

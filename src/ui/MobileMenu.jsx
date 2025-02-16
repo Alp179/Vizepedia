@@ -458,7 +458,7 @@ const MobileMenu = () => {
               setIsOpen(false);
             }}
           >
-            <HiDocument /> Tüm Belgeler
+            <HiDocument style={{color: "var(--color-grey-924)"}}/> Tüm Belgeler
           </StyledNavLink>
           <div className="mobile-scrolldiv">
             {applications.map((app) => (
@@ -494,7 +494,7 @@ const MobileMenu = () => {
               setIsOpen(false);
             }}
           >
-            <HiPlus /> Yeni
+            <HiPlus style={{color: "var(--color-grey-924)"}} /> Yeni
           </StyledNavLink>
           <StyledNavLink style={{ marginLeft: "12px" }} onClick={handleLogout}>
             Oturumu Kapat
