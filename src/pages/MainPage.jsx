@@ -697,7 +697,7 @@ function MainPage() {
       <RahatProfesyonelMobileHeading>Çok Rahat</RahatProfesyonelMobileHeading>
       <RahatProfesyonelContainer>
         <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
-          <Heading as="h14">Çok Rahat</Heading>
+          <Heading as="h15">Çok Rahat</Heading>
           <Heading as="h13">
             Vize başvuru sürecinin karmaşıklığını ve bilgi kirliliğinin negatif
             hissiyatını unutun ve her adımda size sunulan rehberlikle rahat,
@@ -712,7 +712,7 @@ function MainPage() {
       <RahatProfesyonelContainer>
         <RahatProfesyonelImage>s</RahatProfesyonelImage>
         <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
-          <Heading as="h14">Çok Profesyonel</Heading>
+          <Heading as="h15">Çok Profesyonel</Heading>
           <Heading as="h13">
             Vizepedia, alanında uzman ekibi ve profesyonel yaklaşımıyla vize
             başvurularınızda güvenilir ve etkili bir çözüm ortağı olarak

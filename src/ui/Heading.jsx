@@ -254,6 +254,23 @@ const Heading = styled.h1`
         margin-left: 0 !important;
       }
     `}
+    ${(props) =>
+      props.as === "h15" &&
+      css`
+        color: var(--color-grey-904);
+        font-size: 72px;
+        font-weight: 600;
+        max-width: 1100px;
+        @media (max-width: 1200px) {
+          font-size: 48px;
+        }
+        @media (max-width: 732px) {
+          font-size: 36px;
+        }
+        @media (max-width: 500px) {
+          display: none;
+        }
+      `}
     
   
 

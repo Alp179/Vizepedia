@@ -747,7 +747,12 @@ Slider h2 span {
       width: 248px;
       height: 89px;
   }
+}
 
+@media (max-width: 330px) {
+  .footer-header {
+    font-size: 32px;
+  }
 }
 
 @media (max-width: 1000px) {
