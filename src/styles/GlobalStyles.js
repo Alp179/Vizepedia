@@ -686,6 +686,7 @@ Slider h2 span {
   border: 3px solid #00FFA2;
   filter: drop-shadow(0px 20px 40px rgba(0, 0, 0, 0.11));
   border-radius: 82px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
 .footer-buton {
@@ -702,6 +703,7 @@ Slider h2 span {
   font-size: 24px;
   text-align: center;
   color: #00FFA2;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .footer-buton:hover {
@@ -711,6 +713,12 @@ Slider h2 span {
 
 .ceper:hover {
   border-color: #004466;
+  transform: scale(0.8);
+}
+
+/* Footer butonun sabit kalmasını sağlamak için */
+.ceper:hover .footer-buton {
+  transform: scale(1); /* Butonun boyutunu değiştirme */
 }
 
 .footer-divider {

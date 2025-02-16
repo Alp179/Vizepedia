@@ -98,7 +98,7 @@ const HeroImage = styled.img`
   @media (min-width: 710px) {
     width: 80%;
   }
-  width: 1440px%;
+  width: 1440px;
   max-width: 1400px;
   border-radius: 1rem;
   display: flex;
@@ -116,7 +116,6 @@ const ButtonWrapper = styled.div`
   transform: translate(-50%, -50%);
   z-index: 3000;
 `;
-
 
 const ContainerScroll = ({ titleComponent, children }) => {
   const titleRef = useRef(null);
@@ -171,7 +170,7 @@ const ContainerScroll = ({ titleComponent, children }) => {
       <TitleWrapper ref={titleRef}>{titleComponent}</TitleWrapper>
       <ImageWrapper ref={imageRef}>{children}</ImageWrapper>
       <ButtonWrapper>
-      <div className="ceper">
+        <div className="ceper">
           <div className="footer-buton" onClick={handleSignUpClick}>
             Hemen başlayın
           </div>
