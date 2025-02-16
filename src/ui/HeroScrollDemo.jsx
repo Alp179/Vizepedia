@@ -7,7 +7,7 @@ import Button from "./Button";
 // Styled Components
 const HeroContainer = styled.div`
 @media (min-width: 710px) {
-  padding-top: 200px
+  padding-top: 8vh;
 }
   padding-top: 80px;
   height: 100vh;
@@ -93,7 +93,7 @@ const HighlightText = styled.span`
 const ImageWrapper = styled.div`
   width: 1440px;
   height: auto;
-  perspective: 2000px; /* Perspektif efekti için */
+  perspective: 1500px; /* Perspektif efekti için */
 `;
 
 const HeroImage = styled.img`
@@ -135,10 +135,10 @@ const ContainerScroll = ({ titleComponent, children }) => {
 
       // Image animation: Scroll ile düzleşme
       if (imageRef.current) {
-        const rotation = Math.max(40 - scrollY * 0.1, 0); // Başlangıçta 20 derece, scroll ile 0 dereceye gelir
+        const rotation = Math.max(35 - scrollY * 0.1, 0); // Başlangıçta 20 derece, scroll ile 0 dereceye gelir
         const translateY = Math.min(scrollY * 0.2, 100); // Maksimum yukarı kayma 100px
         imageRef.current.style.transform = `
-          perspective(2000px) 
+          perspective(1500px) 
           translateY(${translateY}px) 
           rotateX(${rotation}deg)
         `;
@@ -148,9 +148,9 @@ const ContainerScroll = ({ titleComponent, children }) => {
     // Başlangıçta görselin yamuk görünmesini sağlıyoruz
     if (imageRef.current) {
       imageRef.current.style.transform = `
-        perspective(1000px) 
+        perspective(2000px) 
         translateY(0px) 
-        rotateX(20deg)
+        rotateX(35deg)
       `;
     }
 

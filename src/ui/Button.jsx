@@ -312,7 +312,7 @@ const variations = {
     border: 2px solid #87f9cd;
     font-size: 28px;
     font-weight: bold;
-    z-index: 3000;
+    z-index: 3000!important;
     display: flex;
     justify-content: center;
     &:hover {
