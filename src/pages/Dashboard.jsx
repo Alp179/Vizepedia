@@ -308,7 +308,7 @@ const StepIndicatorWrapper = styled.div`
   justify-content: flex-start;
   @media (max-width: 1450px) {
     margin-bottom: 46px;
-  
+  }
 `;
 
 const InfoContainerWrapper = styled.div`
