@@ -300,7 +300,26 @@ const variations = {
     @media (max-width: 1020px) {
       display: none;
     }
-    
+  `,
+
+  mainpage5: css`
+    margin: 0 auto;
+    width: 240px;
+    height: 80px;
+    border-radius: 28px;
+    background: #004466;
+    color: #87f9cd;
+    border: 2px solid #87f9cd;
+    font-size: 28px;
+    font-weight: bold;
+    z-index: 3000;
+    display: flex;
+    justify-content: center;
+    &:hover {
+      background: #87f9cd;
+      color: #004466;
+    }
+    align-items: center;
   `,
 };
 

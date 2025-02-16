@@ -1,15 +1,22 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import Button from "./Button";
 
 // Styled Components
 const HeroContainer = styled.div`
-  padding-top: 200px;
+@media (min-width: 710px) {
+  padding-top: 200px
+}
+  padding-top: 80px;
+  height: 100vh;
   padding-bottom: 65px;
   overflow: hidden;
   @media (prefers-color-scheme: dark) {
     background-color: #121212;
   }
+
 `;
 
 const PositionContainer = styled.div`
@@ -84,25 +91,35 @@ const HighlightText = styled.span`
 `;
 
 const ImageWrapper = styled.div`
-  width: 100%;
+  width: 1440px;
   height: auto;
-  perspective: 1000px; /* Perspektif efekti için */
+  perspective: 2000px; /* Perspektif efekti için */
 `;
 
 const HeroImage = styled.img`
-  width: 90%;
+@media (min-width: 710px) {
+  width: 80%;
+}
+  width: 1440px%;
   max-width: 1400px;
   border-radius: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1;
   margin: 0 auto;
   transition: transform 0.2s ease;
+`;
+
+const ButtonWrapper = styled.div`
+  z-index: 3000;
+  margin-top: 70px;
 `;
 
 const ContainerScroll = ({ titleComponent, children }) => {
   const titleRef = useRef(null);
   const imageRef = useRef(null);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -110,16 +127,18 @@ const ContainerScroll = ({ titleComponent, children }) => {
 
       // Title animation: Yukarı hareket ve opaklık azalması
       if (titleRef.current) {
-        titleRef.current.style.transform = `translate(-50%, calc(-50% + ${scrollY * 0.3}px))`;
+        titleRef.current.style.transform = `translate(-50%, calc(-50% + ${
+          scrollY * 0.3
+        }px))`;
         titleRef.current.style.opacity = `${1 - scrollY / 300}`;
       }
 
       // Image animation: Scroll ile düzleşme
       if (imageRef.current) {
-        const rotation = Math.max(20 - scrollY * 0.1, 0); // Başlangıçta 20 derece, scroll ile 0 dereceye gelir
+        const rotation = Math.max(40 - scrollY * 0.1, 0); // Başlangıçta 20 derece, scroll ile 0 dereceye gelir
         const translateY = Math.min(scrollY * 0.2, 100); // Maksimum yukarı kayma 100px
         imageRef.current.style.transform = `
-          perspective(1000px) 
+          perspective(2000px) 
           translateY(${translateY}px) 
           rotateX(${rotation}deg)
         `;
@@ -150,6 +169,11 @@ const ContainerScroll = ({ titleComponent, children }) => {
 };
 
 export function HeroScrollDemo() {
+  const navigate = useNavigate();
+
+  const handleSignUpClick = () => {
+    navigate("/sign-up"); // /sign-up yoluna yönlendir
+  };
   return (
     <HeroContainer>
       <ContainerScroll
@@ -168,6 +192,11 @@ export function HeroScrollDemo() {
           draggable={false}
         />
       </ContainerScroll>
+      <ButtonWrapper>
+        <Button variation="mainpage5" onClick={handleSignUpClick}>
+          Başlayalım
+        </Button>
+      </ButtonWrapper>
     </HeroContainer>
   );
 }

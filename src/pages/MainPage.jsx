@@ -426,7 +426,9 @@ const Background2 = styled.div`
   height: 100%;
 `;
 
+
 function MainPage() {
+  
   const countries = [
     "Almanya",
     "Avusturya",
@@ -461,9 +463,12 @@ function MainPage() {
     "Birleşik Krallık",
     "Kanada",
   ];
+
+  
   return (
     <>
-      <HeroScrollDemo/>
+      <HeroScrollDemo />
+      
       <BackgroundContainer>
         <BackgroundContainer2>
           <Background1 />
