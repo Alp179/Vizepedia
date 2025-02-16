@@ -131,6 +131,7 @@ const MenuContent = styled.div`
   z-index: 3000;
   margin-top: 2rem;
   display: flex;
+  height: 90%;
   flex-direction: column;
   gap: 4px;
 `;
@@ -214,18 +215,11 @@ const Divider = styled.div`
 const LogoContainer = styled.div`
   margin-top: 12px;
   margin-left: 12px;
+  margin-bottom: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 16px;
-`;
-
-const DarkModeToggleContainer = styled.div`
-  @media (max-width: 350px) {
-    position: absolute;
-    top: 50px;
-    right: 5%;
-  }
 `;
 
 const MobileMenu = () => {
@@ -455,9 +449,6 @@ const MobileMenu = () => {
       <MenuContainer isOpen={isOpen} ref={menuRef}>
         <MenuHeader>
           <UserAvatar />
-          <DarkModeToggleContainer>
-            <DarkModeToggle />
-          </DarkModeToggleContainer>
         </MenuHeader>
         <MenuContent>
           <StyledNavLink
@@ -513,6 +504,7 @@ const MobileMenu = () => {
             <Logo variant="mobilemenu" />
             <BlogLogo variant="mobilemenu" />
           </LogoContainer>
+          <DarkModeToggle />
         </MenuContent>
       </MenuContainer>
       {isDocsOpen && (
