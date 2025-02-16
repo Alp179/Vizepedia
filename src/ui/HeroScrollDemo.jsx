@@ -12,9 +12,6 @@ const HeroContainer = styled.div`
   height: 100vh;
   padding-bottom: 65px;
   overflow: hidden;
-  @media (prefers-color-scheme: dark) {
-    background-color: #121212;
-  }
 `;
 
 const PositionContainer = styled.div`
@@ -33,10 +30,26 @@ const TitleWrapper = styled.div`
   transform: translate(-50%, -50%);
   text-align: center;
   z-index: 10;
-  mix-blend-mode: luminosity;
+  font-size: 3.5rem; /* Yazıyı büyüt */
+  font-weight: bold; /* Daha kalın font */
+  color: white; /* Beyaz yap */
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); /* Arkaya gölge ekleyerek belirgin hale getir */
+  padding: 20px;
+  border-radius: 10px;
+
+  /* Gradient efekti */
+  background: linear-gradient(135deg, #004466, #00ffa2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 
   @media (max-width: 1000px) {
     top: 45%;
+    font-size: 2.8rem; /* Küçük ekranlarda biraz küçült */
+  }
+
+  @media (max-width: 600px) {
+    font-size: 2rem; /* Mobilde daha okunaklı hale getir */
+    padding: 10px;
   }
 `;
 
@@ -66,28 +79,6 @@ const Title = styled.h1`
   }
 `;
 
-const HighlightText = styled.span`
-  font-size: 70px;
-  font-weight: 800;
-  line-height: 1;
-  mix-blend-mode: difference;
-  @media (max-width: 1410px) {
-    font-size: 65px;
-  }
-  @media (max-width: 1200px) {
-    font-size: 60px;
-  }
-  @media (max-width: 1050px) {
-    font-size: 55px;
-  }
-  @media (max-width: 830px) {
-    font-size: 45px;
-  }
-  @media (max-width: 730px) {
-    font-size: 40px;
-  }
-`;
-
 const ImageWrapper = styled.div`
   width: 1440px;
   height: auto;
@@ -114,7 +105,7 @@ const ButtonWrapper = styled.div`
   top: 80%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 3000;
+  z-index: 11;
 `;
 
 const ContainerScroll = ({ titleComponent, children }) => {
@@ -187,8 +178,7 @@ export function HeroScrollDemo() {
         titleComponent={
           <>
             <Title>
-              Düşlerinizdeki Seyahatin İlk Adımı: <br />
-              <HighlightText>Vizepedia </HighlightText>
+              Düşlerinizdeki Seyahatin İlk Adımı <br />
             </Title>
           </>
         }
