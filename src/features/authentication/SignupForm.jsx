@@ -39,6 +39,10 @@ const Bracket = styled.div`
   }
 `;
 
+const Girisyap = styled.div`
+  margin: 0 auto;
+`;
+
 function SignupForm({ onCloseModal }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -205,6 +209,9 @@ function SignupForm({ onCloseModal }) {
         >
           Anonim Giriş
         </Button>
+        <FormRow orientation="vertical">
+          <Girisyap>Zaten bir hesabın var mı? <a onClick={() => navigate("/login")} style={{ cursor: "pointer", color: "#00ffa2", textDecoration: "underline" }}>Giriş yap</a></Girisyap>
+        </FormRow>
       </FormRow>
     </Form>
   );

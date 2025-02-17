@@ -12,10 +12,6 @@ const HeroContainer = styled.div`
   height: 100vh;
   padding-bottom: 65px;
   overflow: hidden;
-<<<<<<< Updated upstream
-=======
-  
->>>>>>> Stashed changes
 `;
 
 const PositionContainer = styled.div`
@@ -90,11 +86,8 @@ const ImageWrapper = styled.div`
 `;
 
 const HeroImage = styled.img`
-  @media (min-width: 710px) {
-    width: 80%;
-  }
-  width: 1440px;
   max-width: 1400px;
+  width: 200vw;
   border-radius: 1rem;
   display: flex;
   justify-content: center;

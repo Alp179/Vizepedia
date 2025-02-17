@@ -45,6 +45,7 @@ const StepAndContinueContainer = styled.div`
     flex-flow: column;
     width: 350px;
     padding: 12px;
+    overflow-y: visible;
     justify-content: flex-start;
     align-items: flex-start;
     padding-bottom: 16px;

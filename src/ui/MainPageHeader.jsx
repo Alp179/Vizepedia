@@ -11,7 +11,9 @@ import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/apiAuth"; // Oturum açma durumunu kontrol eden fonksiyon
 
 const DarkModeContainer = styled.div`
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   @media (max-width: 870px) {
     display: none;
   }

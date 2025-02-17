@@ -40,6 +40,10 @@ const Bracket = styled.div`
   }
 `;
 
+const Girisyap = styled.div`
+  margin: 0 auto;
+`;
+
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -180,6 +184,21 @@ function LoginForm() {
         <Button size="login" variation="login" disabled={isLoading}>
           {!isLoading ? "Giriş yap" : <SpinnerMini />}
         </Button>
+      </FormRow>
+      <FormRow orientation="vertical">
+        <Girisyap>
+          Bir hesabın yok mu?{" "}
+          <a
+            onClick={() => navigate("/sign-up")}
+            style={{
+              cursor: "pointer",
+              color: "#00ffa2",
+              textDecoration: "underline",
+            }}
+          >
+            Kayıt ol
+          </a>
+        </Girisyap>
       </FormRow>
 
       {/* Anonim giriş butonunu ekliyoruz */}

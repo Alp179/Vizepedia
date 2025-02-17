@@ -140,7 +140,6 @@ const CreatedAtContainer = styled.div`
     margin-top: 40px;
     mix-blend-mode: difference;
     width: 200px;
-   
   }
 `;
 
@@ -318,9 +317,11 @@ const DashboardItems = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+
   @media (max-width: 710px) {
     flex-wrap: nowrap;
     padding: 0 12px;
+    height:100vh;
     width: 100vw;
     flex-direction: row;
     justify-content: flex-start;
@@ -328,18 +329,17 @@ const DashboardItems = styled.div`
     gap: 12px;
     overflow-x: auto;
     min-height: 100%;
-    overflow-y: hidden; /* Yatay kaydırma açık, dikey kaydırma kapalı */
-    white-space: nowrap; /* İçeriklerin alt alta gelmesini önler */
+    overflow-y: visible;
+    white-space: nowrap;
     -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory; /* Snap efektini aktif eder */
 
     & > * {
-      scroll-snap-align: start;
+      scroll-snap-align: center; /* Öğeler tam ortalanarak hizalanır */
+      
     }
-  }
-`;
 
-const DashboardItemsContainer = styled.div`
-  height: 100vh;
+  }
 `;
 
 const Dashboard = () => {
@@ -348,6 +348,7 @@ const Dashboard = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [createdAt, setCreatedAt] = useState(null);
   const navigate = useNavigate();
+  
   const {
     state: { completedDocuments },
     dispatch,
@@ -540,7 +541,7 @@ const Dashboard = () => {
           Hoş geldiniz
         </Heading>
       </CustomRow>
-      <DashboardItemsContainer>
+     
         <DashboardItems>
           <StepIndicatorWrapper>
             <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
@@ -611,7 +612,7 @@ const Dashboard = () => {
             )}
           </InfoContainerWrapper>
         </DashboardItems>
-      </DashboardItemsContainer>
+    
 
       {/* Anonim kullanıcıysa Üye Olarak Devam Et butonunu göster */}
       {isAnonymous && (

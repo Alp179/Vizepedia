@@ -125,7 +125,14 @@ const CardHeading = styled.p`
   margin-left: 20px;
   margin-top: 5px;
   margin-right: 10px;
+
+  /* Taşmayı engelle ve ellipsis uygula */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Maksimum 2 satır */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
+
 
 const DevaminiGor = styled.div`
   display: flex;
