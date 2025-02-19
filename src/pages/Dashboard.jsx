@@ -321,14 +321,14 @@ const DashboardItems = styled.div`
   @media (max-width: 710px) {
     flex-wrap: nowrap;
     padding: 0 12px;
-    height:100vh;
+    height: 120vh;
     width: 100vw;
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 12px;
     overflow-x: auto;
-    min-height: 100%;
+    min-height: 1000px;
     overflow-y: visible;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
