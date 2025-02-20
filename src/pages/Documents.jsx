@@ -265,7 +265,7 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: white;
+  background: var(--color-grey-51);
   border-radius: 10px;
   padding: 8px;
   position: relative;
@@ -273,9 +273,12 @@ const ModalContent = styled.div`
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  width: ${({ width }) => (width ? `${width + 16}px` : "auto")};
-  height: ${({ height }) => (height ? `${height + 16}px` : "auto")};
+  width: ${({ width }) => `${width}px`};
+  height: ${({ height }) => `${height}px`};
+  max-width: 85vw;
+  max-height: 85vh;
 `;
+
 
 const CloseButton = styled.button`
   position: absolute;
@@ -297,11 +300,15 @@ const CloseButton = styled.button`
 `;
 
 const ModalImage = styled.img`
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   border-radius: 10px;
 `;
 
 const DocumentDetail = () => {
+  const imgRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const { id: applicationId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
@@ -337,6 +344,46 @@ const DocumentDetail = () => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (imgRef.current) {
+      const updateSize = () => {
+        const imgWidth = imgRef.current.naturalWidth;
+        const imgHeight = imgRef.current.naturalHeight;
+        const windowWidth = window.innerWidth * 0.92;
+        const windowHeight = window.innerHeight * 0.92;
+        const aspectRatio = imgWidth / imgHeight;
+  
+        let newWidth, newHeight;
+  
+        if (aspectRatio > 1) {
+          // Enine büyük görseller
+          newWidth = windowWidth;
+          newHeight = windowWidth / aspectRatio;
+          if (newHeight > windowHeight) {
+            newHeight = windowHeight;
+            newWidth = newHeight * aspectRatio;
+          }
+        } else {
+          // Boyuna büyük görseller
+          newHeight = windowHeight;
+          newWidth = windowHeight * aspectRatio;
+          if (newWidth > windowWidth) {
+            newWidth = windowWidth;
+            newHeight = newWidth / aspectRatio;
+          }
+        }
+  
+        setDimensions({ width: newWidth, height: newHeight });
+      };
+  
+      if (imgRef.current.complete) {
+        updateSize();
+      } else {
+        imgRef.current.onload = updateSize;
+      }
+    }
+  }, [modalImage]);
 
   useEffect(() => {
     if (isDocumentsSuccess && documents && !selectedDocument) {
@@ -464,9 +511,13 @@ const DocumentDetail = () => {
 
       {isModalOpen && (
         <ModalOverlay onClick={closeModal}>
-          <ModalContent onClick={(e) => e.stopPropagation()}>
+          <ModalContent
+            width={dimensions.width}
+            height={dimensions.height}
+            onClick={(e) => e.stopPropagation()}
+          >
             <CloseButton onClick={closeModal}>×</CloseButton>
-            <ModalImage src={modalImage} alt="Belge Görseli" />
+            <ModalImage ref={imgRef} src={modalImage} alt="Büyütülmüş Görsel" />
           </ModalContent>
         </ModalOverlay>
       )}
