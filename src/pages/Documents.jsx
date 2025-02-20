@@ -265,18 +265,18 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: var(--color-grey-51);
-  border-radius: 10px;
-  padding: 8px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   width: ${({ width }) => `${width}px`};
   height: ${({ height }) => `${height}px`};
-  max-width: 85vw;
-  max-height: 85vh;
+  max-width: 80vw;
+  max-height: 80vh;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
 `;
 
 
@@ -302,8 +302,8 @@ const CloseButton = styled.button`
 const ModalImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: 10px;
+  overflow: hidden;
+  border-radius: 16px;
 `;
 
 const DocumentDetail = () => {
@@ -346,12 +346,25 @@ const DocumentDetail = () => {
   }, []);
 
   useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden"; // Scroll'u kapat
+    } else {
+      document.body.style.overflow = "auto"; // Scroll'u aç
+    }
+  
+    return () => {
+      document.body.style.overflow = "auto"; // Modal kapanınca scroll'u geri aç
+    };
+  }, [isModalOpen]);
+  
+
+  useEffect(() => {
     if (imgRef.current) {
       const updateSize = () => {
         const imgWidth = imgRef.current.naturalWidth;
         const imgHeight = imgRef.current.naturalHeight;
-        const windowWidth = window.innerWidth * 0.92;
-        const windowHeight = window.innerHeight * 0.92;
+        const windowWidth = window.innerWidth * 0.98;
+        const windowHeight = window.innerHeight * 0.98;
         const aspectRatio = imgWidth / imgHeight;
   
         let newWidth, newHeight;
@@ -511,15 +524,12 @@ const DocumentDetail = () => {
 
       {isModalOpen && (
         <ModalOverlay onClick={closeModal}>
-          <ModalContent
-            width={dimensions.width}
-            height={dimensions.height}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <CloseButton onClick={closeModal}>×</CloseButton>
-            <ModalImage ref={imgRef} src={modalImage} alt="Büyütülmüş Görsel" />
-          </ModalContent>
-        </ModalOverlay>
+        <ModalContent width={dimensions.width} height={dimensions.height} onClick={(e) => e.stopPropagation()}>
+          <CloseButton onClick={closeModal}>×</CloseButton>
+          <ModalImage ref={imgRef} src={modalImage} alt="Büyütülmüş Görsel" />
+        </ModalContent>
+      </ModalOverlay>
+      
       )}
     </>
   );
