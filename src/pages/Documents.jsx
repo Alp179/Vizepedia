@@ -20,7 +20,31 @@ const fadeIn = keyframes`
     opacity: 1;
     transform: translateX(0);
   }
+  
 `;
+
+const fadeInScale = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
+const fadeOutScale = keyframes`
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+`;
+
 
 const PageContainer = styled.div`
   display: flex;
@@ -257,12 +281,14 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.5); /* Arka planı hafif karartma */
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(8px); /* Arka planı blurlama */
 `;
+
 
 const ModalContent = styled.div`
   position: relative;
@@ -277,6 +303,7 @@ const ModalContent = styled.div`
   border: none;
   padding: 0;
   box-shadow: none;
+  animation: ${({ isClosing }) => (isClosing ? fadeOutScale : fadeInScale)} 0.3s ease-in-out;
 `;
 
 
@@ -308,6 +335,7 @@ const ModalImage = styled.img`
 
 const DocumentDetail = () => {
   const imgRef = useRef(null);
+  const [isClosing, setIsClosing] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const { id: applicationId } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -463,14 +491,21 @@ const DocumentDetail = () => {
   };
 
   const handleImageClick = (imageSrc) => {
+    setIsClosing(false); // Açılırken isClosing'in false olduğundan emin ol
     setModalImage(imageSrc);
     setIsModalOpen(true);
   };
+  
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    setModalImage("");
+    setIsClosing(true); // Önce kapanış animasyonunu başlat
+    setTimeout(() => {
+      setIsModalOpen(false);
+      setModalImage("");
+      setIsClosing(false); // Kapanış animasyonu tamamlandı
+    }, 300); // 300ms, animasyon süresi kadar beklet
   };
+  
 
   return (
     <>
@@ -524,7 +559,7 @@ const DocumentDetail = () => {
 
       {isModalOpen && (
         <ModalOverlay onClick={closeModal}>
-        <ModalContent width={dimensions.width} height={dimensions.height} onClick={(e) => e.stopPropagation()}>
+        <ModalContent isClosing={isClosing} width={dimensions.width} height={dimensions.height} onClick={(e) => e.stopPropagation()}>
           <CloseButton onClick={closeModal}>×</CloseButton>
           <ModalImage ref={imgRef} src={modalImage} alt="Büyütülmüş Görsel" />
         </ModalContent>
