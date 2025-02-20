@@ -1,5 +1,5 @@
 import styled, { keyframes } from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
@@ -251,8 +251,60 @@ const NavigationButton = styled.button`
   }
 `;
 
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  border-radius: 10px;
+  padding: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: ${({ width }) => (width ? `${width + 16}px` : "auto")};
+  height: ${({ height }) => (height ? `${height + 16}px` : "auto")};
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  z-index: 3000;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  cursor: pointer;
+  &:hover {
+    background: #004466;
+    color: #00ffa2;
+  }
+`;
+
+const ModalImage = styled.img`
+  object-fit: contain;
+  border-radius: 10px;
+`;
+
 const DocumentDetail = () => {
   const { id: applicationId } = useParams();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalImage, setModalImage] = useState("");
   const [userId, setUserId] = useState(null);
   const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0);
   const navigate = useNavigate();
@@ -350,53 +402,75 @@ const DocumentDetail = () => {
     }
   };
 
+  const handleImageClick = (imageSrc) => {
+    setModalImage(imageSrc);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalImage("");
+  };
+
   return (
-    <PageContainer>
-      <NavigationButton
-        className="left"
-        onClick={() => handleNavigation("prev")}
-      >
-        &lt;
-      </NavigationButton>
-      <InfoContainer>
-        <DocumentMeta>
-          Tahmini Tamamlama Süresi: {selectedDocument.estimatedCompletionTime}
-        </DocumentMeta>
-        <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
-        <DocumentDescription>
-          {selectedDocument.docDescription}
-        </DocumentDescription>
-        <SourceButton>Bağlantı {selectedDocument.docSource}</SourceButton>
-        <RelatedSteps>
-          <RelatedStepsTitle>
-            Bu Belge ile Bağlantılı İşlemler
-          </RelatedStepsTitle>
-          <ul>
-            {selectedDocument.relatedSteps?.map((step, index) => (
-              <li key={index}>{step}</li>
-            ))}
-          </ul>
-        </RelatedSteps>
-        <ActionButton onClick={handleAction} isCompleted={isCompleted}>
-          {isCompleted ? "Tamamlandı" : "Tamamla"}
-        </ActionButton>
-      </InfoContainer>
-      <ImageContainer>
-        <ImageText>Belge Örneği</ImageText>
-        <DocumentImage
-          src={selectedDocument.docImage}
-          alt={selectedDocument.docName}
-        />
-        <ImageText>Temin Yeri:</ImageText>
-        <ImageText>Tür:</ImageText>
-      </ImageContainer>
-      <NavigationButton
-        className="right"
-        onClick={() => handleNavigation("next")}
-      >
-        &gt;
-      </NavigationButton>
-    </PageContainer>
+    <>
+      <PageContainer>
+        <NavigationButton
+          className="left"
+          onClick={() => handleNavigation("prev")}
+        >
+          &lt;
+        </NavigationButton>
+        <InfoContainer>
+          <DocumentMeta>
+            Tahmini Tamamlama Süresi: {selectedDocument.estimatedCompletionTime}
+          </DocumentMeta>
+          <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
+          <DocumentDescription>
+            {selectedDocument.docDescription}
+          </DocumentDescription>
+          <SourceButton>Bağlantı {selectedDocument.docSource}</SourceButton>
+          <RelatedSteps>
+            <RelatedStepsTitle>
+              Bu Belge ile Bağlantılı İşlemler
+            </RelatedStepsTitle>
+            <ul>
+              {selectedDocument.relatedSteps?.map((step, index) => (
+                <li key={index}>{step}</li>
+              ))}
+            </ul>
+          </RelatedSteps>
+          <ActionButton onClick={handleAction} isCompleted={isCompleted}>
+            {isCompleted ? "Tamamlandı" : "Tamamla"}
+          </ActionButton>
+        </InfoContainer>
+        <ImageContainer>
+          <ImageText>Belge Örneği</ImageText>
+          <DocumentImage
+            src={selectedDocument.docImage}
+            alt={selectedDocument.docName}
+            onClick={() => handleImageClick(selectedDocument.docImage)}
+          />
+          <ImageText>Temin Yeri:</ImageText>
+          <ImageText>Tür:</ImageText>
+        </ImageContainer>
+        <NavigationButton
+          className="right"
+          onClick={() => handleNavigation("next")}
+        >
+          &gt;
+        </NavigationButton>
+      </PageContainer>
+
+      {isModalOpen && (
+        <ModalOverlay onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <CloseButton onClick={closeModal}>×</CloseButton>
+            <ModalImage src={modalImage} alt="Belge Görseli" />
+          </ModalContent>
+        </ModalOverlay>
+      )}
+    </>
   );
 };
 
