@@ -7,6 +7,9 @@ const ButtonIcon = styled.button`
   border-radius: var(--border-radius-sm);
   transition: all 0.2s;
 
+  &:focus {
+    outline: none;
+  }
   &:hover {
     backdrop-filter: blur(40px);
 

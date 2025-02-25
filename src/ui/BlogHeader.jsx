@@ -13,7 +13,7 @@ const BlogLogo = styled.img`
   &:hover {
     filter: ${(props) =>
       props.isDarkMode
-        ? "hue-rotate(280deg)"  /* Dark Mode: Renk tonu değişimi */
+        ? "hue-rotate(280deg)" /* Dark Mode: Renk tonu değişimi */
         : "hue-rotate(360deg)"};
   }
   position: absolute;
@@ -188,8 +188,10 @@ const BlogInput = styled.input`
   outline: none;
   padding: 0 25px; /* Padding'i artırdık */
   font-size: 16px;
+  margin-left: 8px;
   @media (max-width: 470px) {
     font-size: 13px;
+    margin-left: 0;
   }
   @media (max-width: 350px) {
     font-size: 12px;
@@ -202,32 +204,56 @@ const BlogInput = styled.input`
       theme === "dark" ? "var(--color-grey-500)" : "var(--color-grey-500)"};
     opacity: 1;
   }
+
+  &:focus {
+    outline: none;
+  }
 `;
 
 const SearchIcon = styled.div`
-  position: absolute;
-  left: 10px;
   font-size: 1.5rem;
-  color: ${({ theme }) =>
-    theme === "dark" ? "var(--color-white)" : "var(--color-grey-600)"};
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   opacity: ${({ isActive }) => (isActive ? 0 : 1)};
   visibility: ${({ isActive }) => (isActive ? "hidden" : "visible")};
   transition: opacity 0.3s ease, visibility 0.3s ease;
   display: ${({ isActive }) => (isActive ? "none" : "block")};
-  @media (max-width: 470px) {
+
+  svg {
+    position: absolute;
+    top: 7px;
     left: 7px;
+    width: 24px;
+    height: 24px;
+    @media (max-width: 470px) {
+      width: 20px;
+      height: 20px;
+      left: 5px;
+      top: 5px;
+    }
   }
 `;
 
 const ArrowIcon = styled.div`
-  position: absolute;
-  right: 10px;
   font-size: 1.5rem;
   color: ${({ theme }) =>
     theme === "dark" ? "var(--color-white)" : "var(--color-grey-600)"};
   cursor: pointer;
   display: ${({ isActive }) => (isActive ? "block" : "none")};
+
+  svg {
+    top: 9px;
+    right: 10px;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    stroke-width: 2px;
+    @media (max-width: 470px){
+      top: 4px;
+    }
+  }
 `;
 
 const SearchResultsContainer = styled.div`
@@ -425,7 +451,33 @@ function BlogHeader() {
         <InputAndDarkToggleContainer>
           <BlogInputWrapper isActive={isActive}>
             <SearchIcon isActive={isActive} onClick={handleSearchClick}>
-              🔍
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width={24}
+                height={24}
+                color={"var(--color-grey-600)"}
+                fill={"none"}
+              >
+                <path
+                  d="M14 14L16.5 16.5"
+                  stroke="var(--color-grey-600)"
+                  strokeWidth="1.5"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M16.4333 18.5252C15.8556 17.9475 15.8556 17.0109 16.4333 16.4333C17.0109 15.8556 17.9475 15.8556 18.5252 16.4333L21.5667 19.4748C22.1444 20.0525 22.1444 20.9891 21.5667 21.5667C20.9891 22.1444 20.0525 22.1444 19.4748 21.5667L16.4333 18.5252Z"
+                  stroke="var(--color-grey-600)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M16 9C16 5.13401 12.866 2 9 2C5.13401 2 2 5.13401 2 9C2 12.866 5.13401 16 9 16C12.866 16 16 12.866 16 9Z"
+                  stroke="var(--color-grey-600)"
+                  strokeWidth="1.5"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </SearchIcon>
             <BlogInput
               onMouseEnter={() => setIsHovered(true)}
@@ -441,7 +493,21 @@ function BlogHeader() {
                 setShowSearchResults(true);
               }}
             />
-            <ArrowIcon isActive={isActive}>➡️</ArrowIcon>
+            <ArrowIcon isActive={isActive}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                
+              >
+                <path d="M5 12l14 0" />
+                <path d="M13 18l6 -6" />
+                <path d="M13 6l6 6" />
+              </svg>
+            </ArrowIcon>
           </BlogInputWrapper>
           <DarkModeToggle />
         </InputAndDarkToggleContainer>

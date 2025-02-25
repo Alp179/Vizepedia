@@ -564,7 +564,7 @@ const DocumentDetail = () => {
           <ModalImage ref={imgRef} src={modalImage} alt="Büyütülmüş Görsel" />
         </ModalContent>
       </ModalOverlay>
-      
+    
       )}
     </>
   );
