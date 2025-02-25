@@ -111,6 +111,7 @@ const InputAndLogo = styled.div`
 `;
 
 const InputField = styled.input`
+color: black;
 @media (min-width: 1150px) {
   margin-top: 50px;
 }
@@ -144,6 +145,7 @@ const CheckboxRow = styled.div`
   @media (max-width: 1000px) {
     margin-bottom: -10px;
   }
+  
 `;
 
 const CheckboxLabel = styled.label`
@@ -153,11 +155,15 @@ const CheckboxLabel = styled.label`
   font-family: "Open Sans", Arial, sans-serif;
   font-size: 12px;
   color: #000;
+
+  
+  
 `;
 
 const Izin = styled.p`
   font-size: 12px;
   color: var(--color-grey-600);
+ 
 `;
 
 const SubmitButton = styled.button`
@@ -286,7 +292,7 @@ const MailerLiteForm = () => {
 
               <CheckboxRow>
                 <CheckboxLabel>
-                  <input type="checkbox" required />
+                  <input style={{outline: "none"}} type="checkbox" required />
                   <Izin>
                     Kişisel verilerimin burada yer alan Gizlilik Bildirimi
                     kapsamında işlenmesine izin veriyorum.

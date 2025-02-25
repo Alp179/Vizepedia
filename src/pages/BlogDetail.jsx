@@ -365,6 +365,11 @@ const RelatedBlogTitleSmall = styled.h4`
   @media (max-width: 360px) {
     font-size: 11px;
   }
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Maksimum 2 satır */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
 function BlogDetail() {

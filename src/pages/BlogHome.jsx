@@ -218,6 +218,12 @@ const BlogTitle = styled.h3`
   font-size: 14px;
   margin-bottom: 10px;
   color: var(--color-grey-600);
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Maksimum 2 satır */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
   @media (max-width: 910px) {
     font-size: 13px;
   }
