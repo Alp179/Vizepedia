@@ -246,9 +246,9 @@ const DashboardContainer = styled.div`
 `;
 
 const Ceper = styled.div`
-  position: absolute;
-  left: 20vw;
-  bottom: 0px;
+  margin-top: 10px;
+  margin-left: 20vw;
+  margin-right: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -257,18 +257,18 @@ const Ceper = styled.div`
   border: 3px solid #00ffa2;
   filter: drop-shadow(0px 20px 40px rgba(0, 0, 0, 0.11));
   border-radius: 82px;
+
   @media (max-width: 1300px) {
-    left: 15%;
+    margin-left: 12vw;
   }
-  @media (max-width: 1000px) {
-    left: 10%;
+  
+  @media (max-width: 900px) {
+    margin-left: 1vw;
   }
-  @media (max-width: 875px) {
-    left: 0%;
-  }
+
   @media (max-width: 710px) {
     position: relative;
-    margin-bottom: 70px;
+    margin: 12px auto;
   }
   &:hover {
     border-color: #004466;
@@ -335,9 +335,7 @@ const DashboardItems = styled.div`
 
     & > * {
       scroll-snap-align: center; /* Öğeler tam ortalanarak hizalanır */
-      
     }
-
   }
 `;
 
@@ -347,7 +345,7 @@ const Dashboard = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [createdAt, setCreatedAt] = useState(null);
   const navigate = useNavigate();
-  
+
   const {
     state: { completedDocuments },
     dispatch,
@@ -540,11 +538,26 @@ const Dashboard = () => {
           Hoş geldiniz
         </Heading>
       </CustomRow>
-     
-        <DashboardItems>
+
+      <DashboardItems>
+        <StepIndicatorWrapper>
+          <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
+          <StepIndicator
+            steps={stepLabels}
+            currentStep={currentStep}
+            onStepClick={handleStepClick}
+            completedDocuments={completedDocuments}
+            documents={documents}
+          />
+        </StepIndicatorWrapper>
+
+        {/* SponsorStepIndicator'ü sadece kullanıcının sponsoru varsa göster */}
+        {userSelections?.find(
+          (selection) => selection.ans_hassponsor === true
+        ) && (
           <StepIndicatorWrapper>
-            <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
-            <StepIndicator
+            <Heading as="h14">Sponsorun Belgeleri</Heading>
+            <SponsorStepIndicator
               steps={stepLabels}
               currentStep={currentStep}
               onStepClick={handleStepClick}
@@ -552,66 +565,50 @@ const Dashboard = () => {
               documents={documents}
             />
           </StepIndicatorWrapper>
-
-          {/* SponsorStepIndicator'ü sadece kullanıcının sponsoru varsa göster */}
-          {userSelections?.find(
-            (selection) => selection.ans_hassponsor === true
-          ) && (
-            <StepIndicatorWrapper>
-              <Heading as="h14">Sponsorun Belgeleri</Heading>
-              <SponsorStepIndicator
-                steps={stepLabels}
-                currentStep={currentStep}
-                onStepClick={handleStepClick}
-                completedDocuments={completedDocuments}
-                documents={documents}
+        )}
+        {countryCode && (
+          <FlagContainer>
+            <span className={`fi fi-${countryCode}`}></span>
+          </FlagContainer>
+        )}
+        <InfoContainerWrapper>
+          <Heading as="h14">Başvuru adresi</Heading>
+          {isFirmLocationSuccess && firmLocation && (
+            <InfoContainer>
+              <MapContainer
+                dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
               />
-            </StepIndicatorWrapper>
+              <InfoDetails>
+                <div>
+                  <strong>Firma Adı: </strong>
+                  {firmLocation.firm_name}
+                </div>
+                <div>
+                  <strong>Vize Ücreti: </strong>
+                  {firmLocation.visa_fee} €
+                </div>
+                <div>
+                  <strong>Servis Ücreti: </strong>
+                  {firmLocation.service_fee} €
+                </div>
+                <div>
+                  <strong>Ofis Saatleri: </strong>
+                  {firmLocation.office_hours}
+                </div>
+                <div>
+                  <a
+                    href={firmLocation.firm_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    İstanbul harici başvuru merkezleri için tıklayın
+                  </a>
+                </div>
+              </InfoDetails>
+            </InfoContainer>
           )}
-          {countryCode && (
-            <FlagContainer>
-              <span className={`fi fi-${countryCode}`}></span>
-            </FlagContainer>
-          )}
-          <InfoContainerWrapper>
-            <Heading as="h14">Başvuru adresi</Heading>
-            {isFirmLocationSuccess && firmLocation && (
-              <InfoContainer>
-                <MapContainer
-                  dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
-                />
-                <InfoDetails>
-                  <div>
-                    <strong>Firma Adı: </strong>
-                    {firmLocation.firm_name}
-                  </div>
-                  <div>
-                    <strong>Vize Ücreti: </strong>
-                    {firmLocation.visa_fee} €
-                  </div>
-                  <div>
-                    <strong>Servis Ücreti: </strong>
-                    {firmLocation.service_fee} €
-                  </div>
-                  <div>
-                    <strong>Ofis Saatleri: </strong>
-                    {firmLocation.office_hours}
-                  </div>
-                  <div>
-                    <a
-                      href={firmLocation.firm_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      İstanbul harici başvuru merkezleri için tıklayın
-                    </a>
-                  </div>
-                </InfoDetails>
-              </InfoContainer>
-            )}
-          </InfoContainerWrapper>
-        </DashboardItems>
-    
+        </InfoContainerWrapper>
+      </DashboardItems>
 
       {/* Anonim kullanıcıysa Üye Olarak Devam Et butonunu göster */}
       {isAnonymous && (
