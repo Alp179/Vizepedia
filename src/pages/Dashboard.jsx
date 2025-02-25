@@ -539,6 +539,12 @@ const Dashboard = () => {
         </Heading>
       </CustomRow>
 
+      {countryCode && (
+          <FlagContainer>
+            <span className={`fi fi-${countryCode}`}></span>
+          </FlagContainer>
+        )}
+
       <DashboardItems>
         <StepIndicatorWrapper>
           <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
@@ -566,11 +572,7 @@ const Dashboard = () => {
             />
           </StepIndicatorWrapper>
         )}
-        {countryCode && (
-          <FlagContainer>
-            <span className={`fi fi-${countryCode}`}></span>
-          </FlagContainer>
-        )}
+        
         <InfoContainerWrapper>
           <Heading as="h14">Başvuru adresi</Heading>
           {isFirmLocationSuccess && firmLocation && (
