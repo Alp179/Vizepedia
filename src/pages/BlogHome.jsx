@@ -246,7 +246,7 @@ const BlogDate = styled.span`
 const ContinueReading = styled(Link)`
   display: inline-flex;
   align-items: center;
-  color: #007bff;
+  color: var(--color-grey-926);
   font-weight: bold;
   font-size: 11px;
   position: absolute;
@@ -305,7 +305,7 @@ const ArrowButton = styled.button`
 
 
 const LoadMoreButton = styled.button`
-  background-color: #007bff;
+  background-color: #004466;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -317,7 +317,7 @@ const LoadMoreButton = styled.button`
   transition: all 0.3s ease;
 
   &:hover {
-    background-color: #0056b3;
+    
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   }

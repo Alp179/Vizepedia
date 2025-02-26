@@ -137,7 +137,7 @@ const CardHeading = styled.p`
 const DevaminiGor = styled.div`
   display: flex;
   align-items: center;
-  color: #007bff;
+  color: var(--color-grey-926);
   font-weight: bold;
   font-size: 16px;
   position: absolute;
