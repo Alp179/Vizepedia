@@ -330,6 +330,7 @@ const RelatedBlogInfo = styled.div`
 `;
 
 const RelatedBlogDate = styled.span`
+  margin-top: 2px;
   font-size: 10px;
   color: #999;
   @media (max-width: 1400px) {
