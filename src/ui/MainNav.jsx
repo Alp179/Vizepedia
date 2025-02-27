@@ -479,7 +479,7 @@ function MainNav() {
           <ModalDocs>
             <ModalDocs.Open opens="allDocs">
               <AllDocsButton style={{ width: "100%" }}>
-                <HiDocument style={{color: "var(--color-grey-924)"}} /> <span className="sidebartext">Tüm belgeler</span>
+                <HiDocument className="mainnavicons" style={{color: "var(--color-grey-924)"}} /> <span className="sidebartext">Tüm belgeler</span>
               </AllDocsButton>
             </ModalDocs.Open>
             <ModalDocs.Window name="allDocs">
@@ -512,7 +512,7 @@ function MainNav() {
         </ScrollableDiv>
         <li>
           <AllDocsButton to="/wellcome-2">
-            <HiPlus style={{color: "var(--color-grey-924)"}} /> <span className="sidebartext">Yeni</span>
+            <HiPlus className="mainnavicons" style={{color: "var(--color-grey-924)"}} /> <span className="sidebartext">Yeni</span>
           </AllDocsButton>
         </li>
       </NavList>

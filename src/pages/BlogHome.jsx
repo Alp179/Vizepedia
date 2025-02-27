@@ -567,6 +567,7 @@ function BlogHome() {
       <SlideShow />
 
       <MailerLiteForm />
+      
 
       <Footer />
     </>

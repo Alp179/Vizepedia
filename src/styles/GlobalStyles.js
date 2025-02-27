@@ -366,6 +366,11 @@ ul {
   }
 }
 
+.mainnavicons {
+  @media(max-width: 830px) {
+    margin-left: -5px;
+  }
+}
 
 @media (max-width: 1050px) {
   .sidebartext {
@@ -375,6 +380,7 @@ ul {
 @media (max-width: 830px) {
   .sidebartext {
     font-size: 14px;
+    margin-left: -5px;
   }
 }
 

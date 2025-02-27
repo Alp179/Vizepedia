@@ -123,9 +123,9 @@ const BlurredFlagBackground = styled.div`
   }
 
   @media (max-width: 450px) {
-    width: 400px !important;
+    width: 500px !important;
     right: -20%;
-    height: 400px !important;
+    height: 380px !important;
   }
 `;
 
