@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUser } from "../services/apiAuth";
@@ -17,6 +19,7 @@ import supabase from "../services/supabase";
 import SignupForm from "../features/authentication/SignupForm";
 import ModalSignup from "../ui/ModalSignup";
 import SponsorStepIndicator from "../ui/SponsorStepIndicator";
+import FirmMap from "../ui/FirmMap"; // FirmMap komponentini import ediyoruz
 
 const FlagContainer = styled.div`
   position: fixed;
@@ -161,70 +164,6 @@ const CustomRow = styled(Row)`
 }
  
 
-`;
-
-const InfoContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  @media (min-width: 1285px) {
-    width: 1000px;
-  }
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 22px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  gap: 32px;
-  z-index: 3000;
-  @media (max-width: 1550px) {
-    margin-left: -100px;
-  }
-  @media (max-width: 1350px) {
-    flex-flow: column;
-    gap: 22px;
-    width: 500px;
-    padding-bottom: 20px;
-  }
-  @media (max-width: 760px) {
-    width: 400px;
-  }
-  @media (max-width: 710px) {
-    margin: 0;
-    width: 350px;
-  }
-`;
-
-const MapContainer = styled.div`
-  height: auto;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 10px;
-  @media (max-width: 1350px) {
-    width: 420px;
-    height: 420px;
-  }
-  @media (max-width: 760px) {
-    width: 350px;
-    height: 350px;
-  }
-  @media (max-width: 500px) {
-    width: 280px;
-    height: 280px;
-  }
-  @media (max-width: 389px) {
-    height: 230px;
-    width: 230px;
-  }
-`;
-
-const InfoDetails = styled.div`
-  flex: 1;
-  color: var(--color-grey-600);
-  display: flex;
-  z-index: 3000;
-  flex-direction: column;
-  gap: 10px;
 `;
 
 const DashboardContainer = styled.div`
@@ -576,38 +515,7 @@ const Dashboard = () => {
         <InfoContainerWrapper>
           <Heading as="h14">Başvuru adresi</Heading>
           {isFirmLocationSuccess && firmLocation && (
-            <InfoContainer>
-              <MapContainer
-                dangerouslySetInnerHTML={{ __html: firmLocation.firmAdress }}
-              />
-              <InfoDetails>
-                <div>
-                  <strong>Firma Adı: </strong>
-                  {firmLocation.firm_name}
-                </div>
-                <div>
-                  <strong>Vize Ücreti: </strong>
-                  {firmLocation.visa_fee} €
-                </div>
-                <div>
-                  <strong>Servis Ücreti: </strong>
-                  {firmLocation.service_fee} €
-                </div>
-                <div>
-                  <strong>Ofis Saatleri: </strong>
-                  {firmLocation.office_hours}
-                </div>
-                <div>
-                  <a
-                    href={firmLocation.firm_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    İstanbul harici başvuru merkezleri için tıklayın
-                  </a>
-                </div>
-              </InfoDetails>
-            </InfoContainer>
+            <FirmMap firmLocation={firmLocation} />
           )}
         </InfoContainerWrapper>
       </DashboardItems>
