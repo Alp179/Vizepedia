@@ -39,12 +39,15 @@ const StepAndContinueContainer = styled.div`
     padding: 6px;
   }
   @media (max-width: 710px) {
-    margin-left: auto;
-    margin-right: auto;
-    gap: 12px;
+    margin: 0 auto 15px;
+    gap: 16px;
     flex-flow: column;
-    width: 350px;
-    padding: 12px;
+    width: 90%;
+    max-width: 350px;
+    box-shadow: 0 4px 20px rgba(31, 38, 135, 0.3);
+    padding: 15px;
+    border-radius: 20px;
+    overflow-y: visible;
     justify-content: flex-start;
     align-items: flex-start;
     padding-bottom: 16px;
@@ -57,7 +60,6 @@ const StepCircleContainer = styled.div`
   height: 40px;
   @media (max-width: 1400px) {
     gap: 6px;
-    height: 40px;
   }
   @media (max-width: 710px) {
     height: 100%;
@@ -65,6 +67,8 @@ const StepCircleContainer = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
   }
 `;
 
@@ -116,6 +120,11 @@ const StepPageCont = styled.div`
   flex-direction: column;
   height: 100px;
   justify-content: flex-start;
+  
+  @media (max-width: 710px) {
+    height: auto;
+    margin-bottom: 20px;
+  }
 `;
 
 const ContinueButton = styled.button`
@@ -191,13 +200,17 @@ const ContinueButton = styled.button`
   }
 
   @media (max-width: 710px) {
-    width: 60%;
-    margin-left: auto;
-    margin-right: auto;
+    width: 80%;
+    margin: 8px auto;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    height: auto;
+    
     @media (max-height: 830px) {
-      width: 40%;
-      height: 42px;
-      font-size: 13px;
+      width: 70%;
+      padding: 10px;
+      font-size: 14px;
     }
   }
 
@@ -211,10 +224,11 @@ const StepLabel = styled.span`
     props.isCompleted ? "#2ecc71" : "var(--color-grey-600)"};
   margin-left: 8px;
   @media (max-width: 710px) {
-    font-size: 16px;
+    font-size: 15px;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 70%;
+    max-width: 80%;
+    font-weight: ${(props) => props.isActive ? "bold" : "normal"};
   }
 `;
 
@@ -226,6 +240,8 @@ const IconContainer = ({
   mouseX,
   stepNumber,
   isExtraSmallScreen,
+  index,
+  totalSteps,
 }) => {
   const ref = useRef(null);
   const [hovered, setHovered] = useState(false);
@@ -266,7 +282,13 @@ const IconContainer = ({
 
   if (isExtraSmallScreen) {
     return (
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ 
+        display: "flex", 
+        alignItems: "center",
+        padding: "5px 0",
+        width: "100%",
+        borderBottom: index !== totalSteps - 1 ? "1px solid rgba(0,0,0,0.05)" : "none"
+      }}>
         <IconWrapper
           onClick={onClick}
           isActive={isActive}
@@ -274,7 +296,11 @@ const IconContainer = ({
         >
           <div>{stepNumber}</div>
         </IconWrapper>
-        <StepLabel onClick={onClick} isCompleted={isCompleted}>
+        <StepLabel 
+          onClick={onClick} 
+          isCompleted={isCompleted}
+          isActive={isActive}
+        >
           {title}
         </StepLabel>
       </div>
@@ -441,6 +467,8 @@ const SponsorStepIndicator = () => {
                   title={doc.docName}
                   mouseX={mouseXContainer1}
                   stepNumber={index + 1}
+                  index={index}
+                  totalSteps={documents.length}
                 />
               );
             })}
@@ -468,6 +496,8 @@ const SponsorStepIndicator = () => {
                     title={doc.docName}
                     mouseX={mouseXContainer1}
                     stepNumber={index + 1}
+                    index={index}
+                    totalSteps={firstSteps.length}
                   />
                 );
               })}
@@ -494,6 +524,8 @@ const SponsorStepIndicator = () => {
                       title={doc.docName}
                       mouseX={mouseXContainer2}
                       stepNumber={index + 11}
+                      index={index}
+                      totalSteps={remainingSteps.length}
                     />
                   );
                 })}
