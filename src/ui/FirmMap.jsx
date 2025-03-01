@@ -209,7 +209,7 @@ const FirmName = styled.h3`
   color: #004466;
   margin: 0 0 20px 0;
   padding-bottom: 14px;
-  font-size: 1.6rem;
+  font-size: 2.6rem;
   border-bottom: 2px solid rgba(0, 68, 102, 0.15);
   
   @media (max-width: 389px) {

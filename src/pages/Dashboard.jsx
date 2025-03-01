@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUser } from "../services/apiAuth";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
@@ -13,124 +13,13 @@ import StepIndicator from "../ui/StepIndicator";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDocuments } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
-import styled, { keyframes } from "styled-components";
-import "flag-icons/css/flag-icons.min.css";
+import styled from "styled-components";
 import supabase from "../services/supabase";
 import SignupForm from "../features/authentication/SignupForm";
 import ModalSignup from "../ui/ModalSignup";
 import SponsorStepIndicator from "../ui/SponsorStepIndicator";
-import FirmMap from "../ui/FirmMap"; // FirmMap komponentini import ediyoruz
-
-const FlagContainer = styled.div`
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 700px;
-  height: 450px;
-  transform: translate(23%, -20%) rotate(31deg);
-  border-radius: 10%;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
-
-  & > span {
-    width: 100%;
-    height: 100%;
-    display: block;
-    background-size: cover;
-    background-position: center;
-  }
-
-  @media (max-width: 1450px) {
-    width: 600px;
-    height: 360px;
-  }
-
-  @media (max-width: 1200px) {
-    width: 500px;
-    height: 300px;
-  }
-
-  @media (max-width: 900px) {
-    width: 400px;
-    height: 240px;
-  }
-
-  @media (max-width: 450px) {
-    width: 300px;
-    height: 180px;
-  }
-
-  @media (max-width: 375px) {
-    width: 250px;
-    height: 150px;
-  }
-`;
-
-// Sürekli ve kesintisiz yukarıdan aşağıya akan animasyon
-const moveFlagAnimation = keyframes`
-  0% {
-    transform: translateY(-55%) rotate(31deg);
-  }
-  10% {
-    transform: translateY(-40%) rotate(31deg);
-  }
-  20% {
-    transform: translateY(-30%) rotate(31deg);
-  }
-   30% {
-    transform: translateY(-20%) rotate(31deg);
-  }
-  40% {
-    transform: translateY(-10%) rotate(31deg);
-  }
-  50% {
-    transform: translateY(-0%) rotate(31deg);
-  }
-    60% {
-    transform: translateY(-10%) rotate(31deg);
-  }
-  70% {
-    transform: translateY(-20%) rotate(31deg);
-  }
-  80% {
-    transform: translateY(-30%) rotate(31deg);
-  }
-   90% {
-    transform: translateY(-40%) rotate(31deg);
-  }
-  100% {
-    transform: translateY(-55%) rotate(31deg);
-  }
-  
-`;
-
-const BlurredFlagBackground = styled.div`
-  position: fixed;
-  top: -10%;
-  right: -10%;
-  width: 1000px; // %50 daralma
-  height: 642px; // %50 daralma
-  filter: blur(150px);
-  z-index: 0;
-  animation: ${moveFlagAnimation} 14s linear infinite; // Akış alanı daraltıldı ve süre ayarlandı
-
-  @media (max-width: 1450px) {
-    width: 800px;
-    height: 514px;
-  }
-
-  @media (max-width: 1200px) {
-    width: 600px;
-    height: 385px;
-  }
-
-  @media (max-width: 450px) {
-    width: 500px !important;
-    right: -20%;
-    height: 380px !important;
-  }
-`;
+import FirmMap from "../ui/FirmMap";
+import AnimatedFlag from "../ui/AnimatedFlag";
 
 const CreatedAtContainer = styled.div`
   font-size: 1.3rem;
@@ -161,9 +50,6 @@ const CustomRow = styled(Row)`
     margin-left: 32px;
     margin-right: auto;
   }
-}
- 
-
 `;
 
 const DashboardContainer = styled.div`
@@ -243,6 +129,11 @@ const StepIndicatorWrapper = styled.div`
   @media (max-width: 1450px) {
     margin-bottom: 46px;
   }
+  
+  @media (max-width: 710px) {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 `;
 
 const InfoContainerWrapper = styled.div`
@@ -250,31 +141,98 @@ const InfoContainerWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
+  
+  @media (max-width: 710px) {
+    width: 100%;
+  }
 `;
 
+// Carousel stilleri
 const DashboardItems = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
 
   @media (max-width: 710px) {
-    flex-wrap: nowrap;
-    padding: 0 12px;
-    height: auto;
-    width: 100vw;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    overflow-x: auto;
-    overflow-y: visible;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory; /* Snap efektini aktif eder */
+    position: relative;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 20px;
+  }
+`;
 
-    & > * {
-      scroll-snap-align: center; /* Öğeler tam ortalanarak hizalanır */
-    }
+// CarouselContainer artık width prop'u kullanıyor
+const CarouselContainer = styled.div`
+  width: ${props => props.width ? props.width + "px" : "100%"};
+  position: relative;
+  overflow: hidden;
+`;
+
+const CarouselContent = styled.div`
+  display: flex;
+  transition: transform 0.4s ease;
+  transform: ${props => `translateX(-${props.activeIndex * props.itemWidth}px)`};
+  will-change: transform;
+  position: relative;
+  left: 0;
+`;
+
+const CarouselItem = styled.div`
+  flex: 0 0 auto;
+  width: ${props => props.width}px;
+  padding: 0 10px;
+`;
+
+const CarouselControls = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 15px auto 5px;
+  padding: 0;
+  gap: 8px;
+`;
+
+const PaginationDot = styled.div`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: ${props => props.active ? '#004466' : 'rgba(0, 68, 102, 0.3)'};
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:hover {
+    transform: scale(1.2);
+    background-color: ${props => props.active ? '#004466' : 'rgba(0, 68, 102, 0.5)'};
+  }
+`;
+
+const NavButton = styled.button`
+  background-color: rgba(0, 68, 102, 0.1);
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #004466;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  padding: 0;
+  margin: 0 10px;
+  
+  &:hover {
+    background-color: rgba(0, 68, 102, 0.2);
+  }
+  
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 `;
 
@@ -284,6 +242,21 @@ const Dashboard = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [createdAt, setCreatedAt] = useState(null);
   const navigate = useNavigate();
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 710);
+  const [touchStart, setTouchStart] = useState(0);
+  const carouselRef = useRef(null);
+  const [carouselVisible, setCarouselVisible] = useState(false);
+  
+  // Öğenin genişliğini hesaplıyoruz
+  const [itemWidth, setItemWidth] = useState(() => {
+    if (window.innerWidth <= 389) {
+      return 300;
+    } else if (window.innerWidth <= 710) {
+      return 350;
+    }
+    return window.innerWidth;
+  });
 
   const {
     state: { completedDocuments },
@@ -294,19 +267,56 @@ const Dashboard = () => {
     localStorage.getItem("isAnonymous") === "true"
   );
 
+  // Sadece active index sıfırlanıyor
+  const resetCarouselPosition = () => {
+    setActiveCardIndex(0);
+  };
+
+  useLayoutEffect(() => {
+    resetCarouselPosition();
+  }, [isMobile]);
+
+  useEffect(() => {
+    setCarouselVisible(false);
+    setTimeout(() => {
+      setCarouselVisible(true);
+      resetCarouselPosition();
+    }, 50);
+  }, [isMobile]);
+
+  useEffect(() => {
+    resetCarouselPosition();
+  }, []);
+
+  useEffect(() => {
+    const calculateItemWidth = () => {
+      if (window.innerWidth <= 389) {
+        return 300;
+      } else if (window.innerWidth <= 710) {
+        return 350;
+      }
+      return window.innerWidth;
+    };
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 710);
+      setItemWidth(calculateItemWidth());
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
         setUserId(user.id);
-
-        // Kullanıcı üye olmuşsa, anonim verileri temizleyin
         if (!isAnonymous) {
           localStorage.removeItem("isAnonymous");
           localStorage.removeItem("userAnswers");
           localStorage.removeItem("userSelections");
         }
-
-        // Kullanıcı verilerini Supabase'den çek
         fetchCompletedDocuments(user.id, applicationId).then((data) => {
           const completedDocsMap = data.reduce((acc, doc) => {
             if (!acc[applicationId]) {
@@ -324,11 +334,8 @@ const Dashboard = () => {
     });
   }, [applicationId, dispatch, isAnonymous]);
 
-  // Anonim kullanıcıdan normal kullanıcıya geçişte local storage ile bağı koparma
   const handleUserConversion = () => {
-    // Üye olduktan sonra yerel depolama temizlenmiş oluyor
     setIsAnonymous(false);
-    // Üye olan kullanıcıları dashboard'a yönlendiriyoruz
     navigate("/dashboard");
   };
 
@@ -342,6 +349,12 @@ const Dashboard = () => {
     queryFn: () => fetchUserSelectionsDash(userId, applicationId),
     enabled: !!userId && !!applicationId,
   });
+
+  useEffect(() => {
+    if (isUserSelectionsSuccess) {
+      resetCarouselPosition();
+    }
+  }, [isUserSelectionsSuccess]);
 
   const ansCountry = userSelections?.[0]?.ans_country;
 
@@ -443,6 +456,17 @@ const Dashboard = () => {
     enabled: !!documentNames.length,
   });
 
+  useEffect(() => {
+    if (documents) {
+      resetCarouselPosition();
+      setCarouselVisible(false);
+      setTimeout(() => {
+        setCarouselVisible(true);
+        resetCarouselPosition();
+      }, 50);
+    }
+  }, [documents]);
+
   if (isUserSelectionsLoading || isDocumentsLoading) {
     return <Spinner />;
   }
@@ -457,16 +481,15 @@ const Dashboard = () => {
   };
 
   const stepLabels = documents?.map((doc) => doc.docName) || [];
+  const hasSponsor = userSelections?.find(selection => selection.ans_hassponsor === true);
+  
+  // Toplam öğe sayısı: sponsor varsa 3, yoksa 2
+  const totalItems = hasSponsor ? 3 : 2;
 
   return (
     <DashboardContainer>
-      {countryCode && (
-        <BlurredFlagBackground
-          style={{
-            backgroundImage: `url(https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode.toUpperCase()}.svg)`,
-          }}
-        />
-      )}
+      <AnimatedFlag countryCode={countryCode} />
+      
       <CustomRow type="horizontal">
         {createdAt && (
           <CreatedAtContainer style={{ zIndex: "3000" }}>
@@ -478,49 +501,141 @@ const Dashboard = () => {
         </Heading>
       </CustomRow>
 
-      {countryCode && (
-          <FlagContainer>
-            <span className={`fi fi-${countryCode}`}></span>
-          </FlagContainer>
-        )}
-
       <DashboardItems>
-        <StepIndicatorWrapper>
-          <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
-          <StepIndicator
-            steps={stepLabels}
-            currentStep={currentStep}
-            onStepClick={handleStepClick}
-            completedDocuments={completedDocuments}
-            documents={documents}
-          />
-        </StepIndicatorWrapper>
+        {/* Masaüstü görünümü */}
+        {!isMobile && (
+          <>
+            <StepIndicatorWrapper>
+              <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
+              <StepIndicator
+                steps={stepLabels}
+                currentStep={currentStep}
+                onStepClick={handleStepClick}
+                completedDocuments={completedDocuments}
+                documents={documents}
+              />
+            </StepIndicatorWrapper>
 
-        {/* SponsorStepIndicator'ü sadece kullanıcının sponsoru varsa göster */}
-        {userSelections?.find(
-          (selection) => selection.ans_hassponsor === true
-        ) && (
-          <StepIndicatorWrapper>
-            <Heading as="h14">Sponsorun Belgeleri</Heading>
-            <SponsorStepIndicator
-              steps={stepLabels}
-              currentStep={currentStep}
-              onStepClick={handleStepClick}
-              completedDocuments={completedDocuments}
-              documents={documents}
-            />
-          </StepIndicatorWrapper>
+            {hasSponsor && (
+              <StepIndicatorWrapper>
+                <Heading as="h14">Sponsorun Belgeleri</Heading>
+                <SponsorStepIndicator
+                  steps={stepLabels}
+                  currentStep={currentStep}
+                  onStepClick={handleStepClick}
+                  completedDocuments={completedDocuments}
+                  documents={documents}
+                />
+              </StepIndicatorWrapper>
+            )}
+            
+            <InfoContainerWrapper>
+              <Heading as="h14">Başvuru adresi</Heading>
+              {isFirmLocationSuccess && firmLocation && (
+                <FirmMap firmLocation={firmLocation} />
+              )}
+            </InfoContainerWrapper>
+          </>
         )}
-        
-        <InfoContainerWrapper>
-          <Heading as="h14">Başvuru adresi</Heading>
-          {isFirmLocationSuccess && firmLocation && (
-            <FirmMap firmLocation={firmLocation} />
-          )}
-        </InfoContainerWrapper>
+
+        {/* Mobil carousel görünümü */}
+        {isMobile && (
+          <div>
+            <CarouselContainer 
+              width={itemWidth} 
+              style={{ display: carouselVisible ? 'block' : 'none' }}
+              onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
+              onTouchEnd={(e) => {
+                const touchEnd = e.changedTouches[0].clientX;
+                const diff = touchStart - touchEnd;
+                
+                if (diff > 50 && activeCardIndex < totalItems - 1) {
+                  setActiveCardIndex(prevIndex => prevIndex + 1);
+                } else if (diff < -50 && activeCardIndex > 0) {
+                  setActiveCardIndex(prevIndex => prevIndex - 1);
+                }
+              }}
+            >
+              <CarouselContent 
+                ref={carouselRef}
+                activeIndex={activeCardIndex} 
+                itemWidth={itemWidth}
+              >
+                <CarouselItem width={itemWidth}>
+                  <StepIndicatorWrapper>
+                    <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
+                    <StepIndicator
+                      steps={stepLabels}
+                      currentStep={currentStep}
+                      onStepClick={handleStepClick}
+                      completedDocuments={completedDocuments}
+                      documents={documents}
+                    />
+                  </StepIndicatorWrapper>
+                </CarouselItem>
+
+                {hasSponsor && (
+                  <CarouselItem width={itemWidth}>
+                    <StepIndicatorWrapper>
+                      <Heading as="h14">Sponsorun Belgeleri</Heading>
+                      <SponsorStepIndicator
+                        steps={stepLabels}
+                        currentStep={currentStep}
+                        onStepClick={handleStepClick}
+                        completedDocuments={completedDocuments}
+                        documents={documents}
+                      />
+                    </StepIndicatorWrapper>
+                  </CarouselItem>
+                )}
+                
+                <CarouselItem width={itemWidth}>
+                  <InfoContainerWrapper>
+                    <Heading as="h14">Başvuru adresi</Heading>
+                    {isFirmLocationSuccess && firmLocation && (
+                      <FirmMap firmLocation={firmLocation} />
+                    )}
+                  </InfoContainerWrapper>
+                </CarouselItem>
+              </CarouselContent>
+              
+              <CarouselControls>
+                <NavButton 
+                  onClick={() => setActiveCardIndex(prev => Math.max(0, prev - 1))}
+                  disabled={activeCardIndex === 0}
+                >
+                  &lt;
+                </NavButton>
+                
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <PaginationDot 
+                    active={activeCardIndex === 0} 
+                    onClick={() => setActiveCardIndex(0)} 
+                  />
+                  {hasSponsor && (
+                    <PaginationDot 
+                      active={activeCardIndex === 1} 
+                      onClick={() => setActiveCardIndex(1)} 
+                    />
+                  )}
+                  <PaginationDot 
+                    active={activeCardIndex === (hasSponsor ? 2 : 1)} 
+                    onClick={() => setActiveCardIndex(hasSponsor ? 2 : 1)} 
+                  />
+                </div>
+                
+                <NavButton 
+                  onClick={() => setActiveCardIndex(prev => Math.min(totalItems - 1, prev + 1))}
+                  disabled={activeCardIndex === totalItems - 1}
+                >
+                  &gt;
+                </NavButton>
+              </CarouselControls>
+            </CarouselContainer>
+          </div>
+        )}
       </DashboardItems>
 
-      {/* Anonim kullanıcıysa Üye Olarak Devam Et butonunu göster */}
       {isAnonymous && (
         <div
           style={{
@@ -536,7 +651,6 @@ const Dashboard = () => {
               </Ceper>
             </ModalSignup.Open>
             <ModalSignup.Window name="signUpForm">
-              {/* Üye olduktan sonra verileri Supabase'den çekebilmek için, kullanıcıyı signUpForm ile yönlendirme işlemi */}
               <SignupForm onSuccess={handleUserConversion} />
             </ModalSignup.Window>
           </ModalSignup>
