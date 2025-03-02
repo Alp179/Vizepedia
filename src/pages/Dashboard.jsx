@@ -25,9 +25,11 @@ import MobileCarousel from "../ui/MobileCarousel";
 const CreatedAtContainer = styled.div`
   font-size: 1.3rem;
   color: var(--color-grey-700);
+
   @media (max-width: 1550px) {
     margin-left: -100px;
   }
+
   @media (max-width: 710px) {
     margin-left: 0;
     margin-top: 40px;
@@ -43,13 +45,16 @@ const CustomRow = styled(Row)`
   gap: 10px;
   justify-content: flex-start;
   align-items: flex-start;
+  position: relative;
+  z-index: 10;
+
   @media (max-width: 710px) {
     @media (max-height: 830px) {
       gap: 8px;
     }
-    width: 400px;
-    margin-left: 32px;
-    margin-right: auto;
+    width: 90%;
+    margin: 30px auto 0;
+    padding: 0 15px;
   }
 `;
 
@@ -72,7 +77,7 @@ const DashboardContainer = styled.div`
 `;
 
 const Ceper = styled.div`
-  margin-top: 10px;
+  margin-top: 30px;
   margin-left: 20vw;
   margin-right: auto;
   display: flex;
@@ -83,6 +88,9 @@ const Ceper = styled.div`
   border: 3px solid #00ffa2;
   filter: drop-shadow(0px 20px 40px rgba(0, 0, 0, 0.11));
   border-radius: 82px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
 
   @media (max-width: 1300px) {
     margin-left: 12vw;
@@ -94,10 +102,16 @@ const Ceper = styled.div`
 
   @media (max-width: 710px) {
     position: relative;
-    margin: 12px auto;
+    margin: 30px auto;
+    transform: scale(0.9);
   }
   &:hover {
     border-color: #004466;
+    transform: scale(1.03);
+
+    @media (max-width: 710px) {
+      transform: scale(0.95);
+    }
   }
 `;
 
@@ -115,9 +129,20 @@ const UyeDevam = styled.button`
   font-size: 18px;
   text-align: center;
   color: white;
+  transition: all 0.3s ease;
+  border: none;
+  outline: none;
+
   &:hover {
     background-color: #00ffa2;
     color: #004466;
+    transform: translateY(-3px);
+    box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.15);
   }
 `;
 
@@ -127,6 +152,7 @@ const StepIndicatorWrapper = styled.div`
   gap: 16px;
   width: 100%;
   justify-content: flex-start;
+
   @media (max-width: 1450px) {
     margin-bottom: 46px;
   }
@@ -153,14 +179,17 @@ const DashboardItems = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  position: relative;
+  z-index: 10;
 
   @media (max-width: 710px) {
     position: relative;
     width: 100%;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    padding-bottom: 20px;
+    gap: 24px;
+    padding: 10px 0 30px;
+    margin-top: 20px;
   }
 `;
 

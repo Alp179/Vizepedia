@@ -6,16 +6,19 @@ import StepIndicator from "../ui/StepIndicator";
 import SponsorStepIndicator from "../ui/SponsorStepIndicator";
 import FirmMap from "../ui/FirmMap";
 
-// Carousel stilleri
+// Geliştirilmiş Carousel stilleri
 const CarouselContainer = styled.div`
   width: ${(props) => (props.width ? props.width + "px" : "100%")};
   position: relative;
   overflow: hidden;
+  margin: 0 auto;
+  border-radius: 20px;
+  padding: 10px 0;
 `;
 
 const CarouselContent = styled.div`
   display: flex;
-  transition: transform 0.4s ease;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
   transform: ${(props) =>
     `translateX(-${props.activeIndex * props.itemWidth}px)`};
   will-change: transform;
@@ -27,59 +30,19 @@ const CarouselItem = styled.div`
   flex: 0 0 auto;
   width: ${(props) => props.width}px;
   padding: 0 10px;
+  opacity: ${(props) => (props.active ? 1 : 0.8)};
+  transition: opacity 0.3s ease;
 `;
 
+// Daha minimal ve şık bir kontrol paneli
 const CarouselControls = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin: 15px auto 5px;
+  margin: 20px auto 10px;
   padding: 0;
   gap: 8px;
-`;
-
-const PaginationDot = styled.div`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: ${(props) =>
-    props.active ? "#004466" : "rgba(0, 68, 102, 0.3)"};
-  transition: all 0.3s ease;
-  cursor: pointer;
-
-  &:hover {
-    transform: scale(1.2);
-    background-color: ${(props) =>
-      props.active ? "#004466" : "rgba(0, 68, 102, 0.5)"};
-  }
-`;
-
-const NavButton = styled.button`
-  background-color: rgba(0, 68, 102, 0.1);
-  border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #004466;
-  font-size: 16px;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  padding: 0;
-  margin: 0 10px;
-
-  &:hover {
-    background-color: rgba(0, 68, 102, 0.2);
-  }
-
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
 `;
 
 const StepIndicatorWrapper = styled.div`
@@ -88,6 +51,7 @@ const StepIndicatorWrapper = styled.div`
   gap: 16px;
   width: 100%;
   justify-content: flex-start;
+
   @media (max-width: 1450px) {
     margin-bottom: 46px;
   }
@@ -109,6 +73,84 @@ const InfoContainerWrapper = styled.div`
   }
 `;
 
+// Swipe göstergeleri için animasyonlu element
+const SwipeIndicator = styled.div`
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  top: 50%;
+  opacity: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100;
+  background-color: rgba(0, 255, 162, 0.3);
+  transform: translateY(-50%);
+
+  &.left {
+    left: 20px;
+    animation: ${(props) =>
+      props.animate ? "pulseLeft 1.5s ease-in-out infinite" : "none"};
+  }
+
+  &.right {
+    right: 20px;
+    animation: ${(props) =>
+      props.animate ? "pulseRight 1.5s ease-in-out infinite" : "none"};
+  }
+
+  @keyframes pulseLeft {
+    0%,
+    100% {
+      opacity: 0;
+      transform: translateX(10px) translateY(-50%);
+    }
+    50% {
+      opacity: 0.7;
+      transform: translateX(0) translateY(-50%);
+    }
+  }
+
+  @keyframes pulseRight {
+    0%,
+    100% {
+      opacity: 0;
+      transform: translateX(-10px) translateY(-50%);
+    }
+    50% {
+      opacity: 0.7;
+      transform: translateX(0) translateY(-50%);
+    }
+  }
+`;
+
+// Çok basit sabit pozisyonlar kullanalım
+const ScrollbarContainer = styled.div`
+  position: relative;
+  width: 80%;
+  height: 4px;
+  background-color: rgba(0, 68, 102, 0.1);
+  margin: 0 auto 20px;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const ScrollIndicator = styled.div`
+  position: absolute;
+  height: 100%;
+  width: ${(props) => 100 / props.totalItems}%;
+  background-color: rgba(0, 68, 102, 0.3);
+  border-radius: 10px;
+  left: ${(props) => {
+    // Basit ve direkt sabit pozisyonlar
+    if (props.activeIndex === 0) return "0";
+    if (props.activeIndex === 1 && props.totalItems === 3) return "33.33%";
+    if (props.activeIndex === props.totalItems - 1)
+      return `${100 - 100 / props.totalItems}%`;
+    return "0";
+  }};
+  transition: left 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+`;
+
 const MobileCarousel = ({
   stepLabels,
   currentStep,
@@ -121,7 +163,9 @@ const MobileCarousel = ({
 }) => {
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
   const [carouselVisible, setCarouselVisible] = useState(false);
+  const [showSwipeHint, setShowSwipeHint] = useState(true);
   const carouselRef = useRef(null);
 
   // Öğenin genişliğini hesaplıyoruz
@@ -142,12 +186,22 @@ const MobileCarousel = ({
     setActiveCardIndex(0);
   };
 
+  // İlk bir kaç saniye swipe ipucu gösteriliyor
+  useEffect(() => {
+    if (showSwipeHint) {
+      const timer = setTimeout(() => {
+        setShowSwipeHint(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSwipeHint]);
+
   useEffect(() => {
     setCarouselVisible(false);
     setTimeout(() => {
       setCarouselVisible(true);
       resetCarouselPosition();
-    }, 50);
+    }, 100);
   }, []);
 
   useEffect(() => {
@@ -173,29 +227,122 @@ const MobileCarousel = ({
     resetCarouselPosition();
   }, [documents]);
 
+  // Geliştirilmiş dokunma kontrolü
+  const handleTouchStart = (e) => {
+    setTouchStart(e.touches[0].clientX);
+    setTouchEnd(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 30;
+    const isRightSwipe = distance < -30;
+
+    if (isLeftSwipe && activeCardIndex < totalItems - 1) {
+      setActiveCardIndex((prevIndex) => prevIndex + 1);
+    }
+
+    if (isRightSwipe && activeCardIndex > 0) {
+      setActiveCardIndex((prevIndex) => prevIndex - 1);
+    }
+
+    // İpucu sadece ilk swipe'tan sonra kaldırılıyor
+    if (isLeftSwipe || isRightSwipe) {
+      setShowSwipeHint(false);
+    }
+  };
+
   return (
-    <div>
+    <div style={{ position: "relative" }}>
+      <ScrollbarContainer>
+        <ScrollIndicator
+          totalItems={totalItems}
+          activeIndex={activeCardIndex}
+        />
+      </ScrollbarContainer>
+
+      {/* Swipe ipucu ikonları */}
+      <div
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+          top: 0,
+          left: 0,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "0 15px",
+          opacity: showSwipeHint ? 0.6 : 0,
+        }}
+      >
+        {activeCardIndex > 0 && (
+          <div
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              backgroundColor: "rgba(0, 68, 102, 0.1)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "#004466",
+              transition: "opacity 0.3s",
+            }}
+          >
+            &lt;
+          </div>
+        )}
+
+        {activeCardIndex < totalItems - 1 && (
+          <div
+            style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              backgroundColor: "rgba(0, 68, 102, 0.1)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "#004466",
+              marginLeft: "auto",
+              transition: "opacity 0.3s",
+            }}
+          >
+            &gt;
+          </div>
+        )}
+      </div>
+
       <CarouselContainer
         width={itemWidth}
         style={{ display: carouselVisible ? "block" : "none" }}
-        onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
-        onTouchEnd={(e) => {
-          const touchEnd = e.changedTouches[0].clientX;
-          const diff = touchStart - touchEnd;
-
-          if (diff > 50 && activeCardIndex < totalItems - 1) {
-            setActiveCardIndex((prevIndex) => prevIndex + 1);
-          } else if (diff < -50 && activeCardIndex > 0) {
-            setActiveCardIndex((prevIndex) => prevIndex - 1);
-          }
-        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
+        <SwipeIndicator
+          className="left"
+          animate={showSwipeHint && activeCardIndex > 0}
+        />
+        <SwipeIndicator
+          className="right"
+          animate={showSwipeHint && activeCardIndex < totalItems - 1}
+        />
+
         <CarouselContent
           ref={carouselRef}
           activeIndex={activeCardIndex}
           itemWidth={itemWidth}
         >
-          <CarouselItem width={itemWidth}>
+          <CarouselItem width={itemWidth} active={activeCardIndex === 0}>
             <StepIndicatorWrapper>
               <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
               <StepIndicator
@@ -209,7 +356,7 @@ const MobileCarousel = ({
           </CarouselItem>
 
           {hasSponsor && (
-            <CarouselItem width={itemWidth}>
+            <CarouselItem width={itemWidth} active={activeCardIndex === 1}>
               <StepIndicatorWrapper>
                 <Heading as="h14">Sponsorun Belgeleri</Heading>
                 <SponsorStepIndicator
@@ -223,7 +370,10 @@ const MobileCarousel = ({
             </CarouselItem>
           )}
 
-          <CarouselItem width={itemWidth}>
+          <CarouselItem
+            width={itemWidth}
+            active={activeCardIndex === (hasSponsor ? 2 : 1)}
+          >
             <InfoContainerWrapper>
               <Heading as="h14">Başvuru adresi</Heading>
               {isFirmLocationSuccess && firmLocation && (
@@ -234,38 +384,7 @@ const MobileCarousel = ({
         </CarouselContent>
 
         <CarouselControls>
-          <NavButton
-            onClick={() => setActiveCardIndex((prev) => Math.max(0, prev - 1))}
-            disabled={activeCardIndex === 0}
-          >
-            &lt;
-          </NavButton>
-
-          <div style={{ display: "flex", gap: "8px" }}>
-            <PaginationDot
-              active={activeCardIndex === 0}
-              onClick={() => setActiveCardIndex(0)}
-            />
-            {hasSponsor && (
-              <PaginationDot
-                active={activeCardIndex === 1}
-                onClick={() => setActiveCardIndex(1)}
-              />
-            )}
-            <PaginationDot
-              active={activeCardIndex === (hasSponsor ? 2 : 1)}
-              onClick={() => setActiveCardIndex(hasSponsor ? 2 : 1)}
-            />
-          </div>
-
-          <NavButton
-            onClick={() =>
-              setActiveCardIndex((prev) => Math.min(totalItems - 1, prev + 1))
-            }
-            disabled={activeCardIndex === totalItems - 1}
-          >
-            &gt;
-          </NavButton>
+          {/* Dot göstergelerini ve butonları kaldıralım */}
         </CarouselControls>
       </CarouselContainer>
     </div>
