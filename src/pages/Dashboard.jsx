@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUser } from "../services/apiAuth";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
@@ -20,6 +20,7 @@ import ModalSignup from "../ui/ModalSignup";
 import SponsorStepIndicator from "../ui/SponsorStepIndicator";
 import FirmMap from "../ui/FirmMap";
 import AnimatedFlag from "../ui/AnimatedFlag";
+import MobileCarousel from "../ui/MobileCarousel";
 
 const CreatedAtContainer = styled.div`
   font-size: 1.3rem;
@@ -86,7 +87,7 @@ const Ceper = styled.div`
   @media (max-width: 1300px) {
     margin-left: 12vw;
   }
-  
+
   @media (max-width: 900px) {
     margin-left: 1vw;
   }
@@ -129,7 +130,7 @@ const StepIndicatorWrapper = styled.div`
   @media (max-width: 1450px) {
     margin-bottom: 46px;
   }
-  
+
   @media (max-width: 710px) {
     width: 100%;
     margin-bottom: 10px;
@@ -141,7 +142,7 @@ const InfoContainerWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  
+
   @media (max-width: 710px) {
     width: 100%;
   }
@@ -163,100 +164,13 @@ const DashboardItems = styled.div`
   }
 `;
 
-// CarouselContainer artık width prop'u kullanıyor
-const CarouselContainer = styled.div`
-  width: ${props => props.width ? props.width + "px" : "100%"};
-  position: relative;
-  overflow: hidden;
-`;
-
-const CarouselContent = styled.div`
-  display: flex;
-  transition: transform 0.4s ease;
-  transform: ${props => `translateX(-${props.activeIndex * props.itemWidth}px)`};
-  will-change: transform;
-  position: relative;
-  left: 0;
-`;
-
-const CarouselItem = styled.div`
-  flex: 0 0 auto;
-  width: ${props => props.width}px;
-  padding: 0 10px;
-`;
-
-const CarouselControls = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin: 15px auto 5px;
-  padding: 0;
-  gap: 8px;
-`;
-
-const PaginationDot = styled.div`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: ${props => props.active ? '#004466' : 'rgba(0, 68, 102, 0.3)'};
-  transition: all 0.3s ease;
-  cursor: pointer;
-  
-  &:hover {
-    transform: scale(1.2);
-    background-color: ${props => props.active ? '#004466' : 'rgba(0, 68, 102, 0.5)'};
-  }
-`;
-
-const NavButton = styled.button`
-  background-color: rgba(0, 68, 102, 0.1);
-  border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #004466;
-  font-size: 16px;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  padding: 0;
-  margin: 0 10px;
-  
-  &:hover {
-    background-color: rgba(0, 68, 102, 0.2);
-  }
-  
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-`;
-
 const Dashboard = () => {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [createdAt, setCreatedAt] = useState(null);
   const navigate = useNavigate();
-  const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 710);
-  const [touchStart, setTouchStart] = useState(0);
-  const carouselRef = useRef(null);
-  const [carouselVisible, setCarouselVisible] = useState(false);
-  
-  // Öğenin genişliğini hesaplıyoruz
-  const [itemWidth, setItemWidth] = useState(() => {
-    if (window.innerWidth <= 389) {
-      return 300;
-    } else if (window.innerWidth <= 710) {
-      return 350;
-    }
-    return window.innerWidth;
-  });
 
   const {
     state: { completedDocuments },
@@ -267,45 +181,14 @@ const Dashboard = () => {
     localStorage.getItem("isAnonymous") === "true"
   );
 
-  // Sadece active index sıfırlanıyor
-  const resetCarouselPosition = () => {
-    setActiveCardIndex(0);
-  };
-
   useLayoutEffect(() => {
-    resetCarouselPosition();
-  }, [isMobile]);
-
-  useEffect(() => {
-    setCarouselVisible(false);
-    setTimeout(() => {
-      setCarouselVisible(true);
-      resetCarouselPosition();
-    }, 50);
-  }, [isMobile]);
-
-  useEffect(() => {
-    resetCarouselPosition();
-  }, []);
-
-  useEffect(() => {
-    const calculateItemWidth = () => {
-      if (window.innerWidth <= 389) {
-        return 300;
-      } else if (window.innerWidth <= 710) {
-        return 350;
-      }
-      return window.innerWidth;
-    };
-
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 710);
-      setItemWidth(calculateItemWidth());
     };
 
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -349,12 +232,6 @@ const Dashboard = () => {
     queryFn: () => fetchUserSelectionsDash(userId, applicationId),
     enabled: !!userId && !!applicationId,
   });
-
-  useEffect(() => {
-    if (isUserSelectionsSuccess) {
-      resetCarouselPosition();
-    }
-  }, [isUserSelectionsSuccess]);
 
   const ansCountry = userSelections?.[0]?.ans_country;
 
@@ -456,17 +333,6 @@ const Dashboard = () => {
     enabled: !!documentNames.length,
   });
 
-  useEffect(() => {
-    if (documents) {
-      resetCarouselPosition();
-      setCarouselVisible(false);
-      setTimeout(() => {
-        setCarouselVisible(true);
-        resetCarouselPosition();
-      }, 50);
-    }
-  }, [documents]);
-
   if (isUserSelectionsLoading || isDocumentsLoading) {
     return <Spinner />;
   }
@@ -481,15 +347,14 @@ const Dashboard = () => {
   };
 
   const stepLabels = documents?.map((doc) => doc.docName) || [];
-  const hasSponsor = userSelections?.find(selection => selection.ans_hassponsor === true);
-  
-  // Toplam öğe sayısı: sponsor varsa 3, yoksa 2
-  const totalItems = hasSponsor ? 3 : 2;
+  const hasSponsor = userSelections?.find(
+    (selection) => selection.ans_hassponsor === true
+  );
 
   return (
     <DashboardContainer>
       <AnimatedFlag countryCode={countryCode} />
-      
+
       <CustomRow type="horizontal">
         {createdAt && (
           <CreatedAtContainer style={{ zIndex: "3000" }}>
@@ -528,7 +393,7 @@ const Dashboard = () => {
                 />
               </StepIndicatorWrapper>
             )}
-            
+
             <InfoContainerWrapper>
               <Heading as="h14">Başvuru adresi</Heading>
               {isFirmLocationSuccess && firmLocation && (
@@ -540,99 +405,16 @@ const Dashboard = () => {
 
         {/* Mobil carousel görünümü */}
         {isMobile && (
-          <div>
-            <CarouselContainer 
-              width={itemWidth} 
-              style={{ display: carouselVisible ? 'block' : 'none' }}
-              onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
-              onTouchEnd={(e) => {
-                const touchEnd = e.changedTouches[0].clientX;
-                const diff = touchStart - touchEnd;
-                
-                if (diff > 50 && activeCardIndex < totalItems - 1) {
-                  setActiveCardIndex(prevIndex => prevIndex + 1);
-                } else if (diff < -50 && activeCardIndex > 0) {
-                  setActiveCardIndex(prevIndex => prevIndex - 1);
-                }
-              }}
-            >
-              <CarouselContent 
-                ref={carouselRef}
-                activeIndex={activeCardIndex} 
-                itemWidth={itemWidth}
-              >
-                <CarouselItem width={itemWidth}>
-                  <StepIndicatorWrapper>
-                    <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
-                    <StepIndicator
-                      steps={stepLabels}
-                      currentStep={currentStep}
-                      onStepClick={handleStepClick}
-                      completedDocuments={completedDocuments}
-                      documents={documents}
-                    />
-                  </StepIndicatorWrapper>
-                </CarouselItem>
-
-                {hasSponsor && (
-                  <CarouselItem width={itemWidth}>
-                    <StepIndicatorWrapper>
-                      <Heading as="h14">Sponsorun Belgeleri</Heading>
-                      <SponsorStepIndicator
-                        steps={stepLabels}
-                        currentStep={currentStep}
-                        onStepClick={handleStepClick}
-                        completedDocuments={completedDocuments}
-                        documents={documents}
-                      />
-                    </StepIndicatorWrapper>
-                  </CarouselItem>
-                )}
-                
-                <CarouselItem width={itemWidth}>
-                  <InfoContainerWrapper>
-                    <Heading as="h14">Başvuru adresi</Heading>
-                    {isFirmLocationSuccess && firmLocation && (
-                      <FirmMap firmLocation={firmLocation} />
-                    )}
-                  </InfoContainerWrapper>
-                </CarouselItem>
-              </CarouselContent>
-              
-              <CarouselControls>
-                <NavButton 
-                  onClick={() => setActiveCardIndex(prev => Math.max(0, prev - 1))}
-                  disabled={activeCardIndex === 0}
-                >
-                  &lt;
-                </NavButton>
-                
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <PaginationDot 
-                    active={activeCardIndex === 0} 
-                    onClick={() => setActiveCardIndex(0)} 
-                  />
-                  {hasSponsor && (
-                    <PaginationDot 
-                      active={activeCardIndex === 1} 
-                      onClick={() => setActiveCardIndex(1)} 
-                    />
-                  )}
-                  <PaginationDot 
-                    active={activeCardIndex === (hasSponsor ? 2 : 1)} 
-                    onClick={() => setActiveCardIndex(hasSponsor ? 2 : 1)} 
-                  />
-                </div>
-                
-                <NavButton 
-                  onClick={() => setActiveCardIndex(prev => Math.min(totalItems - 1, prev + 1))}
-                  disabled={activeCardIndex === totalItems - 1}
-                >
-                  &gt;
-                </NavButton>
-              </CarouselControls>
-            </CarouselContainer>
-          </div>
+          <MobileCarousel
+            stepLabels={stepLabels}
+            currentStep={currentStep}
+            handleStepClick={handleStepClick}
+            completedDocuments={completedDocuments}
+            documents={documents}
+            hasSponsor={hasSponsor}
+            firmLocation={firmLocation}
+            isFirmLocationSuccess={isFirmLocationSuccess}
+          />
         )}
       </DashboardItems>
 
