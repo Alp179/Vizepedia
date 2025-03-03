@@ -8,30 +8,42 @@ import FirmMap from "../ui/FirmMap";
 
 // Geliştirilmiş Carousel stilleri
 const CarouselContainer = styled.div`
-  width: ${(props) => (props.width ? props.width + "px" : "100%")};
+  width: 100vw;
   position: relative;
-  overflow: hidden;
+  overflow: visible; // Değiştirildi: itemlerin dışarıda görünmesine izin verir
   margin: 0 auto;
   border-radius: 20px;
-  padding: 10px 0;
+  padding: 4px 0;
 `;
 
 const CarouselContent = styled.div`
   display: flex;
   transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-  transform: ${(props) =>
-    `translateX(-${props.activeIndex * props.itemWidth}px)`};
+  transform: ${(props) => {
+    // Her itemin genişliği (padding dahil değil)
+    const itemWidth = props.itemWidth;
+    
+    // Container genişliği
+    const containerWidth = props.containerWidth;
+    
+    // Merkeze hizalamak için offset hesaplama
+    const centerOffset = (containerWidth - itemWidth) / 2;
+    
+    // Her kaydırmada bir tam item ilerleyecek
+    return `translateX(${-props.activeIndex * itemWidth + centerOffset}px)`;
+  }};
   will-change: transform;
   position: relative;
-  left: 0;
 `;
 
 const CarouselItem = styled.div`
   flex: 0 0 auto;
   width: ${(props) => props.width}px;
   padding: 0 10px;
-  opacity: ${(props) => (props.active ? 1 : 0.8)};
-  transition: opacity 0.3s ease;
+  opacity: ${(props) => (props.active ? 1 : 0.6)};
+  transform: ${(props) => (props.active ? 'scale(1)' : 'scale(0.95)')};
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-sizing: border-box;
 `;
 
 // Daha minimal ve şık bir kontrol paneli
@@ -142,13 +154,19 @@ const ScrollIndicator = styled.div`
   border-radius: 10px;
   left: ${(props) => {
     // Basit ve direkt sabit pozisyonlar
-    if (props.activeIndex === 0) return "0";
-    if (props.activeIndex === 1 && props.totalItems === 3) return "33.33%";
-    if (props.activeIndex === props.totalItems - 1)
-      return `${100 - 100 / props.totalItems}%`;
-    return "0";
+    const stepSize = 100 - (100 / props.totalItems);
+    const percentage = (props.activeIndex / (props.totalItems - 1)) * stepSize;
+    return `${percentage}%`;
   }};
   transition: left 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+`;
+
+const CarouselWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  overflow: hidden; // Ana container içinde overflow hidden
+  border-radius: 20px;
+  margin: 0 auto;
 `;
 
 const MobileCarousel = ({
@@ -167,17 +185,24 @@ const MobileCarousel = ({
   const [carouselVisible, setCarouselVisible] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const carouselRef = useRef(null);
+  const containerRef = useRef(null);
 
-  // Öğenin genişliğini hesaplıyoruz
+  // Görünür kısmın genişliğini hesaplıyoruz
+  const [containerWidth, setContainerWidth] = useState(0);
+  
+  // Kenardan görünecek miktar
+  // Artık merkeze konumlandırma ile çalışacağız, peek amount'a gerek yok
+  
+  // Her bir itemin gerçek genişliği (merkezdeki item için)
   const [itemWidth, setItemWidth] = useState(() => {
     if (window.innerWidth <= 389) {
       return 300;
     } else if (window.innerWidth <= 710) {
       return 350;
     }
-    return window.innerWidth;
+    return window.innerWidth > 800 ? 800 : window.innerWidth;
   });
-
+  
   // Toplam öğe sayısı: sponsor varsa 3, yoksa 2
   const totalItems = hasSponsor ? 3 : 2;
 
@@ -205,22 +230,34 @@ const MobileCarousel = ({
   }, []);
 
   useEffect(() => {
-    const calculateItemWidth = () => {
+    const calculateWidths = () => {
+      // Konteyner genişliğini ölç
+      const currentContainerWidth = containerRef.current?.clientWidth || window.innerWidth;
+      setContainerWidth(currentContainerWidth);
+      
+      // Her ekran boyutu için doğru genişlik hesaplaması
+      let calculatedWidth;
+      
+      // Ekran boyutuna göre item genişliği ayarla
+      // Bu değerler, kenarlarda görünecek kısımları hesaba katarak belirlenmiştir
       if (window.innerWidth <= 389) {
-        return 300;
+        // Çok küçük ekranlarda item genişliği konteyner genişliğinin %80'i
+        calculatedWidth = Math.min(300, currentContainerWidth * 0.80);
       } else if (window.innerWidth <= 710) {
-        return 350;
+        // Küçük ekranlarda item genişliği konteyner genişliğinin %75'i
+        calculatedWidth = Math.min(350, currentContainerWidth * 0.75);
+      } else {
+        // Daha büyük ekranlarda item genişliği konteyner genişliğinin %70'i
+        // Bu değer daha fazla peek efekti sağlar
+        calculatedWidth = Math.min(800, currentContainerWidth * 0.70);
       }
-      return window.innerWidth;
+      
+      setItemWidth(calculatedWidth);
     };
 
-    const handleResize = () => {
-      setItemWidth(calculateItemWidth());
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    calculateWidths();
+    window.addEventListener("resize", calculateWidths);
+    return () => window.removeEventListener("resize", calculateWidths);
   }, []);
 
   useEffect(() => {
@@ -259,7 +296,7 @@ const MobileCarousel = ({
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative" }} ref={containerRef}>
       <ScrollbarContainer>
         <ScrollIndicator
           totalItems={totalItems}
@@ -281,6 +318,7 @@ const MobileCarousel = ({
           alignItems: "center",
           padding: "0 15px",
           opacity: showSwipeHint ? 0.6 : 0,
+          zIndex: 10,
         }}
       >
         {activeCardIndex > 0 && (
@@ -321,45 +359,33 @@ const MobileCarousel = ({
         )}
       </div>
 
-      <CarouselContainer
-        width={itemWidth}
-        style={{ display: carouselVisible ? "block" : "none" }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        <SwipeIndicator
-          className="left"
-          animate={showSwipeHint && activeCardIndex > 0}
-        />
-        <SwipeIndicator
-          className="right"
-          animate={showSwipeHint && activeCardIndex < totalItems - 1}
-        />
-
-        <CarouselContent
-          ref={carouselRef}
-          activeIndex={activeCardIndex}
-          itemWidth={itemWidth}
+      <CarouselWrapper>
+        <CarouselContainer
+          style={{ display: carouselVisible ? "block" : "none" }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
-          <CarouselItem width={itemWidth} active={activeCardIndex === 0}>
-            <StepIndicatorWrapper>
-              <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
-              <StepIndicator
-                steps={stepLabels}
-                currentStep={currentStep}
-                onStepClick={handleStepClick}
-                completedDocuments={completedDocuments}
-                documents={documents}
-              />
-            </StepIndicatorWrapper>
-          </CarouselItem>
+          <SwipeIndicator
+            className="left"
+            animate={showSwipeHint && activeCardIndex > 0}
+          />
+          <SwipeIndicator
+            className="right"
+            animate={showSwipeHint && activeCardIndex < totalItems - 1}
+          />
 
-          {hasSponsor && (
-            <CarouselItem width={itemWidth} active={activeCardIndex === 1}>
+          <CarouselContent
+            ref={carouselRef}
+            activeIndex={activeCardIndex}
+            itemWidth={itemWidth}
+
+            containerWidth={containerWidth}
+          >
+            <CarouselItem width={itemWidth} active={activeCardIndex === 0}>
               <StepIndicatorWrapper>
-                <Heading as="h14">Sponsorun Belgeleri</Heading>
-                <SponsorStepIndicator
+                <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
+                <StepIndicator
                   steps={stepLabels}
                   currentStep={currentStep}
                   onStepClick={handleStepClick}
@@ -368,25 +394,40 @@ const MobileCarousel = ({
                 />
               </StepIndicatorWrapper>
             </CarouselItem>
-          )}
 
-          <CarouselItem
-            width={itemWidth}
-            active={activeCardIndex === (hasSponsor ? 2 : 1)}
-          >
-            <InfoContainerWrapper>
-              <Heading as="h14">Başvuru adresi</Heading>
-              {isFirmLocationSuccess && firmLocation && (
-                <FirmMap firmLocation={firmLocation} />
-              )}
-            </InfoContainerWrapper>
-          </CarouselItem>
-        </CarouselContent>
+            {hasSponsor && (
+              <CarouselItem width={itemWidth} active={activeCardIndex === 1}>
+                <StepIndicatorWrapper>
+                  <Heading as="h14">Sponsorun Belgeleri</Heading>
+                  <SponsorStepIndicator
+                    steps={stepLabels}
+                    currentStep={currentStep}
+                    onStepClick={handleStepClick}
+                    completedDocuments={completedDocuments}
+                    documents={documents}
+                  />
+                </StepIndicatorWrapper>
+              </CarouselItem>
+            )}
 
-        <CarouselControls>
-          {/* Dot göstergelerini ve butonları kaldıralım */}
-        </CarouselControls>
-      </CarouselContainer>
+            <CarouselItem
+              width={itemWidth}
+              active={activeCardIndex === (hasSponsor ? 2 : 1)}
+            >
+              <InfoContainerWrapper>
+                <Heading as="h14">Başvuru adresi</Heading>
+                {isFirmLocationSuccess && firmLocation && (
+                  <FirmMap firmLocation={firmLocation} />
+                )}
+              </InfoContainerWrapper>
+            </CarouselItem>
+          </CarouselContent>
+
+          <CarouselControls>
+            {/* Dot göstergelerini ve butonları kaldıralım */}
+          </CarouselControls>
+        </CarouselContainer>
+      </CarouselWrapper>
     </div>
   );
 };

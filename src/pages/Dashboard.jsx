@@ -168,10 +168,6 @@ const InfoContainerWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
-
-  @media (max-width: 710px) {
-    width: 100%;
-  }
 `;
 
 // Carousel stilleri

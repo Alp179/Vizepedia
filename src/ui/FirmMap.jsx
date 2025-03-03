@@ -19,8 +19,9 @@ const MapContainer = styled.div`
     height: 420px;
   }
   @media (max-width: 760px) {
-    width: 350px;
-    height: 350px;
+    width: 100%;
+    height: 300px;
+    border-radius: 10px;
   }
   @media (max-width: 500px) {
     width: 100%;
@@ -64,7 +65,7 @@ const InfoContainer = styled.div`
     width: 500px;
     padding-bottom: 28px;
     align-items: center;
-    margin-left: 0;
+    margin-right: auto;
   }
   @media (max-width: 760px) {
     width: 400px;
@@ -72,7 +73,7 @@ const InfoContainer = styled.div`
   }
   @media (max-width: 710px) {
     margin: 0;
-    width: 350px;
+    width: 330px;
   }
   @media (max-width: 389px) {
     width: 300px;
