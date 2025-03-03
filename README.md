@@ -1,4 +1,4 @@
 # Vizepedia
 
-King of the visaaaa tapatapinho
+King of the visa taptaptaptap
 
