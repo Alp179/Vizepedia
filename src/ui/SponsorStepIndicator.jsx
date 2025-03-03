@@ -67,8 +67,40 @@ const StepCircleContainer = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-    padding: 5px 10px;
+    padding: 5px 10px 5px 10px;
     margin-bottom: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    
+    /* İçeriği sola yanaştırma ve scrollbar için sağda boşluk bırakma */
+    width: calc(100% - 10px);
+    padding-right: 16px;
+    box-sizing: border-box;
+    
+    /* Scrollbar styling */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      margin-right: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 68, 102, 0.5);
+      border-radius: 10px;
+      transition: background 0.3s ease;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 68, 102, 0.8);
+    }
+    
+    /* Firefox için scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 68, 102, 0.5) rgba(255, 255, 255, 0.1);
   }
 `;
 

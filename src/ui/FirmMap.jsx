@@ -1,39 +1,7 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
 
-const MapContainer = styled.div`
-  height: auto;
-  flex-shrink: 0;
-  overflow: hidden;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  transition: transform 0.3s ease;
-  position: relative;
-  
-  &:hover {
-    transform: scale(1.01);
-  }
-  
-  @media (max-width: 1350px) {
-    width: 420px;
-    height: 420px;
-  }
-  @media (max-width: 760px) {
-    width: 100%;
-    height: 300px;
-    border-radius: 10px;
-  }
-  @media (max-width: 500px) {
-    width: 100%;
-    height: 300px;
-    border-radius: 10px;
-  }
-  @media (max-width: 389px) {
-    height: 250px;
-    width: 100%;
-  }
-`;
-
+/* InfoContainer için güncelleme */
 const InfoContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -74,15 +42,60 @@ const InfoContainer = styled.div`
   @media (max-width: 710px) {
     margin: 0;
     width: 330px;
+    height: 550px; /* 100px daha büyük yükseklik */
+    transform: scale(0.97); /* Daha az küçültme */
+    transform-origin: top center;
   }
   @media (max-width: 389px) {
     width: 300px;
     padding: 18px;
     gap: 20px;
     overflow: visible;
+    height: 550px; /* Sabit yükseklik korunuyor */
+    transform: scale(0.92); /* Daha küçük ekranlarda biraz daha küçült */
   }
 `;
 
+/* MapContainer için güncelleme */
+const MapContainer = styled.div`
+  height: auto;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease;
+  position: relative;
+  
+  &:hover {
+    transform: scale(1.01);
+  }
+  
+  @media (max-width: 1350px) {
+    width: 420px;
+    height: 420px;
+  }
+  @media (max-width: 760px) {
+    width: 100%;
+    height: 300px;
+    border-radius: 10px;
+  }
+  @media (max-width: 710px) {
+    width: 100%;
+    height: 220px; /* Daha büyük harita yüksekliği */
+    border-radius: 10px;
+  }
+  @media (max-width: 500px) {
+    width: 100%;
+    height: 220px; /* Aynı büyük yükseklik */
+    border-radius: 10px;
+  }
+  @media (max-width: 389px) {
+    height: 200px; /* En küçük ekranlarda da daha büyük */
+    width: 100%;
+  }
+`;
+
+/* InfoDetails için güncelleme */
 const InfoDetails = styled.div`
   flex: 1;
   color: var(--color-grey-600);
@@ -98,8 +111,28 @@ const InfoDetails = styled.div`
     padding: 0;
     width: 100%;
   }
+  
+  @media (max-width: 710px) {
+    gap: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 310px; /* InfoDetails için daha fazla alan */
+  }
 `;
 
+/* Firma bilgileri içeren div için stil ekleyerek InfoItems arasındaki boşluğu ayarla */
+const FirmInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  
+  @media (max-width: 710px) {
+    margin-bottom: 10px;
+    flex: 1;
+    justify-content: space-evenly;
+  }
+`;
 const InfoItem = styled.div`
   margin-bottom: 0;
   display: flex;
@@ -135,13 +168,19 @@ const InfoItem = styled.div`
     }
   }
   
+  @media (max-width: 710px) {
+    padding: 8px 5px 8px 12px; /* Padding'i azalt */
+    margin-bottom: 4px; /* Öğeler arası biraz boşluk ekle */
+  }
+  
   @media (max-width: 389px) {
     font-size: 1.2rem;
-    padding: 10px 5px 10px 14px;
+    padding: 6px 5px 6px 12px; /* Padding'i daha da azalt */
     flex-wrap: wrap;
   }
 `;
 
+/* InfoLabel için güncelleme */
 const InfoLabel = styled.strong`
   margin-right: 10px;
   color: #004466;
@@ -149,28 +188,55 @@ const InfoLabel = styled.strong`
   letter-spacing: 0.2px;
   min-width: 150px;
   
+  @media (max-width: 710px) {
+    font-size: 1.25rem;
+    min-width: 120px;
+  }
+  
   @media (max-width: 500px) {
-    font-size: 1.35rem;
-    margin-bottom: 5px;
+    font-size: 1.2rem;
+    margin-bottom: 2px;
   }
 `;
 
+/* InfoValue için güncelleme */
 const InfoValue = styled.span`
   color: #333;
   font-weight: 400;
   font-size: 1.4rem;
   
+  @media (max-width: 710px) {
+    font-size: 1.25rem;
+  }
+  
   @media (max-width: 500px) {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     padding-left: 8px;
   }
 `;
 
-const PriceValue = styled(InfoValue)`
-  font-weight: 600;
-  color: #006699;
+/* FirmName için güncelleme */
+const FirmName = styled.h3`
+  color: #004466;
+  margin: 0 0 20px 0;
+  padding-bottom: 14px;
+  font-size: 2.6rem;
+  border-bottom: 2px solid rgba(0, 68, 102, 0.15);
+  
+  @media (max-width: 710px) {
+    font-size: 1.8rem;
+    margin-bottom: 15px; /* Başlık altında daha fazla boşluk */
+    padding-bottom: 10px;
+  }
+  
+  @media (max-width: 389px) {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+  }
 `;
 
+/* FirmLink için güncelleme */
 const FirmLink = styled.a`
   color: #004466;
   text-decoration: none;
@@ -192,12 +258,19 @@ const FirmLink = styled.a`
     transform: translateY(-2px);
   }
   
+  @media (max-width: 710px) {
+    margin-top: 20px;
+    padding: 12px 15px;
+    font-size: 1.15rem;
+    margin-bottom: 10px; /* Alt kısmında biraz boşluk bırak */
+  }
+  
   @media (max-width: 500px) {
     width: 100%;
     text-align: center;
-    padding: 14px 10px;
-    font-size: 1.1rem;
-    margin-top: 20px;
+    padding: 10px 10px;
+    font-size: 1.05rem;
+    margin-top: 12px;
     background-color: rgba(0, 68, 102, 0.12);
     border: 1px solid rgba(0, 68, 102, 0.15);
     word-break: break-word;
@@ -206,19 +279,12 @@ const FirmLink = styled.a`
   }
 `;
 
-const FirmName = styled.h3`
-  color: #004466;
-  margin: 0 0 20px 0;
-  padding-bottom: 14px;
-  font-size: 2.6rem;
-  border-bottom: 2px solid rgba(0, 68, 102, 0.15);
-  
-  @media (max-width: 389px) {
-    font-size: 1.4rem;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-  }
+const PriceValue = styled(InfoValue)`
+  font-weight: 600;
+  color: #006699;
 `;
+
+
 
 const FirmMap = ({ firmLocation }) => {
   if (!firmLocation) return null;
@@ -231,7 +297,7 @@ const FirmMap = ({ firmLocation }) => {
       <InfoDetails>
         <FirmName>{firmLocation.firm_name}</FirmName>
         
-        <div>
+        <FirmInfoContainer>
           <InfoItem>
             <InfoLabel>Vize Ücreti:</InfoLabel>
             <PriceValue>{firmLocation.visa_fee} €</PriceValue>
@@ -246,7 +312,7 @@ const FirmMap = ({ firmLocation }) => {
             <InfoLabel>Ofis Saatleri:</InfoLabel>
             <InfoValue>{firmLocation.office_hours}</InfoValue>
           </InfoItem>
-        </div>
+        </FirmInfoContainer>
         
         <FirmLink
           href={firmLocation.firm_url}

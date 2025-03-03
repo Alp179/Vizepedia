@@ -185,7 +185,6 @@ const DashboardItems = styled.div`
     align-items: center;
     gap: 24px;
     padding: 10px 0 30px;
-    margin-top: 20px;
   }
 `;
 
