@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import styled from "styled-components";
 
-/* InfoContainer için güncelleme */
 const InfoContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -283,8 +282,6 @@ const PriceValue = styled(InfoValue)`
   font-weight: 600;
   color: #006699;
 `;
-
-
 
 const FirmMap = ({ firmLocation }) => {
   if (!firmLocation) return null;
