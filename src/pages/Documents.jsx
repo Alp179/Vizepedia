@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import { useContext, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
@@ -11,22 +11,22 @@ import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 
+// Animasyon tanımlamaları
 const fadeIn = keyframes`
   from {
     opacity: 0;
-    transform: translateX(-20%);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
-  
 `;
 
 const fadeInScale = keyframes`
   from {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
@@ -41,10 +41,23 @@ const fadeOutScale = keyframes`
   }
   to {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.9);
   }
 `;
 
+const pulse = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+// Tekrar kullanılabilir stiller
 
 const PageContainer = styled.div`
   display: flex;
@@ -57,19 +70,18 @@ const PageContainer = styled.div`
   border-radius: 20px;
   box-sizing: border-box;
   position: relative;
+  animation: ${fadeIn} 0.5s ease-in-out;
 
   @media (max-width: 680px) {
     flex-direction: column;
-    padding: 10px;
+    padding: 16px;
     height: 100%;
   }
   @media (max-width: 450px) {
-    width: 90%;
+    width: 95%;
     margin: 0 auto;
+    padding: 12px;
   }
-
-  /* Belgeler arası geçiş için animasyon */
-  animation: ${fadeIn} 0.5s ease-in-out;
 `;
 
 const InfoContainer = styled.div`
@@ -77,14 +89,14 @@ const InfoContainer = styled.div`
   padding: 30px;
   background: var(--color-grey-51);
   border-radius: 15px;
-  color: #333;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  color: #333;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 680px) {
-    padding: 15px;
+    padding: 20px;
     margin-bottom: 20px;
   }
 `;
@@ -103,22 +115,22 @@ const ImageContainer = styled.div`
 
   @media (max-width: 680px) {
     margin-left: 0;
-    padding: 15px;
+    padding: 20px;
   }
 `;
 
 const DocumentTitle = styled.h1`
   font-size: 35px;
-  text-align: center;
   font-weight: bold;
   color: var(--color-grey-52);
+  margin-bottom: 16px;
+  text-align: left;
 
   @media (max-width: 1000px) {
-    font-size: 32px;
+    font-size: 24px;
   }
 
   @media (max-width: 680px) {
-    margin-top: 10px;
     font-size: 20px;
     text-align: center;
   }
@@ -128,59 +140,99 @@ const DocumentDescription = styled.p`
   margin-top: 20px;
   color: var(--color-grey-53);
   font-size: 18px;
-
-  @media (max-width: 1000px) {
-    font-size: 18px;
-  }
+  line-height: 1.6;
 
   @media (max-width: 680px) {
     font-size: 14px;
-    margin-top: 10px;
     text-align: center;
   }
 `;
 
-const DocumentMeta = styled.p`
-  margin-top: 10px;
-  color: var(--color-grey-53);
+const DocumentMeta = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  color: #718096;
+  font-size: 14px;
+  
+  svg {
+    margin-right: 8px;
+  }
 
   @media (max-width: 680px) {
-    font-size: 14px;
-    margin-top: 5px;
-    text-align: center;
+    font-size: 13px;
+    justify-content: center;
+  }
+`;
+
+const MetaTag = styled.span`
+  display: inline-flex;
+  align-items: center;
+  background-color: #e6f6ff;
+  color: #0056b3;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  margin-right: 12px;
+  
+  svg {
+    margin-right: 5px;
   }
 `;
 
 const ImageText = styled.p`
   color: var(--color-grey-52);
   font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 8px;
 `;
 
 const SourceButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
   margin-top: 20px;
-  text-align: center;
   padding: 15px 20px;
   background-color: #004466;
   color: white;
   border: 2px solid #00ffa2;
   border-radius: 16px;
-  width: 150px;
+  width: auto;
+  min-width: 150px;
+  transition: all 0.2s ease;
+  
+  svg {
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  
   &:hover {
     background-color: #00ffa2;
     color: #004466;
   }
+  
   @media (max-width: 680px) {
     font-size: 14px;
     padding: 10px 15px;
     margin-left: auto;
     margin-right: auto;
     max-width: 150px;
-    width: 80%;
+    width: auto;
+  }
+  
+  @media (max-width: 680px) {
+    font-size: 14px;
+    padding: 10px 15px;
+    margin-left: auto;
+    margin-right: auto;
   }
 `;
 
 const ActionButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 15px 25px;
   background-color: ${(props) => (props.isCompleted ? "#e74c3c" : "#2ecc71")};
   color: white;
@@ -188,67 +240,67 @@ const ActionButton = styled.button`
   border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
-  margin-left: auto;
   font-weight: bold;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  margin-left: auto;
   margin-right: auto;
-  width: 200px;
-  @media (max-width: 710px) {
-    width: 80% !important;
+  width: auto;
+  min-width: 200px;
+  
+  svg {
+    margin-right: 8px;
+    flex-shrink: 0;
   }
+  
+  ${props => props.isCompleted ? '' : css`
+    animation: ${pulse} 2s infinite ease-in-out;
+  `}
 
   &:hover {
     background-color: ${(props) => (props.isCompleted ? "#c0392b" : "#27ae60")};
   }
+  
+  @media (max-width: 680px) {
+    font-size: 14px;
+    padding: 12px;
+    width: 80%;
+    max-width: 200px;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
 
   @media (max-width: 680px) {
-    width: 200px;
-    padding: 10px;
+    width: 100%;
+    max-width: 200px;
+    padding: 12px;
     font-size: 14px;
-    margin-top: 15px;
+    margin: 20px auto 0;
   }
 `;
 
 const DocumentImage = styled.img`
-  max-width: 100%;
+  width: 100%;
   height: auto;
-  border: 2px solid #e0e0e0;
-  border-radius: 10px;
-`;
-
-const RelatedSteps = styled.div`
-  background-color: #f0f0f0;
-  padding: 20px;
-  border-radius: 15px;
-  margin-top: 20px;
-  color: #333;
-  box-shadow: 0px 9px 24px -12px rgba(0, 0, 0, 0.75);
-
-  @media (max-width: 680px) {
-    padding: 15px;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  object-fit: cover;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    transform: scale(1.02);
   }
 `;
 
-const RelatedStepsTitle = styled.h3`
-  margin-bottom: 10px;
-  text-align: center;
 
-  @media (max-width: 1000px) {
-    font-size: 16px;
-  }
 
-  @media (max-width: 680px) {
-    text-align: center;
-  }
-`;
 
 const NavigationButton = styled.button`
-  position: fixed;
+  position: absolute;
   top: 50%;
   transform: translateY(-50%);
   background: var(--color-grey-903);
-  z-index: 3000;
   color: white;
   border: none;
   border-radius: 50%;
@@ -260,18 +312,44 @@ const NavigationButton = styled.button`
   align-items: center;
   justify-content: center;
   font-size: 20px;
+  transition: all 0.2s ease;
 
   &:hover {
     background-color: #004466;
     color: #00ffa2;
   }
 
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.95);
+      color: #1a365d;
+      transform: translateY(-50%);
+    }
+  }
+
   &.left {
-    left: 10px;
+    left: -60px;
   }
 
   &.right {
-    right: 10px;
+    right: -60px;
+  }
+  
+  @media (max-width: 680px) {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    
+    &.left {
+      left: 10px;
+    }
+    
+    &.right {
+      right: 10px;
+    }
   }
 `;
 
@@ -281,14 +359,13 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Arka planı hafif karartma */
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(8px); /* Arka planı blurlama */
+  backdrop-filter: blur(8px);
 `;
-
 
 const ModalContent = styled.div`
   position: relative;
@@ -297,8 +374,8 @@ const ModalContent = styled.div`
   justify-content: center;
   width: ${({ width }) => `${width}px`};
   height: ${({ height }) => `${height}px`};
-  max-width: 80vw;
-  max-height: 80vh;
+  max-width: 90vw;
+  max-height: 90vh;
   background: transparent;
   border: none;
   padding: 0;
@@ -306,32 +383,96 @@ const ModalContent = styled.div`
   animation: ${({ isClosing }) => (isClosing ? fadeOutScale : fadeInScale)} 0.3s ease-in-out;
 `;
 
-
 const CloseButton = styled.button`
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: red;
+  top: -40px;
+  right: -40px;
+  background: #e53e3e;
   color: white;
   border: none;
   border-radius: 50%;
-  z-index: 3000;
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   font-size: 18px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  
   &:hover {
-    background: #004466;
-    color: #00ffa2;
+    background: #c53030;
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 680px) {
+    top: -30px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
   }
 `;
 
 const ModalImage = styled.img`
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  border-radius: 16px;
+  object-fit: contain;
+  border-radius: 8px;
 `;
+
+const DocProgress = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+`;
+
+const ProgressDot = styled.div`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: ${(props) => (props.active ? "#004466" : "#cbd5e0")};
+  margin: 0 4px;
+  transition: all 0.3s ease;
+  
+  ${props => props.active && css`
+    transform: scale(1.3);
+  `}
+`;
+
+const MetaInfo = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+`;
+
+// SVG ikonları için bileşenler
+const TimeIcon = () => (
+  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+);
+
+const LinkIcon = () => (
+  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+  </svg>
+);
+
+const UndoIcon = () => (
+  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a4 4 0 0 1 0 8H9" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10l5-5" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10l5 5" />
+  </svg>
+);
 
 const DocumentDetail = () => {
   const imgRef = useRef(null);
@@ -374,41 +515,72 @@ const DocumentDetail = () => {
   }, []);
 
   useEffect(() => {
+    // Sadece mobil görünümde navigasyon butonlarını bağlantı butonuyla hizala
+    const adjustNavigationButtons = () => {
+      if (window.innerWidth <= 680) {
+        const sourceButton = document.getElementById('sourceButton');
+        if (sourceButton) {
+          const buttonRect = sourceButton.getBoundingClientRect();
+          const navigationButtons = document.querySelectorAll('.left, .right');
+          navigationButtons.forEach(button => {
+            // Bağlantı butonunun ortasına hizala
+            button.style.top = `${buttonRect.top + buttonRect.height/2 - 22.5}px`;
+          });
+        }
+      } else {
+        // Desktop görünümde eski konumlarına getir
+        const navigationButtons = document.querySelectorAll('.left, .right');
+        navigationButtons.forEach(button => {
+          button.style.top = '';
+          button.style.transform = '';
+        });
+      }
+    };
+
+    // Sayfa tam yüklendiğinde butonları hizala
+    setTimeout(adjustNavigationButtons, 500);
+
+    // Pencere boyutu değiştikçe butonları yeniden hizala
+    window.addEventListener('resize', adjustNavigationButtons);
+    
+    return () => {
+      window.removeEventListener('resize', adjustNavigationButtons);
+    };
+  }, [selectedDocument]);
+
+  useEffect(() => {
     if (isModalOpen) {
-      document.body.style.overflow = "hidden"; // Scroll'u kapat
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto"; // Scroll'u aç
+      document.body.style.overflow = "auto";
     }
   
     return () => {
-      document.body.style.overflow = "auto"; // Modal kapanınca scroll'u geri aç
+      document.body.style.overflow = "auto";
     };
   }, [isModalOpen]);
   
-
   useEffect(() => {
     if (imgRef.current) {
       const updateSize = () => {
         const imgWidth = imgRef.current.naturalWidth;
         const imgHeight = imgRef.current.naturalHeight;
-        const windowWidth = window.innerWidth * 0.98;
-        const windowHeight = window.innerHeight * 0.98;
+        const windowWidth = window.innerWidth * 0.8;
+        const windowHeight = window.innerHeight * 0.8;
         const aspectRatio = imgWidth / imgHeight;
   
         let newWidth, newHeight;
   
         if (aspectRatio > 1) {
-          // Enine büyük görseller
-          newWidth = windowWidth;
-          newHeight = windowWidth / aspectRatio;
+          newWidth = Math.min(imgWidth, windowWidth);
+          newHeight = newWidth / aspectRatio;
           if (newHeight > windowHeight) {
             newHeight = windowHeight;
             newWidth = newHeight * aspectRatio;
           }
         } else {
-          // Boyuna büyük görseller
-          newHeight = windowHeight;
-          newWidth = windowHeight * aspectRatio;
+          newHeight = Math.min(imgHeight, windowHeight);
+          newWidth = newHeight * aspectRatio;
           if (newWidth > windowWidth) {
             newWidth = windowWidth;
             newHeight = newWidth / aspectRatio;
@@ -491,54 +663,85 @@ const DocumentDetail = () => {
   };
 
   const handleImageClick = (imageSrc) => {
-    setIsClosing(false); // Açılırken isClosing'in false olduğundan emin ol
+    setIsClosing(false);
     setModalImage(imageSrc);
     setIsModalOpen(true);
   };
   
-
   const closeModal = () => {
-    setIsClosing(true); // Önce kapanış animasyonunu başlat
+    setIsClosing(true);
     setTimeout(() => {
       setIsModalOpen(false);
       setModalImage("");
-      setIsClosing(false); // Kapanış animasyonu tamamlandı
-    }, 300); // 300ms, animasyon süresi kadar beklet
+      setIsClosing(false);
+    }, 300);
   };
   
-
   return (
     <>
       <PageContainer>
         <NavigationButton
           className="left"
           onClick={() => handleNavigation("prev")}
+          disabled={currentDocumentIndex === 0}
         >
           &lt;
         </NavigationButton>
+        
         <InfoContainer>
-          <DocumentMeta>
-            Tahmini Tamamlama Süresi: {selectedDocument.estimatedCompletionTime}
-          </DocumentMeta>
-          <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
-          <DocumentDescription>
-            {selectedDocument.docDescription}
-          </DocumentDescription>
-          <SourceButton>Bağlantı {selectedDocument.docSource}</SourceButton>
-          <RelatedSteps>
-            <RelatedStepsTitle>
-              Bu Belge ile Bağlantılı İşlemler
-            </RelatedStepsTitle>
-            <ul>
-              {selectedDocument.relatedSteps?.map((step, index) => (
-                <li key={index}>{step}</li>
-              ))}
-            </ul>
-          </RelatedSteps>
+          <div>
+            <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
+            
+            <MetaInfo>
+              <MetaTag>
+                <TimeIcon />
+                {selectedDocument.estimatedCompletionTime}
+              </MetaTag>
+              {selectedDocument.docType && (
+                <MetaTag>
+                  {selectedDocument.docType}
+                </MetaTag>
+              )}
+            </MetaInfo>
+            
+            <DocumentDescription>
+              {selectedDocument.docDescription}
+            </DocumentDescription>
+            
+            <SourceButton id="sourceButton">
+              <LinkIcon />
+              <span>Bağlantı</span>
+            </SourceButton>
+            
+            {/* İlgili işlemler kısmı geçici olarak inaktif 
+            <RelatedSteps>
+              <RelatedStepsTitle>
+                Bu Belge ile Bağlantılı İşlemler
+              </RelatedStepsTitle>
+              <StepsList>
+                {selectedDocument.relatedSteps?.map((step, index) => (
+                  <li key={index}>{step}</li>
+                ))}
+              </StepsList>
+            </RelatedSteps>
+            */}
+          </div>
+          
           <ActionButton onClick={handleAction} isCompleted={isCompleted}>
-            {isCompleted ? "Tamamlandı" : "Tamamla"}
+            {isCompleted ? (
+              <>
+                <UndoIcon />
+                <span>Tamamlandı</span>
+              </>
+            ) : (
+              <>
+                <CheckIcon />
+                <span>Tamamla</span>
+              </>
+            )}
           </ActionButton>
         </InfoContainer>
+        
         <ImageContainer>
           <ImageText>Belge Örneği</ImageText>
           <DocumentImage
@@ -546,12 +749,25 @@ const DocumentDetail = () => {
             alt={selectedDocument.docName}
             onClick={() => handleImageClick(selectedDocument.docImage)}
           />
-          <ImageText>Temin Yeri:</ImageText>
-          <ImageText>Tür:</ImageText>
+          
+          <DocumentMeta>
+            Temin Yeri: {selectedDocument.procurementLocation || "Belirtilmemiş"}
+          </DocumentMeta>
+          
+          <DocProgress>
+            {documents && documents.map((_, index) => (
+              <ProgressDot 
+                key={index} 
+                active={index === currentDocumentIndex} 
+              />
+            ))}
+          </DocProgress>
         </ImageContainer>
+        
         <NavigationButton
           className="right"
           onClick={() => handleNavigation("next")}
+          disabled={!documents || currentDocumentIndex === documents.length - 1}
         >
           &gt;
         </NavigationButton>
@@ -559,12 +775,20 @@ const DocumentDetail = () => {
 
       {isModalOpen && (
         <ModalOverlay onClick={closeModal}>
-        <ModalContent isClosing={isClosing} width={dimensions.width} height={dimensions.height} onClick={(e) => e.stopPropagation()}>
-          <CloseButton onClick={closeModal}>×</CloseButton>
-          <ModalImage ref={imgRef} src={modalImage} alt="Büyütülmüş Görsel" />
-        </ModalContent>
-      </ModalOverlay>
-    
+          <ModalContent 
+            isClosing={isClosing} 
+            width={dimensions.width} 
+            height={dimensions.height} 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <CloseButton onClick={closeModal}>×</CloseButton>
+            <ModalImage 
+              ref={imgRef} 
+              src={modalImage} 
+              alt="Büyütülmüş Görsel" 
+            />
+          </ModalContent>
+        </ModalOverlay>
       )}
     </>
   );
