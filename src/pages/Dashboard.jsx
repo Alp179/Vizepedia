@@ -25,36 +25,53 @@ import MobileCarousel from "../ui/MobileCarousel";
 const CreatedAtContainer = styled.div`
   font-size: 1.3rem;
   color: var(--color-grey-700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
 
-  @media (max-width: 1550px) {
-    margin-left: -100px;
+  @media (min-width: 711px) {
+    position: absolute;
+    top: 25px;
+    right: 40px;
+    padding: 6px 12px;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
 
   @media (max-width: 710px) {
     margin-left: 0;
-    margin-top: 40px;
-    mix-blend-mode: difference;
-    width: 200px;
+    margin-top: 5px;
+    color: rgba(255, 255, 255, 0.9);
+    width: auto;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(5px);
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
   }
 `;
 
 const CustomRow = styled(Row)`
-  margin-top: 30px;
+  margin-top: 25px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  justify-content: flex-start;
-  align-items: flex-start;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
   position: relative;
   z-index: 10;
 
   @media (max-width: 710px) {
-    @media (max-height: 830px) {
-      gap: 8px;
-    }
-    width: 90%;
-    margin: 30px auto 0;
-    padding: 0 15px;
+    width: 92%;
+    margin: 25px auto 10px;
+    padding: 0;
   }
 `;
 
@@ -64,7 +81,7 @@ const DashboardContainer = styled.div`
   height: auto;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 
   @media (max-width: 710px) {
     height: 100%;
@@ -73,11 +90,13 @@ const DashboardContainer = styled.div`
     flex-flow: column;
     justify-content: flex-start;
     margin-right: auto;
+    padding-top: 15px;
+    background: linear-gradient(rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0) 60%);
   }
 `;
 
 const Ceper = styled.div`
-  margin-top: 30px;
+  margin-top: 20px;
   margin-left: 20vw;
   margin-right: auto;
   display: flex;
@@ -102,15 +121,15 @@ const Ceper = styled.div`
 
   @media (max-width: 710px) {
     position: relative;
-    margin: 30px auto;
-    transform: scale(0.9);
+    margin: 15px auto;
+    transform: scale(0.85);
   }
   &:hover {
     border-color: #004466;
     transform: scale(1.03);
 
     @media (max-width: 710px) {
-      transform: scale(0.95);
+      transform: scale(0.9);
     }
   }
 `;
@@ -154,7 +173,7 @@ const StepIndicatorWrapper = styled.div`
   justify-content: flex-start;
 
   @media (max-width: 1450px) {
-    margin-bottom: 46px;
+    margin-bottom: 40px;
   }
 
   @media (max-width: 710px) {
@@ -174,7 +193,7 @@ const InfoContainerWrapper = styled.div`
 const DashboardItems = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   position: relative;
   z-index: 10;
 
@@ -183,8 +202,9 @@ const DashboardItems = styled.div`
     width: 100%;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
-    padding: 10px 0 30px;
+    gap: 8px;
+    padding: 0 0 20px;
+    margin-top: -8px;
   }
 `;
 
@@ -382,12 +402,9 @@ const Dashboard = () => {
       <CustomRow type="horizontal">
         {createdAt && (
           <CreatedAtContainer style={{ zIndex: "3000" }}>
-            Oluşturulma tarihi: {createdAt}
+            <span role="img" aria-label="calendar" style={{ marginRight: "6px", fontSize: isMobile ? "0.95rem" : "1.1rem" }}>📆</span> {createdAt}
           </CreatedAtContainer>
         )}
-        <Heading style={{ zIndex: "3000" }} as="h1">
-          Hoş geldiniz
-        </Heading>
       </CustomRow>
 
       <DashboardItems>
@@ -447,7 +464,7 @@ const Dashboard = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            marginTop: "20px",
+            marginTop: isMobile ? "10px" : "20px",
           }}
         >
           <ModalSignup>
