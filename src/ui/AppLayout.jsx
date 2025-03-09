@@ -4,13 +4,14 @@ import Header from "./Header";
 import styled from "styled-components";
 import DashboardMobileHeader from "./DashboardMobileHeader";
 import MobileMenu from "./MobileMenu";
+import SlideShow from "./SlideShow";
 
 const StyledAppLayout = styled.div`
   overflow: clip;
   display: grid;
   grid-template-columns: 26rem 1fr;
   grid-template-rows: auto 1fr;
-  height: 100dvh;
+  height: 100%;
   background: var(--color-grey-1);
   @media (max-width: 1300px) {
     grid-template-columns: 22rem 1fr;
@@ -33,7 +34,7 @@ const Main = styled.main`
   overflow-x: clip;
   z-index: 1;
   backdrop-filter: blur(0px);
-  padding: 10rem 4.8rem 6.4rem;
+  padding: 10rem 0 0 0;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -54,7 +55,7 @@ const Main = styled.main`
     border: 3px solid var(--color-grey-2);
   }
   @media (max-width: 710px) {
-    padding: 40px 0;;
+    padding: 40px 0;
     width: 100vw;
     &::-webkit-scrollbar {
       width: 0;
@@ -78,6 +79,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
+  @media (max-width: 1550px) {
+    margin-left: 150px;
+  }
   @media (max-width: 710px) {
     padding-bottom: 80px;
     width: 100vw;
@@ -105,6 +109,7 @@ function AppLayout() {
         <Container>
           <Outlet />
         </Container>
+        <SlideShow />
       </Main>
     </StyledAppLayout>
   );

@@ -23,40 +23,21 @@ import AnimatedFlag from "../ui/AnimatedFlag";
 import MobileCarousel from "../ui/MobileCarousel";
 
 const CreatedAtContainer = styled.div`
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   color: var(--color-grey-700);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: flex;
   align-items: center;
+  z-index: 3000;
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(5px);
+  padding: 6px 12px;
+  border-radius: 6px;
 
-  @media (min-width: 711px) {
-    position: absolute;
-    top: 25px;
-    right: 40px;
-    padding: 6px 12px;
-    background-color: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(4px);
-    border-radius: 8px;
-    font-size: 1.1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-
-  @media (max-width: 710px) {
-    margin-left: 0;
-    margin-top: 5px;
-    color: rgba(255, 255, 255, 0.9);
-    width: auto;
-    padding: 4px 10px;
-    border-radius: 6px;
-    background-color: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(5px);
-    font-size: 0.95rem;
-    display: inline-flex;
-    align-items: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
 `;
 
 const CustomRow = styled(Row)`
@@ -66,12 +47,17 @@ const CustomRow = styled(Row)`
   justify-content: flex-end;
   align-items: center;
   position: relative;
-  z-index: 10;
-
+  z-index: 3000;
+  margin: 25px auto 10px 0;
+  @media (max-width: 1550px) {
+    margin-left: -100px;
+  }
+  padding: 0;
   @media (max-width: 710px) {
-    width: 92%;
-    margin: 25px auto 10px;
-    padding: 0;
+    margin: 55px 10px 0 auto;
+  }
+  @media (max-width: 450px) {
+    margin-top: 40px;
   }
 `;
 
@@ -91,7 +77,11 @@ const DashboardContainer = styled.div`
     justify-content: flex-start;
     margin-right: auto;
     padding-top: 15px;
-    background: linear-gradient(rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.1) 40%, rgba(0, 0, 0, 0) 60%);
+    background: linear-gradient(
+      rgba(0, 0, 0, 0.4) 0%,
+      rgba(0, 0, 0, 0.1) 40%,
+      rgba(0, 0, 0, 0) 60%
+    );
   }
 `;
 
@@ -402,7 +392,17 @@ const Dashboard = () => {
       <CustomRow type="horizontal">
         {createdAt && (
           <CreatedAtContainer style={{ zIndex: "3000" }}>
-            <span role="img" aria-label="calendar" style={{ marginRight: "6px", fontSize: isMobile ? "0.95rem" : "1.1rem" }}>📆</span> {createdAt}
+            <span
+              role="img"
+              aria-label="calendar"
+              style={{
+                marginRight: "6px",
+                fontSize: isMobile ? "0.95rem" : "1.1rem",
+              }}
+            >
+              📆
+            </span>{" "}
+            {createdAt}
           </CreatedAtContainer>
         )}
       </CustomRow>
