@@ -199,7 +199,6 @@ FaqIcon.propTypes = {
 const FaqContentWrapper = styled.div`
   padding: ${({ isOpen }) => (isOpen ? "0 28px 28px" : "0 28px")};
   max-height: ${({ isOpen, height }) => (isOpen ? `${height}px` : "0")};
-  overflow: hidden;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: ${({ isOpen }) => (isOpen ? "1" : "0")};
   

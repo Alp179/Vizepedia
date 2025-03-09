@@ -1,3 +1,4 @@
+// MainPage.jsx içerisindeki import düzeltmesi
 import styled from "styled-components";
 import Heading from "../ui/Heading";
 import Footer from "../ui/Footer";
@@ -5,270 +6,52 @@ import Marquee from "react-fast-marquee";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
 import HeroScrollDemo from "../ui/HeroScrollDemo";
-import { FaqSection, FaqTitle, FaqSubtitle, Faq, CountryList, CountryItem } from "../ui/FaqComponents";
-
-const Why = styled.p`
-  text-align: center;
-  font-size: 40px;
-  color: var(--color-grey-904);
-  z-index: 3000;
-  margin-top: 50px;
-  font-weight: bold;
-  @media (max-width: 1200px) {
-    font-size: 32px;
-  }
-  @media (max-width: 360px) {
-    font-size: 24px;
-  }
-`;
-
-const WhyCardsContainer = styled.div`
-  margin-top: 100px;
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  align-items: center;
-  @media (max-width: 1225px) {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  @media (max-width: 732px) {
-    flex-flow: column;
-    margin-top: 36px;
-  }
-`;
+import { FaqSection, FaqTitle, FaqSubtitle, Faq } from "../ui/FaqComponents";
+import GroupedCountryList from "../ui/GroupedCountryList"; // CountryGroups yerine GroupedCountryList
+import {
+  FeatureTitle,
+  FeaturesContainer,
+  FeatureCard,
+  CardTitle,
+  CardContent,
+  CardImage,
+  SecondaryFeaturesContainer,
+  HorizontalFeatureCard,
+  HorizontalCardContent,
+  HorizontalCardImageWrapper,
+  HorizontalCardImage,
+} from "../ui/FeatureComponents";
 
 const BackgroundContainer = styled.div`
   margin-left: auto;
   margin-right: auto;
+  position: relative;
 `;
 
-const WhyCards = styled.div`
-  mix-blend-mode: normal;
-  background: var(--color-grey-919);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border-radius: 20px;
-  width: 265px;
-  box-shadow: 0px 26px 35px 6px rgba(0, 0, 0, 0.2);
-  height: 565px;
+const BackgroundContainer2 = styled.div`
+  position: absolute;
+  margin-top: 100px;
   display: flex;
-  flex-direction: column;
-  gap: 22px;
-  @media (max-width: 1225px) {
-    width: 360px;
-    height: 500px;
-  }
-  @media (max-width: 360px) {
-    width: 100%;
-    height: auto;
-  }
-`;
-
-const WhyCardsHeading = styled.p`
-  color: var(--color-grey-904);
-  font-size: 24px;
-  margin-top: 32px;
-  margin-left: 29px;
-  font-weight: 600;
-  @media (max-width: 732px) {
-    font-size: 28px;
-  }
-  @media (max-width: 360px) {
-    font-size: 20px;
-  }
-`;
-
-const WhyCardsContext = styled.p`
-  color: var(--color-grey-904);
-  margin-left: 29px;
-  margin-right: 20px;
-  font-size: 16px;
-  line-height: 193%;
-  @media (max-width: 732px) {
-    font-size: 20px;
-  }
-  @media (max-width: 360px) {
-    font-size: 16px;
-  }
-`;
-
-const WhyCardsImagesSavings = styled.img`
-  user-drag: none;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  width: 212px;
-  height: 212px;
-  margin-top: auto;
+  height: 1100px;
+  width: 100%;
   margin-left: auto;
-  @media (max-width: 732px) {
-    height: 35%;
-    width: auto;
-    align-self: flex-end;
-  }
+  margin-right: auto;
+  z-index: 1;
 `;
 
-const WhyCardsImagesWatch = styled.img`
-  user-drag: none;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  width: 212px;
-  height: 212px;
-  margin-top: auto;
-  margin-left: auto;
-  @media (max-width: 732px) {
-    margin: -80px 10px 50px auto;
-  }
-  @media (max-width: 360px) {
-    margin: auto 20px 20px auto;
-  }
+const Background1 = styled.div`
+  margin-top: -600px;
+  width: 50%;
+  height: 100%;
+  background: var(--color-grey-917);
 `;
 
-const WhyCardsImagesHappy = styled.img`
-  user-drag: none;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  width: 212px;
-  height: 212px;
-  margin-top: auto;
-  margin-left: auto;
-  @media (max-width: 732px) {
-    height: 30%;
-    width: auto;
-    margin: 0;
-    align-self: flex-end;
-  }
-`;
-
-const WhyCardsImagesPhone = styled.img`
-  user-drag: none;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  width: 212px;
-  height: 212px;
-  margin-top: auto;
-  margin-left: auto;
-  @media (max-width: 732px) {
-    height: 30%;
-    width: auto;
-    margin: -30px 10px 50px auto;
-  }
-`;
-
-const WhyCardsContainer2 = styled.div`
-  margin-top: 32px;
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  align-items: center;
-  @media (max-width: 1200px) {
-    margin-top: 12px;
-    gap: 12px;
-  }
-  @media (max-width: 732px) {
-    flex-flow: column;
-  }
-`;
-
-const WhyCards2 = styled.div`
-  background: var(--color-grey-919);
-  box-shadow: 0px 26px 35px 6px rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
-  height: 265px;
-  width: 565px;
-  display: flex;
-  gap: 22px;
-  @media (max-width: 1225px) {
-    width: 360px;
-    height: 500px;
-    flex-flow: column;
-  }
-  @media (max-width: 360px) {
-    width: 100%;
-    height: auto;
-  }
-`;
-
-const WhyCards2Inner = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-`;
-
-const WhyCardsHeading2 = styled.p`
-  color: var(--color-grey-904);
-  font-size: 24px;
-  margin-top: 39px;
-  margin-left: 29px;
-  font-weight: 600;
-  @media (max-width: 732px) {
-    font-size: 28px;
-  }
-  @media (max-width: 360px) {
-    font-size: 20px;
-  }
-`;
-
-const WhyCardsContext2 = styled.p`
-  color: var(--color-grey-904);
-  margin-left: 29px;
-  margin-right: 20px;
-  font-size: 16px;
-  line-height: 193%;
-  @media (max-width: 732px) {
-    font-size: 20px;
-  }
-  @media (max-width: 360px) {
-    font-size: 16px;
-  }
-`;
-
-const WhyCards2DocImage = styled.img`
-  user-drag: none;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  width: 142px;
-  height: 185px;
-  margin: auto 10px auto 0;
-  @media (max-width: 1225px) {
-    margin: auto 10px 10px auto;
-  }
-  @media (max-width: 732px) {
-    margin-top: -10px;
-  }
-`;
-
-const WhyCards2PlaneImage = styled.img`
-  user-drag: none;
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-drag: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  margin: auto 10px auto 0;
-  width: 203px;
-  height: 115px;
-  @media (max-width: 1225px) {
-    margin: auto 10px 10px auto;
-  }
-  @media (max-width: 732px) {
-    margin: 50px 20px 10px auto;
-  }
+const Background2 = styled.div`
+  margin-top: -600px;
+  background: var(--color-grey-918);
+  transform: scaleX(-1);
+  width: 50%;
+  height: 100%;
 `;
 
 const RahatProfesyonelContainer = styled.div`
@@ -322,159 +105,100 @@ const RahatProfesyonelMobileHeading = styled.p`
   }
 `;
 
-const BackgroundContainer2 = styled.div`
-  position: absolute;
-  display: flex;
-  height: 1100px;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-`;
-
-const Background1 = styled.div`
-  margin-top: -600px;
-  width: 50%;
-  height: 100%;
-  background: var(--color-grey-917);
-`;
-
-const Background2 = styled.div`
-  margin-top: -600px;
-  background: var(--color-grey-918);
-  transform: scaleX(-1);
-  width: 50%;
-  height: 100%;
-`;
-
 function MainPage() {
-  const countries = [
-    "Almanya",
-    "Avusturya",
-    "Belçika",
-    "Çek Cumhuriyeti",
-    "Danimarka",
-    "Estonya",
-    "Finlandiya",
-    "Fransa",
-    "Yunanistan",
-    "Hollanda",
-    "Hırvatistan",
-    "İtalya",
-    "Letonya",
-    "Litvanya",
-    "Lüksemburg",
-    "Malta",
-    "Polonya",
-    "Portekiz",
-    "Slovakya",
-    "Slovenya",
-    "İspanya",
-    "İsveç",
-    "İsviçre",
-    "Norveç",
-    "İzlanda",
-    "Lihtenştayn",
-    "Çin",
-    "Amerika Birleşik Devletleri",
-    "Birleşik Arap Emirlikleri",
-    "Rusya",
-    "Birleşik Krallık",
-    "Kanada",
+  // Features kartları için veriler
+  const featuresData = [
+    {
+      title: "Tamamen Ücretsiz",
+      content:
+        "Vizepedia, size ücretsiz bir hizmet sunarak, vize başvuru sürecindeki danışmanlık giderlerinden tasarruf etmenize yardımcı olur ve seyahat bütçenizi optimize eder.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-savings.png?t=2024-10-01T13%3A58%3A51.889Z",
+      alt: "bonbon-savings",
+    },
+    {
+      title: "Zaman Tasarrufu",
+      content:
+        "Vizepedia, vize başvuru sürecine ilişkin bilgilere kolay ve hızlı bir şekilde erişimenizi sağlayarak, süreç yönetimini daha verimli hale getirir. Böylece, süreci daha rahat ve keyifli bir deneyime dönüştürebilirsiniz.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-watch.png?t=2024-10-01T13%3A59%3A14.116Z",
+      alt: "bonbon-watch",
+    },
+    {
+      title: "Ferah Arayüz",
+      content:
+        "Vizepedia, kullanıcıların ihtiyaçlarına göre tasarlanmış kullanıcı dostu bir arayüz sunarak, vize başvuru süreci boyunca rahat ve sorunsuz bir deneyim yaşamanıza yardımcı olur.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-happy.png?t=2024-10-01T13%3A59%3A27.902Z",
+      alt: "bonbon-happy",
+    },
+    {
+      title: "Güncel ve Doğru",
+      content:
+        "Vizepedia, vize başvuru süreçlerindeki değişiklikleri ve güncellemeleri yakından takip ederek, size her zaman en güncel ve doğru bilgileri sunar. Bu sayede, güncel bilgilere güvenerek başvurularınızı gerçekleştirin.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-phone.png?t=2024-10-01T14%3A00%3A19.108Z",
+      alt: "bonbon-phone",
+    },
+  ];
+
+  // İkincil özellikler için veriler
+  const secondaryFeaturesData = [
+    {
+      title: "En Uygun Belgeler",
+      content:
+        "Vizepedia, seyahat planlarınıza özel olarak hazırlanmış belge listeleriyle, vize başvuru sürecinizi profesyonel ve sistematik bir şekilde yönetmenize imkan tanır.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-doc.png?t=2024-10-01T14%3A00%3A36.059Z",
+      alt: "bonbon-doc",
+    },
+    {
+      title: "Süreç Takibi",
+      content:
+        "Vizepedia, vize başvuru sürecinde her adımda size rehberlik eder ve sürecinizi kolayca takip etmenize imkan tanır. Kontrol hep sizde!",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-flight.png?t=2024-10-01T14%3A00%3A47.915Z",
+      alt: "bonbon-flight",
+    },
   ];
 
   return (
     <>
       <HeroScrollDemo />
-      
+
       <BackgroundContainer>
         <BackgroundContainer2>
           <Background1 />
           <Background2 />
         </BackgroundContainer2>
-        <Why>Neden Vizepedia</Why>
-        <WhyCardsContainer>
-          <WhyCards>
-            <WhyCardsHeading>Tamamen Ücretsiz</WhyCardsHeading>
-            <WhyCardsContext>
-              Vizepedia, size ücretsiz bir hizmet sunarak, vize başvuru
-              sürecindeki danışmanlık giderlerinden tasarruf etmenize yardımcı
-              olur ve seyahat bütçenizi optimize eder.
-            </WhyCardsContext>
-            <WhyCardsImagesSavings
-              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-savings.png?t=2024-10-01T13%3A58%3A51.889Z"
-              alt="bonbon-savings"
-            />
-          </WhyCards>
-          <WhyCards>
-            <WhyCardsHeading>Zaman Tasarrufu</WhyCardsHeading>
-            <WhyCardsContext>
-              Vizepedia, vize başvuru sürecine ilişkin bilgilere kolay ve hızlı
-              bir şekilde erişimenizi sağlayarak, süreç yönetimini daha verimli
-              hale getirir. Böylece, süreci daha rahat ve keyifli bir deneyime
-              dönüştürebilirsiniz.
-            </WhyCardsContext>
-            <WhyCardsImagesWatch
-              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-watch.png?t=2024-10-01T13%3A59%3A14.116Z"
-              alt="bonbon-watch"
-            />
-          </WhyCards>
-          <WhyCards>
-            <WhyCardsHeading>Ferah Arayüz</WhyCardsHeading>
-            <WhyCardsContext>
-              Vizepedia, kullanıcıların ihtiyaçlarına göre tasarlanmış kullanıcı
-              dostu bir arayüz sunarak, vize başvuru süreci boyunca rahat ve
-              sorunsuz bir deneyim yaşamanıza yardımcı olur.
-            </WhyCardsContext>
-            <WhyCardsImagesHappy
-              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-happy.png?t=2024-10-01T13%3A59%3A27.902Z"
-              alt="bonbon-happy"
-            />
-          </WhyCards>
-          <WhyCards>
-            <WhyCardsHeading>Güncel ve Doğru</WhyCardsHeading>
-            <WhyCardsContext>
-              Vizepedia, vize başvuru süreçlerindeki değişiklikleri ve
-              güncellemeleri yakından takip ederek, size her zaman en güncel ve
-              doğru bilgileri sunar. Bu sayede, güncel bilgilere güvenerek
-              başvurularınızı gerçekleştirin.
-            </WhyCardsContext>
-            <WhyCardsImagesPhone
-              src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-phone.png?t=2024-10-01T14%3A00%3A19.108Z"
-              alt="bonbon-phone"
-            />
-          </WhyCards>
-        </WhyCardsContainer>
+
+        <FeatureTitle>Neden Vizepedia</FeatureTitle>
+
+        <FeaturesContainer>
+          {featuresData.map((feature, index) => (
+            <FeatureCard key={index} index={index}>
+              <CardTitle>{feature.title}</CardTitle>
+              <CardContent>{feature.content}</CardContent>
+              <CardImage src={feature.image} alt={feature.alt} />
+            </FeatureCard>
+          ))}
+        </FeaturesContainer>
+
+        <SecondaryFeaturesContainer>
+          {secondaryFeaturesData.map((feature, index) => (
+            <HorizontalFeatureCard key={index} index={index}>
+              <HorizontalCardContent>
+                <CardTitle>{feature.title}</CardTitle>
+                <CardContent>{feature.content}</CardContent>
+              </HorizontalCardContent>
+              <HorizontalCardImageWrapper>
+                <HorizontalCardImage src={feature.image} alt={feature.alt} />
+              </HorizontalCardImageWrapper>
+            </HorizontalFeatureCard>
+          ))}
+        </SecondaryFeaturesContainer>
       </BackgroundContainer>
-      <WhyCardsContainer2>
-        <WhyCards2>
-          <WhyCards2Inner>
-            <WhyCardsHeading2>En Uygun Belgeler</WhyCardsHeading2>
-            <WhyCardsContext2>
-              Vizepedia, seyahat planlarınıza özel olarak hazırlanmış belge
-              listeleriyle, vize başvuru sürecinizi profesyonel ve sistematik
-              bir şekilde yönetmenize imkan tanır.
-            </WhyCardsContext2>
-          </WhyCards2Inner>
-          <WhyCards2DocImage
-            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-doc.png?t=2024-10-01T14%3A00%3A36.059Z"
-            alt="bonbon-doc"
-          />
-        </WhyCards2>
-        <WhyCards2>
-          <WhyCards2Inner>
-            <WhyCardsHeading2>Süreç Takibi</WhyCardsHeading2>
-            <WhyCardsContext2>
-              Vizepedia, vize başvuru sürecinde her adımda size rehberlik eder
-              ve sürecinizi kolayca takip etmenize imkan tanır. Kontrol hep
-              sizde!
-            </WhyCardsContext2>
-          </WhyCards2Inner>
-          <WhyCards2PlaneImage
-            src="https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/bucketto/bonbon-flight.png?t=2024-10-01T14%3A00%3A47.915Z"
-            alt="bonbon-flight"
-          />
-        </WhyCards2>
-      </WhyCardsContainer2>
+
       <section
         style={{
           width: "100%",
@@ -616,6 +340,7 @@ function MainPage() {
         </Marquee>
         <Heading as="h11">Tek Rehber</Heading>
       </section>
+
       <RahatProfesyonelMobileHeading>Çok Rahat</RahatProfesyonelMobileHeading>
       <RahatProfesyonelContainer>
         <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
@@ -628,6 +353,7 @@ function MainPage() {
         </div>
         <RahatProfesyonelImage>s</RahatProfesyonelImage>
       </RahatProfesyonelContainer>
+
       <RahatProfesyonelMobileHeading>
         Çok Profesyonel
       </RahatProfesyonelMobileHeading>
@@ -649,17 +375,15 @@ function MainPage() {
         <FaqTitle>Sıkça Sorulan Sorular</FaqTitle>
         <FaqSubtitle>Sizler için buradayız!</FaqSubtitle>
 
-        <Faq title={"Vizepedia ile hangi ülkelerin vize sürecini yönetebilirim?"}>
+        <Faq
+          title={"Vizepedia ile hangi ülkelerin vize sürecini yönetebilirim?"}
+        >
           <p>
             Vizepedia kullanıcıları, platformumuzun rehberliğinde aşağıdaki
             ülkelerin vize başvurularını tamamlayabilir ve bu ülkelerin vize
             işlemlerini gerçekleştirebilirler:
           </p>
-          <CountryList>
-            {countries.map((country, index) => (
-              <CountryItem key={index}>{country}</CountryItem>
-            ))}
-          </CountryList>
+          <GroupedCountryList />
           <p>
             Vizepedia, bu ülkelerin vize süreçlerini yönetmekle ilgili tüm
             gerekli bilgileri sunarak kullanıcıların vize başvurularını
@@ -669,6 +393,7 @@ function MainPage() {
             kapsamlı bilgiler sağlarız.
           </p>
         </Faq>
+
         <Faq
           title={`Vizepedia'nın sunduğu bilgiler için herhangi bir ücret ödemem gerekiyor mu?`}
         >
@@ -680,6 +405,7 @@ function MainPage() {
             kolay ve anlaşılır hale getirmektir.
           </p>
         </Faq>
+
         <Faq title={`Vizepedia'nın sunduğu bilgilerin kaynağı nedir?`}>
           <p>
             Vizepedia&apos;nın sunduğu bilgiler, bir dizi resmi ve güvenilir
