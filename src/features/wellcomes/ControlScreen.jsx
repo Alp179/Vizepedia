@@ -72,16 +72,12 @@ function ControlScreen() {
     border: 1px solid rgba(255, 255, 255, 0.52);
     width: calc(100vw - 180px);
     max-width: 370px;
-    height: calc(100vh - 280px);
-    max-height: 640px;
-    @media (max-height: 770px) {
-      height: 450px;
+    height: calc(100vh - 190px);
+   
+    @media (max-width: 710px) {
+      width: calc(100vw - 80px);
     }
-    @media (max-width: 380px) {
-      margin-left: auto;
-      margin-right: auto;
-      width: 80vw;
-    }
+  
     @media (max-width: 300px) {
       position: fixed;
       top: 50%;

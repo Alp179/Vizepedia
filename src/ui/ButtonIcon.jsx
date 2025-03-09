@@ -16,8 +16,8 @@ const ButtonIcon = styled.button`
   }
 
   & svg {
-    width: 2.2rem;
-    height: 2.2rem;
+    width: 2.8rem;
+    height: 2.8rem;
     color: var(--color-grey-924);
     &:hover {
       opacity: 0.5;

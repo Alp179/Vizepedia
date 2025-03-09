@@ -47,7 +47,7 @@ function WellcomeB() {
   return (
     <>
       <QuestionContainer>
-        <Heading as="h5">Vize almak istediğiniz ülkeyi seçiniz</Heading>
+        <Heading as="h5">Vize almak istediğiniz ülke</Heading>
         <CountrySelection
           selectedCountry={selectedCountry}
           onCountryChange={handleCountryChange}

@@ -117,15 +117,11 @@ const Heading = styled.h1`
       font-size: 22px;
       font-weight: bold;
       padding: 8px 0px 8px 0px;
-      @media (max-height: 825px) {
-        font-size: 18px;
-      }
+     
       @media (max-height: 770px) {
         padding-bottom: 0;
       }
-      @media (max-width: 400px) {
-        font-size: 16px;
-      }
+      
     `}
           ${(props) =>
     props.as === "h9" &&
@@ -137,10 +133,10 @@ const Heading = styled.h1`
       margin: 4px 0 -4px 0;
       font-weight: bold;
       @media (max-height: 825px) {
-        font-size: 12px;
+        font-size: 14px;
       }
       @media (max-width: 400px) {
-        font-size: 14px;
+        font-size: 16px;
       }
     `}
     ${(props) =>

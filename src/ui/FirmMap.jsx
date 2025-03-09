@@ -40,6 +40,7 @@ const InfoContainer = styled.div`
   }
   @media (max-width: 710px) {
     margin: 0;
+    gap: 8px;
     width: 330px;
     height: 550px; /* 100px daha büyük yükseklik */
     transform: scale(0.97); /* Daha az küçültme */
@@ -127,7 +128,7 @@ const FirmInfoContainer = styled.div`
   flex-direction: column;
   
   @media (max-width: 710px) {
-    margin-bottom: 10px;
+    margin-bottom: -5px;
     flex: 1;
     justify-content: space-evenly;
   }
@@ -188,13 +189,8 @@ const InfoLabel = styled.strong`
   min-width: 150px;
   
   @media (max-width: 710px) {
-    font-size: 1.25rem;
+    font-size: 18px;
     min-width: 120px;
-  }
-  
-  @media (max-width: 500px) {
-    font-size: 1.2rem;
-    margin-bottom: 2px;
   }
 `;
 
@@ -223,16 +219,12 @@ const FirmName = styled.h3`
   border-bottom: 2px solid rgba(0, 68, 102, 0.15);
   
   @media (max-width: 710px) {
-    font-size: 1.8rem;
+    font-size: 28px;
     margin-bottom: 15px; /* Başlık altında daha fazla boşluk */
     padding-bottom: 10px;
   }
   
-  @media (max-width: 389px) {
-    font-size: 1.4rem;
-    margin-bottom: 8px;
-    padding-bottom: 6px;
-  }
+  
 `;
 
 /* FirmLink için güncelleme */
@@ -260,7 +252,7 @@ const FirmLink = styled.a`
   @media (max-width: 710px) {
     margin-top: 20px;
     padding: 12px 15px;
-    font-size: 1.15rem;
+    font-size: 18px;
     margin-bottom: 10px; /* Alt kısmında biraz boşluk bırak */
   }
   
@@ -268,7 +260,6 @@ const FirmLink = styled.a`
     width: 100%;
     text-align: center;
     padding: 10px 10px;
-    font-size: 1.05rem;
     margin-top: 12px;
     background-color: rgba(0, 68, 102, 0.12);
     border: 1px solid rgba(0, 68, 102, 0.15);
@@ -280,6 +271,7 @@ const FirmLink = styled.a`
 
 const PriceValue = styled(InfoValue)`
   font-weight: 600;
+  font-size: 18px;
   color: #006699;
 `;
 

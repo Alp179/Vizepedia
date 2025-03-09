@@ -30,10 +30,11 @@ const StyledSelectContainer = styled.div`
   @media (max-width: 450px) {
     width: 135px;
     height: 135px;
+    font-size: 18px;
   }
 
   @media (max-width: 400px) {
-    font-size: 15px;
+    font-size: 18px;
   }
 
   @media (max-width: 370px) {
@@ -88,13 +89,13 @@ const RadioLabel = styled.label`
   }
 
   @media (max-width: 450px) {
-    font-size: 16px;
+    font-size: 18px;
     width: 135px;
     height: 135px;
   }
 
   @media (max-width: 400px) {
-    font-size: 15px;
+    font-size: 18px;
   }
 
   @media (max-width: 370px) {

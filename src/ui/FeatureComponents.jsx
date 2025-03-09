@@ -296,13 +296,22 @@ const HorizontalFeatureCard = styled.div`
   @media (max-width: 732px) {
     flex-direction: column;
     min-height: auto;
+    width: 320px;
+  }
+
+  @media (max-width: 450px) {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 450px;
   }
 `;
 
 // Yatay kartların içeriği
 const HorizontalCardContent = styled.div`
   flex: 1;
-  padding: 30px;
+  padding: 18px;
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -125,7 +125,7 @@ function WelcomeD() {
   return (
     <>
       <QuestionContainer>
-        <Heading as="h5">Mesleğinizi seçiniz</Heading>
+        <Heading as="h5">Mesleğiniz</Heading>
         <ProfessionSelection
           selectedProfession={selectedProfession}
           onProfessionChange={handleProfessionChange}

@@ -33,7 +33,7 @@ const SelectionButton = styled.button`
     padding: 0.74rem 0.5rem;
   }
   cursor: pointer;
-  font-size: 1.4rem;
+  font-size: 18px;
   margin: 0.3rem 0; /* Dikey sıralama için üst ve alt margin */
   width: 100%;
   max-width: 300px;

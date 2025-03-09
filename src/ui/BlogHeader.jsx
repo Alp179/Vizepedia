@@ -148,6 +148,7 @@ const BlogInputWrapper = styled.div`
   }
   @media (max-width: 470px) {
     width: ${({ isActive }) => (isActive ? "180px" : "30px")};
+    margin-top: 5px;
     height: 30px;
   }
   transition: width 0.4s ease, background-color 0.4s ease;

@@ -3,7 +3,6 @@ import React from "react";
 import styled from "styled-components";
 import Heading from "../../ui/Heading";
 import Spinner from "../../ui/Spinner";
-
 import { useVehicles } from "./useVehicles";
 import { useKids } from "./useKids";
 import { useAccommodations } from "./useAccommodations";
@@ -40,8 +39,9 @@ const SelectionButton = styled.button`
   border-radius: 16px;
   padding: 0.4rem 1rem;
   cursor: pointer;
-  font-size: 1.4rem;
+  font-size: 18px;
   margin: 0.5rem;
+  text-align: center;
   width: 100%;
   max-width: 140px;
   @media (max-height: 925px) {
@@ -66,15 +66,16 @@ const Section = styled.div`
   }
 
   display: flex;
+  text-align: center;
   flex-direction: column;
   align-items: center;
- 
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 `;
 
 const HorizontalButtonGroup = styled.div`
@@ -132,7 +133,7 @@ function OtherQSelections({
     <Container>
       <Section>
         <Heading as="h7">Konaklama türü</Heading>
-        <HorizontalButtonGroup style={{marginLeft: "-24px"}}>
+        <HorizontalButtonGroup style={{ marginLeft: "-24px" }}>
           {accommodationsData &&
             accommodationsData.map((accommodation, index) => (
               <React.Fragment key={accommodation.id}>
@@ -159,6 +160,7 @@ function OtherQSelections({
           {vehiclesData &&
             vehiclesData.map((vehicles) => (
               <SelectionButton
+                style={{ textAlign: "center" }}
                 key={vehicles.id}
                 isSelected={selectedVehicle === vehicles.travelVehicleName}
                 onClick={() => handleVehicle(vehicles.travelVehicleName)}

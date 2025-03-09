@@ -20,15 +20,8 @@ const StyledSelect = styled.select`
   color: #000000;
   background-color: transparent;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   transition: all 0.3s;
-
-  @media (max-width: 825px) {
-    font-size: 14px !important;
-  }
-  @media (max-height: 770px) {
-    padding: 4px;
-  }
 
   &:hover,
   &:active {
@@ -50,12 +43,8 @@ const Section = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  @media (max-height: 800px) {
-    height: 50px;
-  }
-  @media (max-height: 770px) {
-    margin-top: -1px;
-  }
+ 
+ 
 `;
 
 const Divider = styled.div`

@@ -15,7 +15,6 @@ import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import UserAvatar from "../features/authentication/UserAvatar";
 import AllDocs from "./AllDocs";
-import DarkModeToggle from "./DarkModeToggle";
 import Logo from "./Logo";
 import BlogLogo from "./BlogLogo";
 import toast, { Toaster } from "react-hot-toast";
@@ -789,7 +788,6 @@ const MobileMenu = () => {
             <Logo variant="mobilemenu" />
             <BlogLogo variant="mobilemenu" />
           </LogoContainer>
-          <DarkModeToggle />
         </MenuContent>
       </MenuContainer>
 

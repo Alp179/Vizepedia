@@ -32,15 +32,17 @@ const StyledSelectContainer = styled.div`
   @media (max-width: 450px) {
     width: 135px;
     height: 135px;
+    font-size: 18px;
   }
 
   @media (max-width: 400px) {
-    font-size: 15px;
+    font-size: 18px;
   }
 
   @media (max-width: 370px) {
     width: 125px;
     height: 125px;
+    font-size: 14px;
   }
 
   &:active {
@@ -70,10 +72,11 @@ const RadioLabel = styled.label`
   @media (max-width: 450px) {
     width: 135px;
     height: 135px;
+    font-size: 18px;
   }
 
   @media (max-width: 400px) {
-    font-size: 15px;
+    font-size: 18px;
   }
 
   @media (max-width: 370px) {
@@ -91,7 +94,7 @@ const RadioLabel = styled.label`
   }
 
   @media (max-width: 450px) {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   input[type="radio"] {
@@ -145,10 +148,10 @@ const DropdownButton = styled.button`
   cursor: pointer;
   font-size: 18px;
   @media (max-width: 450px) {
-    font-size: 16px;
+    font-size: 18px;
   }
   @media (max-width: 400px) {
-    font-size: 15px;
+    font-size: 18px;
   }
   @media (max-width: 370px) {
     font-size: 14px;

@@ -120,8 +120,8 @@ function WellcomeE() {
     <>
       <QuestionContainer>
         <Heading as="h5">
-          Lütfen konaklama türünüzü, seyahat aracınızı ve çocuklu yolculuk
-          durumunuzu seçiniz
+          Konaklama türü, seyahat aracı ve çocuklu yolculuk
+          durumu
         </Heading>
         <OtherQSelections
           selectedAccommodation={selectedAccommodation}
