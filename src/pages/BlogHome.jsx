@@ -101,7 +101,10 @@ const BlogHeader = styled.h1`
   @media (max-width: 435px) {
     font-size: 24px;
   }
-  @media (max-width: 370px) {
+  @media (max-width: 390px) {
+    font-size: 22px;
+  }
+  @media (max-width: 365px) {
     font-size: 20px;
   }
   @media (max-width: 320px) {
