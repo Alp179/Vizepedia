@@ -787,47 +787,64 @@ Slider h2 span {
 
 
 }
+/* GlobalStyles.js içine eklenecek güncellenmiş modal stilleri */
 
-/*
-FOR DARK MODE
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 1rem;
+}
 
---color-grey-0: #18212f;
---color-grey-50: #111827;
---color-grey-100: #1f2937;
---color-grey-200: #374151;
---color-grey-300: #4b5563;
---color-grey-400: #6b7280;
---color-grey-500: #9ca3af;
---color-grey-600: #d1d5db;
---color-grey-700: #e5e7eb;
---color-grey-800: #f3f4f6;
---color-grey-900: #f9fafb;
+.modal-content {
+  background-color: var(--color-grey-0);
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 0 auto;
+}
 
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  color: var(--color-grey-800);
+}
 
---color-blue-100: #075985;
---color-blue-700: #e0f2fe;
---color-green-100: #166534;
---color-green-700: #dcfce7;
---color-yellow-100: #854d0e;
---color-yellow-700: #fef9c3;
---color-silver-100: #374151;
---color-silver-700: #f3f4f6;
---color-indigo-100: #3730a3;
---color-indigo-700: #e0e7ff;
+.modal-content p {
+  margin-bottom: 1.5rem;
+  color: var(--color-grey-600);
+  line-height: 1.5;
+}
 
---color-red-100: #fee2e2;
---color-red-700: #b91c1c;
---color-red-800: #991b1b;
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
 
---backdrop-color: rgba(0, 0, 0, 0.3);
+/* Masaüstü için özel stil */
+@media (min-width: 768px) {
+  .modal-content {
+    min-width: 400px;
+    padding: 2.5rem;
+  }
+  
+  .modal-content h3 {
+    font-size: 1.6rem;
+  }
+}
 
---shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
---shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.3);
---shadow-lg: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.4);
-
---image-grayscale: 10%;
---image-opacity: 90%;
-*/
 `;
 
 export default GlobalStyles;

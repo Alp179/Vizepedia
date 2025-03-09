@@ -1,6 +1,22 @@
 /* eslint-disable no-unused-vars */
 import supabase from "./supabase";
 
+// Şifre sıfırlama e-postası gönderme fonksiyonu
+export async function resetPassword(email) {
+  try {
+    // Şifre sıfırlama isteği gönder
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+
+    if (error) throw new Error(error.message);
+    return data;
+  } catch (error) {
+    console.error("Şifre sıfırlama hatası:", error);
+    throw error;
+  }
+}
+
 // Yeni fonksiyon: Google ile oturum açma
 export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -53,10 +69,17 @@ export async function logout() {
 }
 
 // Kullanıcı güncelleme fonksiyonu
-export async function updateCurrentUser({ email, password }) {
-  const updates = {};
-  if (email) updates.email = email; // E-posta adresini ekleyin
-  if (password) updates.password = password; // Şifreyi ekleyin
+export async function updateCurrentUser({ email, password, fullName, avatar }) {
+  let updates = {};
+
+  if (email) updates.email = email;
+  if (password) updates.password = password;
+
+  // Metadata güncelleme
+  if (fullName || avatar) {
+    updates.data = {};
+    if (fullName) updates.data.fullName = fullName;
+  }
 
   const { data, error } = await supabase.auth.updateUser(updates);
 
@@ -65,7 +88,37 @@ export async function updateCurrentUser({ email, password }) {
     throw new Error(error.message);
   }
 
-  console.log("Güncelleme başarılı:", data);
+  // Avatar yükleme işlemi
+  if (avatar) {
+    const fileName = `avatar-${data.user.id}-${Math.random()}`;
+
+    const { error: storageError } = await supabase.storage
+      .from("avatars")
+      .upload(fileName, avatar);
+
+    if (storageError) {
+      console.error("Avatar yüklenemedi:", storageError.message);
+      throw new Error(storageError.message);
+    }
+
+    // Avatar URL'ini kullanıcı metadata'sına ekle
+    const { data: avatarData } = supabase.storage
+      .from("avatars")
+      .getPublicUrl(fileName);
+
+    const { error: updateError } = await supabase.auth.updateUser({
+      data: {
+        ...updates.data,
+        avatar: avatarData.publicUrl,
+      },
+    });
+
+    if (updateError) {
+      console.error("Avatar URL'i güncellenemedi:", updateError.message);
+      throw new Error(updateError.message);
+    }
+  }
+
   return data;
 }
 
@@ -114,7 +167,11 @@ export async function convertAnonymousToUser({ email, password }) {
     const localAnswers = JSON.parse(localStorage.getItem("userSelections"));
 
     if (localAnswers) {
-      await syncAnonymousDataToUser(anonymousUserId, signUpData.user.id, localAnswers);
+      await syncAnonymousDataToUser(
+        anonymousUserId,
+        signUpData.user.id,
+        localAnswers
+      );
     }
 
     localStorage.removeItem("isAnonymous");

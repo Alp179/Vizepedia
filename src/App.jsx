@@ -31,10 +31,12 @@ import QuestionsLayout from "./ui/QuesitonsLayout";
 import MainPageLayout from "./ui/MainPageLayout";
 import BlogHome from "./pages/BlogHome";
 import BlogDetail from "./pages/BlogDetail";
+
 import { useEffect } from "react";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
 import WellcomeDa from "./features/wellcomes/WellcomeDa";
+import ResetPassword from "./features/authentication/ResetPassword";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -127,7 +129,7 @@ function App() {
                       <Route path="blog/:slug" element={<BlogDetail />} />
                     </Route>
 
-                    {/* Login and Sign-Up Routes */}
+                    {/* Login, Sign-Up ve ResetPassword Routes */}
                     <Route
                       path="login"
                       element={
@@ -144,6 +146,8 @@ function App() {
                         </RedirectIfLoggedIn>
                       }
                     />
+                    {/* Yeni şifre sıfırlama sayfası rotası */}
+                    <Route path="reset-password" element={<ResetPassword />} />
 
                     <Route path="*" element={<PageNotFound />} />
                   </Routes>
