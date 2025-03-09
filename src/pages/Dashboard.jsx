@@ -37,7 +37,6 @@ const CreatedAtContainer = styled.div`
   backdrop-filter: blur(5px);
   padding: 6px 12px;
   border-radius: 6px;
-
 `;
 
 const CustomRow = styled(Row)`
@@ -54,7 +53,7 @@ const CustomRow = styled(Row)`
   }
   padding: 0;
   @media (max-width: 710px) {
-    margin: 55px 10px 0 auto;
+    margin: 55px auto 0 44px;
   }
   @media (max-width: 450px) {
     margin-top: 40px;

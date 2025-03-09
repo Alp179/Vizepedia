@@ -8,85 +8,169 @@ import PropTypes from "prop-types";
 import MainPageHamburger from "./MainPageHamburger";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "../services/apiAuth"; // Oturum açma durumunu kontrol eden fonksiyon
+import { getCurrentUser } from "../services/apiAuth";
 
-const DarkModeContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  @media (max-width: 870px) {
-    display: none;
-  }
-`;
-
-const StyledMainPageHeader = styled.div`
+// Yeni modern, geçiş animasyonlu header
+const StyledMainPageHeader = styled.header`
   position: fixed;
-  top: 0%;
-  left: 0%;
+  top: 0;
+  left: 0;
   width: 100%;
-  padding: 20px;
-  z-index: 2990;
+  z-index: 3000;
+  transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: none;
+  padding: 20px 0;
 `;
 
 const HeaderContents = styled.div`
-  width: 80%;
-  margin-left: auto;
-  margin-right: auto;
+  width: 85%;
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
-  gap: 52px;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  position: relative;
+
   @media (max-width: 1310px) {
     width: 90%;
   }
+
   @media (max-width: 1200px) {
-    gap: 32px;
     width: 95%;
   }
+
   @media (max-width: 480px) {
     width: 100%;
-  }
-  @media (max-width: 360px) {
-    gap: 16px;
+    padding: 0 16px;
   }
 `;
 
 const LogoContainer = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 40px;
+
   @media (max-width: 870px) {
     justify-content: space-between;
     flex-flow: row-reverse;
   }
 `;
 
+const NavLinks = styled.nav`
+  display: flex;
+  align-items: center;
+  gap: 32px;
+
+  @media (max-width: 870px) {
+    display: none;
+  }
+`;
+
+const NavLink = styled(Heading)`
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  opacity: 0.85;
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: currentColor;
+    transition: width 0.3s ease;
+  }
+
+  &:hover {
+    opacity: 1;
+
+    &:after {
+      width: 100%;
+    }
+  }
+`;
+
 const ButtonContainer = styled.div`
   display: flex;
-  gap: 16px;
-  margin-left: auto;
+  align-items: center;
+  gap: 20px;
+
   @media (max-width: 870px) {
-    gap: 4px;
+    gap: 12px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 8px;
+  }
+`;
+
+const ActionButton = styled(Button)`
+  transition: all 0.3s ease;
+  transform: translateY(0);
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+`;
+
+const DarkModeContainer = styled.div`
+  margin-left: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: rotate(5deg);
+  }
+
+  @media (max-width: 870px) {
+    display: none;
+  }
+`;
+
+const MobileMenuContainer = styled.div`
+  @media (min-width: 871px) {
+    display: none;
   }
 `;
 
 function MainPageHeader({ setMenuOpen }) {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
+  // Kullanıcı oturum kontrolü
   useEffect(() => {
-    // Kullanıcının oturum açıp açmadığını kontrol et
     async function checkUserStatus() {
       const currentUser = await getCurrentUser();
-      setIsLoggedIn(!!currentUser); // Kullanıcı varsa true, yoksa false
+      setIsLoggedIn(!!currentUser);
     }
     checkUserStatus();
   }, []);
 
+  // Scroll efekti için event listener
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Sayfa içi navigasyon
   const handleFaqClick = () => {
     const faqSection = document.getElementById("faq-section");
     if (faqSection) {
@@ -94,48 +178,50 @@ function MainPageHeader({ setMenuOpen }) {
     }
   };
 
-  const handleSignUpClick = () => {
-    navigate("/sign-up"); // /sign-up yoluna yönlendir
-  };
-
-  const handleLogInClick = () => {
-    navigate("/login"); // /login yoluna yönlendir
-  };
-
-  const handleContinueClick = () => {
-    navigate("/dashboard"); // /dashboard yoluna yönlendir
-  };
+  // Yönlendirme fonksiyonları
+  const handleSignUpClick = () => navigate("/sign-up");
+  const handleLogInClick = () => navigate("/login");
+  const handleContinueClick = () => navigate("/dashboard");
+  const handleAboutClick = () => navigate("/about");
 
   return (
-    <StyledMainPageHeader>
+    <StyledMainPageHeader scrolled={scrolled}>
       <HeaderContents>
         <LogoContainer>
           <Logo variant="mainpage" />
-          <Heading className="header-link1" as="h10">
-            Hakkımızda
-          </Heading>
-          <Heading className="header-link1" as="h10" onClick={handleFaqClick}>
-            SSS
-          </Heading>
-          <BlogLogo variant="mainpage2" />
+
+          <NavLinks>
+            <NavLink as="h6" onClick={handleAboutClick}>
+              Hakkımızda
+            </NavLink>
+            <NavLink as="h6" onClick={handleFaqClick}>
+              SSS
+            </NavLink>
+            <BlogLogo variant="mainpage2" />
+          </NavLinks>
         </LogoContainer>
+
         <ButtonContainer>
           {isLoggedIn ? (
             <>
-              <MainPageHamburger setMenuOpen={setMenuOpen} />
-              <Button variation="mainpage4" onClick={handleContinueClick}>
+              <ActionButton variation="mainpage4" onClick={handleContinueClick}>
                 Devam Et
-              </Button>
+              </ActionButton>
+              <MobileMenuContainer>
+                <MainPageHamburger setMenuOpen={setMenuOpen} />
+              </MobileMenuContainer>
             </>
           ) : (
             <>
-              <Button variation="mainpage2" onClick={handleLogInClick}>
+              <ActionButton variation="mainpage2" onClick={handleLogInClick}>
                 Oturum Aç
-              </Button>
-              <Button variation="mainpage" onClick={handleSignUpClick}>
+              </ActionButton>
+              <ActionButton variation="mainpage" onClick={handleSignUpClick}>
                 Başlayalım
-              </Button>
-              <MainPageHamburger setMenuOpen={setMenuOpen} />
+              </ActionButton>
+              <MobileMenuContainer>
+                <MainPageHamburger setMenuOpen={setMenuOpen} />
+              </MobileMenuContainer>
             </>
           )}
           <DarkModeContainer>
@@ -148,7 +234,7 @@ function MainPageHeader({ setMenuOpen }) {
 }
 
 MainPageHeader.propTypes = {
-  setMenuOpen: PropTypes.func.isRequired, // setMenuOpen'ın fonksiyon olduğunu belirtin
+  setMenuOpen: PropTypes.func.isRequired,
 };
 
 export default MainPageHeader;
