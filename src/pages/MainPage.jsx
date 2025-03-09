@@ -4,48 +4,8 @@ import Footer from "../ui/Footer";
 import Marquee from "react-fast-marquee";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
-import Faq from "../ui/Faq";
 import HeroScrollDemo from "../ui/HeroScrollDemo";
-
-const CountryList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(240px, 1fr)
-  ); /* Ekrana sığacak şekilde sütunları oluştur */
-  gap: 20px;
-  padding: 10px 0;
-  @media (max-width: 850px) {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-  @media (max-width: 470px) {
-    gap: 4px;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-  @media (max-width: 337px) {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  }
-`;
-
-const CountryItem = styled.div`
-  font-size: 20px;
-  @media (max-width: 1000px) {
-    font-size: 18px;
-  }
-  @media (max-width: 450px) {
-    font-size: 16px;
-  }
-  color: var(--color-grey-600);
-  display: flex;
-  align-items: center; /* Nokta ve metnin aynı hizaya gelmesi için */
-
-  &::before {
-    content: "•"; /* Madde işareti olarak nokta ekler */
-    color: var(--color-grey-600);
-    margin-right: 8px; /* Nokta ile metin arasında boşluk */
-    font-size: 24px;
-  }
-`;
+import { FaqSection, FaqTitle, FaqSubtitle, Faq, CountryList, CountryItem } from "../ui/FaqComponents";
 
 const Why = styled.p`
   text-align: center;
@@ -91,7 +51,6 @@ const WhyCards = styled.div`
   border-radius: 20px;
   width: 265px;
   box-shadow: 0px 26px 35px 6px rgba(0, 0, 0, 0.2);
-
   height: 565px;
   display: flex;
   flex-direction: column;
@@ -363,45 +322,6 @@ const RahatProfesyonelMobileHeading = styled.p`
   }
 `;
 
-const FaqSection = styled.div`
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 100px;
-  max-width: 1200px;
-  width: 90%;
-  @media (max-width: 450px) {
-    margin-top: 150px;
-  }
-`;
-
-const FaqTitle = styled.p`
-  font-size: 40px;
-  font-weight: bold;
-  color: var(--color-grey-600);
-  text-align: center;
-  @media (max-width: 1000px) {
-    font-size: 32px;
-  }
-  @media (max-width: 450px) {
-    font-size: 28px;
-  }
-`;
-
-const FaqSmallTitle = styled.p`
-  margin-top: 20px;
-  margin-bottom: 50px;
-  font-size: 24px;
-  color: var(--color-grey-600);
-  text-align: center;
-  @media (max-width: 1000px) {
-    font-size: 20px;
-  }
-  @media (max-width: 450px) {
-    font-size: 18px;
-    margin-bottom: 30px;
-  }
-`;
-
 const BackgroundContainer2 = styled.div`
   position: absolute;
   display: flex;
@@ -426,9 +346,7 @@ const Background2 = styled.div`
   height: 100%;
 `;
 
-
 function MainPage() {
-  
   const countries = [
     "Almanya",
     "Avusturya",
@@ -464,7 +382,6 @@ function MainPage() {
     "Kanada",
   ];
 
-  
   return (
     <>
       <HeroScrollDemo />
@@ -730,11 +647,9 @@ function MainPage() {
 
       <FaqSection id="faq-section">
         <FaqTitle>Sıkça Sorulan Sorular</FaqTitle>
-        <FaqSmallTitle>Sizler için buradayız!</FaqSmallTitle>
+        <FaqSubtitle>Sizler için buradayız!</FaqSubtitle>
 
-        <Faq
-          title={"Vizepedia ile hangi ülkelerin vize sürecini yönetebilirim?"}
-        >
+        <Faq title={"Vizepedia ile hangi ülkelerin vize sürecini yönetebilirim?"}>
           <p>
             Vizepedia kullanıcıları, platformumuzun rehberliğinde aşağıdaki
             ülkelerin vize başvurularını tamamlayabilir ve bu ülkelerin vize
