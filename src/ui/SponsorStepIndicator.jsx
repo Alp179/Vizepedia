@@ -39,7 +39,7 @@ const StepAndContinueContainer = styled.div`
     padding: 6px;
   }
   @media (max-width: 710px) {
-    margin: 0 auto 15px;
+    margin: 0 auto;
     gap: 16px;
     flex-flow: column;
     width: 90%;
@@ -50,7 +50,6 @@ const StepAndContinueContainer = styled.div`
     overflow-y: visible;
     justify-content: flex-start;
     align-items: flex-start;
-    padding-bottom: 16px;
   }
 `;
 
@@ -67,8 +66,8 @@ const StepCircleContainer = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-    padding: 5px 10px 5px 10px;
-    margin-bottom: 10px;
+    padding: 5px 10px 0 10px;
+    margin-bottom: 0;
     max-height: 400px;
     overflow-y: auto;
     
@@ -233,7 +232,7 @@ const ContinueButton = styled.button`
 
   @media (max-width: 710px) {
     width: 80%;
-    margin: 8px auto;
+    margin: 8px auto 0;
     padding: 12px;
     border-radius: 12px;
     font-weight: 600;

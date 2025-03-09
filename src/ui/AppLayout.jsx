@@ -11,7 +11,7 @@ const StyledAppLayout = styled.div`
   display: grid;
   grid-template-columns: 26rem 1fr;
   grid-template-rows: auto 1fr;
-  height: 100%;
+  height: 100vh;
   background: var(--color-grey-1);
   @media (max-width: 1300px) {
     grid-template-columns: 22rem 1fr;
@@ -55,7 +55,6 @@ const Main = styled.main`
     border: 3px solid var(--color-grey-2);
   }
   @media (max-width: 710px) {
-
     width: 100vw;
     &::-webkit-scrollbar {
       width: 0;

@@ -39,18 +39,17 @@ const StepAndContinueContainer = styled.div`
     padding: 6px;
   }
   @media (max-width: 710px) {
-    margin: 0 auto 15px;
+    margin: 0 auto 0;
     gap: 16px;
     flex-flow: column;
     width: 90%;
     max-width: 350px;
     box-shadow: 0 4px 20px rgba(31, 38, 135, 0.3);
-    padding: 15px;
+    padding: 15px 15px 12px;
     border-radius: 20px;
     overflow-y: visible;
     justify-content: flex-start;
     align-items: flex-start;
-    padding-bottom: 16px;
   }
 `;
 
@@ -67,8 +66,7 @@ const StepCircleContainer = styled.div`
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
-    padding: 5px 10px 5px 10px;
-    margin-bottom: 10px;
+    padding: 5px 10px 0 10px;
     max-height: 400px;
     overflow-y: auto;
     
