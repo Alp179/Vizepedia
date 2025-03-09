@@ -25,11 +25,9 @@ const DocumentItem = styled.li`
     background-color: ${(props) => (props.isCompleted ? "#cde0d9" : "#f0f0f0")};
   }
   @media (max-width: 970px) {
-    font-size: 16px;
+    font-size: 20px;
   }
-  @media (max-width: 450px) {
-    font-size: 14px;
-  }
+  
 `;
 
 const Bracket = styled.div`
@@ -44,9 +42,9 @@ const ScrollableDiv = styled.div`
   overflow-y: auto;
   width: 100%;
   margin: 0 auto;
-  max-height: calc(100vh - 300px);
+  max-height: calc(100vh - 200px);
   @media (max-width: 710px) {
-    max-height: calc(100vh - 500px);
+    max-height: calc(100vh - 400px);
   }
 
   /* Scrollbar styling */
@@ -66,8 +64,11 @@ const ScrollableDiv = styled.div`
 `;
 
 const HeadingBig = styled.p`
-  font-size: 28px;
+  font-size: 22px;
   font-weight: bold;
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid var(--color-grey-920);
   @media (max-width: 970px) {
     font-size: 24px;
   }
@@ -82,9 +83,6 @@ const HeadingSmall = styled.p`
   margin-bottom: 12px;
   @media (max-width: 970px) {
     font-size: 18px;
-  }
-  @media (max-width: 450px) {
-    font-size: 16px;
   }
 `;
 
@@ -165,7 +163,8 @@ function AllDocs() {
         zIndex: "3000",
       }}
     >
-      <HeadingBig>Tüm Belgeler</HeadingBig>
+      <HeadingBig>
+        <h2>Tüm Belgeler</h2></HeadingBig>
       <HeadingSmall>
         Başvurunuzda gerekli olan tüm belgeleri aşağıda görebilirsiniz
       </HeadingSmall>

@@ -316,8 +316,8 @@ const DocsModalContainer = styled.div`
 // Dokümanlar modalı için kapatma butonu
 const DocsModalCloseButton = styled.button`
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 2rem;
+  right: 2rem;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -338,18 +338,6 @@ const DocsModalCloseButton = styled.button`
   }
 `;
 
-// Dokümanlar modalı için başlık
-const DocsModalHeader = styled.div`
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--color-grey-920);
-
-  h2 {
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--color-grey-600);
-  }
-`;
 
 // Silme işlemi onay modalı için overlay
 const ModalOverlay = styled.div`
@@ -838,9 +826,7 @@ const MobileMenu = () => {
             <DocsModalCloseButton onClick={closeDocsModal}>
               &times;
             </DocsModalCloseButton>
-            <DocsModalHeader>
-              <h2>Tüm Belgeler</h2>
-            </DocsModalHeader>
+            
             <AllDocs />
           </DocsModalContainer>
         </DocsModalOverlay>
