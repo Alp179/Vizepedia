@@ -478,7 +478,7 @@ function MainNav() {
 
   useEffect(() => {
     refreshApplications();
-  }, [applicationId]);
+  }, [applicationId, refreshApplications]);
 
   useEffect(() => {
     getCurrentUser().then((user) => {
