@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi";
-import { MdClose } from "react-icons/md";
+import { MdClose, MdDelete } from "react-icons/md"; // MdDelete ikonu eklendi
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../features/authentication/useLogout";
 import { useVisaApplications } from "../context/VisaApplicationContext";
@@ -17,12 +18,47 @@ import AllDocs from "./AllDocs";
 import DarkModeToggle from "./DarkModeToggle";
 import Logo from "./Logo";
 import BlogLogo from "./BlogLogo";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 import { NavLink } from "react-router-dom";
 
+// Animasyonlar
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
+const modalFadeIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const modalFadeOut = keyframes`
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+`;
+
+// Hamburger menü ikonu
 const MenuIcon = styled.div.attrs((props) => ({
-  style: { display: props.isDocsOpen ? "none" : "block" },
+  style: { display: props.isDocsModalOpen ? "none" : "block" },
 }))`
   background: ${(props) =>
     props.isOpen ? "transparent" : "rgba(255, 255, 255, 0.5)"};
@@ -32,7 +68,7 @@ const MenuIcon = styled.div.attrs((props) => ({
   position: fixed;
   top: 20px;
   right: 12px;
-  z-index: 3000;
+  z-index: 2000; /* z-index değerini modallara göre daha düşük ayarladık */
   @media (min-width: 710px) {
     display: none;
   }
@@ -83,6 +119,7 @@ const MenuIcon = styled.div.attrs((props) => ({
   }
 `;
 
+// Ana menü konteyner
 const MenuContainer = styled.div`
   z-index: 3000;
   position: fixed;
@@ -113,6 +150,7 @@ const MenuContainer = styled.div`
   }
 `;
 
+// Menü başlık
 const MenuHeader = styled.div`
   z-index: 3000;
   display: flex;
@@ -127,41 +165,104 @@ const MenuHeader = styled.div`
   }
 `;
 
+// Menü içerik
 const MenuContent = styled.div`
   z-index: 3000;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   display: flex;
   height: 90%;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 `;
 
+// Gezinme bağlantıları
 const StyledNavLink = styled.div`
-  width: 86%;
-  gap: 8px;
-  min-height: 50px;
+  width: 90%;
+  gap: 16px;
+  min-height: 60px;
   z-index: 3000;
   border-radius: 16px;
   display: flex;
   align-items: center;
   cursor: pointer;
-  &:hover {
+  font-size: 18px;
+  padding: 0 8px;
+  margin-bottom: 5px;
+  &:hover,
+  &:active {
     background-color: var(--color-grey-3);
   }
 `;
 
-const DeleteButton = styled.button`
-  background: none;
-  z-index: 3000;
+// Silme butonu
+const ActionButton = styled.button`
+  background-color: rgba(231, 76, 60, 0.15);
   border: none;
-  color: red;
+  color: #e74c3c;
   cursor: pointer;
-  margin-left: 10px;
-  &:hover {
-    color: darkred;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  position: absolute;
+  right: 15px;
+  opacity: 1;
+
+  & svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  &:hover,
+  &:active {
+    background-color: rgba(231, 76, 60, 0.25);
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 370px) {
+    width: 40px;
+    height: 40px;
+    right: 10px;
+    & svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 `;
 
+// Mobil nav link container
+const MobileNavLinkContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+
+  .mobile-navlink {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-radius: 14px;
+    margin: 10px 0;
+    color: var(--color-grey-600);
+    text-decoration: none;
+    width: 100%;
+    position: relative;
+    padding-right: 60px; /* Silme butonu için daha fazla yer */
+    transition: all 0.2s ease;
+    font-size: 18px;
+
+    &.mobile-navlink-active {
+      background-color: var(--color-grey-920);
+      color: var(--color-brand-600);
+      font-weight: 600;
+    }
+  }
+`;
+
+// Overlay
 const Overlay = styled.div`
   position: fixed;
   backdrop-filter: blur(4px);
@@ -171,47 +272,197 @@ const Overlay = styled.div`
   height: 100%;
   background-color: var(--backdrop-color);
   z-index: 1100;
-  display: ${(props) => (props.isOpen || props.isDocsOpen ? "block" : "none")};
+  display: ${(props) =>
+    props.isOpen || props.isDocsModalOpen ? "block" : "none"};
 `;
 
-const FullScreenModal = styled.div`
-  z-index: 3000;
+// Dokümanlar modalı için overlay
+const DocsModalOverlay = styled.div`
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90% !important;
-  max-height: calc(100vh - 300px);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: ${(props) => (props.isClosing ? modalFadeOut : modalFadeIn)} 0.3s
+    ease forwards;
+`;
+
+// Dokümanlar modalı için konteyner
+const DocsModalContainer = styled.div`
   background-color: var(--color-grey-51);
   border-radius: 20px;
-  box-shadow: var(--shadow-lg);
-  padding: 3.2rem 4rem;
-  width: fit-content;
-  justify-content: space-between;
-  transition: all 0.5s;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 3rem 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: ${(props) => (props.isClosing ? modalFadeOut : modalFadeIn)} 0.3s
+    ease forwards;
 
-  @media (max-width: 380px) {
-    width: calc(100vw);
+  @media (max-width: 450px) {
+    width: 95%;
+    padding: 2.5rem 1.5rem;
   }
 `;
 
-const CloseButton = styled.button`
+// Dokümanlar modalı için kapatma butonu
+const DocsModalCloseButton = styled.button`
   position: absolute;
-  top: 12px;
-  right: 20px;
-  background: none;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-grey-905);
+  color: var(--color-grey-600);
   border: none;
-  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
   cursor: pointer;
+  transition: all 0.2s;
+  z-index: 1;
+
+  &:hover {
+    background-color: var(--color-grey-900);
+    color: white;
+  }
 `;
 
+// Dokümanlar modalı için başlık
+const DocsModalHeader = styled.div`
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-grey-920);
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--color-grey-600);
+  }
+`;
+
+// Silme işlemi onay modalı için overlay
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  opacity: 0;
+  animation: ${fadeIn} 0.3s forwards;
+`;
+
+// Silme işlemi onay modalı için konteyner
+const ConfirmationModal = styled.div`
+  background-color: var(--color-grey-914);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 28px;
+  width: 90%;
+  max-width: 360px;
+  animation: ${modalFadeIn} 0.3s ease;
+  border: 1px solid var(--color-grey-920);
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+// Silme işlemi onay modalı için başlık
+const ModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  color: var(--color-grey-600);
+
+  svg {
+    margin-right: 16px;
+    color: #e74c3c;
+    width: 28px;
+    height: 28px;
+  }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+  }
+`;
+
+// Silme işlemi onay modalı için içerik
+const ModalContent = styled.p`
+  color: var(--color-grey-600);
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+`;
+
+// Silme işlemi onay modalı için butonlar
+const ModalActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+`;
+
+// Genel buton stilini
+const Button = styled.button`
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+
+  &:focus {
+    outline: none;
+  }
+`;
+
+// İptal butonu
+const CancelButton = styled(Button)`
+  background-color: var(--color-grey-920);
+  color: var(--color-grey-600);
+
+  &:hover {
+    background-color: var(--color-grey-905);
+  }
+`;
+
+// Silme butonu
+const DeleteButton = styled(Button)`
+  background-color: #e74c3c;
+  color: white;
+
+  &:hover {
+    background-color: #c0392b;
+  }
+`;
+
+// Divider
 const Divider = styled.div`
-  height: 1px;
+  height: 2px;
   width: 95%;
   background: var(--color-grey-600);
-  margin: 8px auto 8px auto;
+  margin: 12px auto 12px auto;
 `;
 
+// Logo konteyner
 const LogoContainer = styled.div`
   margin-top: 12px;
   margin-left: 12px;
@@ -222,10 +473,41 @@ const LogoContainer = styled.div`
   gap: 16px;
 `;
 
+// Uygulama bilgisi için stiller
+const AppInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 75%;
+  overflow: hidden;
+`;
+
+const AppTitle = styled.span`
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 18px;
+  margin-bottom: 4px;
+`;
+
+const AppSubtitle = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  opacity: 0.9;
+`;
+
 const MobileMenu = () => {
+  // State yönetimi
   const [isOpen, setIsOpen] = useState(false);
-  const [isDocsOpen, setIsDocsOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedAppId, setSelectedAppId] = useState(null);
+
+  // Tüm Belgeler modalı için state yönetimi
+  const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
+  const [isDocsModalClosing, setIsDocsModalClosing] = useState(false);
+
   const navigate = useNavigate();
   const { logout } = useLogout();
   const { applications, dispatch: applicationsDispatch } =
@@ -236,6 +518,7 @@ const MobileMenu = () => {
   const menuRef = useRef();
   const iconRef = useRef();
 
+  // Kullanıcı bilgilerini ve dışarı tıklama olayını yönetme
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
@@ -258,23 +541,23 @@ const MobileMenu = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isDocsOpen]);
+  }, []);
 
+  // ESC tuşu ile modal kapatma
   useEffect(() => {
-    const handleBackButton = (event) => {
-      if (isDocsOpen) {
-        event.preventDefault();
-        closeModal();
+    const handleEscape = (e) => {
+      if (e.key === "Escape" && isDocsModalOpen) {
+        closeDocsModal();
       }
     };
 
-    window.addEventListener("popstate", handleBackButton);
-
+    window.addEventListener("keydown", handleEscape);
     return () => {
-      window.removeEventListener("popstate", handleBackButton);
+      window.removeEventListener("keydown", handleEscape);
     };
-  }, [isDocsOpen]);
+  }, [isDocsModalOpen]);
 
+  // Kullanıcı seçimleri ve belge bilgilerini alma
   const userSelectionsQuery = useQuery({
     queryKey: ["userSelectionsNav", userId],
     queryFn: () => fetchUserSelectionsDash(userId),
@@ -291,7 +574,7 @@ const MobileMenu = () => {
     enabled: !!documentNames.length,
   });
 
-  /* eslint-disable no-unused-vars */
+  // Belgeye devam etme fonksiyonu
   const continueToDocument = () => {
     if (!documentsQuery.data) return;
 
@@ -307,65 +590,76 @@ const MobileMenu = () => {
     }
   };
 
-  const closeModal = () => {
-    setIsClosing(true);
+  // Tüm Belgeler modalını açma fonksiyonu
+  const openDocsModal = () => {
+    setIsDocsModalOpen(true);
+    setIsOpen(false); // Ana menüyü kapat
+    document.body.style.overflow = "hidden"; // Scroll'u kilitle
+  };
+
+  // Tüm Belgeler modalını kapatma fonksiyonu
+  const closeDocsModal = () => {
+    setIsDocsModalClosing(true);
+
+    // Animasyon tamamlandıktan sonra modalı kapat
     setTimeout(() => {
-      setIsDocsOpen(false);
-      setIsClosing(false);
+      setIsDocsModalOpen(false);
+      setIsDocsModalClosing(false);
+      document.body.style.overflow = ""; // Scroll kilidini kaldır
     }, 300);
   };
 
-  const handleDelete = async (appId) => {
-    const confirmDelete = await new Promise((resolve) => {
-      toast(
-        (t) => (
-          <span>
-            Bu vize başvurusunu silmek istediğinizden emin misiniz?
-            <br />
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                resolve(true);
-              }}
-              style={{
-                marginRight: "8px",
-                color: "white",
-                backgroundColor: "red",
-                padding: "5px",
-                border: "none",
-              }}
-            >
-              Evet
-            </button>
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                resolve(false);
-              }}
-              style={{ padding: "5px", border: "none" }}
-            >
-              Hayır
-            </button>
-          </span>
-        ),
-        {
-          duration: Infinity,
-        }
-      );
-    });
+  // Modal açma fonksiyonu
+  const openDeleteModal = (appId, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedAppId(appId);
+    setShowDeleteModal(true);
+    setIsOpen(false); // Menüyü kapat ki modal görünebilsin
+  };
 
-    if (confirmDelete) {
-      try {
-        await deleteVisaApplication(appId);
-        applicationsDispatch({ type: "DELETE_APPLICATION", payload: appId });
-        toast.success("Vize başvurusu başarıyla silindi!");
-        navigate("/dashboard");
-      } catch (error) {
-        toast.error("Vize başvurusu silinemedi.");
-      }
+  // Modal kapatma fonksiyonu
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setSelectedAppId(null);
+  };
+
+  // Silme işlemi
+  const handleDelete = async () => {
+    if (!selectedAppId) return;
+
+    try {
+      await deleteVisaApplication(selectedAppId);
+      applicationsDispatch({
+        type: "DELETE_APPLICATION",
+        payload: selectedAppId,
+      });
+      toast.success("Vize başvurusu başarıyla silindi!", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+        iconTheme: {
+          primary: "#00ffa2",
+          secondary: "#333",
+        },
+      });
+      navigate("/dashboard");
+      closeDeleteModal();
+    } catch (error) {
+      toast.error("Vize başvurusu silinemedi.", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+      });
+      closeDeleteModal();
     }
   };
 
+  // Oturum kapatma işlemi
   const handleLogout = async () => {
     const confirmLogout = await new Promise((resolve) => {
       toast(
@@ -421,13 +715,14 @@ const MobileMenu = () => {
 
   return (
     <>
+      <Toaster />
       <MenuIcon
         ref={iconRef}
         isOpen={isOpen}
         onClick={() => {
           setIsOpen(!isOpen);
         }}
-        isDocsOpen={isDocsOpen}
+        isDocsModalOpen={isDocsModalOpen}
       >
         <svg
           className={`ham hamRotate ham8 ${isOpen ? "active" : ""}`}
@@ -445,27 +740,19 @@ const MobileMenu = () => {
           />
         </svg>
       </MenuIcon>
-      <Overlay isOpen={isOpen} isDocsOpen={isDocsOpen} /> {/* Blur efekt */}
+      <Overlay isOpen={isOpen} isDocsModalOpen={isDocsModalOpen} />
       <MenuContainer isOpen={isOpen} ref={menuRef}>
         <MenuHeader>
           <UserAvatar />
         </MenuHeader>
         <MenuContent>
-          <StyledNavLink
-            style={{ marginLeft: "12px" }}
-            onClick={() => {
-              setIsDocsOpen(true);
-              setIsOpen(false);
-            }}
-          >
-            <HiDocument style={{color: "var(--color-grey-924)"}}/> Tüm Belgeler
+          <StyledNavLink style={{ marginLeft: "12px" }} onClick={openDocsModal}>
+            <HiDocument size={26} style={{ color: "var(--color-grey-924)" }} />
+            <span style={{ fontSize: "18px" }}>Tüm Belgeler</span>
           </StyledNavLink>
           <div className="mobile-scrolldiv">
             {applications.map((app) => (
-              <div
-                key={app.id}
-                style={{ display: "flex", alignItems: "center" }}
-              >
+              <MobileNavLinkContainer key={app.id}>
                 <NavLink
                   to={`/dashboard/${app.id}`}
                   className={({ isActive }) =>
@@ -477,14 +764,23 @@ const MobileMenu = () => {
                     setIsOpen(false);
                   }}
                 >
-                  {app.ans_country} - {app.ans_purpose} - {app.ans_profession}
-                  {applications.length > 1 && (
-                    <DeleteButton onClick={() => handleDelete(app.id)}>
-                      <MdClose size={20} />
-                    </DeleteButton>
-                  )}
+                  <AppInfo>
+                    <AppTitle>{app.ans_country}</AppTitle>
+                    <AppSubtitle>
+                      {app.ans_purpose} - {app.ans_profession}
+                    </AppSubtitle>
+                  </AppInfo>
                 </NavLink>
-              </div>
+                {applications.length > 1 && (
+                  <ActionButton
+                    onClick={(e) => openDeleteModal(app.id, e)}
+                    aria-label="Vize başvurusunu sil"
+                    title="Vize başvurusunu sil"
+                  >
+                    <MdDelete />
+                  </ActionButton>
+                )}
+              </MobileNavLinkContainer>
             ))}
           </div>
           <StyledNavLink
@@ -494,10 +790,11 @@ const MobileMenu = () => {
               setIsOpen(false);
             }}
           >
-            <HiPlus style={{color: "var(--color-grey-924)"}} /> Yeni
+            <HiPlus size={26} style={{ color: "var(--color-grey-924)" }} />
+            <span style={{ fontSize: "18px" }}>Yeni</span>
           </StyledNavLink>
           <StyledNavLink style={{ marginLeft: "12px" }} onClick={handleLogout}>
-            Oturumu Kapat
+            <span style={{ fontSize: "18px" }}>Oturumu Kapat</span>
           </StyledNavLink>
           <Divider />
           <LogoContainer>
@@ -507,17 +804,46 @@ const MobileMenu = () => {
           <DarkModeToggle />
         </MenuContent>
       </MenuContainer>
-      {isDocsOpen && (
-        <FullScreenModal isClosing={isClosing}>
-          <CloseButton
-            onClick={() => {
-              closeModal();
-            }}
+
+      {/* Silme Onay Modalı */}
+      {showDeleteModal && (
+        <ModalOverlay onClick={closeDeleteModal}>
+          <ConfirmationModal onClick={(e) => e.stopPropagation()}>
+            <ModalHeader>
+              <MdDelete size={28} />
+              <h3>Vize Başvurusunu Sil</h3>
+            </ModalHeader>
+            <ModalContent>
+              Bu vize başvurusunu silmek istediğinizden emin misiniz? Bu işlem
+              geri alınamaz.
+            </ModalContent>
+            <ModalActions>
+              <CancelButton onClick={closeDeleteModal}>İptal</CancelButton>
+              <DeleteButton onClick={handleDelete}>Sil</DeleteButton>
+            </ModalActions>
+          </ConfirmationModal>
+        </ModalOverlay>
+      )}
+
+      {/* Yeni Tüm Belgeler Modal */}
+      {isDocsModalOpen && (
+        <DocsModalOverlay
+          isClosing={isDocsModalClosing}
+          onClick={closeDocsModal}
+        >
+          <DocsModalContainer
+            isClosing={isDocsModalClosing}
+            onClick={(e) => e.stopPropagation()}
           >
-            ×
-          </CloseButton>
-          <AllDocs />
-        </FullScreenModal>
+            <DocsModalCloseButton onClick={closeDocsModal}>
+              &times;
+            </DocsModalCloseButton>
+            <DocsModalHeader>
+              <h2>Tüm Belgeler</h2>
+            </DocsModalHeader>
+            <AllDocs />
+          </DocsModalContainer>
+        </DocsModalOverlay>
       )}
     </>
   );
