@@ -55,7 +55,7 @@ const Main = styled.main`
     border: 3px solid var(--color-grey-2);
   }
   @media (max-width: 710px) {
-    padding: 40px 0;
+
     width: 100vw;
     &::-webkit-scrollbar {
       width: 0;
@@ -83,7 +83,6 @@ const Container = styled.div`
     margin-left: 150px;
   }
   @media (max-width: 710px) {
-    padding-bottom: 80px;
     width: 100vw;
     margin-left: auto;
     margin-right: auto;

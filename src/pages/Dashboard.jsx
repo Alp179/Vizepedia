@@ -111,7 +111,7 @@ const Ceper = styled.div`
 
   @media (max-width: 710px) {
     position: relative;
-    margin: 15px auto;
+    margin: 0 auto;
     transform: scale(0.85);
   }
   &:hover {
@@ -168,7 +168,6 @@ const StepIndicatorWrapper = styled.div`
 
   @media (max-width: 710px) {
     width: 100%;
-    margin-bottom: 10px;
   }
 `;
 
@@ -193,7 +192,6 @@ const DashboardItems = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    padding: 0 0 20px;
     margin-top: -8px;
   }
 `;
@@ -464,7 +462,7 @@ const Dashboard = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            marginTop: isMobile ? "10px" : "20px",
+            marginTop: isMobile ? "-30px" : "20px",
           }}
         >
           <ModalSignup>

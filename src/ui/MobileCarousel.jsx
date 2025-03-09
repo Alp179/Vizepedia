@@ -39,7 +39,7 @@ const CarouselContent = styled.div`
 const CarouselItem = styled.div`
   flex: 0 0 auto;
   width: ${(props) => props.width}px;
-  padding: 0 10px;
+  padding: 0;
   opacity: ${(props) => (props.active ? 1 : 0.6)};
   transform: ${(props) => (props.active ? 'scale(1)' : 'scale(0.95)')};
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -70,7 +70,7 @@ const StepIndicatorWrapper = styled.div`
 
   @media (max-width: 710px) {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 0;
   }
 `;
 
@@ -245,7 +245,7 @@ const MobileCarousel = ({
         calculatedWidth = Math.min(300, currentContainerWidth * 0.80);
       } else if (window.innerWidth <= 710) {
         // Küçük ekranlarda item genişliği konteyner genişliğinin %75'i
-        calculatedWidth = Math.min(350, currentContainerWidth * 0.75);
+        calculatedWidth = Math.min(350, currentContainerWidth * 0.80);
       } else {
         // Daha büyük ekranlarda item genişliği konteyner genişliğinin %70'i
         // Bu değer daha fazla peek efekti sağlar
