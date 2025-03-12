@@ -53,7 +53,7 @@ const LogoContainer = styled.div`
   align-items: center;
   gap: 40px;
 
-  @media (max-width: 870px) {
+  @media (max-width: 960px) {
     justify-content: space-between;
     flex-flow: row-reverse;
   }
@@ -64,7 +64,7 @@ const NavLinks = styled.nav`
   align-items: center;
   gap: 32px;
 
-  @media (max-width: 870px) {
+  @media (max-width: 960px) {
     display: none;
   }
 `;
@@ -73,9 +73,18 @@ const NavLink = styled(Heading)`
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
   position: relative;
   transition: all 0.3s ease;
   opacity: 0.85;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 
   &:after {
     content: "";
@@ -111,15 +120,6 @@ const ButtonContainer = styled.div`
   }
 `;
 
-const ActionButton = styled(Button)`
-  transition: all 0.3s ease;
-  transform: translateY(0);
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-`;
-
 const DarkModeContainer = styled.div`
   margin-left: 8px;
   display: flex;
@@ -131,13 +131,13 @@ const DarkModeContainer = styled.div`
     transform: rotate(5deg);
   }
 
-  @media (max-width: 870px) {
+  @media (max-width: 960px) {
     display: none;
   }
 `;
 
 const MobileMenuContainer = styled.div`
-  @media (min-width: 871px) {
+  @media (min-width: 960px) {
     display: none;
   }
 `;
@@ -146,6 +146,45 @@ function MainPageHeader({ setMenuOpen }) {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // İkonlar için SVG bileşenleri
+  const IconUser = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+  );
+
+  const IconRocket = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+    </svg>
+  );
+
+  const IconContinue = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  );
+
+  const IconInfo = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+  );
+
+  const IconHelp = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>
+  );
 
   // Kullanıcı oturum kontrolü
   useEffect(() => {
@@ -189,36 +228,40 @@ function MainPageHeader({ setMenuOpen }) {
       <HeaderContents>
         <LogoContainer>
           <Logo variant="mainpage" />
-
           <NavLinks>
             <NavLink as="h6" onClick={handleAboutClick}>
+              <IconInfo />
               Hakkımızda
             </NavLink>
             <NavLink as="h6" onClick={handleFaqClick}>
+              <IconHelp />
               SSS
             </NavLink>
-            <BlogLogo variant="mainpage2" />
           </NavLinks>
+          <BlogLogo variant="mainpage2" />
         </LogoContainer>
 
         <ButtonContainer>
           {isLoggedIn ? (
             <>
-              <ActionButton variation="mainpage4" onClick={handleContinueClick}>
+              <Button variation="mainpage4" onClick={handleContinueClick}>
+                <IconContinue />
                 Devam Et
-              </ActionButton>
+              </Button>
               <MobileMenuContainer>
                 <MainPageHamburger setMenuOpen={setMenuOpen} />
               </MobileMenuContainer>
             </>
           ) : (
             <>
-              <ActionButton variation="mainpage2" onClick={handleLogInClick}>
+              <Button variation="mainpage2" onClick={handleLogInClick}>
+                <IconUser />
                 Oturum Aç
-              </ActionButton>
-              <ActionButton variation="mainpage" onClick={handleSignUpClick}>
+              </Button>
+              <Button variation="mainpage" onClick={handleSignUpClick}>
+                <IconRocket />
                 Başlayalım
-              </ActionButton>
+              </Button>
               <MobileMenuContainer>
                 <MainPageHamburger setMenuOpen={setMenuOpen} />
               </MobileMenuContainer>

@@ -47,7 +47,7 @@ const StyledLogo = styled.div`
       @media (max-width: 1200px) {
         width: 120px;
       }
-      @media (max-width: 870px) {
+      @media (max-width: 960px) {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -137,6 +137,16 @@ const StyledLogo = styled.div`
       width: 120px;
       height: auto;
     `}
+    ${(props) =>
+      props.variant === "mainpageham" &&
+      css`
+        width: 180px;
+        height: auto;
+        margin: 0 auto;
+        @media (max-width: 600px) {
+          width: 75%;
+        }
+      `}
       ${(props) =>
     props.variant === "dashmobile" &&
     css`

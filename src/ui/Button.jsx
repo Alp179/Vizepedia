@@ -208,17 +208,29 @@ const variations = {
     font-weight: bold;
     display: flex;
     justify-content: center;
+    transition: all 0.3s ease;
+    transform: translateY(0);
+    gap: 8px;
+    text-wrap: nowrap;
+    svg {
+      width: 18px;
+      height: 18px;
+    }
     &:hover {
+      svg {
+        color: #004466;
+      }
       background: #87f9cd;
+      transform: translateY(-2px);
       color: #004466;
     }
     align-items: center;
     @media (max-width: 1200px) {
-      width: 120px;
+      width: 140px;
       font-size: 16px;
       height: 50px;
     }
-    @media (max-width: 870px) {
+    @media (max-width: 960px) {
       display: none;
     }
     @media (max-width: 732px) {
@@ -234,22 +246,35 @@ const variations = {
     height: 55px;
     border-radius: 20px;
     border: 2px solid var(--color-grey-904);
+    transform: translateY(0);
     background: transparent;
     font-size: 20px;
+    transition: all 0.3s ease;
     font-weight: bold;
     display: flex;
     justify-content: center;
+    text-wrap: nowrap;
     align-items: center;
+    gap: 8px;
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+
     &:hover {
+      svg {
+        color: #87f9cd;
+      }
+      transform: translateY(-2px);
       background: #004466;
       color: #87f9cd;
     }
     @media (max-width: 1200px) {
-      width: 120px;
+      width: 140px;
       font-size: 16px;
       height: 50px;
     }
-    @media (max-width: 870px) {
+    @media (max-width: 960px) {
       display: none;
     }
   `,
@@ -287,17 +312,28 @@ const variations = {
     font-weight: bold;
     display: flex;
     justify-content: center;
-    &:hover {
-      background: #87f9cd;
-      color: #004466;
-    }
+    transition: all 0.3s ease;
+    transform: translateY(0);
+    display: flex;
     align-items: center;
-    @media (max-width: 1200px) {
-      width: 120px;
-      font-size: 16px;
-      height: 50px;
+    justify-content: center;
+    gap: 8px;
+
+    svg {
+      width: 18px;
+      height: 18px;
     }
-    @media (max-width: 1020px) {
+
+    &:hover {
+      transform: translateY(-2px);
+      color: #004466;
+      background: #87f9cd;
+      svg {
+        color: #004466;
+      }
+    }
+
+    @media (max-width: 960px) {
       display: none;
     }
   `,
@@ -312,7 +348,7 @@ const variations = {
     border: 2px solid #87f9cd;
     font-size: 28px;
     font-weight: bold;
-    z-index: 3000!important;
+    z-index: 3000 !important;
     display: flex;
     justify-content: center;
     &:hover {

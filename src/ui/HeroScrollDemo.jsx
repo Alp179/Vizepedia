@@ -105,6 +105,62 @@ const ButtonWrapper = styled.div`
   z-index: 11;
 `;
 
+// Yeniden düzenlenmiş buton stilleri
+const StyledHeroButton = styled.div`
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px; /* İkon ve metin arasında boşluk */
+  width: 248.6px;
+  height: 89px;
+  background: #004466;
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.11);
+  border-radius: 49px;
+  font-weight: 700;
+  font-size: 24px;
+  text-align: center;
+  color: #00ffa2;
+  transition: all 0.3s ease;
+
+  /* İkon için stil */
+  svg {
+    width: 28px;
+    height: 28px;
+    stroke: currentColor;
+    stroke-width: 2;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    background-color: #00ffa2;
+    color: #004466;
+
+    svg {
+      transform: translateY(-3px);
+    }
+  }
+`;
+
+const StyledCeper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 283px;
+  height: 127px;
+  border: 3px solid #00ffa2;
+  filter: drop-shadow(0px 20px 40px rgba(0, 0, 0, 0.11));
+  border-radius: 82px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+
+  &:hover {
+    transform: scale(0.97);
+
+    border-color: #004466;
+    transform: scale(0.8);
+  }
+`;
+
 const ContainerScroll = ({ titleComponent, children }) => {
   const titleRef = useRef(null);
   const imageRef = useRef(null);
@@ -113,6 +169,24 @@ const ContainerScroll = ({ titleComponent, children }) => {
   const handleSignUpClick = () => {
     navigate("/sign-up"); // /sign-up yoluna yönlendir
   };
+
+  // Roket ikonu bileşeni
+  const IconRocket = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+    </svg>
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -158,11 +232,12 @@ const ContainerScroll = ({ titleComponent, children }) => {
       <TitleWrapper ref={titleRef}>{titleComponent}</TitleWrapper>
       <ImageWrapper ref={imageRef}>{children}</ImageWrapper>
       <ButtonWrapper>
-        <div className="ceper">
-          <div className="footer-buton" onClick={handleSignUpClick}>
+        <StyledCeper>
+          <StyledHeroButton onClick={handleSignUpClick}>
+            <IconRocket />
             Hemen başlayın
-          </div>
-        </div>
+          </StyledHeroButton>
+        </StyledCeper>
       </ButtonWrapper>
     </PositionContainer>
   );

@@ -4,16 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledBlogLogo = styled.div`
-cursor: pointer;
-transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
+  cursor: pointer;
+  transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
 
-&:hover {
-  filter: ${(props) =>
-    props.isDarkMode
-      ? "hue-rotate(280deg)"  /* Dark Mode: Renk tonu değişimi */
-      : "hue-rotate(360deg)"}; /* Light Mode: Farklı renk tonu değişimi */
-  transform: scale(1.05); /* Hafif büyütme efekti */
-}
+  &:hover {
+    filter: ${(props) =>
+      props.isDarkMode
+        ? "hue-rotate(280deg)" /* Dark Mode: Renk tonu değişimi */
+        : "hue-rotate(360deg)"}; /* Light Mode: Farklı renk tonu değişimi */
+    transform: scale(1.05); /* Hafif büyütme efekti */
+  }
   ${(props) =>
     props.variant === "blogpage1" &&
     css`
@@ -56,7 +56,7 @@ transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animas
         width: 120px;
       }
       @media (max-width: 870px) {
-        width: 100px;
+        width: 100px!important;
       }
       @media (max-width: 380px) {
         width: 75px;
@@ -85,8 +85,7 @@ transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animas
     props.variant === "mainpage3" &&
     css`
       width: 165px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: auto;
       height: auto;
       @media (max-width: 600px) {
         width: 70%;
@@ -117,7 +116,7 @@ transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animas
     ${(props) =>
     props.variant === "dashmobile" &&
     css`
-    mix-blend-mode: difference;
+      mix-blend-mode: difference;
       width: 130px;
       height: auto;
       flex-shrink: 0;
@@ -134,7 +133,6 @@ transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animas
 `;
 
 const Img = styled.img`
-
   user-drag: none;
   user-select: none;
   -moz-user-select: none;

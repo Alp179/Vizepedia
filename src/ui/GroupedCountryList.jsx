@@ -160,18 +160,31 @@ const GroupedCountryList = () => {
   
   // İlk grup açık, diğerleri kapalı başlasın
   const [openGroups, setOpenGroups] = useState({
-    "Avrupa Birliği Ülkeleri": true,
+    "Avrupa Birliği Ülkeleri": false,
     "Avrupa (Diğer)": false,
     "Asya Ülkeleri": false,
     "Amerika ve Diğer": false
   });
   
   const toggleGroup = (groupName) => {
-    setOpenGroups(prev => ({
+  setOpenGroups(prev => {
+    const newState = {
       ...prev,
       [groupName]: !prev[groupName]
-    }));
-  };
+    };
+    
+    // Durum değiştikten sonra üst Faq komponenti yüksekliğini güncellemek için
+    // setTimeout kullanarak DOM'un güncellenmesini bekleyelim
+    setTimeout(() => {
+      // Global olarak tanımladığımız updateFaqContentHeight fonksiyonunu çağır
+      if (window.updateFaqContentHeight) {
+        window.updateFaqContentHeight();
+      }
+    }, 300); // Geçiş animasyonunun tamamlanması için yeterli süre (300ms)
+    
+    return newState;
+  });
+};
   
   // Toplam ülke sayısını hesapla
   const totalCountries = Object.values(groupedCountries).flat().length;

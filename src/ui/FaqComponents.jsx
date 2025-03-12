@@ -1,5 +1,5 @@
 import styled, { keyframes } from "styled-components";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import PropTypes from 'prop-types';
 
 // Animasyonlar
@@ -131,7 +131,7 @@ const FaqHeader = styled.button`
   background: transparent;
   border: none;
   text-align: left;
-  cursor: pointer;
+  cursor: pointer!important;
   font-size: 18px;
   font-weight: 600;
   color: var(--color-grey-904);
@@ -295,15 +295,56 @@ function Faq({ title, children }) {
   const [contentHeight, setContentHeight] = useState(0);
   const contentRef = useRef(null);
 
+   // GroupedCountryList'in içindeki açılır kapanır bileşenler açıldığında
+  // yüksekliği yeniden hesaplamak için bir fonksiyon
+  const updateContentHeight = useCallback(() => {
+    if (contentRef.current && isOpen) {
+      setContentHeight(contentRef.current.scrollHeight);
+    }
+  }, [isOpen]);
+
+  // İçerik açıldığında veya children değiştiğinde yüksekliği güncelle
   useEffect(() => {
     if (contentRef.current) {
       setContentHeight(contentRef.current.scrollHeight);
     }
   }, [isOpen, children]);
 
+  // ResizeObserver kullanarak içerik boyutu değişimlerini takip et
+  useEffect(() => {
+    if (!contentRef.current || !isOpen) return;
+
+    // ResizeObserver, DOM elemanının boyutu değiştiğinde tetiklenir
+    const resizeObserver = new ResizeObserver(() => {
+      if (contentRef.current) {
+        setContentHeight(contentRef.current.scrollHeight);
+      }
+    });
+
+    // contentRef'i izlemeye başla
+    resizeObserver.observe(contentRef.current);
+
+    // Temizleme fonksiyonu
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [isOpen]);
+
+  // updateContentHeight fonksiyonunu global window nesnesine ekle
+  // böylece GroupedCountryList içinden çağrılabilir
+  useEffect(() => {
+    if (isOpen) {
+      window.updateFaqContentHeight = updateContentHeight;
+    }
+    return () => {
+      // Component unmount olduğunda temizle
+      window.updateFaqContentHeight = undefined;
+    };
+  }, [isOpen, updateContentHeight]);
+
   return (
     <FaqItemContainer>
-      <FaqHeader onClick={() => setIsOpen(!isOpen)}>
+      <FaqHeader isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
         {title}
         <FaqIcon isOpen={isOpen} />
       </FaqHeader>

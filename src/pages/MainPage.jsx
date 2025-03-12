@@ -105,6 +105,7 @@ const RahatProfesyonelMobileHeading = styled.p`
   }
 `;
 
+
 function MainPage() {
   // Features kartları için veriler
   const featuresData = [
