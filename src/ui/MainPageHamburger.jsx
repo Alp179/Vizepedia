@@ -222,7 +222,7 @@ const ProfileInfoContainer = styled.div`
   margin-top: 16px;
   padding: 12px;
 
-  @media (max-height: 700px) {
+  @media (max-height: 830px) {
     margin-top: 8px;
     padding: 8px;
   }
@@ -253,7 +253,7 @@ const Avatar = styled.div`
   font-weight: 600;
   flex-shrink: 0;
 
-  @media (max-height: 700px) {
+  @media (max-height: 830px) {
     width: 40px;
     height: 40px;
     font-size: 18px;
