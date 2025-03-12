@@ -1,3 +1,5 @@
+// MainPageHamburger.jsx - Tüm güncellenmiş kod
+
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -6,6 +8,8 @@ import Logo from "./Logo";
 import BlogLogo from "./BlogLogo";
 import DarkModeToggle from "./DarkModeToggle";
 import { getCurrentUser } from "../services/apiAuth";
+import { useUser } from "../features/authentication/useUser";
+import { useLogout } from "../features/authentication/useLogout";
 
 // Modern ve daha minimalist hamburger ikonu
 const MenuIcon = styled.div`
@@ -98,7 +102,7 @@ const CloseButton = styled.button`
   }
 `;
 
-// Geliştirilmiş menü konteyner tasarımı
+// Geliştirilmiş menü konteyner tasarımı - overflow-y: auto eklendi
 const MenuContainer = styled.aside`
   z-index: 2999;
   width: 300px;
@@ -120,6 +124,21 @@ const MenuContainer = styled.aside`
     props.isOpen ? "translateX(0)" : "translateX(100%)"};
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s ease;
+  overflow-y: auto; /* Taşan içeriği kaydırılabilir yap */
+
+  /* Kaydırma çubuğu stili */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 68, 102, 0.2);
+    border-radius: 10px;
+  }
 
   @media (min-width: 960px) {
     display: none;
@@ -141,25 +160,27 @@ const MenuContainer = styled.aside`
   }
 `;
 
+// MenuContents - Düzenlendi, daha kompakt yapı için
 const MenuContents = styled.div`
-  padding: 32px 24px;
-  height: 100%;
+  padding: 26px 24px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 100%;
 
   .top-section {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 24px; /* 40px'den azaltıldı */
     margin-top: 24px;
   }
 
   .bottom-section {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 16px; /* 24px'den azaltıldı */
+    margin-top: 24px;
+    margin-bottom: 16px; /* 24px'den azaltıldı */
   }
 
   .buttons-section {
@@ -169,10 +190,108 @@ const MenuContents = styled.div`
   }
 
   @media (max-width: 600px) {
-    padding: 24px 16px;
+    padding: 24px 16px 16px;
+  }
+
+  @media (max-height: 700px) {
+    .top-section {
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .bottom-section {
+      gap: 12px;
+      margin-top: 16px;
+      margin-bottom: 12px;
+    }
+  }
+
+  @media (max-height: 600px) {
+    padding-top: 16px;
+    .top-section {
+      gap: 12px;
+      margin-top: 12px;
+    }
   }
 `;
 
+// ProfileInfoContainer - daha kompakt tasarım için güncellendi
+const ProfileInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  padding: 12px;
+
+  @media (max-height: 700px) {
+    margin-top: 8px;
+    padding: 8px;
+  }
+`;
+
+const ProfileHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+
+  @media (max-height: 700px) {
+    margin-bottom: 8px;
+  }
+`;
+
+// Avatar - boyut düzenlemesi
+const Avatar = styled.div`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--color-grey-200, #eee);
+  color: var(--color-grey-700, #333);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 600;
+  flex-shrink: 0;
+
+  @media (max-height: 700px) {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+`;
+
+const UserDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+const UserName = styled.span`
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--color-grey-700, #333);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-height: 700px) {
+    font-size: 16px;
+  }
+`;
+
+const UserEmail = styled.span`
+  font-size: 14px;
+  color: var(--color-grey-500, #777);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-height: 700px) {
+    font-size: 12px;
+  }
+`;
+
+// NavButton - Daha kompakt
 const NavButton = styled.button`
   font-size: 18px;
   background: transparent;
@@ -196,14 +315,18 @@ const NavButton = styled.button`
     height: 20px;
   }
 
-  /* Dark Mode Styles */
-  .dark-mode & {
-    --nav-text: #b3b9c5;
-    --nav-hover-bg: rgba(135, 249, 205, 0.1);
-    --nav-hover-text: #ffffff;
+  @media (max-height: 700px) {
+    padding: 8px 12px;
+    font-size: 16px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 `;
 
+// PrimaryButton ve SecondaryButton - height düzenlemesi
 const PrimaryButton = styled.button`
   background: var(--primary-btn-bg, #004466);
   color: var(--primary-btn-text, #87f9cd);
@@ -235,6 +358,20 @@ const PrimaryButton = styled.button`
   svg {
     width: 20px;
     height: 20px;
+  }
+
+  @media (max-height: 700px) {
+    height: 45px;
+    font-size: 16px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  @media (max-height: 600px) {
+    height: 40px;
   }
 
   /* Dark Mode Styles */
@@ -279,6 +416,20 @@ const SecondaryButton = styled.button`
     height: 20px;
   }
 
+  @media (max-height: 700px) {
+    height: 45px;
+    font-size: 16px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  @media (max-height: 600px) {
+    height: 40px;
+  }
+
   /* Dark Mode Styles */
   .dark-mode & {
     --secondary-btn-text: #e1e1e1;
@@ -290,6 +441,59 @@ const SecondaryButton = styled.button`
   }
 `;
 
+// ProfileButton - padding düzenlemesi
+const ProfileButton = styled.button`
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--color-grey-700, #333);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+
+  &:hover {
+    background: rgba(0, 68, 102, 0.1);
+  }
+
+  svg {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &.logout {
+    color: #e53935;
+
+    &:hover {
+      background: rgba(229, 57, 53, 0.1);
+    }
+  }
+
+  @media (max-height: 700px) {
+    padding: 8px 12px;
+    font-size: 14px;
+    margin-bottom: 4px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+    }
+  }
+`;
+
+// Divider - Margin düzenlemesi
 const Divider = styled.div`
   height: 1px;
   width: 100%;
@@ -302,7 +506,15 @@ const Divider = styled.div`
       rgba(0, 68, 102, 0.05)
     )
   );
-  margin: 20px 0;
+  margin: 16px 0;
+
+  @media (max-height: 700px) {
+    margin: 12px 0;
+  }
+
+  @media (max-height: 600px) {
+    margin: 8px 0;
+  }
 
   /* Dark Mode Styles */
   .dark-mode & {
@@ -323,6 +535,8 @@ const MainPageHamburger = ({ setMenuOpen }) => {
   const iconRef = useRef();
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user } = useUser();
+  const { logout } = useLogout();
 
   const toggleMenu = () => {
     if (!isOpen) {
@@ -402,6 +616,42 @@ const MainPageHamburger = ({ setMenuOpen }) => {
     navigate("/dashboard");
     setIsOpen(false);
     setMenuOpen(false);
+  };
+
+  const handleProfileClick = () => {
+    navigate("/account");
+    setIsOpen(false);
+    setMenuOpen(false);
+  };
+
+  const handleLogoutClick = () => {
+    logout();
+    setIsOpen(false);
+    setMenuOpen(false);
+  };
+
+  // Kullanıcı bilgileri yardımcı fonksiyonları
+  const getInitial = () => {
+    if (!user) return "";
+
+    const { user_metadata, email } = user;
+    const fullName = user_metadata?.full_name;
+
+    return fullName
+      ? fullName.charAt(0).toUpperCase()
+      : email.charAt(0).toUpperCase();
+  };
+
+  const getDisplayName = () => {
+    if (!user) return "";
+
+    const { user_metadata, email } = user;
+    return user_metadata?.full_name || email;
+  };
+
+  const getEmail = () => {
+    if (!user) return "";
+    return user.email;
   };
 
   // İkonlar için SVG bileşenleri
@@ -499,6 +749,37 @@ const MainPageHamburger = ({ setMenuOpen }) => {
     </svg>
   );
 
+  const IconSettings = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+  );
+
+  const IconLogout = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+      <polyline points="16 17 21 12 16 7"></polyline>
+      <line x1="21" y1="12" x2="9" y2="12"></line>
+    </svg>
+  );
+
   return (
     <>
       <MenuIcon ref={iconRef} isOpen={isOpen} onClick={toggleMenu}>
@@ -535,10 +816,34 @@ const MainPageHamburger = ({ setMenuOpen }) => {
 
             <div className="buttons-section">
               {isLoggedIn ? (
-                // Kullanıcı giriş yapmışsa "Devam Et" butonu gösteriyoruz
-                <PrimaryButton onClick={handleContinueClick}>
-                  <IconContinue /> Devam Et
-                </PrimaryButton>
+                <>
+                  <PrimaryButton onClick={handleContinueClick}>
+                    <IconContinue /> Devam Et
+                  </PrimaryButton>
+
+                  {/* Profil bilgileri bölümü */}
+                  <ProfileInfoContainer>
+                    <ProfileHeader>
+                      <Avatar>{getInitial()}</Avatar>
+                      <UserDetails>
+                        <UserName>{getDisplayName()}</UserName>
+                        <UserEmail>{getEmail()}</UserEmail>
+                      </UserDetails>
+                    </ProfileHeader>
+
+                    <ProfileButton onClick={handleProfileClick}>
+                      <IconSettings />
+                      Profil Ayarları
+                    </ProfileButton>
+                    <ProfileButton
+                      className="logout"
+                      onClick={handleLogoutClick}
+                    >
+                      <IconLogout />
+                      Oturumu Kapat
+                    </ProfileButton>
+                  </ProfileInfoContainer>
+                </>
               ) : (
                 // Kullanıcı giriş yapmamışsa "Başlayalım" ve "Oturum Aç" butonlarını gösteriyoruz
                 <>

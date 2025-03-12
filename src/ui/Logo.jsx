@@ -146,6 +146,9 @@ const StyledLogo = styled.div`
         @media (max-width: 600px) {
           width: 75%;
         }
+        @media (max-height: 830px) {
+          width: 140px;
+        }
       `}
       ${(props) =>
     props.variant === "dashmobile" &&

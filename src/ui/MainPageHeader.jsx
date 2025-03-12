@@ -5,6 +5,7 @@ import Heading from "./Heading";
 import Button from "./Button";
 import DarkModeToggle from "./DarkModeToggle";
 import PropTypes from "prop-types";
+import ProfileButton from "./ProfileButtonMainpage";
 import MainPageHamburger from "./MainPageHamburger";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -142,6 +143,17 @@ const MobileMenuContainer = styled.div`
   }
 `;
 
+const ProfileAndButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  
+  @media (max-width: 870px) {
+    gap: 8px;
+  }
+`;
+
+
 function MainPageHeader({ setMenuOpen }) {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -205,8 +217,18 @@ function MainPageHeader({ setMenuOpen }) {
       }
     };
 
+   
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    async function checkUserStatus() {
+      const currentUser = await getCurrentUser();
+      setIsLoggedIn(!!currentUser);
+    }
+    checkUserStatus();
   }, []);
 
   // Sayfa içi navigasyon
@@ -244,10 +266,13 @@ function MainPageHeader({ setMenuOpen }) {
         <ButtonContainer>
           {isLoggedIn ? (
             <>
-              <Button variation="mainpage4" onClick={handleContinueClick}>
-                <IconContinue />
-                Devam Et
-              </Button>
+              <ProfileAndButtonContainer>
+                <ProfileButton /> {/* ProfileButton eklendi */}
+                <Button variation="mainpage4" onClick={handleContinueClick}>
+                  <IconContinue />
+                  Devam Et
+                </Button>
+              </ProfileAndButtonContainer>
               <MobileMenuContainer>
                 <MainPageHamburger setMenuOpen={setMenuOpen} />
               </MobileMenuContainer>

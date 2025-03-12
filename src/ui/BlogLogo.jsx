@@ -90,6 +90,9 @@ const StyledBlogLogo = styled.div`
       @media (max-width: 600px) {
         width: 70%;
       }
+      @media (max-height: 830px) {
+        width: 130px;
+      }
     `}
       ${(props) =>
     props.variant === "dashdropdown" &&

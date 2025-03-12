@@ -333,6 +333,12 @@ const variations = {
       }
     }
 
+    @media(max-width: 1000px) {
+      width: 135px;
+      font-size: 15px;
+      text-wrap: nowrap;
+    }
+
     @media (max-width: 960px) {
       display: none;
     }
