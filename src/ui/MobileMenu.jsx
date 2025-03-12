@@ -15,8 +15,6 @@ import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import UserAvatar from "../features/authentication/UserAvatar";
 import AllDocs from "./AllDocs";
-import Logo from "./Logo";
-import BlogLogo from "./BlogLogo";
 import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 import { NavLink } from "react-router-dom";
@@ -186,7 +184,7 @@ const StyledNavLink = styled.div`
   cursor: pointer;
   font-size: 18px;
   padding: 0 8px;
-  margin-bottom: 5px;
+
   &:hover,
   &:active {
     background-color: var(--color-grey-3);
@@ -337,7 +335,6 @@ const DocsModalCloseButton = styled.button`
   }
 `;
 
-
 // Silme işlemi onay modalı için overlay
 const ModalOverlay = styled.div`
   position: fixed;
@@ -449,17 +446,6 @@ const Divider = styled.div`
   margin: 12px auto 12px auto;
 `;
 
-// Logo konteyner
-const LogoContainer = styled.div`
-  margin-top: 12px;
-  margin-left: 12px;
-  margin-bottom: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 16px;
-`;
-
 // Uygulama bilgisi için stiller
 const AppInfo = styled.div`
   display: flex;
@@ -484,6 +470,39 @@ const AppSubtitle = styled.span`
   font-size: 16px;
   opacity: 0.9;
 `;
+
+const IconSettings = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ width: "26px", height: "26px", color: "var(--color-grey-924)" }}
+  >
+    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>
+);
+
+const IconLogout = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ width: "26px", height: "26px", color: "rgb(229, 57, 53)" }}
+  >
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+    <polyline points="16 17 21 12 16 7"></polyline>
+    <line x1="21" y1="12" x2="9" y2="12"></line>
+  </svg>
+);
 
 const MobileMenu = () => {
   // State yönetimi
@@ -780,14 +799,30 @@ const MobileMenu = () => {
             <HiPlus size={26} style={{ color: "var(--color-grey-924)" }} />
             <span style={{ fontSize: "18px" }}>Yeni</span>
           </StyledNavLink>
-          <StyledNavLink style={{ marginLeft: "12px" }} onClick={handleLogout}>
-            <span style={{ fontSize: "18px" }}>Oturumu Kapat</span>
-          </StyledNavLink>
+
           <Divider />
-          <LogoContainer>
-            <Logo variant="mobilemenu" />
-            <BlogLogo variant="mobilemenu" />
-          </LogoContainer>
+          
+            <StyledNavLink
+              style={{ marginLeft: "12px" }}
+              onClick={handleLogout}
+            >
+               <IconLogout />
+              <span style={{color: "rgb(229, 57, 53)"}}>
+               
+                Oturumu Kapat
+              </span>
+            </StyledNavLink>
+            <StyledNavLink
+              style={{ marginLeft: "12px" }}
+              onClick={handleLogout}
+            >
+              <IconSettings />
+              <span style={{ fontSize: "18px" }}>
+                
+                Profil Ayarları
+              </span>
+            </StyledNavLink>
+          
         </MenuContent>
       </MenuContainer>
 
@@ -824,7 +859,7 @@ const MobileMenu = () => {
             <DocsModalCloseButton onClick={closeDocsModal}>
               &times;
             </DocsModalCloseButton>
-            
+
             <AllDocs />
           </DocsModalContainer>
         </DocsModalOverlay>
