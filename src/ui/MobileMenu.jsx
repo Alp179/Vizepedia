@@ -665,6 +665,11 @@ const MobileMenu = () => {
     }
   };
 
+  const handleProfileClick = () => {
+    navigate("/account");
+    setIsOpen(false);
+  };
+
   // Oturum kapatma işlemi
   const handleLogout = async () => {
     const confirmLogout = await new Promise((resolve) => {
@@ -718,6 +723,8 @@ const MobileMenu = () => {
   if (userSelectionsQuery.isError || documentsQuery.isError) {
     return <div>Error loading data.</div>;
   }
+
+
 
   return (
     <>
@@ -814,7 +821,7 @@ const MobileMenu = () => {
             </StyledNavLink>
             <StyledNavLink
               style={{ marginLeft: "12px" }}
-              onClick={handleLogout}
+              onClick={handleProfileClick}
             >
               <IconSettings />
               <span style={{ fontSize: "18px" }}>
