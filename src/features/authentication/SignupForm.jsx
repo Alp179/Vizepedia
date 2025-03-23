@@ -103,6 +103,25 @@ function SignupForm({ onCloseModal }) {
         });
 
         if (error) {
+          // E-posta zaten kullanılıyorsa özel hata mesajı göster ve login bağlantısı ekle
+          if (error.message.includes("already registered")) {
+            setErrorMessage(
+              <>
+                Bu e-posta adresi zaten kullanılıyor.{" "}
+                <a
+                  onClick={() => navigate("/login")}
+                  style={{
+                    cursor: "pointer",
+                    color: "#00ffa2",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Giriş yapın
+                </a>
+              </>
+            );
+            return;
+          }
           throw new Error(error.message);
         }
 
@@ -210,7 +229,19 @@ function SignupForm({ onCloseModal }) {
           Anonim Giriş
         </Button>
         <FormRow orientation="vertical">
-          <Girisyap>Zaten bir hesabın var mı? <a onClick={() => navigate("/login")} style={{ cursor: "pointer", color: "#00ffa2", textDecoration: "underline" }}>Giriş yap</a></Girisyap>
+          <Girisyap>
+            Zaten bir hesabın var mı?{" "}
+            <a
+              onClick={() => navigate("/login")}
+              style={{
+                cursor: "pointer",
+                color: "#00ffa2",
+                textDecoration: "underline",
+              }}
+            >
+              Giriş yap
+            </a>
+          </Girisyap>
         </FormRow>
       </FormRow>
     </Form>

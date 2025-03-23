@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { Outlet, useLocation,  } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import BackButton from "./BackButton";
 import DarkModeToggle from "./DarkModeToggle";
 import ProgressBar from "@ramonak/react-progress-bar";
@@ -19,6 +19,7 @@ const LoginLayout = styled.main`
   flex-direction: column;
   gap: 7rem;
   overflow: hidden;
+  position: relative;
   @media (max-width: 710px) {
     background: transparent;
   }
@@ -84,9 +85,20 @@ const DarkModeContainer = styled.div`
   }
 `;
 
+const BackButtonContainer = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 10%;
+  z-index: 3000;
+  @media (max-width: 450px) {
+    top: 10px;
+    left: 5%;
+  }
+`;
+
 function QuestionsLayout() {
   const location = useLocation();
-  
+
   const [previousPath, setPreviousPath] = useState(null);
 
   // Tüm localStorage ve çerezleri temizleyen işlev
@@ -105,7 +117,10 @@ function QuestionsLayout() {
 
   useEffect(() => {
     const handlePopState = () => {
-      if (location.pathname === "/wellcome-2" && previousPath !== "/wellcome-1") {
+      if (
+        location.pathname === "/wellcome-2" &&
+        previousPath !== "/wellcome-1"
+      ) {
         clearAllStorageAndCookies();
       }
     };
@@ -137,7 +152,9 @@ function QuestionsLayout() {
   return (
     <BackgroundColor>
       <LoginLayout>
-        <BackButton>Geri Dön</BackButton>
+        <BackButtonContainer>
+          <BackButton>Geri Dön</BackButton>
+        </BackButtonContainer>
         <DarkModeContainer>
           <DarkModeToggle />
         </DarkModeContainer>

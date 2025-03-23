@@ -1,5 +1,61 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import Button from "./Button"; // Button bileşeninizi import edin
+import styled from "styled-components";
+
+const BackButtonWrapper = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 10%;
+  z-index: 3000;
+  transform: scale(1.2);
+
+  @media (max-width: 710px) {
+    top: 10px;
+    left: 7%;
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 450px) {
+    top: -5px;
+    left: 5%;
+    transform: scale(1);
+  }
+
+  @media (max-width: 350px) {
+    top: 5px;
+    transform: scale(0.9);
+  }
+`;
+
+const StyledBackButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: transparent;
+  color: var(--color-grey-600);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 24px; /* %15 daha büyük font */
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--color-grey-800);
+    transform: translateX(-2px);
+  }
+
+  &:active {
+    transform: translateX(0);
+  }
+
+  svg {
+    width: 35px; /* %15 daha büyük ikon */
+    height: 35px; /* %15 daha büyük ikon */
+    margin-right: 10px;
+  }
+`;
 
 function BackButton() {
   const navigate = useNavigate();
@@ -47,24 +103,23 @@ function BackButton() {
   }
 
   return (
-    <Button type="back" size="back" onClick={handleBackClick}>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{ marginRight: "5px" }}
-      >
-        <line x1="19" y1="12" x2="5" y2="12" />
-        <polyline points="12 19 5 12 12 5" />
-      </svg>
-      Geri
-    </Button>
+    <BackButtonWrapper>
+      <StyledBackButton onClick={handleBackClick}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Geri
+      </StyledBackButton>
+    </BackButtonWrapper>
   );
 }
 
