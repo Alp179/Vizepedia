@@ -1,21 +1,66 @@
 import { useState, useRef, useEffect } from "react";
-import { styled } from "styled-components";
+import { styled, keyframes } from "styled-components";
 import DarkModeToggle from "./DarkModeToggle";
 import { useQuery } from "@tanstack/react-query";
 import { searchBlogs } from "../services/apiBlogs";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
 
+// Ana logo için parlama animasyonu
+const shineEffectMain = keyframes`
+  0% {
+    filter: drop-shadow(0 0 2px rgba(0, 68, 102, 0)) brightness(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(0, 68, 102, 0.6)) brightness(1.1);
+  }
+  100% {
+    filter: drop-shadow(0 0 2px rgba(0, 68, 102, 0)) brightness(1);
+  }
+`;
+
+// Ana logo için parlama animasyonu (dark mode)
+const shineEffectMainDark = keyframes`
+  0% {
+    filter: drop-shadow(0 0 2px rgba(0, 255, 162, 0)) brightness(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(0, 255, 162, 0.7)) brightness(1.2);
+  }
+  100% {
+    filter: drop-shadow(0 0 2px rgba(0, 255, 162, 0)) brightness(1);
+  }
+`;
+
+// Blog logosu için parlama animasyonu
+const shineEffectBlog = keyframes`
+  0% {
+    filter: drop-shadow(0 0 2px rgba(102, 51, 255, 0)) brightness(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(102, 51, 255, 0.6)) brightness(1.2);
+  }
+  100% {
+    filter: drop-shadow(0 0 2px rgba(102, 51, 255, 0)) brightness(1);
+  }
+`;
+
+// Blog logosu için parlama animasyonu (dark mode)
+const shineEffectBlogDark = keyframes`
+  0% {
+    filter: drop-shadow(0 0 2px rgba(208, 204, 214, 0)) brightness(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(208, 204, 214, 0.6)) brightness(1.2);
+  }
+  100% {
+    filter: drop-shadow(0 0 2px rgba(208, 204, 214, 0)) brightness(1);
+  }
+`;
+
 const BlogLogo = styled.img`
   cursor: pointer;
-  transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
-
-  &:hover {
-    filter: ${(props) =>
-      props.isDarkMode
-        ? "hue-rotate(280deg)" /* Dark Mode: Renk tonu değişimi */
-        : "hue-rotate(360deg)"};
-  }
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -23,6 +68,12 @@ const BlogLogo = styled.img`
   transform: translate(-50%, -50%);
   height: auto;
   flex-shrink: 0;
+  
+  &:hover {
+    transform: translate(-50%, -52%) scale(1.05);
+    animation: ${props => props.isDarkMode ? shineEffectBlogDark : shineEffectBlog} 2s infinite;
+  }
+  
   @media (max-width: 1300px) {
     width: 140px;
   }
@@ -31,6 +82,14 @@ const BlogLogo = styled.img`
       isHovered || isActive
         ? "translate(-120%, -50%)"
         : "translate(-50%, -50%)"};
+        
+    &:hover {
+      transform: ${({ isHovered, isActive }) =>
+        isHovered || isActive
+          ? "translate(-120%, -52%) scale(1.05)"
+          : "translate(-50%, -52%) scale(1.05)"};
+      animation: ${props => props.isDarkMode ? shineEffectBlogDark : shineEffectBlog} 2s infinite;
+    }
   }
   @media (max-width: 910px) {
     width: 120px;
@@ -43,6 +102,13 @@ const BlogLogo = styled.img`
       isHovered || isActive
         ? "translate(-150%, -50%)"
         : "translate(-50%, -50%)"};
+        
+    &:hover {
+      transform: ${({ isHovered, isActive }) =>
+        isHovered || isActive
+          ? "translate(-150%, -52%) scale(1.05)"
+          : "translate(-50%, -52%) scale(1.05)"};
+    }
   }
   @media (max-width: 380px) {
     transform: ${({ isHovered, isActive }) =>
@@ -50,26 +116,42 @@ const BlogLogo = styled.img`
         ? "translate(-170%, -50%)"
         : "translate(-50%, -50%)"};
     width: 80px;
+    
+    &:hover {
+      transform: ${({ isHovered, isActive }) =>
+        isHovered || isActive
+          ? "translate(-170%, -52%) scale(1.05)"
+          : "translate(-50%, -52%) scale(1.05)"};
+    }
   }
   @media (max-width: 300px) {
     transform: ${({ isHovered, isActive }) =>
       isHovered || isActive
         ? "translate(-170%, -50%)"
         : "translate(-50%, -50%)"};
+        
+    &:hover {
+      transform: ${({ isHovered, isActive }) =>
+        isHovered || isActive
+          ? "translate(-170%, -52%) scale(1.05)"
+          : "translate(-50%, -52%) scale(1.05)"};
+    }
   }
 `;
 
 const Logo = styled.img`
   cursor: pointer;
-  transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
-
-  &:hover {
-    filter: brightness(0) invert(0.4); /* Logo hoverlandığında beyaza döner */
-  }
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   width: 165px;
   transform: translate(0, 0);
   height: auto;
   flex-shrink: 0;
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.05);
+    animation: ${props => props.isDarkMode ? shineEffectMainDark : shineEffectMain} 2s infinite;
+  }
+  
   @media (max-width: 1300px) {
     width: 140px;
     position: relavite;
@@ -83,6 +165,11 @@ const Logo = styled.img`
   @media (max-width: 470px) {
     transform: ${({ isHovered, isActive }) =>
       isHovered || isActive ? "translate(-150%, 0%)" : "translate(0%, 0%)"};
+      
+    &:hover {
+      transform: ${({ isHovered, isActive }) =>
+        isHovered || isActive ? "translate(-150%, -2px) scale(1.05)" : "translate(0%, -2px) scale(1.05)"};
+    }
   }
   @media (max-width: 380px) {
     width: 60px;
@@ -441,12 +528,14 @@ function BlogHeader() {
           src={srcLogo}
           isHovered={isHovered}
           isActive={isActive}
+          isDarkMode={isDarkMode}
         />
         <BlogLogo
           onClick={handleBlogLogoClick}
           src={srcBlog}
           isHovered={isHovered}
           isActive={isActive}
+          isDarkMode={isDarkMode}
         />
 
         <InputAndDarkToggleContainer>

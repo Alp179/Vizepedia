@@ -5,12 +5,13 @@ import { useDarkMode } from "../context/DarkModeContext";
 
 const StyledLogo = styled.div`
   cursor: pointer;
-  transition: filter 0.5s ease, transform 0.5s ease; /* Renk ve dönüşüm animasyonu */
-
-  &:hover {
-    filter: brightness(0) invert(0.4); /* Logo hoverlandığında beyaza döner */
-  }
+  position: relative;
+  transition: all 0.3s ease;
   
+  &:hover {
+    transform: scale(1.05);
+  }
+
   ${(props) =>
     props.variant === "login" &&
     css`
@@ -52,6 +53,10 @@ const StyledLogo = styled.div`
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+        
+        &:hover {
+          transform: translate(-50%, -50%) scale(1.05);
+        }
       }
       @media (max-width: 732px) {
         width: 98px;
@@ -161,6 +166,11 @@ const StyledLogo = styled.div`
       transform: translateX(50%);
       width: 120px;
       height: auto;
+      
+      &:hover {
+        transform: translateX(50%) scale(1.05);
+      }
+      
       @media (max-width: 550px) {
         width: 90px;
       }
@@ -177,11 +187,57 @@ const Img = styled.img`
   -webkit-user-drag: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+  transition: all 0.5s ease;
+  
+  /* Logo efektleri */
+  ${props => props.isDarkMode
+    ? css`
+        filter: drop-shadow(0 0 1px rgba(0, 255, 162, 0));
+        
+        ${StyledLogo}:hover & {
+          filter: drop-shadow(0 0 5px rgba(0, 255, 162, 0.7)) brightness(1.2);
+          animation: pulseLight 2s infinite alternate;
+        }
+      `
+    : css`
+        filter: drop-shadow(0 0 1px rgba(0, 68, 102, 0));
+        
+        ${StyledLogo}:hover & {
+          filter: drop-shadow(0 0 5px rgba(0, 68, 102, 0.6)) brightness(1.1);
+          animation: pulseDark 2s infinite alternate;
+        }
+      `
+  }
+  
+  @keyframes pulseLight {
+    0% {
+      filter: drop-shadow(0 0 5px rgba(0, 255, 162, 0.7)) brightness(1.2);
+    }
+    50% {
+      filter: drop-shadow(0 0 10px rgba(0, 255, 162, 0.9)) brightness(1.3);
+    }
+    100% {
+      filter: drop-shadow(0 0 5px rgba(0, 255, 162, 0.7)) brightness(1.2);
+    }
+  }
+  
+  @keyframes pulseDark {
+    0% {
+      filter: drop-shadow(0 0 5px rgba(0, 68, 102, 0.6)) brightness(1.1);
+    }
+    50% {
+      filter: drop-shadow(0 0 10px rgba(0, 68, 102, 0.8)) brightness(1.2);
+    }
+    100% {
+      filter: drop-shadow(0 0 5px rgba(0, 68, 102, 0.6)) brightness(1.1);
+    }
+  }
 `;
 
 function Logo({ variant }) {
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
+  
   const handleLogoClick = () => {
     navigate("/mainpage");
   };
@@ -191,8 +247,12 @@ function Logo({ variant }) {
     : "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/Varl_k_20_8x.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL1Zhcmxfa18yMF84eC5wbmciLCJpYXQiOjE3MjA5ODIzNjUsImV4cCI6NzU2ODI3NTE2NX0.uo2NgeaGhKZjiNKp5qq4ikIZTlDCkRCZ21ENwcwldLE&t=2024-07-14T18%3A39%3A25.590Z";
 
   return (
-    <StyledLogo onClick={handleLogoClick} variant={variant}>
-      <Img src={src} alt="Logo" />
+    <StyledLogo 
+      onClick={handleLogoClick} 
+      variant={variant} 
+      isDarkMode={isDarkMode}
+    >
+      <Img src={src} alt="Logo" isDarkMode={isDarkMode} />
     </StyledLogo>
   );
 }
