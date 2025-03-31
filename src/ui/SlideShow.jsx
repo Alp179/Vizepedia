@@ -15,7 +15,7 @@ const SlideSection = styled.div`
   align-items: center;
   width: 100%;
   background: var(--color-grey-907);
-  @media (max-width: 710px) {
+  @media (max-width: 890px) {
     margin-top: 50px;
     flex-flow: column;
     height: 800px;
@@ -32,7 +32,7 @@ const SlideExplanation = styled.div`
     max-width: 300px;
     margin-left: 40px;
   }
-  @media (max-width: 710px) {
+  @media (max-width: 890px) {
     gap: 32px;
     margin-bottom: 10px;
     justify-content: center;
@@ -53,7 +53,7 @@ const SlideText = styled.p`
   @media (max-width: 1250px) {
     font-size: 28px;
   }
-  @media (max-width: 710px) {
+  @media (max-width: 890px) {
     font-size: 26px;
   }
   @media (max-width: 320px) {
@@ -69,7 +69,7 @@ const SlideContainer = styled.div`
   width: 70%;
   position: relative;
   overflow: hidden;
-  @media (max-width: 710px) {
+  @media (max-width: 890px) {
     width: 100%;
   }
 `;
@@ -114,12 +114,13 @@ const CardImage = styled.img`
 const CardDate = styled.p`
   font-size: 12px;
   color: #999;
+  text-shadow: 1px 1px #cecece;
   margin-top: 12px;
   margin-left: 20px;
 `;
 
 const CardHeading = styled.p`
-  font-size: 22px;
+  font-size: 20px;
   font-weight: bold;
   color: var(--color-grey-600);
   margin-left: 20px;

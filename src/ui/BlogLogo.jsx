@@ -106,7 +106,7 @@ const StyledBlogLogo = styled.div`
       @media (max-width: 1250px) {
         width: 135px;
       }
-      @media (max-width: 710px) {
+      @media (max-width: 890px) {
         width: 123px;
         margin-top: 32px;
       }
