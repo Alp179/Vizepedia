@@ -143,7 +143,7 @@ const DocumentDescription = styled.p`
   line-height: 1.6;
 
   @media (max-width: 680px) {
-    font-size: 14px;
+    font-size: 16px;
     text-align: center;
   }
 `;
@@ -213,17 +213,8 @@ const SourceButton = styled.button`
   }
   
   @media (max-width: 680px) {
-    font-size: 14px;
-    padding: 10px 15px;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 150px;
-    width: auto;
-  }
-  
-  @media (max-width: 680px) {
-    font-size: 14px;
-    padding: 10px 15px;
+    font-size: 16px;
+    padding: 12px 15px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -261,20 +252,12 @@ const ActionButton = styled.button`
     background-color: ${(props) => (props.isCompleted ? "#c0392b" : "#27ae60")};
   }
   
-  @media (max-width: 680px) {
-    font-size: 14px;
-    padding: 12px;
-    width: 80%;
-    max-width: 200px;
-    flex-wrap: nowrap;
-    white-space: nowrap;
-  }
 
   @media (max-width: 680px) {
     width: 100%;
     max-width: 200px;
-    padding: 12px;
-    font-size: 14px;
+    padding: 14px;
+    font-size: 16px;
     margin: 20px auto 0;
   }
 `;
@@ -425,6 +408,11 @@ const DocProgress = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: 16px;
+  @media (max-width: 1100px) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 4px;
+  } 
 `;
 
 const ProgressDot = styled.div`

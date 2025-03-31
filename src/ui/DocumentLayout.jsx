@@ -34,8 +34,9 @@ const Main = styled.main`
 
 const Container = styled.div`
   padding-top: 50px;
-  width: 800px;
-  height: 100%;
+  width: 1000px;
+  height: inherit;
+  max-width: 100vw;
   margin: 0 auto;
   display: flex;
   flex-direction: column;

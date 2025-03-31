@@ -2,10 +2,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 const BackButtonWrapper = styled.div`
-  position: absolute;
-  top: 20px;
+  position: fixed;
+  top: 10px;
   left: 10%;
-  z-index: 3000;
+  z-index: 2991;
   transform: scale(1.2);
 
   @media (max-width: 710px) {
@@ -15,15 +15,12 @@ const BackButtonWrapper = styled.div`
   }
 
   @media (max-width: 450px) {
-    top: -5px;
+    top: 15px;
     left: 5%;
-    transform: scale(1);
-  }
-
-  @media (max-width: 350px) {
-    top: 5px;
     transform: scale(0.9);
   }
+
+  
 `;
 
 const StyledBackButton = styled.button`

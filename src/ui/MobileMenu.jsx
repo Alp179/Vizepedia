@@ -65,7 +65,7 @@ const MenuIcon = styled.div.attrs((props) => ({
   position: fixed;
   top: 20px;
   right: 12px;
-  z-index: 2000; /* z-index değerini modallara göre daha düşük ayarladık */
+  z-index: 3000; /* z-index değerini modallara göre daha düşük ayarladık */
   @media (min-width: 710px) {
     display: none;
   }
@@ -118,7 +118,7 @@ const MenuIcon = styled.div.attrs((props) => ({
 
 // Ana menü konteyner
 const MenuContainer = styled.div`
-  z-index: 3000;
+  z-index: 2992;
   position: fixed;
   top: 0;
   right: 0;
@@ -135,7 +135,6 @@ const MenuContainer = styled.div`
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.52);
-  z-index: 1100;
   display: flex;
   flex-direction: column;
   padding: 2rem;
@@ -268,7 +267,7 @@ const Overlay = styled.div`
   width: 100%;
   height: 100%;
   background-color: var(--backdrop-color);
-  z-index: 1100;
+  z-index: 2292;
   display: ${(props) =>
     props.isOpen || props.isDocsModalOpen ? "block" : "none"};
 `;
