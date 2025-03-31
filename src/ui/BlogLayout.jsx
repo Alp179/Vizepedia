@@ -29,14 +29,14 @@ const StyledBlogLayout = styled.div`
   inset: -10px;
   left: 0;
   filter: blur(20px);
-  opacity: 0.7;
+  opacity: 0.8;
   width: 100vw;
   height: 1000px;
   @media (max-width: 850px) {
     height: 50vh;
   }
   @media (max-width: 450px) {
-    height: 35vh;
+    height: 40vh;
   }
   background-image: repeating-linear-gradient(
       120deg,

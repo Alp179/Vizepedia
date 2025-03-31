@@ -71,10 +71,13 @@ const AuroraEffect = styled.div`
   background-size: 300%, 200%;
   background-position: 50% 50%, 50% 50%;
   filter: blur(10px);
-  opacity: 0.5;
+  opacity: 0.7;
   pointer-events: none;
   mix-blend-mode: difference;
   animation: ${auroraAnimation} 20s infinite linear;
+  @media (max-width: 450px) {
+    background-size: 400% 300%;
+  }
 
   ${({ showRadialGradient }) =>
     showRadialGradient &&
