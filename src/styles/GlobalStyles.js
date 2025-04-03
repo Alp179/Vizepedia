@@ -294,11 +294,14 @@ ul {
   text-align: center;
   font-weight: bold;
   @media (max-width: 450px) {
+    @media (max-height: 800px) {
+      font-size: 20px;
+    }
+  }
+  @media (max-width: 355px) {
     font-size: 20px;
   }
-  @media (max-height: 725px) {
-    font-size: 18px;
-  }
+  
 }
 
 .subtext {
@@ -306,11 +309,15 @@ ul {
   font-size: 17px;
   text-align: center;
   @media (max-width: 450px) {
-    font-size: 14px;
+    font-size: 16px;
+    @media (max-height: 800px) {
+      font-size: 15px;
+    }
   }
-  @media (max-height: 725px) {
-    font-size: 13px;
+  @media (max-width: 355px) {
+    font-size: 15px;
   }
+ 
 }
 
 .mobile-scrolldiv {

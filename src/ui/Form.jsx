@@ -18,21 +18,17 @@ const Form = styled.form`
       justify-content: space-around;
       align-items: center;
       @media (max-width: 450px) {
-        width: 358px;
-        height: 600px;
+        padding: 22px 12px;
+        @media (max-height: 800px) {
+          padding: 16px 12px;
+        }
       }
-      @media (max-width: 370px) {
-        width: 100%!important;
+      @media (max-width: 380px) {
+        width: 100vw!important;
         height: auto;
 
       }
-      @media (max-height: 725px) {
-        height: 500px;
-        width: 300px;
-        @media (max-width: 270px) {
-          width: 100vw!important;
-          height: auto;
-        }
+     
       }
     `}
 

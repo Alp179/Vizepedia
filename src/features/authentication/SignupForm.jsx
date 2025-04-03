@@ -41,6 +41,9 @@ const Bracket = styled.div`
 
 const Girisyap = styled.div`
   margin: 0 auto;
+  @media (max-width: 300px) {
+    font-size: 15px;
+  }
 `;
 
 function SignupForm({ onCloseModal }) {

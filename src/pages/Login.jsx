@@ -9,20 +9,17 @@ const LoginLayout = styled.main`
 `;
 
 const Container = styled.div`
-  margin-top: 100px;
-  max-height: 90%;
+  margin-top: 60px;
   display: flex;
   flex-direction: column;
   align-content: center;
   justify-content: center;
-  gap: 4rem;
-  @media (max-height: 800px) {
-    margin-top: 40px;
-    gap: 3rem;
+  gap: 32px;
+  @media (max-width: 450px) {
+    gap: 20px;
+    margin-top: 45px;
   }
-  @media (max-width: 370px) {
-    gap: 1.6rem;
-  }
+  
 `;
 
 function Login() {

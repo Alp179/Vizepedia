@@ -20,11 +20,12 @@ const StyledLogo = styled.div`
       width: 125px;
       height: auto;
       @media (max-width: 370px) {
-        width: 100px;
+        width: 120px;
+        @media (max-height: 800px) {
+          width: 110px;
+        }
       }
-      @media (max-height: 725px) {
-        width: 100px;
-      }
+      
     `}
 
   ${(props) =>

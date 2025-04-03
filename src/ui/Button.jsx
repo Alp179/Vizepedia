@@ -26,12 +26,12 @@ const sizes = {
     border: transparent;
     font-weight: bold !important;
     @media (max-width: 450px) {
-      width: 306px !important;
-    }
-    @media (max-height: 725px) {
-      width: 250px !important;
-      height: 36px !important;
-      font-size: 13px !important;
+      width: 350px !important;
+      @media (max-height: 800px) {
+        width: 306px !important;
+        height: 36px !important;
+        font-size: 13px !important;
+      }
     }
   `,
   back: css`
@@ -110,7 +110,7 @@ const variations = {
   login: css`
     color: var(--color-grey-31);
     background-color: var(--color-grey-61);
-    @media (max-width: 370px) {
+    @media (max-width: 380px) {
       width: calc(100vw - 20px) !important;
     }
     &:hover {
@@ -122,7 +122,7 @@ const variations = {
     background-color: var(--color-grey-921);
     border: 1px solid var(--color-grey-905);
     color: var(--color-grey-600);
-    @media (max-width: 370px) {
+    @media (max-width: 380px) {
       width: calc(100vw - 20px) !important;
     }
     &:hover {
@@ -139,8 +139,13 @@ const variations = {
     color: var(--color-grey-600);
     font-weight: bold;
     border: 1px solid var(--color-grey-300);
-    @media (max-width: 370px) {
+    @media (max-width: 380px) {
       width: calc(100vw - 20px) !important;
+    }
+    @media (max-width: 450px) {
+      @media (max-height: 800px) {
+        font-size: 15px;
+      }
     }
     &:hover {
       background: var(--color-grey-922);
@@ -333,7 +338,7 @@ const variations = {
       }
     }
 
-    @media(max-width: 1000px) {
+    @media (max-width: 1000px) {
       width: 135px;
       font-size: 15px;
       text-wrap: nowrap;

@@ -6,14 +6,15 @@ const StyledFormRow = styled.div`
   flex-direction: column;
   justify-content: center;
 
-
   grid-template-columns: ${(props) =>
     props.orientation === "vertical" ? "1fr" : "24rem 1fr 1.2fr"};
   gap: ${(props) => (props.orientation === "vertical" ? "0.8rem" : "2.4rem")};
 
-  padding: 1.2rem 0;
-  @media (max-height: 725px) {
-    padding: 8px;
+  padding: 1rem 0;
+  @media (max-width: 450px) {
+    @media (max-height: 800px) {
+      padding: 8px;
+    }
   }
 
   &:first-child {
@@ -45,9 +46,12 @@ const StyledFormRow = styled.div`
 
 const Label = styled.label`
   font-weight: 500;
-  @media (max-height: 725px) {
-    font-size: 13px;
+  @media (max-width: 450px) {
+    @media (max-height: 800px) {
+      font-size: 13px;
+    }
   }
+  
 `;
 
 const Error = styled.span`

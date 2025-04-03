@@ -8,22 +8,24 @@ import Input from "../../ui/Input";
 import FormRow from "../../ui/FormRow";
 import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
-
 import { toast } from "react-hot-toast"; // toast import edildi
 import { resetPassword, signInWithGoogle } from "../../services/apiAuth";
 
 const BracketContainer = styled.div`
   display: flex;
   gap: 16px;
+  flex-wrap: nowrap !important;
   align-items: center;
   width: 100%;
   justify-content: center;
   @media (max-width: 370px) {
     gap: 8px;
   }
-  @media (max-height: 725px) {
-    font-size: 12px;
-    gap: 12px;
+  @media (max-width: 450px) {
+    @media (max-height: 800px) {
+      font-size: 12px;
+      gap: 12px;
+    }
   }
 `;
 
@@ -44,6 +46,9 @@ const Bracket = styled.div`
 
 const Girisyap = styled.div`
   margin: 0 auto;
+  @media (max-width: 300px) {
+    font-size: 15px;
+  }
 `;
 
 function LoginForm() {
@@ -176,7 +181,15 @@ function LoginForm() {
         </FormRow>
         <BracketContainer>
           <Bracket />
-          <p style={{ color: "var(--color-grey-700)" }}>ya da</p>
+          <p
+            style={{
+              color: "var(--color-grey-700)",
+              textWrap: "nowrap",
+              fontSize: "14px",
+            }}
+          >
+            ya da
+          </p>
           <Bracket />
         </BracketContainer>
         <FormRow orientation="vertical" label="E-posta Adresi">
