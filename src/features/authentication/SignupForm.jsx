@@ -20,6 +20,7 @@ const BracketContainer = styled.div`
   display: flex;
   gap: 16px;
   align-items: center;
+  flex-wrap: nowrap!important;
   width: 100%;
   justify-content: center;
   @media (max-width: 370px) {
