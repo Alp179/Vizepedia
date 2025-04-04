@@ -1,6 +1,6 @@
-/* eslint-disable react/prop-types */
 import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
+import PropTypes from 'prop-types';
 
 // Animasyonlar
 const fadeInUp = keyframes`
@@ -20,9 +20,9 @@ const BlogItem = styled.div`
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
 
@@ -40,7 +40,8 @@ const BlogItem = styled.div`
 const LargeBlogItem = styled(BlogItem)`
   display: flex;
   flex-direction: column;
-  height: ${props => props.isFirst ? '440px' : '420px'};
+  width: 100%;
+  height: 420px;
   position: relative;
   
   @media (max-width: 910px) {
@@ -48,11 +49,13 @@ const LargeBlogItem = styled(BlogItem)`
   }
   
   @media (max-width: 550px) {
+    
     height: 380px;
   }
 `;
 
 const SmallBlogItem = styled(BlogItem)`
+  width: 100%;
   height: 140px;
   display: flex;
   align-items: center;
@@ -78,7 +81,7 @@ const CategoryLabel = styled.span`
 // Görsel stilleri
 const BlogImage = styled.div`
   width: 100%;
-  height: ${props => props.isFirst ? '240px' : '220px'};
+  height: 220px;
   background-image: url(${props => props.src});
   background-size: cover;
   background-position: center;
@@ -99,8 +102,8 @@ const BlogImage = styled.div`
 
 // SmallBlogImage ile ilgili stilleri güncelle
 const SmallBlogImage = styled.div`
-  width: 120px;
-  height: 100px;
+  width: 140px;
+  height: 110px;
   background-image: url(${props => props.src});
   background-size: cover;
   background-position: center;
@@ -114,19 +117,15 @@ const SmallBlogImage = styled.div`
   }
   
   @media (max-width: 550px) {
-    width: 100px;
-    height: 80px;
+    width: 120px;
+    height: 90px;
   }
 `;
 
 // Yükleme durumu için iskelet ekranı
 const SkeletonImage = styled.div`
-  width: ${props => props.small ? '120px' : '100%'};
-  height: ${props => {
-    if (props.small) return '100px';
-    if (props.isFirst) return '240px';
-    return '220px';
-  }};
+  width: ${props => props.small ? '140px' : '100%'};
+  height: ${props => props.small ? '110px' : '220px'};
   background: rgba(245, 245, 247, 0.6);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -135,12 +134,12 @@ const SkeletonImage = styled.div`
   box-shadow: ${props => props.small ? '0 2px 10px rgba(0, 0, 0, 0.08)' : 'none'};
   
   @media (max-width: 910px) {
-    height: ${props => props.small ? '90px' : '200px'};
-    width: ${props => props.small ? '100px' : '100%'};
+    height: ${props => props.small ? '100px' : '200px'};
+    width: ${props => props.small ? '120px' : '100%'};
   }
   
   @media (max-width: 550px) {
-    height: ${props => props.small ? '80px' : '180px'};
+    height: ${props => props.small ? '90px' : '180px'};
   }
 `;
 
@@ -158,11 +157,11 @@ const SmallBlogContent = styled.div`
   flex-direction: column;
   margin: 0 15px;
   flex: 1;
-  max-width: calc(100% - 150px);
+  max-width: calc(100% - 170px);
 `;
 
 const BlogTitle = styled.h3`
-  font-size: ${props => props.isFirst ? '24px' : '20px'};
+  font-size: 20px;
   font-weight: 600;
   margin: 0 0 10px;
   color: rgba(0, 0, 0, 0.85);
@@ -173,7 +172,7 @@ const BlogTitle = styled.h3`
   line-height: 1.3;
 
   @media (max-width: 910px) {
-    font-size: ${props => props.isFirst ? '22px' : '18px'};
+    font-size: 18px;
   }
 `;
 
@@ -216,34 +215,32 @@ const BlogDate = styled.span`
   display: block;
 `;
 
-
-
 // Tarih formatlama yardımcı fonksiyonu
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString("tr-TR", {
-    year: "numeric",
-    month: "long",
     day: "numeric",
+    month: "long",
+    year: "numeric",
   });
 };
 
 // Büyük Kart Komponenti
-export const LargeCard = ({ blog, category, isFirst = false }) => {
+export const LargeCard = ({ blog, category }) => {
   return (
-    <LargeBlogItem isFirst={isFirst}>
+    <LargeBlogItem>
       <Link to={`/blog/${blog.slug}`}>
         {blog.cover_image ? (
-          <BlogImage src={blog.cover_image.trim()} isFirst={isFirst} />
+          <BlogImage src={blog.cover_image.trim()} />
         ) : (
-          <SkeletonImage isFirst={isFirst} />
+          <SkeletonImage />
         )}
         <BlogContent>
           <CategoryLabel>{category}</CategoryLabel>
-          <BlogTitle isFirst={isFirst}>{blog.title}</BlogTitle>
+          <BlogTitle>{blog.title}</BlogTitle>
           <BlogExcerpt>
             {blog.content
               .replace(/<[^>]*>/g, '')
-              .substring(0, isFirst ? 150 : 120)}...
+              .substring(0, 120)}...
           </BlogExcerpt>
           <BlogDate>
             {formatDate(blog.created_at)}
@@ -252,6 +249,17 @@ export const LargeCard = ({ blog, category, isFirst = false }) => {
       </Link>
     </LargeBlogItem>
   );
+};
+
+LargeCard.propTypes = {
+  blog: PropTypes.shape({
+    slug: PropTypes.string.isRequired,
+    cover_image: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
+    created_at: PropTypes.string.isRequired
+  }).isRequired,
+  category: PropTypes.string.isRequired
 };
 
 // Küçük Kart Komponenti
@@ -279,9 +287,21 @@ export const SmallCard = ({ blog, index }) => {
   );
 };
 
+SmallCard.propTypes = {
+  blog: PropTypes.shape({
+    slug: PropTypes.string.isRequired,
+    cover_image: PropTypes.string,
+    category: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    created_at: PropTypes.string.isRequired
+  }).isRequired,
+  index: PropTypes.number.isRequired
+};
+
 // Kategori Kolonu Komponenti
 export const CategoryColumn = styled.div`
-  flex: 0 0 260px;
+  flex: 0 0 320px;
+  width: 320px;
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -309,13 +329,20 @@ export const CategoryColumn = styled.div`
   }
   
   @media (max-width: 910px) {
-    flex: 0 0 270px;
+    flex: 0 0 300px;
+    width: 300px;
     gap: 20px;
   }
   
   @media (max-width: 550px) {
-    flex: 0 0 ${props => props.isMobile ? '100%' : '260px'};
-    width: ${props => props.isMobile ? '100%' : '260px'};
+    flex: 0 0 100%;
+    width: 100%;
     gap: 15px;
   }
 `;
+
+CategoryColumn.propTypes = {
+  index: PropTypes.number,
+  isMobile: PropTypes.bool,
+  className: PropTypes.string
+};

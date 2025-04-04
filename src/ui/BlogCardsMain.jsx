@@ -1,6 +1,6 @@
-/* eslint-disable react/prop-types */
 import { useRef, useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
+import PropTypes from 'prop-types';
 import { LargeCard, SmallCard, CategoryColumn } from "./CardComponent";
 
 // Animasyonlar artık CardComponent'a taşındı
@@ -11,9 +11,6 @@ const CategoriesWrapper = styled.div`
   display: flex;
   overflow-x: hidden;
   padding: 20px 10px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
   
   @media (max-width: 550px) {
     margin-top: 30px;
@@ -31,7 +28,7 @@ const CategoriesContainer = styled.div`
   gap: 25px;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 10px 5px;
-  width: 100%;
+  width: max-content;
   
   @media (max-width: 910px) {
     gap: 15px;
@@ -43,46 +40,48 @@ const ArrowButton = styled.button`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: var(--color-grey-905);
-  color: var(--color-grey-910);
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #1d1d1f;
   border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 44px;
+  height: 44px;
   cursor: pointer;
   z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 
   @media (max-width: 610px) {
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
   }
 
   &:hover {
-    background-color: #004466;
-    color: #00ffa2;
-    transform: translateY(-50%) scale(1.1);
+    background-color: rgba(255, 255, 255, 0.85);
+    transform: translateY(-50%) scale(1.05);
   }
 
   &.left {
-    left: -25px;
+    left: -20px;
     
     @media (max-width: 768px) {
-      left: -15px;
+      left: -12px;
     }
   }
 
   &.right {
-    right: -25px;
+    right: -20px;
     
     @media (max-width: 768px) {
-      right: -15px;
+      right: -12px;
     }
   }
   
@@ -90,8 +89,7 @@ const ArrowButton = styled.button`
     opacity: 0.5;
     cursor: not-allowed;
     &:hover {
-      background-color: var(--color-grey-905);
-      color: var(--color-grey-910);
+      background-color: rgba(255, 255, 255, 0.7);
       transform: translateY(-50%);
     }
   }
@@ -99,27 +97,28 @@ const ArrowButton = styled.button`
 
 // Daha fazla göster butonu
 const LoadMoreButton = styled.button`
-  background: linear-gradient(135deg, #004466, #003355);
-  color: white;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #0066cc;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 12px 24px;
+  border-radius: 22px;
   cursor: pointer;
   font-size: 16px;
-  font-weight: 600;
-  margin: 50px auto;
+  font-weight: 500;
+  margin: 40px auto;
   display: block;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(135deg, #005577, #004466);
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
   
   &:active {
-    transform: translateY(0);
+    transform: scale(0.98);
   }
 `;
 
@@ -133,20 +132,20 @@ const LoadMoreWrapper = styled.div`
 const PaginationIndicator = styled.div`
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-top: 20px;
+  gap: 6px;
+  margin-top: 16px;
 `;
 
 const PaginationDot = styled.div`
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background-color: ${props => props.active ? 'var(--color-grey-926)' : 'var(--color-grey-904)'};
+  background-color: ${props => props.active ? '#1d1d1f' : '#d2d2d7'};
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   
   &:hover {
-    transform: scale(1.2);
+    background-color: ${props => props.active ? '#1d1d1f' : '#a1a1a6'};
   }
 `;
 
@@ -185,7 +184,7 @@ function BlogCardsMain({ blogs }) {
     if (window.innerWidth > 550) {
       // Desktop için viewport genişliğine bağlı olarak görünen kategori sayısını hesapla
       const containerWidth = containerRef.current.offsetWidth;
-      const categoryWidth = 285; // Bir kategorinin ortalama genişliği
+      const categoryWidth = 345; // Bir kategorinin ortalama genişliği (320px + 25px gap)
       visibleCategoryCount = Math.floor(containerWidth / categoryWidth);
     }
     
@@ -431,7 +430,7 @@ function BlogCardsMain({ blogs }) {
           style={{
             transform: isMobile ? 
               `translateX(-${activeIndex * 100}%)` : 
-              `translateX(-${activeIndex * (100 / Math.floor(containerRef.current?.offsetWidth / 285 || 1))}%)`
+              `translateX(-${activeIndex * 345}px)`
           }}
         >
           {Object.keys(groupedBlogsData).map((category, categoryIndex) => {
@@ -510,3 +509,17 @@ function BlogCardsMain({ blogs }) {
 }
 
 export default BlogCardsMain;
+
+BlogCardsMain.propTypes = {
+  blogs: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      slug: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      content: PropTypes.string.isRequired,
+      cover_image: PropTypes.string,
+      category: PropTypes.string.isRequired,
+      created_at: PropTypes.string.isRequired
+    })
+  ).isRequired
+};
