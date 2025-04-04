@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 // Animasyonlar
 const fadeInUp = keyframes`
@@ -20,9 +20,10 @@ const BlogItem = styled.div`
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+  box-shadow: 0px 4px 24px -1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
 
@@ -30,7 +31,7 @@ const BlogItem = styled.div`
     transform: translateY(-4px);
     box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
   }
-  
+
   a {
     text-decoration: none;
     color: inherit;
@@ -43,13 +44,12 @@ const LargeBlogItem = styled(BlogItem)`
   width: 100%;
   height: 420px;
   position: relative;
-  
+
   @media (max-width: 910px) {
     height: 400px;
   }
-  
+
   @media (max-width: 550px) {
-    
     height: 380px;
   }
 `;
@@ -60,9 +60,9 @@ const SmallBlogItem = styled(BlogItem)`
   display: flex;
   align-items: center;
   animation: ${fadeInUp} 0.5s ease both;
-  animation-delay: ${props => (props.index + 1) * 0.1}s;
+  animation-delay: ${(props) => (props.index + 1) * 0.1}s;
   position: relative;
-  
+
   @media (max-width: 550px) {
     height: 120px;
   }
@@ -82,19 +82,19 @@ const CategoryLabel = styled.span`
 const BlogImage = styled.div`
   width: 100%;
   height: 220px;
-  background-image: url(${props => props.src});
+  background-image: url(${(props) => props.src});
   background-size: cover;
   background-position: center;
   transition: transform 0.5s ease;
-  
+
   ${BlogItem}:hover & {
     transform: scale(1.02);
   }
-  
+
   @media (max-width: 910px) {
     height: 200px;
   }
-  
+
   @media (max-width: 550px) {
     height: 180px;
   }
@@ -104,18 +104,18 @@ const BlogImage = styled.div`
 const SmallBlogImage = styled.div`
   width: 140px;
   height: 110px;
-  background-image: url(${props => props.src});
+  background-image: url(${(props) => props.src});
   background-size: cover;
   background-position: center;
   margin: 0 0 0 15px;
   border-radius: 12px;
   transition: transform 0.5s ease;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  
+
   ${SmallBlogItem}:hover & {
     transform: scale(1.03);
   }
-  
+
   @media (max-width: 550px) {
     width: 120px;
     height: 90px;
@@ -124,22 +124,23 @@ const SmallBlogImage = styled.div`
 
 // Yükleme durumu için iskelet ekranı
 const SkeletonImage = styled.div`
-  width: ${props => props.small ? '140px' : '100%'};
-  height: ${props => props.small ? '110px' : '220px'};
+  width: ${(props) => (props.small ? "140px" : "100%")};
+  height: ${(props) => (props.small ? "110px" : "220px")};
   background: rgba(245, 245, 247, 0.6);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  border-radius: ${props => props.small ? '12px' : '0'};
-  margin: ${props => props.small ? '0 0 0 15px' : '0'};
-  box-shadow: ${props => props.small ? '0 2px 10px rgba(0, 0, 0, 0.08)' : 'none'};
-  
+  border-radius: ${(props) => (props.small ? "12px" : "0")};
+  margin: ${(props) => (props.small ? "0 0 0 15px" : "0")};
+  box-shadow: ${(props) =>
+    props.small ? "0 2px 10px rgba(0, 0, 0, 0.08)" : "none"};
+
   @media (max-width: 910px) {
-    height: ${props => props.small ? '100px' : '200px'};
-    width: ${props => props.small ? '120px' : '100%'};
+    height: ${(props) => (props.small ? "100px" : "200px")};
+    width: ${(props) => (props.small ? "120px" : "100%")};
   }
-  
+
   @media (max-width: 550px) {
-    height: ${props => props.small ? '90px' : '180px'};
+    height: ${(props) => (props.small ? "90px" : "180px")};
   }
 `;
 
@@ -186,7 +187,7 @@ const SmallBlogTitle = styled.h3`
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.3;
-  
+
   @media (max-width: 910px) {
     font-size: 15px;
   }
@@ -201,18 +202,27 @@ const BlogExcerpt = styled.p`
   overflow: hidden;
   line-height: 1.5;
   margin: 0 0 18px;
-  
+
   @media (max-width: 910px) {
     font-size: 14px;
     -webkit-line-clamp: 3;
   }
 `;
 
-const BlogDate = styled.span`
+const BlogDateLarge = styled.span`
   font-size: 13px;
   color: rgba(0, 0, 0, 0.5);
   margin-top: auto;
   display: block;
+`;
+
+const BlogDateSmall = styled.span`
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: auto;
+  display: block;
+  position: absolute;
+  bottom: 8px;
 `;
 
 // Tarih formatlama yardımcı fonksiyonu
@@ -238,13 +248,9 @@ export const LargeCard = ({ blog, category }) => {
           <CategoryLabel>{category}</CategoryLabel>
           <BlogTitle>{blog.title}</BlogTitle>
           <BlogExcerpt>
-            {blog.content
-              .replace(/<[^>]*>/g, '')
-              .substring(0, 120)}...
+            {blog.content.replace(/<[^>]*>/g, "").substring(0, 120)}...
           </BlogExcerpt>
-          <BlogDate>
-            {formatDate(blog.created_at)}
-          </BlogDate>
+          <BlogDateLarge>{formatDate(blog.created_at)}</BlogDateLarge>
         </BlogContent>
       </Link>
     </LargeBlogItem>
@@ -257,9 +263,9 @@ LargeCard.propTypes = {
     cover_image: PropTypes.string,
     title: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
-    created_at: PropTypes.string.isRequired
+    created_at: PropTypes.string.isRequired,
   }).isRequired,
-  category: PropTypes.string.isRequired
+  category: PropTypes.string.isRequired,
 };
 
 // Küçük Kart Komponenti
@@ -267,7 +273,12 @@ export const SmallCard = ({ blog, index }) => {
   return (
     <SmallBlogItem index={index}>
       <Link
-        style={{ display: "flex", width: "100%", height: "100%", alignItems: "center" }}
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          alignItems: "center",
+        }}
         to={`/blog/${blog.slug}`}
       >
         {blog.cover_image ? (
@@ -278,9 +289,7 @@ export const SmallCard = ({ blog, index }) => {
         <SmallBlogContent>
           <CategoryLabel>{blog.category}</CategoryLabel>
           <SmallBlogTitle>{blog.title}</SmallBlogTitle>
-          <BlogDate>
-            {formatDate(blog.created_at)}
-          </BlogDate>
+          <BlogDateSmall>{formatDate(blog.created_at)}</BlogDateSmall>
         </SmallBlogContent>
       </Link>
     </SmallBlogItem>
@@ -293,9 +302,9 @@ SmallCard.propTypes = {
     cover_image: PropTypes.string,
     category: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    created_at: PropTypes.string.isRequired
+    created_at: PropTypes.string.isRequired,
   }).isRequired,
-  index: PropTypes.number.isRequired
+  index: PropTypes.number.isRequired,
 };
 
 // Kategori Kolonu Komponenti
@@ -306,34 +315,34 @@ export const CategoryColumn = styled.div`
   flex-direction: column;
   gap: 25px;
   animation: ${fadeInUp} 0.5s ease forwards;
-  animation-delay: ${props => props.index * 0.1}s;
+  animation-delay: ${(props) => props.index * 0.1}s;
   opacity: 0;
   transition: all 0.5s ease;
-  
+
   // Aktif, önceki ve sonraki kategori durumları
   &.category--current {
     opacity: 1;
     transform: scale(1);
     z-index: 3;
   }
-  
+
   &.category--previous,
   &.category--next {
     opacity: 0.8;
     z-index: 2;
   }
-  
+
   &.category--hidden {
     opacity: 0.5;
     z-index: 1;
   }
-  
+
   @media (max-width: 910px) {
     flex: 0 0 300px;
     width: 300px;
     gap: 20px;
   }
-  
+
   @media (max-width: 550px) {
     flex: 0 0 100%;
     width: 100%;
@@ -344,5 +353,5 @@ export const CategoryColumn = styled.div`
 CategoryColumn.propTypes = {
   index: PropTypes.number,
   isMobile: PropTypes.bool,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
