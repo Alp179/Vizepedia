@@ -276,13 +276,10 @@ const DocumentImage = styled.img`
   }
 `;
 
-
-
-
 const NavigationButton = styled.button`
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
+  
   background: var(--color-grey-903);
   color: white;
   border: none;
