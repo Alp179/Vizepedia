@@ -149,45 +149,47 @@ const Dot = styled.div`
   }
 `;
 
-// Content Panel - Dark/Light mode için güncellendi
+// Content Panel - Pozisyonlandırma güncellendi
 const ContentPanel = styled.div`
   position: absolute;
-  width: ${props => props.isMobile ? '80%' : '35%'};
+  width: ${props => props.isMobile ? '90%' : '40%'};
   ${props => !props.isMobile && `${props.position === 'left' ? 'left: 10%;' : 'right: 10%;'}`}
-  ${props => props.isMobile && 'left: 10%;'}
-  top: ${props => props.isMobile ? '22%' : '50%'};
-  transform: translateY(-50%) translateY(${props => props.translateY || '0px'});
+  ${props => props.isMobile && 'left: 5%;'}
+  top: ${props => props.isMobile ? '10%' : '40%'};
+  transform: translateY(${props => props.translateY || '0px'});
   z-index: 10;
   transition: transform 0.8s ${props => props.theme.easing.default}, opacity 0.8s ${props => props.theme.easing.default};
   opacity: ${props => props.visible ? 1 : 0};
   animation: ${contentFadeIn} 0.8s ${props => props.theme.easing.spring} forwards;
   
   @media (max-width: 768px) {
-    width: 80%;
-    left: 10%;
+    width: 85%;
+    left: 7.5%;
     right: auto;
-    top: 25%;
+    top: 12%;
   }
   
   @media (max-width: 480px) {
-    top: 20%;
+    width: 90%;
+    left: 5%;
+    top: 8%;
   }
 `;
 
-// Icon Wrapper - Dark/Light mode için güncellendi
+// Icon Wrapper - Boyut güncellendi
 const IconWrapper = styled.div`
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
   color: ${props => props.color || (props.isDarkMode ? '#fff' : '#333')};
   
   img {
-    width: 100px;
-    height: 100px;
+    width: 110px;
+    height: 110px;
     filter: drop-shadow(0 0 8px ${props => props.glow || (props.isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)')});
     z-index: 1;
     transition: transform 0.3s ease;
@@ -201,34 +203,34 @@ const IconWrapper = styled.div`
   @media (max-width: 768px) {
     width: 100px;
     height: 100px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
     
     img {
-      width: 80px;
-      height: 80px;
+      width: 85px;
+      height: 85px;
     }
   }
   
   @media (max-width: 480px) {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     margin-bottom: 1rem;
     
     img {
-      width: 60px;
-      height: 60px;
+      width: 75px;
+      height: 75px;
     }
   }
 `;
 
-// Title - Dark/Light mode için güncellendi
+// Title - Yazı boyutu büyütüldü
 const Title = styled.h1`
-  font-size: 4rem;
+  font-size: 4.5rem; // Büyütüldü (eskisi: 4rem)
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem; // Artırıldı (eskisi: 1rem)
   
   background: linear-gradient(
     to right, 
@@ -243,67 +245,70 @@ const Title = styled.h1`
   animation: ${shimmer} 5s linear infinite;
   
   @media (max-width: 768px) {
-    font-size: 2.8rem;
+    font-size: 3.5rem; // Büyütüldü (eskisi: 2.8rem)
     margin-bottom: 0.8rem;
   }
   
   @media (max-width: 480px) {
-    font-size: 2.2rem;
-    margin-bottom: 0.5rem;
+    font-size: 3.3rem; // Büyütüldü (eskisi: 2.2rem)
+    margin-bottom: 0.7rem;
+    line-height: 1.05;
   }
 `;
 
-// Subtitle - Dark/Light mode için güncellendi
+// Subtitle - Yazı boyutu büyütüldü
 const Subtitle = styled.h2`
-  font-size: 1.8rem;
+  font-size: 2rem; // Büyütüldü (eskisi: 1.8rem)
   font-weight: 500;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem; // Artırıldı (eskisi: 1.5rem)
   color: ${props => props.isDarkMode 
     ? props.color || 'rgba(255, 255, 255, 0.7)' 
     : props.lightColor || 'rgba(0, 0, 0, 0.7)'};
   position: relative;
   
   @media (max-width: 768px) {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
+    font-size: 1.8rem; // Büyütüldü (eskisi: 1.4rem)
+    margin-bottom: 1.2rem;
   }
   
   @media (max-width: 480px) {
-    font-size: 1.2rem;
-    margin-bottom: 0.8rem;
+    font-size: 1.8rem; // Büyütüldü (eskisi: 1.2rem)
+    margin-bottom: 1rem;
+    line-height: 1.3;
   }
 `;
 
-// Description - Dark/Light mode için güncellendi
+// Description - Yazı boyutu büyütüldü
 const Description = styled.p`
-  font-size: 1.1rem;
+  font-size: 1.3rem; // Büyütüldü (eskisi: 1.1rem)
   line-height: 1.7;
   position: relative;
-  max-width: 90%;
+  max-width: 95%; // Genişletildi (eskisi: 90%)
   color: ${props => props.isDarkMode 
-    ? props.color || 'rgba(255, 255, 255, 0.7)' 
+    ? props.color || 'rgba(255, 255, 255, 0.8)' 
     : props.lightColor || 'rgba(0, 0, 0, 0.7)'};
   
   @media (max-width: 768px) {
-    font-size: 1rem;
+    font-size: 1.3rem; // Büyütüldü (eskisi: 1rem)
     line-height: 1.6;
+    max-width: 100%;
   }
   
   @media (max-width: 480px) {
-    font-size: 0.9rem;
+    font-size: 1.35rem; // Büyütüldü (eskisi: 0.9rem)
     line-height: 1.5;
     max-width: 100%;
   }
 `;
 
-// 3D Frame Effect - Dark/Light mode için güncellendi
+// 3D Frame Effect - Konumu güncellendi
 const ThreeDFrame = styled.div`
-  width: ${props => props.isMobile ? '75%' : '40%'};
-  height: ${props => props.isMobile ? '40%' : '70%'};
+  width: ${props => props.isMobile ? '80%' : '40%'};
+  height: ${props => props.isMobile ? '35%' : '50%'};
   position: absolute;
-  top: ${props => props.isMobile ? '65%' : '50%'};
+  top: ${props => props.isMobile ? '65%' : '65%'};
   ${props => !props.isMobile && `${props.position === 'left' ? 'left: 10%;' : 'right: 10%;'}`}
-  ${props => props.isMobile && 'left: 12.5%;'}
+  ${props => props.isMobile && 'left: 10%;'}
   transform: translateY(-50%) translateY(${props => props.translateY || '0px'}) ${props => props.transform || ''};
   z-index: 10;
   transition: transform 0.8s ${props => props.theme.easing.default}, opacity 0.8s ${props => props.theme.easing.default};
@@ -311,16 +316,16 @@ const ThreeDFrame = styled.div`
   
   @media (max-width: 768px) {
     width: 75%;
-    height: 35%;
+    height: 30%;
     left: 12.5%;
-    top: 62%;
+    top: 68%;
   }
   
   @media (max-width: 480px) {
-    width: 80%;
-    height: 30%;
-    left: 10%;
-    top: 60%;
+    width: 85%;
+    height: 25%;
+    left: 7.5%;
+    top: 72%;
   }
 `;
 
@@ -390,10 +395,10 @@ const ModelCard = styled.div`
   }
 `;
 
-// Scroll Arrow - Dark/Light mode için güncellendi
+// Scroll Arrow - Pozisyonu güncellendi
 const ScrollArrow = styled.div`
   position: absolute;
-  bottom: 3rem;
+  bottom: 2rem; // Yukarı alındı (eskisi: 3rem)
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -413,7 +418,7 @@ const ScrollArrow = styled.div`
   }
   
   @media (max-width: 768px) {
-    bottom: 2rem;
+    bottom: 1.5rem; // Yukarı alındı (eskisi: 2rem)
     
     svg {
       width: 30px;
@@ -422,7 +427,7 @@ const ScrollArrow = styled.div`
   }
   
   @media (max-width: 480px) {
-    bottom: 1.5rem;
+    bottom: 1rem; // Yukarı alındı (eskisi: 1.5rem)
     
     svg {
       width: 24px;
@@ -473,35 +478,37 @@ const BackgroundDots = styled.div`
   }
 `;
 
-// Swipe Indicator for mobile - Dark/Light mode için güncellendi
+// Swipe Indicator - Güncellendi
 const SwipeIndicator = styled.div`
   position: absolute;
-  bottom: 2.5rem;
+  bottom: 1.8rem; // Yukarı alındı (eskisi: 2.5rem)
   left: 50%;
   transform: translateX(-50%);
   display: none;
   align-items: center;
   justify-content: center;
   color: ${props => props.isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'};
-  font-size: 0.8rem;
+  font-size: 0.9rem; // Büyütüldü (eskisi: 0.8rem)
   letter-spacing: 0.5px;
   opacity: ${props => props.hidden ? 0 : 1};
   transition: opacity 0.5s ease;
   
   @media (max-width: 768px) {
     display: flex;
-    bottom: 1.2rem;
+    bottom: 0.8rem; // Yukarı alındı (eskisi: 1.2rem)
+    font-size: 1rem; // Büyütüldü
   }
   
   @media (max-width: 480px) {
-    bottom: 1rem;
+    bottom: 0.6rem; // Yukarı alındı (eskisi: 1rem)
+    font-size: 1.1rem; // Büyütüldü
   }
   
   svg {
-    width: 18px;
-    height: 18px;
+    width: 20px; // Büyütüldü (eskisi: 18px)
+    height: 20px; // Büyütüldü (eskisi: 18px)
     fill: ${props => props.isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'};
-    margin-right: 5px;
+    margin-right: 6px; // Artırıldı (eskisi: 5px)
   }
 `;
 
