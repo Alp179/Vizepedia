@@ -148,7 +148,7 @@ const SkeletonImage = styled.div`
 const BlogContent = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 20px 24px;
+  padding: 20px 24px 40px; /* Alt kısmı tarih için daha fazla boşluk bırak */
   flex: 1;
   position: relative;
 `;
@@ -201,7 +201,7 @@ const BlogExcerpt = styled.p`
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.5;
-  margin: 0 0 18px;
+  margin: 0;
 
   @media (max-width: 910px) {
     font-size: 14px;
@@ -212,17 +212,20 @@ const BlogExcerpt = styled.p`
 const BlogDateLarge = styled.span`
   font-size: 13px;
   color: rgba(0, 0, 0, 0.5);
-  margin-top: auto;
-  display: block;
+  position: absolute;
+  bottom: 12px;
+  left: 24px;
+  width: calc(100% - 48px);
 `;
 
 const BlogDateSmall = styled.span`
   font-size: 13px;
   color: rgba(0, 0, 0, 0.5);
-  margin-top: auto;
-  display: block;
   position: absolute;
   bottom: 8px;
+  @media (max-width: 290px) {
+    font-size: 11px;
+  }
 `;
 
 // Tarih formatlama yardımcı fonksiyonu
@@ -238,18 +241,20 @@ const formatDate = (dateString) => {
 export const LargeCard = ({ blog, category }) => {
   return (
     <LargeBlogItem>
-      <Link to={`/blog/${blog.slug}`}>
+      <Link to={`/blog/${blog.slug}`} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {blog.cover_image ? (
           <BlogImage src={blog.cover_image.trim()} />
         ) : (
           <SkeletonImage />
         )}
         <BlogContent>
-          <CategoryLabel>{category}</CategoryLabel>
-          <BlogTitle>{blog.title}</BlogTitle>
-          <BlogExcerpt>
-            {blog.content.replace(/<[^>]*>/g, "").substring(0, 120)}...
-          </BlogExcerpt>
+          <div>
+            <CategoryLabel>{category}</CategoryLabel>
+            <BlogTitle>{blog.title}</BlogTitle>
+            <BlogExcerpt>
+              {blog.content.replace(/<[^>]*>/g, "").substring(0, 120)}...
+            </BlogExcerpt>
+          </div>
           <BlogDateLarge>{formatDate(blog.created_at)}</BlogDateLarge>
         </BlogContent>
       </Link>

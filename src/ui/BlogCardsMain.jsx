@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { LargeCard, SmallCard, CategoryColumn } from "./CardComponent";
 
@@ -28,13 +28,32 @@ const CategoriesWrapper = styled.div`
 
 const CategoriesContainer = styled.div`
   display: flex;
-  gap: 25px;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 10px 5px;
   width: 100%;
   
-  @media (max-width: 910px) {
-    gap: 15px;
+  /* Desktop kategori genişliği sabit olmalı */
+  & > div {
+    flex: 0 0 320px;
+    width: 320px;
+    margin-right: 25px;
+    
+    @media (max-width: 910px) {
+      flex: 0 0 300px;
+      width: 300px;
+      margin-right: 15px;
+    }
+    
+    @media (max-width: 550px) {
+      flex: 0 0 100%;
+      width: 100%;
+      margin-right: 10px;
+    }
+  }
+  
+  /* Son öğe için sağ margin'i kaldır */
+  & > div:last-child {
+    margin-right: 0;
   }
 `;
 
@@ -152,17 +171,17 @@ const PaginationDot = styled.div`
 
 function BlogCardsMain({ blogs }) {
   const containerRef = useRef(null);
+  const categoriesRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [translateX, setTranslateX] = useState(0);
   const [visibleCounts, setVisibleCounts] = useState({});
-  const [totalPages, setTotalPages] = useState(0);
   
   // Aktif kategori indeksi
   const [activeIndex, setActiveIndex] = useState(0);
   
   // Cihazın mobil olup olmadığını kontrol et
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 550);
+  const [isMobile, setIsMobile] = useState(false);
   
   // Blogları kategoriye göre grupla
   const groupedBlogs = useCallback(() => {
@@ -173,107 +192,70 @@ function BlogCardsMain({ blogs }) {
       return acc;
     }, {});
   }, [blogs]);
-
-  // Sayfalama sisteminde toplam sayfa sayısını hesapla
-  const calculateTotalPages = useCallback(() => {
-    if (!containerRef.current) return;
-    
-    const categoryCount = Object.keys(groupedBlogs()).length;
-    // Ekranda gösterilen kategori sayısını hesapla
-    let visibleCategoryCount = 1; // Mobil için varsayılan
-    
-    if (window.innerWidth > 550) {
-      // Desktop için viewport genişliğine bağlı olarak görünen kategori sayısını hesapla
-      const containerWidth = containerRef.current.offsetWidth;
-      const categoryWidth = 400; // Bir kategorinin ortalama genişliği
-      visibleCategoryCount = Math.floor(containerWidth / categoryWidth);
-    }
-    
-    // Toplam sayfa sayısı = Toplam kategori sayısı / Ekranda görünen kategori sayısı
-    // Math.ceil ile yukarı yuvarlıyoruz, böylece tüm kategoriler görünebilir
-    const pageCount = Math.ceil(categoryCount / visibleCategoryCount);
-    
-    setTotalPages(pageCount);
+  
+  // Kategorileri oluştur
+  const categories = useMemo(() => {
+    return Object.keys(groupedBlogs());
   }, [groupedBlogs]);
   
-  // Sayfa yüklendiğinde ve pencere boyutu değiştiğinde mobil mi diye kontrol et
+  // Kategori sayısı
+  const categoryCount = categories.length;
+  
+  // Görünür kategori sayısı ve sayfa sayısı
+  const [visibleCategoriesCount, setVisibleCategoriesCount] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+  // Sayfa yüklendiğinde ve pencere boyutu değiştiğinde boyutları güncelle
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 550);
-      // Ekran boyutu değişince toplam sayfa sayısını yeniden hesapla
-      calculateTotalPages();
+    const updateDimensions = () => {
+      const isMobileView = window.innerWidth <= 550;
+      setIsMobile(isMobileView);
+      
+      // Görünür kategori sayısını hesapla
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        
+        // Ekran genişliğine göre kaç kategori görünebileceğini hesapla
+        let categoriesPerView;
+        
+        if (isMobileView) {
+          // Mobilde her zaman 1 kategori görünür
+          categoriesPerView = 1;
+        } else if (window.innerWidth <= 910) {
+          // Tablet: 315px genişliğinde (300px + 15px margin)
+          categoriesPerView = Math.floor(containerWidth / 315);
+        } else {
+          // Desktop: 345px genişliğinde (320px + 25px margin)
+          categoriesPerView = Math.floor(containerWidth / 345);
+        }
+        
+        // En az 1 kategori görünebilmeli
+        categoriesPerView = Math.max(1, categoriesPerView);
+        setVisibleCategoriesCount(categoriesPerView);
+        
+        // Toplam sayfa sayısını hesapla
+        const pages = Math.ceil(categoryCount / categoriesPerView);
+        setTotalPages(Math.max(1, pages));
+      }
     };
     
-    window.addEventListener('resize', checkMobile);
-    checkMobile(); // İlk yüklemede kontrol et
+    window.addEventListener('resize', updateDimensions);
+    
+    // İlk yüklemede ve kategori sayısı değişince boyutları güncelle
+    const timer = setTimeout(updateDimensions, 100);
     
     return () => {
-      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('resize', updateDimensions);
+      clearTimeout(timer);
     };
-  }, [calculateTotalPages]);
+  }, [categoryCount]);
   
   // Blog verileri geldiğinde visible counts başlat
   useEffect(() => {
-    if (blogs && Object.keys(blogs).length > 0) {
-      const groupedBlogsData = groupedBlogs();
-      initializeVisibleCounts(Object.keys(groupedBlogsData));
-      calculateTotalPages();
-      
-      // Pencere boyutu değiştiğinde yeniden hesapla
-      const handleResize = () => {
-        initializeVisibleCounts(Object.keys(groupedBlogsData));
-        calculateTotalPages();
-      };
-      
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
+    if (blogs && blogs.length > 0) {
+      initializeVisibleCounts(categories);
     }
-  }, [blogs, calculateTotalPages, groupedBlogs]);
-
-  // Touch events for mobile scrolling
-  const handleTouchStart = (e) => {
-    if (!containerRef.current) return;
-    setIsDragging(true);
-    setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
-    // Dokunmatik başlangıcında animasyonu devre dışı bırak
-    containerRef.current.style.transition = 'none';
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isDragging) return;
-    const x = e.touches[0].pageX - containerRef.current.offsetLeft;
-    const difference = startX - x;
-    // Dokunmatik sürükleme duyarlılığını ayarlama
-    const sensitivity = 1.2;
-    setTranslateX(difference * sensitivity);
-  };
-
-  const handleTouchEnd = () => {
-    if (!containerRef.current) return;
-    
-    // Animasyonu geri etkinleştir
-    containerRef.current.style.transition = '';
-    
-    // Hareketin genişliğine ve hızına bağlı olarak kaydırma yönünü belirle
-    const threshold = window.innerWidth <= 550 ? 30 : 50;
-    
-    if (translateX > threshold) {
-      handleNextClick();
-    } else if (translateX < -threshold) {
-      handlePreviousClick();
-    } else {
-      // Eşik değerinin altında bir hareket varsa, mevcut konuma geri dön
-      if (containerRef.current.scrollLeft !== 0) {
-        containerRef.current.scrollTo({ 
-          left: containerRef.current.scrollLeft, 
-          behavior: "smooth" 
-        });
-      }
-    }
-    
-    setIsDragging(false);
-    setTranslateX(0);
-  };
+  }, [blogs, categories]);
 
   // Her kategori için küçük kartların sayısını başlat
   const initializeVisibleCounts = (categories) => {
@@ -290,20 +272,46 @@ function BlogCardsMain({ blogs }) {
     });
     setVisibleCounts(initialCounts);
   };
+  
+  // Touch events for mobile scrolling
+  const handleTouchStart = (e) => {
+    if (!containerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
+    containerRef.current.style.transition = 'none';
+  };
 
-  const handleMouseDown = (e) => {
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    const x = e.touches[0].pageX - containerRef.current.offsetLeft;
+    const difference = startX - x;
+    const sensitivity = 1.2;
+    setTranslateX(difference * sensitivity);
+  };
+
+  const handleTouchEnd = () => {
     if (!containerRef.current) return;
     
-    // Sadece birincil fare düğmesi (sol tıklama) için sürüklemeyi etkinleştir
-    if (e.button !== 0) return;
+    containerRef.current.style.transition = '';
+    
+    const threshold = window.innerWidth <= 550 ? 30 : 50;
+    
+    if (translateX > threshold) {
+      handleNextClick();
+    } else if (translateX < -threshold) {
+      handlePreviousClick();
+    }
+    
+    setIsDragging(false);
+    setTranslateX(0);
+  };
+
+  const handleMouseDown = (e) => {
+    if (!containerRef.current || e.button !== 0) return;
     
     setIsDragging(true);
     setStartX(e.pageX - containerRef.current.offsetLeft);
-    
-    // Fare sürüklemesi başladığında geçiş animasyonlarını devre dışı bırak
     containerRef.current.style.transition = 'none';
-    
-    // Varsayılan fare davranışlarını engelle
     e.preventDefault();
   };
 
@@ -312,68 +320,74 @@ function BlogCardsMain({ blogs }) {
     
     const x = e.pageX - containerRef.current.offsetLeft;
     const difference = startX - x;
-    
-    // Fare hareketini daha duyarlı hale getir
-    const sensitivity = 1.0; 
+    const sensitivity = 1.0;
     setTranslateX(difference * sensitivity);
-    
-    // Metin seçimini engelle
     e.preventDefault();
   };
   
   const handleMouseUpOrLeave = () => {
     if (!containerRef.current) return;
     
-    // Animasyonu geri etkinleştir
     containerRef.current.style.transition = '';
     
-    // Hareketin büyüklüğüne bağlı olarak kaydırma yönünü belirle
     const threshold = 50;
     
     if (translateX > threshold) {
       handleNextClick();
     } else if (translateX < -threshold) {
       handlePreviousClick();
-    } else {
-      // Eşik değerinin altında bir hareket varsa, mevcut konuma geri dön
-      if (containerRef.current.scrollLeft !== 0) {
-        containerRef.current.scrollTo({ 
-          left: containerRef.current.scrollLeft, 
-          behavior: "smooth" 
-        });
-      }
     }
     
     setIsDragging(false);
     setTranslateX(0);
   };
 
+  // Sonraki kategoriye geçiş
   const handleNextClick = useCallback(() => {
-    const nextIndex = activeIndex + 1;
+    if (categoryCount === 0) return;
     
-    // Toplam kategori sayısı sınırını aşmadan geçiş yap
-    // Bu sayede fazla kaydırma olmaz
-    const maxIndex = totalPages - 1;
-    setActiveIndex(nextIndex > maxIndex ? 0 : nextIndex);
-  }, [activeIndex, totalPages]);
+    setActiveIndex(prevIndex => {
+      const nextIndex = prevIndex + 1;
+      
+      // Eğer sonraki kategori endeksi görüntülenebilecek maksimum kategori sayısından küçükse
+      // o kategoriye git, değilse başa dön
+      const maxVisibleIndex = categoryCount - (isMobile ? 1 : visibleCategoriesCount);
+      return nextIndex <= maxVisibleIndex ? nextIndex : 0;
+    });
+  }, [categoryCount, visibleCategoriesCount, isMobile]);
   
+  // Önceki kategoriye geçiş
   const handlePreviousClick = useCallback(() => {
-    const prevIndex = activeIndex - 1;
+    if (categoryCount === 0) return;
     
-    // Döngüsel hareket - ilk kategoriden önce son kategoriye geç
-    setActiveIndex(prevIndex < 0 ? totalPages - 1 : prevIndex);
-  }, [activeIndex, totalPages]);
+    setActiveIndex(prevIndex => {
+      const nextIndex = prevIndex - 1;
+      // Başa gelince maksimum görünür endekse git
+      const maxVisibleIndex = categoryCount - (isMobile ? 1 : visibleCategoriesCount);
+      return nextIndex >= 0 ? nextIndex : maxVisibleIndex;
+    });
+  }, [categoryCount, visibleCategoriesCount, isMobile]);
   
-  // Slider pagination dot'a tıklanınca
-  const goToCategory = useCallback((categoryIndex) => {
-    setActiveIndex(categoryIndex);
-  }, []);
+  // Belirli bir sayfaya geçiş
+  const goToPage = useCallback((pageIndex) => {
+    if (pageIndex >= 0 && pageIndex < totalPages) {
+      // Sayfa indeksinden kategori indeksine dönüştür
+      // Her sayfada visibleCategoriesCount kadar kategori var 
+      const categoryIndex = pageIndex * visibleCategoriesCount;
+      
+      // Kategori indeksi toplam kategori sayısından küçük olmalı
+      if (categoryIndex < categoryCount) {
+        setActiveIndex(categoryIndex);
+      }
+    }
+  }, [totalPages, visibleCategoriesCount, categoryCount]);
 
+  // Daha fazla göster butonuna tıklama
   const handleLoadMore = () => {
-    setVisibleCounts((prevCounts) => {
+    setVisibleCounts(prevCounts => {
       const updatedCounts = {};
-      Object.keys(prevCounts).forEach((category) => {
-        updatedCounts[category] = prevCounts[category] + (window.innerWidth <= 550 ? 2 : 3);
+      Object.keys(prevCounts).forEach(category => {
+        updatedCounts[category] = prevCounts[category] + (isMobile ? 2 : 3);
       });
       return updatedCounts;
     });
@@ -383,7 +397,7 @@ function BlogCardsMain({ blogs }) {
   const showLoadMoreButton = useCallback(() => {
     const grouped = groupedBlogs();
     return Object.keys(grouped).some(
-      (category) => grouped[category].length > (visibleCounts[category] || 0)
+      category => grouped[category].length > (visibleCounts[category] || 0)
     );
   }, [groupedBlogs, visibleCounts]);
   
@@ -403,7 +417,27 @@ function BlogCardsMain({ blogs }) {
     };
   }, [handlePreviousClick, handleNextClick]);
 
+  // Gruplandırılmış blog verileri
   const groupedBlogsData = groupedBlogs();
+  
+  // CSS transform değeri hesapla
+  const calculateTransform = () => {
+    if (isMobile) {
+      // Mobilde: tam ekran genişliği (100%)
+      return `translateX(-${activeIndex * 100}%)`;
+    } else {
+      // Desktop/tablet: Her kategori için kesin pozisyon
+      if (categoriesRef.current && categoriesRef.current.children.length > 0) {
+        const firstCategory = categoriesRef.current.children[0];
+        const categoryFullWidth = firstCategory.offsetWidth + (window.innerWidth <= 910 ? 15 : 25); // Margin dahil
+        
+        return `translateX(-${activeIndex * categoryFullWidth}px)`;
+      }
+      
+      // Fallback değeri (ilk çizimde veya kategoriler henüz DOM'a eklenmemişse)
+      return `translateX(-${activeIndex * (window.innerWidth <= 910 ? 315 : 345)}px)`;
+    }
+  };
 
   return (
     <>
@@ -411,6 +445,7 @@ function BlogCardsMain({ blogs }) {
         className="left" 
         onClick={handlePreviousClick}
         aria-label="Önceki içerikler"
+        disabled={categoryCount <= 1}
       >
         {"<"}
       </ArrowButton>
@@ -428,13 +463,12 @@ function BlogCardsMain({ blogs }) {
         aria-label="Blog kategorileri"
       >
         <CategoriesContainer 
+          ref={categoriesRef}
           style={{
-            transform: isMobile ? 
-              `translateX(-${activeIndex * 100}%)` : 
-              `translateX(-${activeIndex * (100 / Math.floor(containerRef.current?.offsetWidth / 285 || 1))}%)`
+            transform: calculateTransform()
           }}
         >
-          {Object.keys(groupedBlogsData).map((category, categoryIndex) => {
+          {categories.map((category, categoryIndex) => {
             // Kategoride blog yoksa bu kategoriyi gösterme
             if (!groupedBlogsData[category] || groupedBlogsData[category].length === 0) {
               return null;
@@ -443,19 +477,21 @@ function BlogCardsMain({ blogs }) {
             const [latestBlog, ...otherBlogs] = groupedBlogsData[category];
             const visibleCount = visibleCounts[category] || (isMobile ? 2 : 4);
             
-            // Kategori durumunu belirle
+            // Mobil görünümde kategori durumunu belirle
             let categoryClass = '';
-            if (activeIndex === categoryIndex) categoryClass = 'category--current';
-            else if (activeIndex - 1 === categoryIndex) categoryClass = 'category--previous';
-            else if (activeIndex + 1 === categoryIndex) categoryClass = 'category--next';
-            else categoryClass = 'category--hidden';
+            if (isMobile) {
+              if (categoryIndex === activeIndex) categoryClass = 'category--current';
+              else if (categoryIndex === activeIndex - 1) categoryClass = 'category--previous';
+              else if (categoryIndex === activeIndex + 1) categoryClass = 'category--next';
+              else categoryClass = 'category--hidden';
+            }
 
             return (
               <CategoryColumn 
                 key={category} 
                 index={categoryIndex}
                 isMobile={isMobile}
-                className={isMobile ? categoryClass : ''}
+                className={categoryClass}
               >
                 <LargeCard 
                   blog={latestBlog} 
@@ -472,21 +508,26 @@ function BlogCardsMain({ blogs }) {
         </CategoriesContainer>
       </CategoriesWrapper>
 
-      {/* Sayfalama göstergesi */}
+      {/* Sayfalama göstergesi - her sayfa için bir nokta */}
       {totalPages > 1 && (
         <PaginationIndicator role="navigation" aria-label="Sayfa dolaşımı">
-          {Array.from({length: totalPages}).map((_, index) => (
-            <PaginationDot 
-              key={index} 
-              active={index === activeIndex}
-              onClick={() => goToCategory(index)}
-              role="button"
-              tabIndex={0}
-              aria-label={`Sayfa ${index + 1}`}
-              aria-current={index === activeIndex ? "page" : undefined}
-              onKeyDown={(e) => e.key === 'Enter' && goToCategory(index)}
-            />
-          ))}
+          {Array.from({ length: totalPages }).map((_, pageIndex) => {
+            // Aktif sayfayı hesapla
+            const isActivePage = Math.floor(activeIndex / visibleCategoriesCount) === pageIndex;
+            
+            return (
+              <PaginationDot 
+                key={pageIndex} 
+                active={isActivePage}
+                onClick={() => goToPage(pageIndex)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Sayfa ${pageIndex + 1}`}
+                aria-current={isActivePage ? "page" : undefined}
+                onKeyDown={(e) => e.key === 'Enter' && goToPage(pageIndex)}
+              />
+            );
+          })}
         </PaginationIndicator>
       )}
 
@@ -502,6 +543,7 @@ function BlogCardsMain({ blogs }) {
         className="right" 
         onClick={handleNextClick}
         aria-label="Sonraki içerikler"
+        disabled={categoryCount <= 1}
       >
         {">"}
       </ArrowButton>
