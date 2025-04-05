@@ -155,7 +155,7 @@ const ContentPanel = styled.div`
   width: ${props => props.isMobile ? '90%' : '40%'};
   ${props => !props.isMobile && `${props.position === 'left' ? 'left: 10%;' : 'right: 10%;'}`}
   ${props => props.isMobile && 'left: 5%;'}
-  top: ${props => props.isMobile ? '10%' : '40%'};
+  top: ${props => props.isMobile ? '5%' : '35%'};
   transform: translateY(${props => props.translateY || '0px'});
   z-index: 10;
   transition: transform 0.8s ${props => props.theme.easing.default}, opacity 0.8s ${props => props.theme.easing.default};
@@ -163,16 +163,16 @@ const ContentPanel = styled.div`
   animation: ${contentFadeIn} 0.8s ${props => props.theme.easing.spring} forwards;
   
   @media (max-width: 768px) {
-    width: 85%;
-    left: 7.5%;
+    width: 90%;
+    left: 5%;
     right: auto;
-    top: 12%;
+    top: 8%;
   }
   
   @media (max-width: 480px) {
     width: 90%;
     left: 5%;
-    top: 8%;
+    top: 5%;
   }
 `;
 
@@ -201,36 +201,36 @@ const IconWrapper = styled.div`
   }
   
   @media (max-width: 768px) {
-    width: 100px;
-    height: 100px;
+    width: 110px; // Büyütüldü
+    height: 110px; // Büyütüldü
     margin-bottom: 1.2rem;
     
     img {
-      width: 85px;
-      height: 85px;
+      width: 95px; // Büyütüldü
+      height: 95px; // Büyütüldü
     }
   }
   
   @media (max-width: 480px) {
-    width: 90px;
-    height: 90px;
+    width: 100px; // Büyütüldü
+    height: 100px; // Büyütüldü
     margin-bottom: 1rem;
     
     img {
-      width: 75px;
-      height: 75px;
+      width: 85px; // Büyütüldü
+      height: 85px; // Büyütüldü
     }
   }
 `;
 
-// Title - Yazı boyutu büyütüldü
+// Title - Yazı boyutu %50 daha büyütüldü
 const Title = styled.h1`
-  font-size: 4.5rem; // Büyütüldü (eskisi: 4rem)
+  font-size: 6.5rem; // %50 daha büyütüldü (önceki: 4.5rem)
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;
   position: relative;
-  margin-bottom: 1.2rem; // Artırıldı (eskisi: 1rem)
+  margin-bottom: 1.2rem;
   
   background: linear-gradient(
     to right, 
@@ -245,68 +245,69 @@ const Title = styled.h1`
   animation: ${shimmer} 5s linear infinite;
   
   @media (max-width: 768px) {
-    font-size: 3.5rem; // Büyütüldü (eskisi: 2.8rem)
-    margin-bottom: 0.8rem;
+    font-size: 5.2rem; // %50 daha büyütüldü (önceki: 3.5rem)
+    margin-bottom: 1rem;
+    line-height: 1;
   }
   
   @media (max-width: 480px) {
-    font-size: 3.3rem; // Büyütüldü (eskisi: 2.2rem)
-    margin-bottom: 0.7rem;
-    line-height: 1.05;
+    font-size: 5rem; // %50 daha büyütüldü (önceki: 3.3rem)
+    margin-bottom: 0.8rem;
+    line-height: 1;
   }
 `;
 
-// Subtitle - Yazı boyutu büyütüldü
+// Subtitle - Yazı boyutu %50 daha büyütüldü
 const Subtitle = styled.h2`
-  font-size: 2rem; // Büyütüldü (eskisi: 1.8rem)
+  font-size: 3rem; // %50 daha büyütüldü (önceki: 2rem)
   font-weight: 500;
-  margin-bottom: 1.8rem; // Artırıldı (eskisi: 1.5rem)
+  margin-bottom: 1.8rem;
   color: ${props => props.isDarkMode 
     ? props.color || 'rgba(255, 255, 255, 0.7)' 
     : props.lightColor || 'rgba(0, 0, 0, 0.7)'};
   position: relative;
   
   @media (max-width: 768px) {
-    font-size: 1.8rem; // Büyütüldü (eskisi: 1.4rem)
+    font-size: 2.7rem; // %50 daha büyütüldü (önceki: 1.8rem)
     margin-bottom: 1.2rem;
+    line-height: 1.2;
   }
   
   @media (max-width: 480px) {
-    font-size: 1.8rem; // Büyütüldü (eskisi: 1.2rem)
+    font-size: 2.7rem; // %50 daha büyütüldü (önceki: 1.8rem)
     margin-bottom: 1rem;
-    line-height: 1.3;
+    line-height: 1.2;
   }
 `;
 
-// Description - Yazı boyutu büyütüldü
+// Description - Yazı boyutu %50 daha büyütüldü
 const Description = styled.p`
-  font-size: 1.3rem; // Büyütüldü (eskisi: 1.1rem)
-  line-height: 1.7;
+  font-size: 1.65rem; // %15 küçültüldü (önceki: 1.95rem)
+  line-height: 1.6;
   position: relative;
-  max-width: 95%; // Genişletildi (eskisi: 90%)
+  max-width: 95%;
   color: ${props => props.isDarkMode 
     ? props.color || 'rgba(255, 255, 255, 0.8)' 
     : props.lightColor || 'rgba(0, 0, 0, 0.7)'};
   
   @media (max-width: 768px) {
-    font-size: 1.3rem; // Büyütüldü (eskisi: 1rem)
+    font-size: 1.65rem; // %15 küçültüldü (önceki: 1.95rem)
     line-height: 1.6;
     max-width: 100%;
   }
   
   @media (max-width: 480px) {
-    font-size: 1.35rem; // Büyütüldü (eskisi: 0.9rem)
-    line-height: 1.5;
+    font-size: 1.4rem; // %15 küçültüldü (önceki: 2rem)
+    line-height: 1.6;
     max-width: 100%;
   }
 `;
-
 // 3D Frame Effect - Konumu güncellendi
 const ThreeDFrame = styled.div`
   width: ${props => props.isMobile ? '80%' : '40%'};
-  height: ${props => props.isMobile ? '35%' : '50%'};
+  height: ${props => props.isMobile ? '30%' : '45%'};
   position: absolute;
-  top: ${props => props.isMobile ? '65%' : '65%'};
+  top: ${props => props.isMobile ? '70%' : '70%'};
   ${props => !props.isMobile && `${props.position === 'left' ? 'left: 10%;' : 'right: 10%;'}`}
   ${props => props.isMobile && 'left: 10%;'}
   transform: translateY(-50%) translateY(${props => props.translateY || '0px'}) ${props => props.transform || ''};
@@ -316,16 +317,16 @@ const ThreeDFrame = styled.div`
   
   @media (max-width: 768px) {
     width: 75%;
-    height: 30%;
+    height: 25%;
     left: 12.5%;
-    top: 68%;
+    top: 72%;
   }
   
   @media (max-width: 480px) {
     width: 85%;
-    height: 25%;
+    height: 20%;
     left: 7.5%;
-    top: 72%;
+    top: 75%;
   }
 `;
 
@@ -398,7 +399,7 @@ const ModelCard = styled.div`
 // Scroll Arrow - Pozisyonu güncellendi
 const ScrollArrow = styled.div`
   position: absolute;
-  bottom: 2rem; // Yukarı alındı (eskisi: 3rem)
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -418,7 +419,7 @@ const ScrollArrow = styled.div`
   }
   
   @media (max-width: 768px) {
-    bottom: 1.5rem; // Yukarı alındı (eskisi: 2rem)
+    bottom: 1.5rem;
     
     svg {
       width: 30px;
@@ -427,7 +428,7 @@ const ScrollArrow = styled.div`
   }
   
   @media (max-width: 480px) {
-    bottom: 1rem; // Yukarı alındı (eskisi: 1.5rem)
+    bottom: 1rem;
     
     svg {
       width: 24px;
@@ -478,37 +479,52 @@ const BackgroundDots = styled.div`
   }
 `;
 
-// Swipe Indicator - Güncellendi
+// Swipe Indicator - Tıklanabilir olarak güncellendi
 const SwipeIndicator = styled.div`
   position: absolute;
-  bottom: 1.8rem; // Yukarı alındı (eskisi: 2.5rem)
+  bottom: 1.8rem;
   left: 50%;
   transform: translateX(-50%);
   display: none;
   align-items: center;
   justify-content: center;
   color: ${props => props.isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'};
-  font-size: 0.9rem; // Büyütüldü (eskisi: 0.8rem)
+  font-size: 1.2rem; // Büyütüldü
   letter-spacing: 0.5px;
   opacity: ${props => props.hidden ? 0 : 1};
-  transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease, transform 0.3s ease;
+  padding: 8px 16px; // Click alanını genişletmek için padding eklendi
+  background-color: ${props => props.isDarkMode ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.3)'};
+  backdrop-filter: blur(5px);
+  border-radius: 20px;
+  cursor: pointer; // Pointer cursor gösterilmesi sağlandı
+  
+  &:hover {
+    transform: translateX(-50%) translateY(3px);
+  }
   
   @media (max-width: 768px) {
     display: flex;
-    bottom: 0.8rem; // Yukarı alındı (eskisi: 1.2rem)
-    font-size: 1rem; // Büyütüldü
+    bottom: 0.8rem;
+    font-size: 1.4rem; // Büyütüldü
   }
   
   @media (max-width: 480px) {
-    bottom: 0.6rem; // Yukarı alındı (eskisi: 1rem)
-    font-size: 1.1rem; // Büyütüldü
+    bottom: 0.6rem;
+    font-size: 1.5rem; // Büyütüldü
+    padding: 8px 20px; // Tıklama alanı genişletildi
   }
   
   svg {
-    width: 20px; // Büyütüldü (eskisi: 18px)
-    height: 20px; // Büyütüldü (eskisi: 18px)
+    width: 22px; // Büyütüldü
+    height: 22px; // Büyütüldü
     fill: ${props => props.isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'};
-    margin-right: 6px; // Artırıldı (eskisi: 5px)
+    margin-right: 6px;
+    
+    @media (max-width: 480px) {
+      width: 24px; // Büyütüldü
+      height: 24px; // Büyütüldü
+    }
   }
 `;
 
@@ -958,11 +974,12 @@ const CustomPremiumSections = ({ onComplete }) => {
                   </ScrollArrow>
                 )}
                 
-                {/* Swipe indicator - Sadece mobilde görünür */}
+                {/* Swipe indicator - Sadece mobilde görünür ve tıklanabilir */}
                 {index === currentSectionIndex && isMobile && (
                   <SwipeIndicator 
                     hidden={index === sections.length - 1} 
                     isDarkMode={isDarkMode}
+                    onClick={scrollToNextSection} // Tıklama ile kaydırma eklendi
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z" transform="rotate(90 12 12)"/>
