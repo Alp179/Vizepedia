@@ -342,14 +342,47 @@ function BlogDetail() {
     return headings;
   };
 
+  // Geliştirilmiş smooth scroll fonksiyonu
+  const scrollToHeading = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      // Başlık alanı için boşluk bırakıyoruz
+      const headerOffset = 120;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+      
+      // Aktif başlığı güncelleme
+      setActiveHeading(id);
+      
+      // Erişilebilirlik için başlığa odaklanma 
+      setTimeout(() => {
+        element.setAttribute('tabindex', '-1');
+        element.focus({ preventScroll: true });
+      }, 500);
+      
+      // History API kullanarak URL'yi değiştirmeden geçmişi kaydet (opsiyonel)
+      // const currentPath = window.location.pathname;
+      // window.history.pushState({ headingId: id }, "", currentPath);
+    }
+  };
+
   // Sayfa scroll olaylarını izleme
   useEffect(() => {
     const handleScroll = () => {
+      // Yukarı kaydırma butonu görünürlüğü
       setScrollVisible(window.scrollY > 400);
+      
+      // Okuma ilerleme çubuğu
       const totalHeight = document.body.scrollHeight - window.innerHeight;
       const progress = (window.scrollY / totalHeight) * 100;
       setReadingProgress(progress);
 
+      // Aktif başlığı belirleme
       if (headings.length > 0) {
         const headingElements = headings.map((heading) =>
           document.getElementById(heading.id)
@@ -371,6 +404,10 @@ function BlogDetail() {
         // Eğer aktif başlık değiştiyse state'i güncelle
         if (activeId && activeId !== activeHeading) {
           setActiveHeading(activeId);
+          
+          // URL'yi değiştirmeden durum güncellemesi (opsiyonel)
+          // const currentPath = window.location.pathname;
+          // window.history.replaceState({ headingId: activeId }, "", currentPath);
         }
       }
     };
@@ -378,6 +415,19 @@ function BlogDetail() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [headings, activeHeading]);
+
+  // History API olayları için izleyici (opsiyonel)
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (event.state && event.state.headingId) {
+        const id = event.state.headingId;
+        scrollToHeading(id);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -501,6 +551,7 @@ function BlogDetail() {
           blog={blog}
           headings={headings}
           activeHeading={activeHeading}
+          setActiveHeading={setActiveHeading}
         />
 
         <SidebarBlogList

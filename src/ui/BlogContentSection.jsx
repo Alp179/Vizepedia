@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 
 // Animasyonlar
@@ -28,10 +29,32 @@ const TableOfContentsContainer = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   display: ${(props) => (props.headings.length > 1 ? "block" : "none")};
+
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 85%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+    transform: translate(-50%, -45%);
+
+    &.visible {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%);
+    }
+  }
 `;
 
 const TableOfContentsTitle = styled.h3`
-  font-size: 1.3rem;
+  font-size: 16px;
   margin-bottom: 1.2rem;
   color: var(--color-grey-600);
   display: flex;
@@ -62,7 +85,7 @@ const TableOfContentsItem = styled.li`
     border-radius: 0.5rem;
     transition: all 0.2s ease;
     opacity: 0.85;
-    font-size: ${(props) => (props.level === 2 ? "1rem" : "0.95rem")};
+    font-size: ${(props) => (props.level === 2 ? "16px" : "0.95rem")};
     font-weight: ${(props) => (props.level === 2 ? "500" : "400")};
 
     &:hover {
@@ -84,7 +107,7 @@ const SectionContainer = styled.section`
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 2.2rem;
+  font-size: 36px;
   font-weight: 600;
   margin: 3rem 0 1.5rem;
   color: var(--color-grey-600);
@@ -105,17 +128,20 @@ const SectionTitle = styled.h2`
   }
 
   @media (max-width: 768px) {
-    font-size: 1.75rem;
+    font-size: 32px;
 
     &::before {
       height: 1.75rem;
     }
   }
+  @media (max-width: 450px) {
+    font-size: 24px;
+  }
 `;
 
 const SectionContent = styled.div`
   margin-bottom: 2rem;
-  font-size: 1.35rem;
+  font-size: 16px;
   line-height: 1.8;
   color: var(--color-grey-600);
 
@@ -224,7 +250,7 @@ const SectionContent = styled.div`
   }
 
   @media (max-width: 768px) {
-    font-size: 1.125rem;
+    font-size: 16px;
 
     h3 {
       font-size: 1.5rem;
@@ -328,17 +354,119 @@ const ShareButton = styled.button`
   }
 `;
 
-function BlogContentSection({ blog, headings, activeHeading }) {
-  // Başlığa kaydırma fonksiyonu
-  const scrollToHeading = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      window.scrollTo({
-        top: element.offsetTop - 100,
-        behavior: "smooth",
-      });
+// Mobil için içindekiler toggle butonu
+const TableToggleButton = styled.button`
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: var(--color-grey-600);
+  font-size: 16px!important;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  justify-content: center;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+// Kapat butonu
+const CloseButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  color: var(--color-grey-600);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+  line-height: 1;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+// Overlay
+const Overlay = styled.div`
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+
+  @media (max-width: 768px) {
+    &.visible {
+      display: block;
     }
-  };
+  }
+`;
+
+function BlogContentSection({
+  blog,
+  headings,
+  activeHeading,
+  setActiveHeading,
+}) {
+  // Mobil cihazlar için içindekiler görünürlüğünü takip etmek için state
+  const [tableVisible, setTableVisible] = useState(false);
+
+  // Başlığa kaydırma fonksiyonu - geliştirilmiş versiyon
+  
+  // Scroll olaylarını izleme - eğer BlogDetail.js'den aktif başlık gönderilmezse
+  useEffect(() => {
+    if (!setActiveHeading) {
+      const handleScroll = () => {
+        if (headings.length > 0) {
+          const headingElements = headings.map((heading) =>
+            document.getElementById(heading.id)
+          );
+
+          // En son görünür başlığı bul
+          for (let i = headingElements.length - 1; i >= 0; i--) {
+            const element = headingElements[i];
+            if (element) {
+              const rect = element.getBoundingClientRect();
+              if (rect.top <= 150) {
+                // State'i bu bileşen içinde yönetmek istiyorsak:
+                // setActiveHeading(headings[i].id);
+                break;
+              }
+            }
+          }
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [headings, setActiveHeading]);
+
+  // ESC tuşu ile mobil menüyü kapatma
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && tableVisible) {
+        setTableVisible(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [tableVisible]);
 
   // Paylaşım fonksiyonları
   const shareOnTwitter = () => {
@@ -375,11 +503,17 @@ function BlogContentSection({ blog, headings, activeHeading }) {
 
   const tags = blog.tags ? blog.tags.split(",").map((tag) => tag.trim()) : [];
 
+  // İçindekiler mobil görünürlük toggla butonu
+  const toggleTableOfContents = () => {
+    setTableVisible(!tableVisible);
+  };
+
   return (
     <MainContent>
       {headings.length > 0 && (
-        <TableOfContentsContainer headings={headings}>
-          <TableOfContentsTitle>
+        <>
+          {/* Mobil cihazlar için toggle buton */}
+          <TableToggleButton onClick={toggleTableOfContents}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -389,30 +523,64 @@ function BlogContentSection({ blog, headings, activeHeading }) {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <line x1="21" y1="10" x2="7" y2="10"></line>
-              <line x1="21" y1="6" x2="3" y2="6"></line>
-              <line x1="21" y1="14" x2="3" y2="14"></line>
-              <line x1="21" y1="18" x2="7" y2="18"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
             İçindekiler
-          </TableOfContentsTitle>
-          <TableOfContentsList>
-            {headings.map((heading) => (
-              <TableOfContentsItem key={heading.id} level={heading.level}>
-                <a
-                  href={`#${heading.id}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToHeading(heading.id);
-                  }}
-                  className={activeHeading === heading.id ? "active" : ""}
-                >
-                  {heading.text}
-                </a>
-              </TableOfContentsItem>
-            ))}
-          </TableOfContentsList>
-        </TableOfContentsContainer>
+          </TableToggleButton>
+
+          {/* Mobil overlay */}
+          <Overlay
+            className={tableVisible ? "visible" : ""}
+            onClick={() => setTableVisible(false)}
+          />
+
+          <TableOfContentsContainer
+            headings={headings}
+            className={tableVisible ? "visible" : ""}
+          >
+            <TableOfContentsTitle>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="21" y1="10" x2="7" y2="10"></line>
+                <line x1="21" y1="6" x2="3" y2="6"></line>
+                <line x1="21" y1="14" x2="3" y2="14"></line>
+                <line x1="21" y1="18" x2="7" y2="18"></line>
+              </svg>
+              İçindekiler
+              <CloseButton onClick={() => setTableVisible(false)}>
+                ×
+              </CloseButton>
+            </TableOfContentsTitle>
+            <TableOfContentsList>
+              {headings.map((heading) => (
+                <TableOfContentsItem key={heading.id} level={heading.level}>
+                  <a
+                    href={`#${heading.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const element = document.getElementById(heading.id);
+                      if (element) {
+                        element.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                    className={activeHeading === heading.id ? "active" : ""}
+                  >
+                    {heading.text}
+                  </a>
+                </TableOfContentsItem>
+              ))}
+            </TableOfContentsList>
+          </TableOfContentsContainer>
+        </>
       )}
 
       {/* Bölüm 1 */}
