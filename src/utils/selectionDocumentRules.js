@@ -43,7 +43,7 @@ const selectionDocumentRules = {
       "Ticaret Sicil Gazetesi Fotokopisi",
       "SGK Tescil ve Hizmet Dökümü",
       "Son 3 Aylık Maaş Bordrosu",
-      "Vergi Levhası",
+      "Şirket Vergi Levhası",
       "Şirket İmza Sirküleri",
       "Son 3 Aylık Banka Hesap Dökümü",
       "Şirket Dilekçesi",
@@ -122,6 +122,11 @@ const selectionDocumentRules = {
       purpose: "Ziyaret",
       documents: ["Sarı Davetiye"], // Kombinasyon için gerekli belgeler
     },
+    {
+      country: "İtalya",
+      purpose: "Ticari",
+      documents: ["Visura Camerale"],
+    }
   ],
 };
 
