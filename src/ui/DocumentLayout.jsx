@@ -34,18 +34,18 @@ const Main = styled.main`
 
 const Container = styled.div`
   padding-top: 50px;
-  width: 1000px;
+  width: 1200px;
   height: inherit;
   max-width: 100vw;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
-  @media (max-width: 1100px) {
-    width: 100%;
+  @media (max-width: 1300px) {
+    width: 95%;
   }
   @media (max-width: 680px) {
-    width: 100%!important;
+    width: 100%;
     gap: 0;
     margin: 0px;
   }

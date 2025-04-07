@@ -58,19 +58,19 @@ const pulse = keyframes`
 `;
 
 // Tekrar kullanılabilir stiller
-
 const PageContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
   height: 100%;
-  padding: 20px;
+  padding: 25px;
   background: var(--color-grey-51);
-  border-radius: 20px;
+  border-radius: 24px;
   box-sizing: border-box;
   position: relative;
   animation: ${fadeIn} 0.5s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 
   @media (max-width: 680px) {
     flex-direction: column;
@@ -85,15 +85,15 @@ const PageContainer = styled.div`
 `;
 
 const InfoContainer = styled.div`
-  flex: 1;
+flex: 1;
   padding: 30px;
-  background: var(--color-grey-51);
-  border-radius: 15px;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   color: #333;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 
   @media (max-width: 680px) {
     padding: 20px;
@@ -102,16 +102,16 @@ const InfoContainer = styled.div`
 `;
 
 const ImageContainer = styled.div`
-  flex: 0.4;
-  gap: 16px;
-  padding: 20px;
-  background: var(--color-grey-51);
-  border-radius: 15px;
+flex:1;
+  gap: 20px;
+  padding: 24px;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-left: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 
   @media (max-width: 680px) {
     margin-left: 0;
@@ -125,6 +125,9 @@ const DocumentTitle = styled.h1`
   color: var(--color-grey-52);
   margin-bottom: 16px;
   text-align: left;
+  border-bottom: 3px solid #00ffa2;
+  padding-bottom: 8px;
+  display: inline-block;
 
   @media (max-width: 1000px) {
     font-size: 24px;
@@ -133,6 +136,7 @@ const DocumentTitle = styled.h1`
   @media (max-width: 680px) {
     font-size: 20px;
     text-align: center;
+    display: block;
   }
 `;
 
@@ -141,20 +145,30 @@ const DocumentDescription = styled.p`
   color: var(--color-grey-53);
   font-size: 18px;
   line-height: 1.6;
+  background: rgba(0, 68, 102, 0.03);
+  padding: 16px;
+  border-radius: 12px;
+  border-left: 4px solid #004466;
 
   @media (max-width: 680px) {
     font-size: 16px;
     text-align: center;
+    padding: 12px;
   }
 `;
 
 const DocumentMeta = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 12px;
   color: #718096;
   font-size: 14px;
-  
+  width: 100%;
+  background: rgba(0, 68, 102, 0.05);
+  padding: 10px;
+  border-radius: 10px;
+  justify-content: center;
+
   svg {
     margin-right: 8px;
   }
@@ -168,15 +182,24 @@ const DocumentMeta = styled.div`
 const MetaTag = styled.span`
   display: inline-flex;
   align-items: center;
-  background-color: #e6f6ff;
-  color: #0056b3;
-  padding: 4px 10px;
+  background-color: rgba(0, 68, 102, 0.1);
+  color: #004466;
+  padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
   margin-right: 12px;
-  
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
   svg {
     margin-right: 5px;
+    color: #00ffa2;
   }
 `;
 
@@ -185,6 +208,11 @@ const ImageText = styled.p`
   font-weight: bold;
   font-size: 14px;
   margin-bottom: 8px;
+  padding: 6px 12px;
+  background: rgba(0, 68, 102, 0.05);
+  border-radius: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 `;
 
 const SourceButton = styled.button`
@@ -192,7 +220,7 @@ const SourceButton = styled.button`
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  margin-top: 20px;
+  margin-top: 25px;
   padding: 15px 20px;
   background-color: #004466;
   color: white;
@@ -200,18 +228,42 @@ const SourceButton = styled.button`
   border-radius: 16px;
   width: auto;
   min-width: 150px;
-  transition: all 0.2s ease;
-  
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: #00ffa2;
+    transition: all 0.3s ease;
+    z-index: 0;
+  }
+
+  &:hover:before {
+    width: 100%;
+  }
+
   svg {
     margin-right: 8px;
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
   }
-  
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+
   &:hover {
-    background-color: #00ffa2;
     color: #004466;
   }
-  
+
   @media (max-width: 680px) {
     font-size: 16px;
     padding: 12px 15px;
@@ -228,30 +280,60 @@ const ActionButton = styled.button`
   background-color: ${(props) => (props.isCompleted ? "#e74c3c" : "#2ecc71")};
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 16px;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
-  margin-top: 20px;
+  margin-top: 25px;
   transition: all 0.3s ease;
   margin-left: auto;
   margin-right: auto;
   width: auto;
   min-width: 200px;
-  
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    z-index: 0;
+  }
+
+  &:hover:before {
+    width: 100%;
+  }
+
   svg {
     margin-right: 8px;
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
   }
-  
-  ${props => props.isCompleted ? '' : css`
-    animation: ${pulse} 2s infinite ease-in-out;
-  `}
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+
+  ${(props) =>
+    props.isCompleted
+      ? ""
+      : css`
+          animation: ${pulse} 2s infinite ease-in-out;
+        `}
 
   &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
     background-color: ${(props) => (props.isCompleted ? "#c0392b" : "#27ae60")};
   }
-  
 
   @media (max-width: 680px) {
     width: 100%;
@@ -265,14 +347,15 @@ const ActionButton = styled.button`
 const DocumentImage = styled.img`
   width: 100%;
   height: auto;
-  border-radius: 12px;
-  transition: transform 0.3s ease;
+  border-radius: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   object-fit: cover;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+
   &:hover {
     transform: scale(1.02);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -292,18 +375,22 @@ const NavigationButton = styled.button`
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  transition: background-color 0.2s ease, color 0.2s ease; /* Pozisyon transitionlarını kaldırdık */
-  will-change: transform, top; /* Performans iyileştirmesi */
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  will-change: transform, top;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 
   &:hover {
     background-color: #004466;
     color: #00ffa2;
+    transform: translateY(-50%) scale(1.1);
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    
+    transform: translateY(-50%) scale(1);
+    box-shadow: none;
+
     &:hover {
       background: rgba(255, 255, 255, 0.95);
       color: #1a365d;
@@ -317,9 +404,8 @@ const NavigationButton = styled.button`
   &.right {
     right: -60px;
   }
-  
+
   @media (max-width: 680px) {
-    /* Style burada sabit, pozisyonlandırma JavaScript ile yapılacak */
     width: 45px;
     height: 45px;
     font-size: 20px;
@@ -333,7 +419,7 @@ const ModalOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -354,7 +440,8 @@ const ModalContent = styled.div`
   border: none;
   padding: 0;
   box-shadow: none;
-  animation: ${({ isClosing }) => (isClosing ? fadeOutScale : fadeInScale)} 0.3s ease-in-out;
+  animation: ${({ isClosing }) => (isClosing ? fadeOutScale : fadeInScale)} 0.3s
+    ease-in-out;
 `;
 
 const CloseButton = styled.button`
@@ -372,13 +459,15 @@ const CloseButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+
   &:hover {
     background: #c53030;
     transform: scale(1.1);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   }
-  
+
   @media (max-width: 680px) {
     top: -30px;
     right: -10px;
@@ -392,6 +481,7 @@ const ModalImage = styled.img`
   height: 100%;
   object-fit: contain;
   border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 `;
 
 const DocProgress = styled.div`
@@ -399,57 +489,212 @@ const DocProgress = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: 16px;
-  @media (max-width: 1100px) {
+  background: rgba(0, 68, 102, 0.05);
+  padding: 10px;
+  border-radius: 30px;
+  width: fit-content;
+  
+  @media (max-width: 1300px) {
     flex-wrap: wrap;
     justify-content: flex-start;
     gap: 4px;
-  } 
+  }
 `;
 
 const ProgressDot = styled.div`
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background-color: ${(props) => (props.active ? "#004466" : "#cbd5e0")};
-  margin: 0 4px;
+  margin: 0 5px;
   transition: all 0.3s ease;
-  
-  ${props => props.active && css`
-    transform: scale(1.3);
-  `}
+  box-shadow: ${props => props.active ? '0 0 6px rgba(0, 68, 102, 0.5)' : 'none'};
+
+  ${(props) =>
+    props.active &&
+    css`
+      transform: scale(1.4);
+    `}
 `;
 
 const MetaInfo = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   margin-top: 16px;
+`;
+
+const SectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 25px;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid ${props => props.color || '#004466'};
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover { 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+`;
+
+const SectionHeading = styled.h3`
+  font-size: 20px;
+  color:  var(--color-grey-52);
+  margin-bottom: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  
+  svg {
+    margin-right: 8px;
+    color: ${props => props.iconColor || '#00ffa2'};
+  }
+`;
+
+const SectionContent = styled.div`
+  color: var(--color-grey-53);
+  font-size: 16px;
+  line-height: 1.6;
 `;
 
 // SVG ikonları için bileşenler
 const TimeIcon = () => (
-  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+  <svg
+    width="16"
+    height="16"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
   </svg>
 );
 
 const LinkIcon = () => (
-  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+  <svg
+    width="16"
+    height="16"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+    />
   </svg>
 );
 
 const CheckIcon = () => (
-  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+  <svg
+    width="16"
+    height="16"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M5 13l4 4L19 7"
+    />
   </svg>
 );
 
 const UndoIcon = () => (
-  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h10a4 4 0 0 1 0 8H9" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10l5-5" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10l5 5" />
+  <svg
+    width="16"
+    height="16"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M3 10h10a4 4 0 0 1 0 8H9"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M3 10l5-5"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M3 10l5 5"
+    />
+  </svg>
+);
+
+const WarningIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="#e74c3c"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+    />
+  </svg>
+);
+
+const MapPinIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="#3498db"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+    />
+  </svg>
+);
+
+const BookIcon = () => (
+  <svg
+    width="18"
+    height="18"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="#8e44ad"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+    />
   </svg>
 );
 
@@ -497,42 +742,42 @@ const DocumentDetail = () => {
     // SourceButton ile NavigationButton'ları hizalama fonksiyonu
     const adjustNavigationButtons = () => {
       if (window.innerWidth <= 680) {
-        const sourceButton = document.getElementById('sourceButton');
+        const sourceButton = document.getElementById("sourceButton");
         if (sourceButton) {
           const buttonRect = sourceButton.getBoundingClientRect();
-          const leftButton = document.querySelector('.left');
-          const rightButton = document.querySelector('.right');
-          
+          const leftButton = document.querySelector(".left");
+          const rightButton = document.querySelector(".right");
+
           if (leftButton && rightButton) {
             // Butonların yüksekliklerini SourceButton ile hizala
-            const verticalCenter = buttonRect.top + (buttonRect.height / 2);
+            const verticalCenter = buttonRect.top + buttonRect.height / 2;
             const buttonRadius = 22.5; // Button height (45px) / 2
 
-            leftButton.style.position = 'fixed';
+            leftButton.style.position = "fixed";
             leftButton.style.top = `${verticalCenter - buttonRadius}px`;
-            leftButton.style.transform = 'none';
-            leftButton.style.left = '10px';
-            
-            rightButton.style.position = 'fixed';
+            leftButton.style.transform = "none";
+            leftButton.style.left = "10px";
+
+            rightButton.style.position = "fixed";
             rightButton.style.top = `${verticalCenter - buttonRadius}px`;
-            rightButton.style.transform = 'none';
-            rightButton.style.right = '10px';
+            rightButton.style.transform = "none";
+            rightButton.style.right = "10px";
           }
         }
       } else {
         // Desktop görünümde eski konumlarına getir
-        const navigationButtons = document.querySelectorAll('.left, .right');
-        navigationButtons.forEach(button => {
-          button.style.position = 'absolute';
-          button.style.top = '50%';
-          button.style.transform = 'translateY(-50%)';
-          
-          if (button.classList.contains('left')) {
-            button.style.left = '-60px';
-            button.style.right = 'auto';
+        const navigationButtons = document.querySelectorAll(".left, .right");
+        navigationButtons.forEach((button) => {
+          button.style.position = "absolute";
+          button.style.top = "50%";
+          button.style.transform = "translateY(-50%)";
+
+          if (button.classList.contains("left")) {
+            button.style.left = "-60px";
+            button.style.right = "auto";
           } else {
-            button.style.right = '-60px';
-            button.style.left = 'auto';
+            button.style.right = "-60px";
+            button.style.left = "auto";
           }
         });
       }
@@ -544,15 +789,15 @@ const DocumentDetail = () => {
     };
 
     adjustNavigationButtons();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
 
     // Düzenli olarak pozisyonu güncelle (scroll olayından bağımsız olarak)
     const intervalId = setInterval(adjustNavigationButtons, 100);
-    
+
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
       clearInterval(intervalId);
     };
   }, [selectedDocument]);
@@ -563,12 +808,12 @@ const DocumentDetail = () => {
     } else {
       document.body.style.overflow = "auto";
     }
-  
+
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [isModalOpen]);
-  
+
   useEffect(() => {
     if (imgRef.current) {
       const updateSize = () => {
@@ -577,9 +822,9 @@ const DocumentDetail = () => {
         const windowWidth = window.innerWidth * 0.8;
         const windowHeight = window.innerHeight * 0.8;
         const aspectRatio = imgWidth / imgHeight;
-  
+
         let newWidth, newHeight;
-  
+
         if (aspectRatio > 1) {
           newWidth = Math.min(imgWidth, windowWidth);
           newHeight = newWidth / aspectRatio;
@@ -595,10 +840,10 @@ const DocumentDetail = () => {
             newHeight = newWidth / aspectRatio;
           }
         }
-  
+
         setDimensions({ width: newWidth, height: newHeight });
       };
-  
+
       if (imgRef.current.complete) {
         updateSize();
       } else {
@@ -676,7 +921,7 @@ const DocumentDetail = () => {
     setModalImage(imageSrc);
     setIsModalOpen(true);
   };
-  
+
   const closeModal = () => {
     setIsClosing(true);
     setTimeout(() => {
@@ -685,7 +930,7 @@ const DocumentDetail = () => {
       setIsClosing(false);
     }, 300);
   };
-  
+
   return (
     <>
       <PageContainer>
@@ -696,46 +941,70 @@ const DocumentDetail = () => {
         >
           &lt;
         </NavigationButton>
-        
+
         <InfoContainer>
           <div>
             <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
-            
+
             <MetaInfo>
               <MetaTag>
                 <TimeIcon />
                 {selectedDocument.estimatedCompletionTime}
               </MetaTag>
               {selectedDocument.docType && (
-                <MetaTag>
-                  {selectedDocument.docType}
-                </MetaTag>
+                <MetaTag>{selectedDocument.docType}</MetaTag>
               )}
             </MetaInfo>
-            
+
             <DocumentDescription>
               {selectedDocument.docDescription}
             </DocumentDescription>
-            
+
+            {selectedDocument.docImportant && (
+              <SectionContainer color="#e74c3c">
+                <SectionHeading iconColor="#e74c3c">
+                  <WarningIcon />
+                  Dikkat
+                </SectionHeading>
+                <SectionContent>
+                  {selectedDocument.docImportant.split('\\n-').map((item, index) => (
+                    index === 0 ? (
+                      <p key={index}>{item}</p>
+                    ) : (
+                      <div key={index} style={{ display: 'flex', alignItems: 'flex-start', marginTop: '8px' }}>
+                        <span style={{ 
+                          display: 'inline-block', 
+                          width: '6px', 
+                          height: '6px', 
+                          borderRadius: '50%', 
+                          backgroundColor: '#e74c3c', 
+                          marginRight: '8px',
+                          marginTop: '8px'
+                        }}></span>
+                        <span>{item.trim()}</span>
+                      </div>
+                    )
+                  ))}
+                </SectionContent>
+              </SectionContainer>
+            )}
+
+            {selectedDocument.docWhere && (
+              <SectionContainer color="#3498db">
+                <SectionHeading iconColor="#3498db">
+                  <MapPinIcon />
+                  Temin yeri
+                </SectionHeading>
+                <SectionContent>{selectedDocument.docWhere}</SectionContent>
+              </SectionContainer>
+            )}
+
             <SourceButton id="sourceButton">
               <LinkIcon />
               <span>Bağlantı</span>
             </SourceButton>
-            
-            {/* İlgili işlemler kısmı geçici olarak inaktif 
-            <RelatedSteps>
-              <RelatedStepsTitle>
-                Bu Belge ile Bağlantılı İşlemler
-              </RelatedStepsTitle>
-              <StepsList>
-                {selectedDocument.relatedSteps?.map((step, index) => (
-                  <li key={index}>{step}</li>
-                ))}
-              </StepsList>
-            </RelatedSteps>
-            */}
           </div>
-          
+
           <ActionButton onClick={handleAction} isCompleted={isCompleted}>
             {isCompleted ? (
               <>
@@ -750,7 +1019,7 @@ const DocumentDetail = () => {
             )}
           </ActionButton>
         </InfoContainer>
-        
+
         <ImageContainer>
           <ImageText>Belge Örneği</ImageText>
           <DocumentImage
@@ -758,21 +1027,32 @@ const DocumentDetail = () => {
             alt={selectedDocument.docName}
             onClick={() => handleImageClick(selectedDocument.docImage)}
           />
-          
+
           <DocumentMeta>
-            Temin Yeri: {selectedDocument.procurementLocation || "Belirtilmemiş"}
+            Temin Yeri: {selectedDocument.docSource || "Belirtilmemiş"}
           </DocumentMeta>
-          
+
           <DocProgress>
-            {documents && documents.map((_, index) => (
-              <ProgressDot 
-                key={index} 
-                active={index === currentDocumentIndex} 
-              />
-            ))}
+            {documents &&
+              documents.map((_, index) => (  
+                <ProgressDot
+                  key={index}
+                  active={index === currentDocumentIndex}
+                />
+              ))}
           </DocProgress>
+
+          {selectedDocument.referenceName && (
+            <SectionContainer color="#8e44ad">
+              <SectionHeading iconColor="#8e44ad">
+                <BookIcon />
+                Kaynak
+              </SectionHeading>
+              <SectionContent>{selectedDocument.referenceName}</SectionContent>
+            </SectionContainer>
+          )}
         </ImageContainer>
-        
+
         <NavigationButton
           className="right"
           onClick={() => handleNavigation("next")}
@@ -784,18 +1064,14 @@ const DocumentDetail = () => {
 
       {isModalOpen && (
         <ModalOverlay onClick={closeModal}>
-          <ModalContent 
-            isClosing={isClosing} 
-            width={dimensions.width} 
-            height={dimensions.height} 
+          <ModalContent
+            isClosing={isClosing}
+            width={dimensions.width}
+            height={dimensions.height}
             onClick={(e) => e.stopPropagation()}
           >
             <CloseButton onClick={closeModal}>×</CloseButton>
-            <ModalImage 
-              ref={imgRef} 
-              src={modalImage} 
-              alt="Büyütülmüş Görsel" 
-            />
+            <ModalImage ref={imgRef} src={modalImage} alt="Büyütülmüş Görsel" />
           </ModalContent>
         </ModalOverlay>
       )}
