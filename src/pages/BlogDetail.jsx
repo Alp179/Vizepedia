@@ -7,6 +7,7 @@ import Footer from "../ui/Footer";
 import styled, { keyframes } from "styled-components";
 import SidebarBlogList from "../ui/SidebarBlogList";
 import BlogContentSection from "../ui/BlogContentSection";
+import PaginationDots from "../ui/PaginationDots"; // Yeni bileşen importu
 
 // Animasyonlar
 const fadeIn = keyframes`
@@ -344,30 +345,35 @@ function BlogDetail() {
 
   // Geliştirilmiş smooth scroll fonksiyonu
   const scrollToHeading = (id) => {
+    console.log("scrollToHeading called with id:", id); // Debug için log
     const element = document.getElementById(id);
+
     if (element) {
+      console.log("Element found:", element); // Element bulundu mu?
+
       // Başlık alanı için boşluk bırakıyoruz
       const headerOffset = 120;
       const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
+      const offsetPosition =
+        elementPosition + window.pageYOffset - headerOffset;
+
+      console.log("Scrolling to position:", offsetPosition); // Scroll pozisyonu
+
       window.scrollTo({
         top: offsetPosition,
-        behavior: "smooth"
+        behavior: "smooth",
       });
-      
+
       // Aktif başlığı güncelleme
       setActiveHeading(id);
-      
-      // Erişilebilirlik için başlığa odaklanma 
+
+      // Erişilebilirlik için başlığa odaklanma
       setTimeout(() => {
-        element.setAttribute('tabindex', '-1');
+        element.setAttribute("tabindex", "-1");
         element.focus({ preventScroll: true });
       }, 500);
-      
-      // History API kullanarak URL'yi değiştirmeden geçmişi kaydet (opsiyonel)
-      // const currentPath = window.location.pathname;
-      // window.history.pushState({ headingId: id }, "", currentPath);
+    } else {
+      console.warn("Element not found with id:", id); // Element bulunamadı
     }
   };
 
@@ -376,7 +382,7 @@ function BlogDetail() {
     const handleScroll = () => {
       // Yukarı kaydırma butonu görünürlüğü
       setScrollVisible(window.scrollY > 400);
-      
+
       // Okuma ilerleme çubuğu
       const totalHeight = document.body.scrollHeight - window.innerHeight;
       const progress = (window.scrollY / totalHeight) * 100;
@@ -404,10 +410,6 @@ function BlogDetail() {
         // Eğer aktif başlık değiştiyse state'i güncelle
         if (activeId && activeId !== activeHeading) {
           setActiveHeading(activeId);
-          
-          // URL'yi değiştirmeden durum güncellemesi (opsiyonel)
-          // const currentPath = window.location.pathname;
-          // window.history.replaceState({ headingId: activeId }, "", currentPath);
         }
       }
     };
@@ -500,6 +502,10 @@ function BlogDetail() {
     <PageContainer>
       <ReadingProgress progress={readingProgress} />
 
+      {headings.length > 0 && (
+        <PaginationDots headings={headings} activeHeading={activeHeading} />
+      )}
+
       <HeroSection>
         <HeroImage src={blog.cover_image} />
         <HeroContent>
@@ -552,6 +558,7 @@ function BlogDetail() {
           headings={headings}
           activeHeading={activeHeading}
           setActiveHeading={setActiveHeading}
+          hideTableOfContents={false} // İçindekiler tablosunu göster
         />
 
         <SidebarBlogList

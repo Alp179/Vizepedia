@@ -19,16 +19,17 @@ const MainContent = styled.div`
   animation: ${slideUp} 0.8s ease-in-out;
 `;
 
+// İçindekiler tablosunu sticky olmaktan çıkarıyoruz
 const TableOfContentsContainer = styled.div`
-  position: sticky;
-  top: 2rem;
+  /* position: sticky; - Bu satırı kaldırdık */
+  /* top: 2rem; - Bu satırı kaldırdık */
   margin-bottom: 2rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 1rem;
   padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  display: ${(props) => (props.headings.length > 1 ? "block" : "none")};
+  display: ${(props) => (props.headings.length > 1 && !props.hideTableOfContents ? "block" : "none")};
 
   @media (max-width: 768px) {
     position: fixed;
@@ -46,7 +47,7 @@ const TableOfContentsContainer = styled.div`
     transform: translate(-50%, -45%);
 
     &.visible {
-      display: block;
+      display: ${(props) => (props.hideTableOfContents ? "none" : "block")};
       opacity: 1;
       transform: translate(-50%, -50%);
     }
@@ -356,7 +357,7 @@ const ShareButton = styled.button`
 
 // Mobil için içindekiler toggle butonu
 const TableToggleButton = styled.button`
-  display: none;
+  display: ${(props) => (props.hideTableOfContents ? "none" : "none")};
   align-items: center;
   gap: 0.5rem;
   padding: 0.8rem 1.2rem;
@@ -377,7 +378,7 @@ const TableToggleButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    display: flex;
+    display: ${(props) => (props.hideTableOfContents ? "none" : "flex")};
   }
 `;
 
@@ -421,12 +422,11 @@ function BlogContentSection({
   headings,
   activeHeading,
   setActiveHeading,
+  hideTableOfContents = false,
 }) {
   // Mobil cihazlar için içindekiler görünürlüğünü takip etmek için state
   const [tableVisible, setTableVisible] = useState(false);
 
-  // Başlığa kaydırma fonksiyonu - geliştirilmiş versiyon
-  
   // Scroll olaylarını izleme - eğer BlogDetail.js'den aktif başlık gönderilmezse
   useEffect(() => {
     if (!setActiveHeading) {
@@ -510,10 +510,13 @@ function BlogContentSection({
 
   return (
     <MainContent>
-      {headings.length > 0 && (
+      {headings.length > 0 && !hideTableOfContents && (
         <>
           {/* Mobil cihazlar için toggle buton */}
-          <TableToggleButton onClick={toggleTableOfContents}>
+          <TableToggleButton 
+            onClick={toggleTableOfContents} 
+            hideTableOfContents={hideTableOfContents}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -539,6 +542,7 @@ function BlogContentSection({
           <TableOfContentsContainer
             headings={headings}
             className={tableVisible ? "visible" : ""}
+            hideTableOfContents={hideTableOfContents}
           >
             <TableOfContentsTitle>
               <svg
