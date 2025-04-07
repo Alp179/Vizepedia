@@ -85,7 +85,7 @@ const PageContainer = styled.div`
 `;
 
 const InfoContainer = styled.div`
-flex: 1;
+  flex: 1;
   padding: 30px;
   border-radius: 20px;
   display: flex;
@@ -102,7 +102,7 @@ flex: 1;
 `;
 
 const ImageContainer = styled.div`
-flex:1;
+  flex: 1;
   gap: 20px;
   padding: 24px;
   border-radius: 20px;
@@ -233,7 +233,7 @@ const SourceButton = styled.button`
   overflow: hidden;
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -295,7 +295,7 @@ const ActionButton = styled.button`
   overflow: hidden;
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -493,7 +493,7 @@ const DocProgress = styled.div`
   padding: 10px;
   border-radius: 30px;
   width: fit-content;
-  
+
   @media (max-width: 1300px) {
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -508,7 +508,8 @@ const ProgressDot = styled.div`
   background-color: ${(props) => (props.active ? "#004466" : "#cbd5e0")};
   margin: 0 5px;
   transition: all 0.3s ease;
-  box-shadow: ${props => props.active ? '0 0 6px rgba(0, 68, 102, 0.5)' : 'none'};
+  box-shadow: ${(props) =>
+    props.active ? "0 0 6px rgba(0, 68, 102, 0.5)" : "none"};
 
   ${(props) =>
     props.active &&
@@ -531,26 +532,32 @@ const SectionContainer = styled.div`
   padding: 18px;
   border-radius: 14px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid ${props => props.color || '#004466'};
+  border-left: 4px solid ${(props) => props.color || "#004466"};
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover { 
+  cursor: ${props => props.isLink ? 'pointer' : 'default'};
+
+  &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    ${(props) =>
+      props.isLink &&
+      `
+      background-color: rgba(142, 68, 173, 0.05);
+    `}
   }
 `;
 
 const SectionHeading = styled.h3`
   font-size: 20px;
-  color:  var(--color-grey-52);
+  color: var(--color-grey-52);
   margin-bottom: 12px;
   font-weight: 600;
   display: flex;
   align-items: center;
-  
+
   svg {
     margin-right: 8px;
-    color: ${props => props.iconColor || '#00ffa2'};
+    color: ${(props) => props.iconColor || "#00ffa2"};
   }
 `;
 
@@ -642,13 +649,7 @@ const UndoIcon = () => (
 );
 
 const WarningIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="#e74c3c"
-  >
+  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#e74c3c">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -659,13 +660,7 @@ const WarningIcon = () => (
 );
 
 const MapPinIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="#3498db"
-  >
+  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#3498db">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -682,13 +677,7 @@ const MapPinIcon = () => (
 );
 
 const BookIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="#8e44ad"
-  >
+  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#8e44ad">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -931,6 +920,17 @@ const DocumentDetail = () => {
     }, 300);
   };
 
+  const handleReferenceClick = () => {
+    if (selectedDocument && selectedDocument.referenceLinks) {
+      // Link açma işlemi
+      window.open(
+        selectedDocument.referenceLinks,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    }
+  };
+
   return (
     <>
       <PageContainer>
@@ -967,24 +967,35 @@ const DocumentDetail = () => {
                   Dikkat
                 </SectionHeading>
                 <SectionContent>
-                  {selectedDocument.docImportant.split('\\n-').map((item, index) => (
-                    index === 0 ? (
-                      <p key={index}>{item}</p>
-                    ) : (
-                      <div key={index} style={{ display: 'flex', alignItems: 'flex-start', marginTop: '8px' }}>
-                        <span style={{ 
-                          display: 'inline-block', 
-                          width: '6px', 
-                          height: '6px', 
-                          borderRadius: '50%', 
-                          backgroundColor: '#e74c3c', 
-                          marginRight: '8px',
-                          marginTop: '8px'
-                        }}></span>
-                        <span>{item.trim()}</span>
-                      </div>
-                    )
-                  ))}
+                  {selectedDocument.docImportant
+                    .split("\\n-")
+                    .map((item, index) =>
+                      index === 0 ? (
+                        <p key={index}>{item}</p>
+                      ) : (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            marginTop: "8px",
+                          }}
+                        >
+                          <span
+                            style={{
+                              display: "inline-block",
+                              width: "6px",
+                              height: "6px",
+                              borderRadius: "50%",
+                              backgroundColor: "#e74c3c",
+                              marginRight: "8px",
+                              marginTop: "8px",
+                            }}
+                          ></span>
+                          <span>{item.trim()}</span>
+                        </div>
+                      )
+                    )}
                 </SectionContent>
               </SectionContainer>
             )}
@@ -1034,7 +1045,7 @@ const DocumentDetail = () => {
 
           <DocProgress>
             {documents &&
-              documents.map((_, index) => (  
+              documents.map((_, index) => (
                 <ProgressDot
                   key={index}
                   active={index === currentDocumentIndex}
@@ -1043,10 +1054,32 @@ const DocumentDetail = () => {
           </DocProgress>
 
           {selectedDocument.referenceName && (
-            <SectionContainer color="#8e44ad">
+            <SectionContainer
+              color="#8e44ad"
+              isLink={!!selectedDocument.referenceLinks}
+              onClick={
+                selectedDocument.referenceLinks
+                  ? handleReferenceClick
+                  : undefined
+              }
+            >
               <SectionHeading iconColor="#8e44ad">
                 <BookIcon />
                 Kaynak
+                {selectedDocument.referenceLinks && (
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      marginLeft: "8px",
+                      backgroundColor: "rgba(142, 68, 173, 0.1)",
+                      padding: "2px 6px",
+                      borderRadius: "4px",
+                      color: "#8e44ad",
+                    }}
+                  >
+                    Bağlantıya git
+                  </span>
+                )}
               </SectionHeading>
               <SectionContent>{selectedDocument.referenceName}</SectionContent>
             </SectionContainer>

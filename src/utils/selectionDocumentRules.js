@@ -120,7 +120,7 @@ const selectionDocumentRules = {
     {
       country: "Almanya",
       purpose: "Ziyaret",
-      documents: ["Sarı Davetiye"], // Kombinasyon için gerekli belgeler
+      documents: ["Sarı Davetiye (Verpflichtungserklärung)"], // Kombinasyon için gerekli belgeler
     },
     {
       country: "İtalya",
