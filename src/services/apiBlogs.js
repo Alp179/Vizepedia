@@ -79,28 +79,47 @@ export async function fetchRelatedBlogs(tags, currentSlug = null) {
   return data;
 }
 
-// Bloglarda arama yapma fonksiyonu
+// Bloglarda arama yapma fonksiyonu - Sözdizimi hatası düzeltildi
 export async function searchBlogs(searchTerm) {
+  // Arama terimi validasyonu
+  if (!searchTerm || searchTerm.trim() === '') {
+    console.log('Arama terimi boş');
+    return [];
+  }
+  
   const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  console.log('Arama yapılıyor:', lowerCaseSearchTerm);
 
-  const { data, error } = await supabase
-    .from("blogs")
-    .select("*")
-    .or(
-      `title.ilike.%${lowerCaseSearchTerm}%,
-      content.ilike.%${lowerCaseSearchTerm}%,
-      tags.ilike.%${lowerCaseSearchTerm}%,
-      section1_title.ilike.%${lowerCaseSearchTerm}%,
-      section1_content.ilike.%${lowerCaseSearchTerm}%,
-      section2_title.ilike.%${lowerCaseSearchTerm}%,
-      section2_content.ilike.%${lowerCaseSearchTerm}%,
-      section3_title.ilike.%${lowerCaseSearchTerm}%,
-      section3_content.ilike.%${lowerCaseSearchTerm}%`
-    )
-    .order("created_at", { ascending: false });
+  try {
+    // Supabase sorgusu - düzeltilmiş or sözdizimi
+    const { data, error } = await supabase
+      .from("blogs")
+      .select("id, title, slug, content, category, tags, cover_image, created_at")
+      .or(`title.ilike.%${lowerCaseSearchTerm}%,content.ilike.%${lowerCaseSearchTerm}%,tags.ilike.%${lowerCaseSearchTerm}%,category.ilike.%${lowerCaseSearchTerm}%`)
+      .order("created_at", { ascending: false });
 
-  if (error) throw new Error(error.message);
-  return data;
+    // Hata kontrolü
+    if (error) {
+      console.error('Supabase arama hatası:', error);
+      throw new Error(`Arama hatası: ${error.message}`);
+    }
+    
+    // Başarılı durum logları
+    console.log('Supabase arama sonuçları:', data?.length || 0, 'sonuç bulundu');
+    if (data?.length > 0) {
+      console.log('İlk sonuç:', { 
+        id: data[0].id, 
+        title: data[0].title, 
+        slug: data[0].slug 
+      });
+    }
+    
+    return data || [];
+  } catch (err) {
+    // Hata yakalama ve loglama
+    console.error('Arama işlemi başarısız:', err);
+    throw err;
+  }
 }
 
 export async function fetchVisaBlogs() {

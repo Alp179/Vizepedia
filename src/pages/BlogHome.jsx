@@ -7,7 +7,8 @@ import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
 import VectorOk from "../ui/VectorOk";
-import BlogCardsMain from "../ui/BlogCardsMain"; // Yeni komponent import ediliyor
+import BlogCardsMain from "../ui/BlogCardsMain";
+import SearchBar from "../ui/SearchBar"; // Yeni SearchBar komponentini import ediyoruz
 
 // BlogContainer ve diğer stiller
 const BlogContainer = styled.div`
@@ -47,17 +48,17 @@ const BlogHeaders = styled.div`
 `;
 
 const HeaderveOk = styled.div`
-  margin: 0 auto 70px;
+  margin: 0 auto 30px; /* Reduced bottom margin to bring SearchBar closer */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   
   @media (max-width: 550px) {
-    margin-bottom: 80px;
+    margin-bottom: 40px;
   }
   @media (max-width: 435px) {
-    margin-bottom: 60px;
+    margin-bottom: 30px;
   }
 `;
 
@@ -183,6 +184,9 @@ function BlogHome() {
             </BlogHeader>
           </BlogHeaders>
           <VectorOk variant="blogpage"/>
+          
+          {/* SearchBar komponenti VectorOk'tan sonra, başlığın hemen altında yer alıyor */}
+          <SearchBar />
         </HeaderveOk>
         
         {/* BlogCardsMain komponenti blog verilerini props olarak alıyor */}
