@@ -18,6 +18,10 @@ import AllDocs from "./AllDocs";
 import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 import { NavLink } from "react-router-dom";
+import supabase from "../services/supabase"; // Supabase import ediyoruz
+import ModalSignup from "../ui/ModalSignup"; // Modal bileşenini import ediyoruz
+import SignupForm from "../features/authentication/SignupForm"; // Signup formunu import ediyoruz
+import { useUser } from "../features/authentication/useUser"; // useUser hook'unu import ediyoruz
 
 // Animasyonlar
 const fadeIn = keyframes`
@@ -470,22 +474,75 @@ const AppSubtitle = styled.span`
   opacity: 0.9;
 `;
 
-const IconSettings = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    style={{ width: "26px", height: "26px", color: "var(--color-grey-924)" }}
-  >
-    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-    <circle cx="12" cy="12" r="3"></circle>
-  </svg>
-);
+// Anonim kullanıcı olduğunu belirten avatar stili
+const AnonymousIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  color: var(--color-grey-600);
+  background-color: var(--color-grey-920);
+  border-radius: 10px;
 
+  span {
+    font-size: 16px;
+    opacity: 0.9;
+  }
+`;
+
+// Yükleniyor göstergesi
+const LoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  svg {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+// Hesap oluştur buton
+const CreateAccountButton = styled.button`
+  width: 95%;
+  margin: 15px auto;
+  padding: 14px 24px;
+  border-radius: 16px;
+  background-color: #004466;
+  color: #00ffa2;
+  border: 2px solid #00ffa2;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #00ffa2;
+    color: #004466;
+  }
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+`;
+
+// İkonlar
 const IconLogout = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -503,15 +560,53 @@ const IconLogout = () => (
   </svg>
 );
 
+const IconUpgrade = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#00ffa2"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="16 16 12 12 8 16"></polyline>
+    <line x1="12" y1="12" x2="12" y2="21"></line>
+    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+    <polyline points="16 16 12 12 8 16"></polyline>
+  </svg>
+);
+
+const IconLoading = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="8" />
+  </svg>
+);
 const MobileMenu = () => {
   // State yönetimi
   const [isOpen, setIsOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAppId, setSelectedAppId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // Yükleniyor durumu için state
 
   // Tüm Belgeler modalı için state yönetimi
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
   const [isDocsModalClosing, setIsDocsModalClosing] = useState(false);
+
+  // Kullanıcının anonim olup olmadığını kontrol etmek için state
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  // Modal kontrol state'i
+  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
 
   const navigate = useNavigate();
   const { logout } = useLogout();
@@ -522,6 +617,7 @@ const MobileMenu = () => {
   const [userId, setUserId] = useState(null);
   const menuRef = useRef();
   const iconRef = useRef();
+  const { user } = useUser(); // useUser hook'unu kullanıyoruz
 
   // Kullanıcı bilgilerini ve dışarı tıklama olayını yönetme
   useEffect(() => {
@@ -530,6 +626,10 @@ const MobileMenu = () => {
         setUserId(user.id);
       }
     });
+
+    // Kullanıcının anonim olup olmadığını kontrol et
+    const anonStatus = localStorage.getItem("isAnonymous") === "true";
+    setIsAnonymous(anonStatus);
 
     const handleClickOutside = (event) => {
       if (
@@ -578,6 +678,38 @@ const MobileMenu = () => {
     queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !!documentNames.length,
   });
+
+  // Kullanıcı adının baş harfini almak için
+  const getInitial = () => {
+    if (isAnonymous) return "A"; // Anonim kullanıcılar için "A" harfi
+
+    if (!user) return "";
+
+    const { user_metadata, email } = user;
+    const fullName = user_metadata?.full_name;
+
+    return fullName
+      ? fullName.charAt(0).toUpperCase()
+      : email.charAt(0).toUpperCase();
+  };
+
+  // Kullanıcı adını veya e-postasını almak için
+  const getDisplayName = () => {
+    if (isAnonymous) return "Anonim Kullanıcı";
+
+    if (!user) return "";
+
+    const { user_metadata, email } = user;
+    return user_metadata?.full_name || email;
+  };
+
+  // Kullanıcı e-postasını almak için
+  const getEmail = () => {
+    if (isAnonymous) return "Oturum geçici";
+
+    if (!user) return "";
+    return user.email;
+  };
 
   // Belgeye devam etme fonksiyonu
   const continueToDocument = () => {
@@ -629,6 +761,12 @@ const MobileMenu = () => {
     setSelectedAppId(null);
   };
 
+  // Signup modal kontrolü
+  const closeSignupModal = () => {
+    setIsSignupModalOpen(false);
+    setIsOpen(false);
+  };
+
   // Silme işlemi
   const handleDelete = async () => {
     if (!selectedAppId) return;
@@ -662,11 +800,6 @@ const MobileMenu = () => {
       });
       closeDeleteModal();
     }
-  };
-
-  const handleProfileClick = () => {
-    navigate("/account");
-    setIsOpen(false);
   };
 
   // Oturum kapatma işlemi
@@ -711,7 +844,52 @@ const MobileMenu = () => {
 
     if (confirmLogout) {
       logout();
+      localStorage.removeItem("isAnonymous"); // Logout olunca anonim bilgisini temizle
+      localStorage.removeItem("wellcomesAnswered"); // wellcomes bilgisini de temizle
       setIsOpen(false);
+    }
+  };
+
+  // Anonim giriş fonksiyonu
+  const handleAnonymousSignIn = async () => {
+    try {
+      // Eğer zaten yükleniyorsa, fonksiyondan çık
+      if (isLoading) return;
+
+      setIsLoading(true); // Yükleniyor durumunu başlat
+
+      // Supabase anonim oturum açma fonksiyonu
+      const { data, error } = await supabase.auth.signInAnonymously();
+      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+
+      if (error) {
+        console.error("Anonim oturum açma hatası:", error.message);
+        setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+        return;
+      }
+
+      if (data) {
+        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
+        const wellcomesAnswered =
+          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
+
+        // Menüyü kapat
+        setIsOpen(false);
+
+        if (wellcomesAnswered === "true") {
+          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
+          navigate("/dashboard");
+        } else {
+          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
+          navigate("/wellcome-2");
+        }
+
+        // Yükleniyor durumunu kapat (navigate işlemi gerçekleştiğinde otomatik kapanacak)
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Oturum açma sırasında hata oluştu:", error.message);
+      setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
     }
   };
 
@@ -722,8 +900,6 @@ const MobileMenu = () => {
   if (userSelectionsQuery.isError || documentsQuery.isError) {
     return <div>Error loading data.</div>;
   }
-
-
 
   return (
     <>
@@ -756,7 +932,44 @@ const MobileMenu = () => {
       <MenuContainer isOpen={isOpen} ref={menuRef}>
         <MenuHeader>
           <UserAvatar />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              marginLeft: "10px",
+            }}
+          >
+            <span style={{ fontWeight: "600", fontSize: "16px" }}>
+              {getDisplayName()}
+            </span>
+            <span style={{ fontSize: "14px", opacity: "0.7" }}>
+              {getEmail()}
+            </span>
+          </div>
         </MenuHeader>
+
+        {/* Anonim kullanıcı bilgisi */}
+        {isAnonymous && (
+          <AnonymousIndicator>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Anonim Olarak Giriş Yaptınız</span>
+          </AnonymousIndicator>
+        )}
+
         <MenuContent>
           <StyledNavLink style={{ marginLeft: "12px" }} onClick={openDocsModal}>
             <HiDocument size={26} style={{ color: "var(--color-grey-924)" }} />
@@ -807,28 +1020,30 @@ const MobileMenu = () => {
           </StyledNavLink>
 
           <Divider />
-          
-            <StyledNavLink
-              style={{ marginLeft: "12px" }}
-              onClick={handleLogout}
-            >
-               <IconLogout />
-              <span style={{color: "rgb(229, 57, 53)"}}>
-               
-                Oturumu Kapat
-              </span>
-            </StyledNavLink>
-            <StyledNavLink
-              style={{ marginLeft: "12px" }}
-              onClick={handleProfileClick}
-            >
-              <IconSettings />
-              <span style={{ fontSize: "18px" }}>
-                
-                Profil Ayarları
-              </span>
-            </StyledNavLink>
-          
+
+          {/* Anonim kullanıcı için Hesap oluştur butonu ve modal */}
+          {isAnonymous && (
+            <ModalSignup>
+              <ModalSignup.Open opens="mobileSignUpForm">
+                <CreateAccountButton>
+                  <IconUpgrade />
+                  Hesap Oluştur
+                </CreateAccountButton>
+              </ModalSignup.Open>
+              <ModalSignup.Window name="mobileSignUpForm">
+                <SignupForm
+                  onCloseModal={() => {
+                    setIsOpen(false);
+                  }}
+                />
+              </ModalSignup.Window>
+            </ModalSignup>
+          )}
+
+          <StyledNavLink style={{ marginLeft: "12px" }} onClick={handleLogout}>
+            <IconLogout />
+            <span style={{ color: "rgb(229, 57, 53)" }}>Oturumu Kapat</span>
+          </StyledNavLink>
         </MenuContent>
       </MenuContainer>
 

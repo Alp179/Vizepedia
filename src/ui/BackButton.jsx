@@ -1,5 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { useVisaApplications } from "../context/VisaApplicationContext";
+import { useEffect, useState } from "react"; // useState ve useEffect ekledik
 
 const BackButtonWrapper = styled.div`
   position: fixed;
@@ -55,18 +57,45 @@ const StyledBackButton = styled.button`
 function BackButton() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { applications } = useVisaApplications();
+  const [isFirstApplication, setIsFirstApplication] = useState(true);
+
+  // Kullanıcının ilk başvuru durumunu belirle
+  useEffect(() => {
+    // Mevcut başvurusu var mı?
+    const hasExistingApplications = applications && applications.length > 0;
+    // Yeni başvuru sürecinin başında mı?
+    const isStartingNewApplication = location.pathname === "/wellcome-2";
+
+    if (hasExistingApplications && isStartingNewApplication) {
+      // Kullanıcının önceden başvurusu var ve yeni bir başvuru başlatıyor
+      setIsFirstApplication(false);
+    } else {
+      // Kullanıcının önceden başvurusu yok veya farklı bir sayfada
+      setIsFirstApplication(true);
+    }
+  }, [applications, location.pathname]);
+
+  // Kullanıcı seçimlerini temizleyen işlev
+  const clearUserSelections = () => {
+    // Sadece userSelections ve wellcomesAnswered temizlenir
+    localStorage.removeItem("userSelections");
+    localStorage.removeItem("wellcomesAnswered");
+
+    console.log("Kullanıcı seçimleri temizlendi");
+  };
 
   // Tüm localStorage ve çerezleri temizleyen işlev
   const clearAllStorageAndCookies = () => {
+    // Kullanıcı oturumunu korumak istiyorsak
+    const isAnonymous = localStorage.getItem("isAnonymous"); // Anonim durumunu koru
+
     // Tüm localStorage temizle
     localStorage.clear();
 
-    // Supabase oturum anahtarını özel olarak temizle
-    const supabaseKey = Object.keys(localStorage).find((key) =>
-      key.includes("-auth-token")
-    );
-    if (supabaseKey) {
-      localStorage.removeItem(supabaseKey);
+    // Anonim durumunu geri yükle (oturumu korumak istiyorsak)
+    if (isAnonymous) {
+      localStorage.setItem("isAnonymous", isAnonymous);
     }
 
     // Tüm çerezleri temizle
@@ -79,13 +108,26 @@ function BackButton() {
 
     // Tarayıcı özel oturum depolamasını temizle
     sessionStorage.clear();
+
+    console.log("Tüm localStorage ve çerezler temizlendi");
   };
 
   const handleBackClick = (e) => {
     e.preventDefault();
 
+    // İlk başvuru sürecinde wellcome-2 sayfasındayken (veri girişi başlamadan önce)
     if (location.pathname === "/wellcome-2") {
-      // Yalnızca /wellcome-2'deyken çerezleri ve localStorage temizle
+      if (!isFirstApplication) {
+        // İkinci veya daha sonraki başvurular için sadece seçimleri temizle
+        clearUserSelections();
+      } else {
+        // İlk başvuru için tüm localStorage'ı temizle
+        clearAllStorageAndCookies();
+      }
+    }
+    // Eğer ilk sorudan (wellcome-1) geri dönüyorsa
+    else if (location.pathname === "/wellcome-1") {
+      // Kullanıcı ilk sorudan geri döndüğünde her zaman tümünü temizle
       clearAllStorageAndCookies();
     }
 

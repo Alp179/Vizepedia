@@ -63,9 +63,79 @@ export async function getCurrentUser() {
   return data?.user;
 }
 
+// Kullanıcının anonim olup olmadığını kontrol et
+export async function isUserAnonymous() {
+  const currentUser = await getCurrentUser();
+
+  // Kullanıcı giriş yapmamışsa veya oturum yoksa
+  if (!currentUser) return false;
+
+  // Supabase'de anonim kullanıcıların oturum açma yöntemini kontrol et
+  // Anonim kullanıcılar genellikle email yoktur veya özel bir provider değeri vardır
+  const isAnonymous =
+    localStorage.getItem("isAnonymous") === "true" ||
+    !currentUser.email ||
+    currentUser.app_metadata?.provider === "anonymous";
+
+  // Eğer oturum açılmış bir kullanıcı varsa ve anonim değilse, localStorage'daki isAnonymous değerini temizle
+  if (currentUser && !isAnonymous) {
+    localStorage.removeItem("isAnonymous");
+  }
+
+  return isAnonymous;
+}
+
+// Kullanıcı oturum kontrolü için kapsamlı fonksiyon
+export async function checkAuthStatus() {
+  const currentUser = await getCurrentUser();
+  const userIsAnonymous = await isUserAnonymous();
+
+  return {
+    isLoggedIn: !!currentUser,
+    isAnonymous: userIsAnonymous,
+    user: currentUser,
+  };
+}
+
 export async function logout() {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw new Error(error.message);
+  try {
+    // Tüm localStorage ve çerezleri temizle
+    clearAllStorageAndCookies();
+
+    // Supabase ile oturumu kapat
+    const { error } = await supabase.auth.signOut();
+    if (error) throw new Error(error.message);
+  } catch (error) {
+    console.error("Oturum kapatma hatası:", error.message);
+    throw error;
+  }
+}
+
+// Tüm localStorage ve çerezleri temizleyen yardımcı fonksiyon
+function clearAllStorageAndCookies() {
+  // Tüm localStorage temizle
+  localStorage.clear();
+
+  // Supabase oturum anahtarını özel olarak temizle
+  const supabaseKey = Object.keys(localStorage).find((key) =>
+    key.includes("-auth-token")
+  );
+  if (supabaseKey) {
+    localStorage.removeItem(supabaseKey);
+  }
+
+  // Tüm çerezleri temizle
+  const cookies = document.cookie.split("; ");
+  for (let cookie of cookies) {
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+  }
+
+  // Tarayıcı özel oturum depolamasını temizle
+  sessionStorage.clear();
+
+  console.log("Tüm veriler ve çerezler temizlendi");
 }
 
 // Kullanıcı güncelleme fonksiyonu
@@ -174,6 +244,7 @@ export async function convertAnonymousToUser({ email, password }) {
       );
     }
 
+    // Anonim durumu kaldır
     localStorage.removeItem("isAnonymous");
     localStorage.removeItem("userSelections");
 

@@ -1,9 +1,9 @@
 import Logo from "./Logo";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react"; // useState import ediyoruz
-
-import styled from "styled-components"; // styled-components import ediyoruz
+import { useState, useEffect } from "react"; // useEffect import ediyoruz
+import styled from "styled-components";
 import supabase from "../services/supabase";
+import { getCurrentUser } from "../services/apiAuth"; // getCurrentUser import ediyoruz
 
 // Yükleniyor göstergesi için styled bileşen
 const LoadingIndicator = styled.div`
@@ -40,6 +40,30 @@ function Footer() {
   const navigate = useNavigate();
   // Yükleniyor durumu için state ekliyoruz
   const [isLoading, setIsLoading] = useState(false);
+  // Kullanıcının oturum durumunu kontrol etmek için state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Kullanıcının oturum durumunu kontrol et
+  useEffect(() => {
+    async function checkLoginStatus() {
+      const currentUser = await getCurrentUser();
+      setIsLoggedIn(!!currentUser);
+    }
+
+    checkLoginStatus();
+  }, []);
+
+  // Başlayalım butonuna tıklandığında çalışacak fonksiyon
+  const handleButtonClick = async () => {
+    // Kullanıcı zaten giriş yapmışsa direkt dashboard'a yönlendir
+    if (isLoggedIn) {
+      navigate("/dashboard");
+      return;
+    }
+
+    // Giriş yapmamışsa anonim giriş işlemini başlat
+    await handleAnonymousSignIn();
+  };
 
   // Anonim giriş fonksiyonu ekliyoruz
   const handleAnonymousSignIn = async () => {
@@ -112,6 +136,23 @@ function Footer() {
     </svg>
   );
 
+  // Devam et ikonu bileşeni
+  const IconContinue = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      width="20"
+      height="20"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  );
+
   return (
     <div className="footer">
       <div
@@ -129,7 +170,7 @@ function Footer() {
         <div className="ceper">
           <FooterButton
             className="footer-buton"
-            onClick={handleAnonymousSignIn}
+            onClick={handleButtonClick}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -138,7 +179,10 @@ function Footer() {
                 Yükleniyor...
               </LoadingIndicator>
             ) : (
-              "Hemen başlayın"
+              <>
+                {isLoggedIn && <IconContinue style={{ marginRight: "8px" }} />}
+                {isLoggedIn ? "Devam et" : "Hemen başlayın"}
+              </>
             )}
           </FooterButton>
         </div>

@@ -5,12 +5,13 @@ import Heading from "./Heading";
 import Button from "./Button";
 import DarkModeToggle from "./DarkModeToggle";
 import PropTypes from "prop-types";
-import ProfileButton from "./ProfileButtonMainpage";
+
 import MainPageHamburger from "./MainPageHamburger";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "../services/apiAuth";
+import { getCurrentUser, isUserAnonymous } from "../services/apiAuth";
 import supabase from "../services/supabase";
+import ProfileButton from "./ProfileButton";
 
 // Yeni modern, geçiş animasyonlu header
 const StyledMainPageHeader = styled.header`
@@ -154,6 +155,15 @@ const ProfileAndButtonContainer = styled.div`
   }
 `;
 
+// ProfileButton için responsive container - sadece büyük ekranlarda gösterilir
+const ProfileButtonContainer = styled.div`
+  display: flex;
+
+  @media (max-width: 960px) {
+    display: none; // Tablet ve mobil boyutlarda gizle
+  }
+`;
+
 // Yükleniyor göstergesi için özel buton içeriği
 const LoadingContent = styled.div`
   display: flex;
@@ -178,6 +188,7 @@ const LoadingContent = styled.div`
 function MainPageHeader({ setMenuOpen }) {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   // Yükleniyor durumu için state ekledik
   const [isLoading, setIsLoading] = useState(false);
@@ -323,8 +334,30 @@ function MainPageHeader({ setMenuOpen }) {
   // Kullanıcı oturum kontrolü
   useEffect(() => {
     async function checkUserStatus() {
-      const currentUser = await getCurrentUser();
-      setIsLoggedIn(!!currentUser);
+      try {
+        const currentUser = await getCurrentUser();
+
+        // Kullanıcı giriş yapmış mı?
+        const isUserLoggedIn = !!currentUser;
+        setIsLoggedIn(isUserLoggedIn);
+
+        if (isUserLoggedIn) {
+          // isUserAnonymous fonksiyonunu kullanarak anonim olup olmadığını kontrol et
+          const anonymousStatus = await isUserAnonymous();
+          setIsAnonymous(anonymousStatus);
+
+          // Debug için
+          console.log("Kullanıcı giriş yapmış:", isUserLoggedIn);
+          console.log("Anonim kullanıcı mı:", anonymousStatus);
+          console.log("Kullanıcı bilgileri:", currentUser);
+        } else {
+          setIsAnonymous(false);
+        }
+      } catch (error) {
+        console.error("Kullanıcı durumu kontrol edilirken hata oluştu:", error);
+        setIsLoggedIn(false);
+        setIsAnonymous(false);
+      }
     }
     checkUserStatus();
   }, []);
@@ -378,7 +411,11 @@ function MainPageHeader({ setMenuOpen }) {
           {isLoggedIn ? (
             <>
               <ProfileAndButtonContainer>
-                <ProfileButton /> {/* ProfileButton eklendi */}
+                {/* ProfileButton'u responsive container içine aldık */}
+                <ProfileButtonContainer>
+                  <ProfileButton isAnonymous={isAnonymous} />
+                </ProfileButtonContainer>
+
                 <Button variation="mainpage4" onClick={handleContinueClick}>
                   <IconContinue />
                   Devam Et
