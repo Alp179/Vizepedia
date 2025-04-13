@@ -1,10 +1,84 @@
 import Logo from "./Logo";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react"; // useState import ediyoruz
+
+import styled from "styled-components"; // styled-components import ediyoruz
+import supabase from "../services/supabase";
+
+// Yükleniyor göstergesi için styled bileşen
+const LoadingIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  svg {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+// Yükleniyor göstergesi için özel stil
+const FooterButton = styled.div`
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  opacity: ${(props) => (props.disabled ? 0.7 : 1)};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+`;
 
 function Footer() {
   const navigate = useNavigate();
-  const handleSignUpClick = () => {
-    navigate("/sign-up");
+  // Yükleniyor durumu için state ekliyoruz
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Anonim giriş fonksiyonu ekliyoruz
+  const handleAnonymousSignIn = async () => {
+    try {
+      // Eğer zaten yükleniyorsa, fonksiyondan çık
+      if (isLoading) return;
+
+      setIsLoading(true); // Yükleniyor durumunu başlat
+
+      // Supabase anonim oturum açma fonksiyonu
+      const { data, error } = await supabase.auth.signInAnonymously();
+      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+
+      if (error) {
+        console.error("Anonim oturum açma hatası:", error.message);
+        setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+        return;
+      }
+
+      if (data) {
+        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
+        const wellcomesAnswered =
+          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
+
+        if (wellcomesAnswered === "true") {
+          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
+          navigate("/dashboard");
+        } else {
+          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
+          navigate("/wellcome-2");
+        }
+
+        // Yükleniyor durumunu kapat (navigate işlemi gerçekleştiğinde otomatik kapanacak)
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Oturum açma sırasında hata oluştu:", error.message);
+      setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+    }
   };
 
   const handleMainPageClick = () => {
@@ -14,6 +88,29 @@ function Footer() {
   const handleBlogClick = () => {
     navigate("/blog"); // /blog yoluna yönlendir
   };
+
+  // Yükleniyor ikonu
+  const LoadingIcon = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        strokeDasharray="32"
+        strokeDashoffset="8"
+      />
+    </svg>
+  );
 
   return (
     <div className="footer">
@@ -30,9 +127,20 @@ function Footer() {
           Vize başvurusu yapmak hiç bu kadar kolay olmamıştı.
         </div>
         <div className="ceper">
-          <div className="footer-buton" onClick={handleSignUpClick}>
-            Hemen başlayın
-          </div>
+          <FooterButton
+            className="footer-buton"
+            onClick={handleAnonymousSignIn}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <LoadingIndicator>
+                <LoadingIcon />
+                Yükleniyor...
+              </LoadingIndicator>
+            ) : (
+              "Hemen başlayın"
+            )}
+          </FooterButton>
         </div>
       </div>
       <div className="footer-divider"></div>

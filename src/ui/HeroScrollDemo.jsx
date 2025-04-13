@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react"; // useState ekledik
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import supabase from "../services/supabase";
 
 // Styled Components
 const HeroContainer = styled.div`
@@ -161,13 +162,58 @@ const StyledCeper = styled.div`
   }
 `;
 
+// Yükleniyor durumu için stil ekledik
+const LoadingIndicator = styled.div`
+  color: #00ffa2;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`;
+
 const ContainerScroll = ({ titleComponent, children }) => {
   const titleRef = useRef(null);
   const imageRef = useRef(null);
   const navigate = useNavigate();
+  // Yükleniyor durumu için state ekledik
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignUpClick = () => {
-    navigate("/sign-up"); // /sign-up yoluna yönlendir
+  // Anonim giriş fonksiyonunu SignupForm.jsx'den buraya taşıdık
+  const handleAnonymousSignIn = async () => {
+    try {
+      setIsLoading(true); // Yükleniyor durumunu başlat
+
+      // Supabase anonim oturum açma fonksiyonu
+      const { data, error } = await supabase.auth.signInAnonymously();
+      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+
+      if (error) {
+        console.error("Anonim oturum açma hatası:", error.message);
+        setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+        return;
+      }
+
+      if (data) {
+        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
+        const wellcomesAnswered =
+          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
+
+        if (wellcomesAnswered === "true") {
+          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
+          navigate("/dashboard");
+        } else {
+          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
+          navigate("/wellcome-2");
+        }
+
+        // Yükleniyor durumunu kapat (navigate işlemi gerçekleştiğinde otomatik kapanacak)
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Oturum açma sırasında hata oluştu:", error.message);
+      setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+    }
   };
 
   // Roket ikonu bileşeni
@@ -233,9 +279,41 @@ const ContainerScroll = ({ titleComponent, children }) => {
       <ImageWrapper ref={imageRef}>{children}</ImageWrapper>
       <ButtonWrapper>
         <StyledCeper>
-          <StyledHeroButton onClick={handleSignUpClick}>
-            <IconRocket />
-            Hemen başlayın
+          <StyledHeroButton onClick={handleAnonymousSignIn}>
+            {isLoading ? (
+              <LoadingIndicator>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ animation: "spin 1s linear infinite" }}
+                >
+                  <style>{`
+                    @keyframes spin {
+                      0% { transform: rotate(0deg); }
+                      100% { transform: rotate(360deg); }
+                    }
+                  `}</style>
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    fill="none"
+                    strokeDasharray="32"
+                    strokeDashoffset="8"
+                  />
+                </svg>
+                Yükleniyor...
+              </LoadingIndicator>
+            ) : (
+              <>
+                <IconRocket />
+                Hemen başlayın
+              </>
+            )}
           </StyledHeroButton>
         </StyledCeper>
       </ButtonWrapper>

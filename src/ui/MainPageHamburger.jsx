@@ -10,6 +10,9 @@ import DarkModeToggle from "./DarkModeToggle";
 import { getCurrentUser } from "../services/apiAuth";
 import { useUser } from "../features/authentication/useUser";
 import { useLogout } from "../features/authentication/useLogout";
+import supabase from "../services/supabase"; // Supabase import ediyoruz
+import ModalSignup from "../ui/ModalSignup"; // Modal bileşenini import ediyoruz
+import SignupForm from "../features/authentication/SignupForm"; // Signup formunu import ediyoruz
 
 // Modern ve daha minimalist hamburger ikonu
 const MenuIcon = styled.div`
@@ -244,7 +247,10 @@ const Avatar = styled.div`
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: var(--color-grey-200, #eee);
+  background-color: ${(props) =>
+    props.isAnonymous
+      ? "var(--color-grey-400)"
+      : "var(--color-grey-200, #eee)"};
   color: var(--color-grey-700, #333);
   display: flex;
   align-items: center;
@@ -342,17 +348,31 @@ const PrimaryButton = styled.button`
   gap: 8px;
   transition: all 0.3s ease;
   box-shadow: var(--primary-btn-shadow, 0 4px 6px rgba(0, 0, 0, 0.1));
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  opacity: ${(props) => (props.disabled ? 0.7 : 1)};
 
   &:hover {
-    background: var(--primary-btn-hover-bg, #87f9cd);
-    color: var(--primary-btn-hover-text, #004466);
-    transform: translateY(-2px);
-    box-shadow: var(--primary-btn-hover-shadow, 0 6px 10px rgba(0, 0, 0, 0.1));
+    background: ${(props) =>
+      props.disabled
+        ? "var(--primary-btn-bg, #004466)"
+        : "var(--primary-btn-hover-bg, #87f9cd)"};
+    color: ${(props) =>
+      props.disabled
+        ? "var(--primary-btn-text, #87f9cd)"
+        : "var(--primary-btn-hover-text, #004466)"};
+    transform: ${(props) => (props.disabled ? "none" : "translateY(-2px)")};
+    box-shadow: ${(props) =>
+      props.disabled
+        ? "var(--primary-btn-shadow, 0 4px 6px rgba(0, 0, 0, 0.1))"
+        : "var(--primary-btn-hover-shadow, 0 6px 10px rgba(0, 0, 0, 0.1))"};
   }
 
   &:active {
-    transform: translateY(1px);
-    box-shadow: var(--primary-btn-active-shadow, 0 2px 3px rgba(0, 0, 0, 0.1));
+    transform: ${(props) => (props.disabled ? "none" : "translateY(1px)")};
+    box-shadow: ${(props) =>
+      props.disabled
+        ? "var(--primary-btn-shadow, 0 4px 6px rgba(0, 0, 0, 0.1))"
+        : "var(--primary-btn-active-shadow, 0 2px 3px rgba(0, 0, 0, 0.1))"};
   }
 
   svg {
@@ -373,7 +393,6 @@ const PrimaryButton = styled.button`
   @media (max-height: 600px) {
     height: 40px;
   }
-
   /* Dark Mode Styles */
   .dark-mode & {
     --primary-btn-bg: #004466;
@@ -480,6 +499,14 @@ const ProfileButton = styled.button`
     }
   }
 
+  &.upgrade {
+    color: #00ffa2;
+
+    &:hover {
+      background: rgba(0, 255, 162, 0.1);
+    }
+  }
+
   @media (max-height: 700px) {
     padding: 8px 12px;
     font-size: 14px;
@@ -489,6 +516,27 @@ const ProfileButton = styled.button`
       width: 16px;
       height: 16px;
       margin-right: 8px;
+    }
+  }
+`;
+
+// Yükleniyor göstergesi
+const LoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  svg {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
     }
   }
 `;
@@ -537,6 +585,16 @@ const MainPageHamburger = ({ setMenuOpen }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { user } = useUser();
   const { logout } = useLogout();
+  const [isLoading, setIsLoading] = useState(false); // Yükleniyor durumu için state
+
+  // Kullanıcının anonim olup olmadığını kontrol etmek için state
+  const [isAnonymous, setIsAnonymous] = useState(false);
+
+  // Modal kontrol fonksiyonu
+  const handleCloseMenu = () => {
+    setIsOpen(false);
+    setMenuOpen(false);
+  };
 
   const toggleMenu = () => {
     if (!isOpen) {
@@ -550,6 +608,10 @@ const MainPageHamburger = ({ setMenuOpen }) => {
     async function checkUserStatus() {
       const currentUser = await getCurrentUser();
       setIsLoggedIn(!!currentUser);
+
+      // Kullanıcının anonim olup olmadığını kontrol et
+      const anonStatus = localStorage.getItem("isAnonymous") === "true";
+      setIsAnonymous(anonStatus);
     }
     checkUserStatus();
   }, []);
@@ -600,10 +662,48 @@ const MainPageHamburger = ({ setMenuOpen }) => {
     }
   };
 
-  const handleSignUpClick = () => {
-    navigate("/sign-up");
-    setIsOpen(false);
-    setMenuOpen(false);
+  // Anonim giriş fonksiyonu
+  const handleAnonymousSignIn = async () => {
+    try {
+      // Eğer zaten yükleniyorsa, fonksiyondan çık
+      if (isLoading) return;
+
+      setIsLoading(true); // Yükleniyor durumunu başlat
+
+      // Supabase anonim oturum açma fonksiyonu
+      const { data, error } = await supabase.auth.signInAnonymously();
+      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+
+      if (error) {
+        console.error("Anonim oturum açma hatası:", error.message);
+        setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+        return;
+      }
+
+      if (data) {
+        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
+        const wellcomesAnswered =
+          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
+
+        // Menüyü kapat
+        setIsOpen(false);
+        setMenuOpen(false);
+
+        if (wellcomesAnswered === "true") {
+          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
+          navigate("/dashboard");
+        } else {
+          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
+          navigate("/wellcome-2");
+        }
+
+        // Yükleniyor durumunu kapat (navigate işlemi gerçekleştiğinde otomatik kapanacak)
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Oturum açma sırasında hata oluştu:", error.message);
+      setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+    }
   };
 
   const handleLogInClick = () => {
@@ -626,12 +726,16 @@ const MainPageHamburger = ({ setMenuOpen }) => {
 
   const handleLogoutClick = () => {
     logout();
+    localStorage.removeItem("isAnonymous"); // Logout olunca anonim bilgisini temizle
+    localStorage.removeItem("wellcomesAnswered"); // wellcomes bilgisini de temizle
     setIsOpen(false);
     setMenuOpen(false);
   };
 
   // Kullanıcı bilgileri yardımcı fonksiyonları
   const getInitial = () => {
+    if (isAnonymous) return "A"; // Anonim kullanıcılar için "A" harfi
+
     if (!user) return "";
 
     const { user_metadata, email } = user;
@@ -643,6 +747,8 @@ const MainPageHamburger = ({ setMenuOpen }) => {
   };
 
   const getDisplayName = () => {
+    if (isAnonymous) return "Anonim Kullanıcı";
+
     if (!user) return "";
 
     const { user_metadata, email } = user;
@@ -650,6 +756,8 @@ const MainPageHamburger = ({ setMenuOpen }) => {
   };
 
   const getEmail = () => {
+    if (isAnonymous) return "Oturum geçici";
+
     if (!user) return "";
     return user.email;
   };
@@ -780,6 +888,45 @@ const MainPageHamburger = ({ setMenuOpen }) => {
     </svg>
   );
 
+  const IconUpgrade = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#00ffa2"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="16 16 12 12 8 16"></polyline>
+      <line x1="12" y1="12" x2="12" y2="21"></line>
+      <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+      <polyline points="16 16 12 12 8 16"></polyline>
+    </svg>
+  );
+
+  const IconLoading = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        strokeDasharray="32"
+        strokeDashoffset="8"
+      />
+    </svg>
+  );
+
   return (
     <>
       <MenuIcon ref={iconRef} isOpen={isOpen} onClick={toggleMenu}>
@@ -824,17 +971,33 @@ const MainPageHamburger = ({ setMenuOpen }) => {
                   {/* Profil bilgileri bölümü */}
                   <ProfileInfoContainer>
                     <ProfileHeader>
-                      <Avatar>{getInitial()}</Avatar>
+                      <Avatar isAnonymous={isAnonymous}>{getInitial()}</Avatar>
                       <UserDetails>
                         <UserName>{getDisplayName()}</UserName>
                         <UserEmail>{getEmail()}</UserEmail>
                       </UserDetails>
                     </ProfileHeader>
 
-                    <ProfileButton onClick={handleProfileClick}>
-                      <IconSettings />
-                      Profil Ayarları
-                    </ProfileButton>
+                    {/* Anonim kullanıcı için Hesap Oluştur butonu ve modal */}
+                    {isAnonymous ? (
+                      <ModalSignup>
+                        <ModalSignup.Open opens="hamburgerSignUpForm">
+                          <ProfileButton className="upgrade">
+                            <IconUpgrade />
+                            Hesap Oluştur
+                          </ProfileButton>
+                        </ModalSignup.Open>
+                        <ModalSignup.Window name="hamburgerSignUpForm">
+                          <SignupForm onCloseModal={handleCloseMenu} />
+                        </ModalSignup.Window>
+                      </ModalSignup>
+                    ) : (
+                      <ProfileButton onClick={handleProfileClick}>
+                        <IconSettings />
+                        Profil Ayarları
+                      </ProfileButton>
+                    )}
+
                     <ProfileButton
                       className="logout"
                       onClick={handleLogoutClick}
@@ -847,8 +1010,20 @@ const MainPageHamburger = ({ setMenuOpen }) => {
               ) : (
                 // Kullanıcı giriş yapmamışsa "Başlayalım" ve "Oturum Aç" butonlarını gösteriyoruz
                 <>
-                  <PrimaryButton onClick={handleSignUpClick}>
-                    <IconRocket /> Başlayalım
+                  <PrimaryButton
+                    onClick={handleAnonymousSignIn}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <LoadingSpinner>
+                        <IconLoading />
+                        Yükleniyor...
+                      </LoadingSpinner>
+                    ) : (
+                      <>
+                        <IconRocket /> Başlayalım
+                      </>
+                    )}
                   </PrimaryButton>
                   <SecondaryButton onClick={handleLogInClick}>
                     <IconUser /> Oturum Aç

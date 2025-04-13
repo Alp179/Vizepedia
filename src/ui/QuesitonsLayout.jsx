@@ -119,7 +119,7 @@ function QuestionsLayout() {
     const handlePopState = () => {
       if (
         location.pathname === "/wellcome-2" &&
-        previousPath !== "/wellcome-1"
+        previousPath !== "/wellcome-2"
       ) {
         clearAllStorageAndCookies();
       }

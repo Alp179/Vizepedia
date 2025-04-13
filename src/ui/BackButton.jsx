@@ -19,8 +19,6 @@ const BackButtonWrapper = styled.div`
     left: 5%;
     transform: scale(0.9);
   }
-
-  
 `;
 
 const StyledBackButton = styled.button`
@@ -86,8 +84,8 @@ function BackButton() {
   const handleBackClick = (e) => {
     e.preventDefault();
 
-    if (location.pathname === "/wellcome-1") {
-      // Yalnızca /wellcome-1'deyken çerezleri ve localStorage temizle
+    if (location.pathname === "/wellcome-2") {
+      // Yalnızca /wellcome-2'deyken çerezleri ve localStorage temizle
       clearAllStorageAndCookies();
     }
 

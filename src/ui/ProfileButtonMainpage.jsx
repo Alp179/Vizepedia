@@ -5,10 +5,12 @@ import styled from "styled-components";
 import { useLogout } from "../features/authentication/useLogout";
 import { useUser } from "../features/authentication/useUser";
 import { useNavigate } from "react-router-dom";
+import ModalSignup from "../ui/ModalSignup"; // Modal bileşenini import ediyoruz
+import SignupForm from "../features/authentication/SignupForm"; // Signup formunu import ediyoruz
 
 const ProfileContainer = styled.div`
   position: relative;
-  
+
   @media (max-width: 960px) {
     display: none;
   }
@@ -34,7 +36,10 @@ const Avatar = styled.div`
   width: 3.6rem;
   height: 3.6rem;
   border-radius: 50%;
-  background-color: var(--color-grey-200, #eee);
+  background-color: ${(props) =>
+    props.isAnonymous
+      ? "var(--color-grey-400)"
+      : "var(--color-grey-200, #eee)"};
   color: var(--color-grey-700, #333);
   display: flex;
   align-items: center;
@@ -75,10 +80,10 @@ const DropdownMenu = styled.div`
   backdrop-filter: blur(10px);
   transform-origin: top right;
   transition: all 0.2s ease;
-  
-  transform: ${props => props.isOpen ? 'scale(1)' : 'scale(0.95)'};
-  opacity: ${props => props.isOpen ? '1' : '0'};
-  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
+
+  transform: ${(props) => (props.isOpen ? "scale(1)" : "scale(0.95)")};
+  opacity: ${(props) => (props.isOpen ? "1" : "0")};
+  visibility: ${(props) => (props.isOpen ? "visible" : "hidden")};
 `;
 
 const MenuItem = styled.button`
@@ -92,7 +97,7 @@ const MenuItem = styled.button`
   cursor: pointer;
   font-size: 1.4rem;
   color: var(--color-grey-700, #333);
-  
+
   &:hover {
     background: rgba(0, 68, 102, 0.05);
   }
@@ -111,7 +116,10 @@ function ProfileButton() {
   const { logout } = useLogout();
   const { user } = useUser();
   const navigate = useNavigate();
-  
+
+  // Kullanıcının anonim olup olmadığını kontrol etmek
+  const isAnonymous = localStorage.getItem("isAnonymous") === "true";
+
   // Dışarı tıklandığında menüyü kapatmak için useEffect
   useEffect(() => {
     function handleClickOutside(e) {
@@ -120,10 +128,10 @@ function ProfileButton() {
         setIsOpen(false);
       }
     }
-    
+
     // Global document click event'ini dinle
     document.addEventListener("mousedown", handleClickOutside);
-    
+
     // Cleanup function - component unmount edildiğinde listener'ı kaldır
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -138,6 +146,8 @@ function ProfileButton() {
 
   const handleLogout = () => {
     logout();
+    localStorage.removeItem("isAnonymous"); // Logout olunca anonim bilgisini temizle
+    localStorage.removeItem("wellcomesAnswered"); // wellcomes bilgisini de temizle
     setIsOpen(false);
   };
 
@@ -148,33 +158,47 @@ function ProfileButton() {
 
   // Kullanıcı adının baş harfini almak için
   const getInitial = () => {
+    if (isAnonymous) return "A"; // Anonim kullanıcılar için "A" harfi
+
     if (!user) return "";
-    
+
     const { user_metadata, email } = user;
     const fullName = user_metadata?.full_name;
-    
-    return fullName 
-      ? fullName.charAt(0).toUpperCase() 
+
+    return fullName
+      ? fullName.charAt(0).toUpperCase()
       : email.charAt(0).toUpperCase();
   };
 
   // Kullanıcı adını veya e-postasını almak için
   const getDisplayName = () => {
+    if (isAnonymous) return "Anonim Kullanıcı";
+
     if (!user) return "";
-    
+
     const { user_metadata, email } = user;
     return user_metadata?.full_name || email;
   };
 
   // Kullanıcı e-postasını almak için
   const getEmail = () => {
+    if (isAnonymous) return "Oturum geçici";
+
     if (!user) return "";
     return user.email;
   };
 
   // SVG ikonları
   const LogoutIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgb(229, 57, 53)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="rgb(229, 57, 53)"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
       <polyline points="16 17 21 12 16 7"></polyline>
       <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -182,31 +206,77 @@ function ProfileButton() {
   );
 
   const ProfileIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
       <circle cx="12" cy="7" r="4"></circle>
     </svg>
   );
 
+  const UpgradeIcon = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#00ffa2"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="16 16 12 12 8 16"></polyline>
+      <line x1="12" y1="12" x2="12" y2="21"></line>
+      <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+      <polyline points="16 16 12 12 8 16"></polyline>
+    </svg>
+  );
+
+  // Modal açıldığında menüyü kapatmak için fonksiyon
+  const handleOpenModal = () => {
+    setIsOpen(false); // Açılır menüyü kapat
+  };
+
   return (
     <ProfileContainer ref={menuRef}>
-      <AvatarButton onClick={toggleMenu}>
-        <Avatar>{getInitial()}</Avatar>
+      <AvatarButton onClick={toggleMenu} isAnonymous={isAnonymous}>
+        <Avatar isAnonymous={isAnonymous}>{getInitial()}</Avatar>
         <UserInfo>
           <Username>{getDisplayName()}</Username>
           <UserEmail>{getEmail()}</UserEmail>
         </UserInfo>
       </AvatarButton>
-      
+
       <DropdownMenu isOpen={isOpen}>
-        <MenuItem onClick={handleProfileClick}>
-          <ProfileIcon />
-          Profil Ayarları
-        </MenuItem>
+        {isAnonymous && (
+          <ModalSignup>
+            <ModalSignup.Open opens="profileSignUpForm">
+              <MenuItem onClick={handleOpenModal}>
+                <UpgradeIcon />
+                <p style={{ color: "#00ffa2" }}>Hesap Oluştur</p>
+              </MenuItem>
+            </ModalSignup.Open>
+            <ModalSignup.Window name="profileSignUpForm">
+              <SignupForm />
+            </ModalSignup.Window>
+          </ModalSignup>
+        )}
+
+        {!isAnonymous && (
+          <MenuItem onClick={handleProfileClick}>
+            <ProfileIcon />
+            Profil Ayarları
+          </MenuItem>
+        )}
+
         <MenuItem onClick={handleLogout}>
-          <LogoutIcon /><p style={{color: "rgb(229, 57, 53)"}}>
-          Oturumu Kapat
-          </p>
+          <LogoutIcon />
+          <p style={{ color: "rgb(229, 57, 53)" }}>Oturumu Kapat</p>
         </MenuItem>
       </DropdownMenu>
     </ProfileContainer>

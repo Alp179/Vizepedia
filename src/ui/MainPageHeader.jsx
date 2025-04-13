@@ -10,6 +10,7 @@ import MainPageHamburger from "./MainPageHamburger";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCurrentUser } from "../services/apiAuth";
+import supabase from "../services/supabase";
 
 // Yeni modern, geçiş animasyonlu header
 const StyledMainPageHeader = styled.header`
@@ -147,28 +148,66 @@ const ProfileAndButtonContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
-  
+
   @media (max-width: 870px) {
     gap: 8px;
   }
 `;
 
+// Yükleniyor göstergesi için özel buton içeriği
+const LoadingContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  svg {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
 
 function MainPageHeader({ setMenuOpen }) {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // Yükleniyor durumu için state ekledik
+  const [isLoading, setIsLoading] = useState(false);
 
   // İkonlar için SVG bileşenleri
   const IconUser = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
       <circle cx="12" cy="7" r="4"></circle>
     </svg>
   );
 
   const IconRocket = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
       <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
       <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
@@ -177,13 +216,29 @@ function MainPageHeader({ setMenuOpen }) {
   );
 
   const IconContinue = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   );
 
   const IconInfo = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="12" r="10"></circle>
       <line x1="12" y1="16" x2="12" y2="12"></line>
       <line x1="12" y1="8" x2="12.01" y2="8"></line>
@@ -191,12 +246,79 @@ function MainPageHeader({ setMenuOpen }) {
   );
 
   const IconHelp = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="12" r="10"></circle>
       <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
       <line x1="12" y1="17" x2="12.01" y2="17"></line>
     </svg>
   );
+
+  const IconLoading = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        strokeDasharray="32"
+        strokeDashoffset="8"
+      />
+    </svg>
+  );
+
+  // Anonim giriş fonksiyonu
+  const handleAnonymousSignIn = async () => {
+    try {
+      setIsLoading(true); // Yükleniyor durumunu başlat
+
+      // Supabase anonim oturum açma fonksiyonu
+      const { data, error } = await supabase.auth.signInAnonymously();
+      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+
+      if (error) {
+        console.error("Anonim oturum açma hatası:", error.message);
+        setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+        return;
+      }
+
+      if (data) {
+        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
+        const wellcomesAnswered =
+          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
+
+        if (wellcomesAnswered === "true") {
+          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
+          navigate("/dashboard");
+        } else {
+          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
+          navigate("/wellcome-2");
+        }
+
+        // Yükleniyor durumunu kapat (navigate işlemi gerçekleştiğinde otomatik kapanacak)
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Oturum açma sırasında hata oluştu:", error.message);
+      setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+    }
+  };
 
   // Kullanıcı oturum kontrolü
   useEffect(() => {
@@ -217,18 +339,8 @@ function MainPageHeader({ setMenuOpen }) {
       }
     };
 
-   
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    async function checkUserStatus() {
-      const currentUser = await getCurrentUser();
-      setIsLoggedIn(!!currentUser);
-    }
-    checkUserStatus();
   }, []);
 
   // Sayfa içi navigasyon
@@ -240,7 +352,6 @@ function MainPageHeader({ setMenuOpen }) {
   };
 
   // Yönlendirme fonksiyonları
-  const handleSignUpClick = () => navigate("/sign-up");
   const handleLogInClick = () => navigate("/login");
   const handleContinueClick = () => navigate("/dashboard");
   const handleAboutClick = () => navigate("/about");
@@ -283,9 +394,22 @@ function MainPageHeader({ setMenuOpen }) {
                 <IconUser />
                 Oturum Aç
               </Button>
-              <Button variation="mainpage" onClick={handleSignUpClick}>
-                <IconRocket />
-                Başlayalım
+              <Button
+                variation="mainpage"
+                onClick={handleAnonymousSignIn}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <LoadingContent>
+                    <IconLoading />
+                    Yükleniyor...
+                  </LoadingContent>
+                ) : (
+                  <>
+                    <IconRocket />
+                    Başlayalım
+                  </>
+                )}
               </Button>
               <MobileMenuContainer>
                 <MainPageHamburger setMenuOpen={setMenuOpen} />

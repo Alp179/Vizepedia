@@ -128,8 +128,8 @@ function LoginForm() {
           // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
           navigate("/dashboard");
         } else {
-          // LocalStorage boşsa wellcome-1 (WellcomeA) sayfasına yönlendir
-          navigate("/wellcome-1");
+          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
+          navigate("/wellcome-2");
         }
       }
     } catch (error) {

@@ -20,7 +20,7 @@ const BracketContainer = styled.div`
   display: flex;
   gap: 16px;
   align-items: center;
-  flex-wrap: nowrap!important;
+  flex-wrap: nowrap !important;
   width: 100%;
   justify-content: center;
   @media (max-width: 370px) {
@@ -75,8 +75,8 @@ function SignupForm({ onCloseModal }) {
           // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
           navigate("/dashboard");
         } else {
-          // LocalStorage boşsa wellcome-1 (WellcomeA) sayfasına yönlendir
-          navigate("/wellcome-1");
+          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
+          navigate("/wellcome-2");
         }
       }
     } catch (error) {
