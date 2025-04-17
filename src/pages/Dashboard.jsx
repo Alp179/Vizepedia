@@ -17,7 +17,6 @@ import styled from "styled-components";
 import supabase from "../services/supabase";
 import SignupForm from "../features/authentication/SignupForm";
 import ModalSignup from "../ui/ModalSignup";
-import SponsorStepIndicator from "../ui/SponsorStepIndicator";
 import FirmMap from "../ui/FirmMap";
 import AnimatedFlag from "../ui/AnimatedFlag";
 import MobileCarousel from "../ui/MobileCarousel";
@@ -409,7 +408,7 @@ const Dashboard = () => {
         {!isMobile && (
           <>
             <StepIndicatorWrapper>
-              <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
+              <Heading as="h14">Ülke adı</Heading>
               <StepIndicator
                 steps={stepLabels}
                 currentStep={currentStep}
@@ -418,19 +417,6 @@ const Dashboard = () => {
                 documents={documents}
               />
             </StepIndicatorWrapper>
-
-            {hasSponsor && (
-              <StepIndicatorWrapper>
-                <Heading as="h14">Sponsorun Belgeleri</Heading>
-                <SponsorStepIndicator
-                  steps={stepLabels}
-                  currentStep={currentStep}
-                  onStepClick={handleStepClick}
-                  completedDocuments={completedDocuments}
-                  documents={documents}
-                />
-              </StepIndicatorWrapper>
-            )}
 
             <InfoContainerWrapper>
               <Heading as="h14">Başvuru adresi</Heading>

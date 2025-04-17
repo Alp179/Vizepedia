@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useContext, useState, useEffect, useRef } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
@@ -11,132 +11,324 @@ import Spinner from "./Spinner";
 import { getCurrentUser } from "../services/apiAuth";
 import { DocumentsContext } from "../context/DocumentsContext";
 import { fetchCompletedDocuments } from "../utils/supabaseActions";
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
 
+// Kategorilere göre stil tanımlamaları
+const categoryColors = {
+  hazir: {
+    background: "#e6fff2",
+    border: "#00cc66",
+    text: "#00703a",
+    icon: "📄",
+    title: "Hazır Belgeler",
+    description: "Bu belgeler hazır durumda ve incelenmeyi bekliyor.",
+  },
+  planla: {
+    background: "#fff5e6",
+    border: "#ffaa33",
+    text: "#cc7700",
+    icon: "📅",
+    title: "Planlanacak Belgeler",
+    description: "Bu belgeleri hazırlamak için planlama yapmanız gerekiyor.",
+  },
+  bizimle: {
+    background: "#e6f0ff",
+    border: "#3377ff",
+    text: "#004de6",
+    icon: "🤝",
+    title: "Bizimle Birlikte Hazırlanacak Belgeler",
+    description: "Bu belgeler için bizimle iletişime geçmeniz gerekiyor.",
+  },
+};
+
+// Ana konteyner
 const StepAndContinueContainer = styled.div`
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  width: fit-content;
-  padding: 8px;
-  align-items: center;
   display: flex;
-  gap: 16px;
-  background: rgba(255, 255, 255, 0.2);
-  z-index: 3000;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 900px;
+  padding: 20px;
   border-radius: 16px;
-  margin-bottom: 20px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 30px rgba(31, 38, 135, 0.15);
+
   @media (max-width: 1550px) {
     margin-left: -100px;
   }
-  @media (max-width: 1400px) {
-    padding: 6px;
-  }
-  @media (max-width: 710px) {
-    margin: 0 auto 0;
+  @media (max-width: 768px) {
+    padding: 15px;
     gap: 16px;
-    flex-flow: column;
-    width: 90%;
-    max-width: 350px;
-    box-shadow: 0 4px 20px rgba(31, 38, 135, 0.3);
-    padding: 15px 15px 12px;
-    border-radius: 20px;
-    overflow-y: visible;
-    justify-content: flex-start;
-    align-items: flex-start;
   }
 `;
 
-const StepCircleContainer = styled.div`
+// Kategori başlığı için konteyner
+const CategoryContainer = styled.div`
   display: flex;
-  gap: 10px;
-  height: 40px;
-  @media (max-width: 1400px) {
-    gap: 6px;
-  }
-  @media (max-width: 710px) {
-    height: 100%;
-    flex-flow: column;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 5px 10px 0 10px;
-    max-height: 400px;
-    overflow-y: auto;
-    
-    /* İçeriği sola yanaştırma ve scrollbar için sağda boşluk bırakma */
-    width: calc(100% - 10px);
-    padding-right: 16px;
-    box-sizing: border-box;
-    
-    /* Scrollbar styling */
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-    
-    &::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      margin-right: 4px;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background: rgba(0, 68, 102, 0.5);
-      border-radius: 10px;
-      transition: background 0.3s ease;
-    }
-    
-    &::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 68, 102, 0.8);
-    }
-    
-    /* Firefox için scrollbar */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 68, 102, 0.5) rgba(255, 255, 255, 0.1);
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 8px;
+`;
+
+const CategoryHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background-color: ${(props) =>
+    props.color?.background || "rgba(255, 255, 255, 0.5)"};
+  border-left: 4px solid ${(props) => props.color?.border || "#004466"};
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
 `;
 
-const IconWrapper = styled(motion.div)`
+const CategoryIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  border: 2px solid;
-  border-radius: 50%;
-  position: relative;
-  transition: border-color 0.3s ease;
-  background-color: ${(props) =>
-    props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "white"};
-  color: ${(props) =>
-    props.isActive || props.isCompleted ? "white" : "black"};
-  border-color: ${(props) =>
-    props.isActive ? "#3498db" : props.isCompleted ? "#2ecc71" : "#ccc"};
-  width: 40px; /* Varsayılan genişlik */
-  height: 40px; /* Varsayılan yükseklik */
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  flex-shrink: 0;
+`;
 
-  @media (max-width: 710px) {
-    width: 40px; /* 710px altında sabit genişlik */
-    height: 40px; /* 710px altında sabit yükseklik */
-    flex-shrink: 0; /* Küçülmeyi tamamen engelle */
+const CategoryTitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;
+
+const CategoryTitle = styled.h3`
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: ${(props) => props.color?.text || "#333"};
+`;
+
+const CategoryDescription = styled.p`
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+`;
+
+const CategoryProgress = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ChevronIcon = styled.div`
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+  transform: ${(props) => (props.isOpen ? "rotate(180deg)" : "rotate(0)")};
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.5);
+`;
+
+const ProgressBar = styled.div`
+  height: 6px;
+  width: 60px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+  overflow: hidden;
+`;
+
+const ProgressFill = styled.div`
+  height: 100%;
+  width: ${(props) => `${props.progress}%`};
+  background-color: ${(props) => props.color || "#004466"};
+  border-radius: 3px;
+  transition: width 0.5s ease;
+`;
+
+const ProgressText = styled.span`
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+`;
+
+// Belge öğesi listesi konteyneri
+const DocumentListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 12px;
+  overflow: hidden;
+  max-height: ${(props) => (props.isOpen ? "1000px" : "0")};
+  opacity: ${(props) => (props.isOpen ? 1 : 0)};
+  visibility: ${(props) => (props.isOpen ? "visible" : "hidden")};
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease-in-out, visibility 0.2s ease-in-out;
+  margin-top: ${(props) => (props.isOpen ? "8px" : "0")};
+`;
+
+const DocsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
   }
 `;
 
-const TooltipContainer = styled(motion.div)`
-  position: absolute;
-  top: -35px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
+// Belge öğesi
+const DocumentItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 3px solid
+    ${(props) =>
+      props.isActive
+        ? "#3498db"
+        : props.isCompleted
+        ? "#2ecc71"
+        : "transparent"};
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  ${(props) =>
+    props.isCompleted &&
+    css`
+      background-color: rgba(46, 204, 113, 0.1);
+      &:hover {
+        background-color: rgba(46, 204, 113, 0.15);
+      }
+    `}
+
+  ${(props) =>
+    props.isActive &&
+    css`
+      background-color: rgba(52, 152, 219, 0.1);
+      &:hover {
+        background-color: rgba(52, 152, 219, 0.15);
+      }
+    `}
+  
+  ${(props) =>
+    props.isSponsor &&
+    css`
+      &:after {
+        content: "Sponsor";
+        position: absolute;
+        top: 10px;
+        right: -28px;
+        background: #8533ff;
+        color: white;
+        font-size: 10px;
+        padding: 3px 30px;
+        transform: rotate(45deg);
+        font-weight: 500;
+      }
+    `}
+`;
+
+const DocumentHeader = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+`;
+
+const DocumentNumber = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+  background-color: ${(props) =>
+    props.isActive
+      ? "#3498db"
+      : props.isCompleted
+      ? "#2ecc71"
+      : "rgba(0, 0, 0, 0.1)"};
+  color: ${(props) =>
+    props.isActive || props.isCompleted ? "white" : "rgba(0, 0, 0, 0.7)"};
+  transition: all 0.2s ease;
+`;
+
+const DocumentInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+`;
+
+const DocumentTitle = styled.div`
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.8);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 40px;
+`;
+
+const DocumentStatus = styled.div`
   font-size: 12px;
-  pointer-events: none;
-  white-space: nowrap;
+  font-weight: 500;
+  color: ${(props) =>
+    props.isCompleted
+      ? "#2ecc71"
+      : props.isActive
+      ? "#3498db"
+      : "rgba(0, 0, 0, 0.5)"};
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &:before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: ${(props) =>
+      props.isCompleted
+        ? "#2ecc71"
+        : props.isActive
+        ? "#3498db"
+        : "rgba(0, 0, 0, 0.2)"};
+  }
 `;
 
 const glowing = keyframes`
@@ -145,31 +337,20 @@ const glowing = keyframes`
   100% { background-position: 0 0; }
 `;
 
-const StepPageCont = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100px;
-  justify-content: flex-start;
-  
-  @media (max-width: 710px) {
-    height: auto;
-    margin-bottom: 20px;
-  }
-`;
-
 const ContinueButton = styled.button`
-  flex-shrink: 0;
+  align-self: flex-end;
+  padding: 12px 24px;
   font-size: 14px;
-  font-weight: bold;
-  height: 50px;
-  margin-right: 8px;
-  width: 100px;
-  color: var(--color-grey-913);
-  background: var(--color-grey-914);
+  font-weight: 600;
+  color: white;
+  background: #004466;
   cursor: pointer;
+  border: none;
+  border-radius: 12px;
   position: relative;
-  z-index: 0;
-  border-radius: 10px;
+  z-index: 1;
+  overflow: hidden;
+  transition: all 0.3s ease;
 
   &:before {
     content: "";
@@ -192,182 +373,36 @@ const ContinueButton = styled.button`
     width: calc(100% + 8px);
     height: calc(100% + 8px);
     animation: ${glowing} 20s linear infinite;
-    opacity: 1;
+    opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    border-radius: 10px;
-  }
-
-  &:after {
-    z-index: -1;
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: var(--color-grey-914);
-    left: 0;
-    top: 0;
-    border-radius: 10px;
+    border-radius: 12px;
   }
 
   &:hover {
-    color: #004466;
-  }
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 
-  &:hover:after {
-    background: rgba(255, 255, 255, 0.2);
+    &:before {
+      opacity: 1;
+    }
   }
 
   &:active {
-    color: #000;
+    transform: translateY(0);
   }
 
-  &:active:after {
-    background: transparent;
-  }
-
-  @media (max-width: 830px) {
-    height: 50px;
-  }
-
-  @media (max-width: 710px) {
-    width: 80%;
-    margin: 8px auto;
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: 600;
-    height: auto;
-    
-    @media (max-height: 830px) {
-      width: 70%;
-      padding: 10px;
-      font-size: 14px;
-    }
-  }
-
-  z-index: 4000;
-`;
-
-const StepLabel = styled.span`
-  font-size: 14px;
-  cursor: pointer;
-  color: ${(props) =>
-    props.isCompleted ? "#2ecc71" : "var(--color-grey-600)"};
-  margin-left: 8px;
-  @media (max-width: 710px) {
-    font-size: 15px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 80%;
-    font-weight: ${(props) => props.isActive ? "bold" : "normal"};
+  @media (max-width: 768px) {
+    align-self: center;
+    width: 100%;
+    max-width: 250px;
   }
 `;
 
-const IconContainer = ({
-  isActive,
-  isCompleted,
-  onClick,
-  title,
-  mouseX,
-  stepNumber,
-  isExtraSmallScreen,
-  index,
-  totalSteps,
-}) => {
-  const ref = useRef(null);
-  const [hovered, setHovered] = useState(false);
-  const [baseSize, setBaseSize] = useState(40);
-
-  // Transform ve spring işlemleri koşulsuz olarak tanımlandı.
-  const distance = useTransform(mouseX, (val) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-    return val - bounds.x - bounds.width / 2;
-  });
-
-  const size = useSpring(
-    useTransform(distance, [-150, 0, 150], [baseSize, baseSize * 2, baseSize]),
-    {
-      mass: 0.1,
-      stiffness: 150,
-      damping: 12,
-    }
-  );
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 710) {
-        setBaseSize(40);
-      } else if (window.innerWidth <= 1200) {
-        setBaseSize(30);
-      } else if (window.innerWidth <= 1400) {
-        setBaseSize(35);
-      } else {
-        setBaseSize(40);
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  if (isExtraSmallScreen) {
-    return (
-      <div style={{ 
-        display: "flex", 
-        alignItems: "center",
-        padding: "5px 0",
-        width: "100%",
-        borderBottom: index !== totalSteps - 1 ? "1px solid rgba(0,0,0,0.05)" : "none"
-      }}>
-        <IconWrapper
-          onClick={onClick}
-          isActive={isActive}
-          isCompleted={isCompleted}
-        >
-          <div>{stepNumber}</div>
-        </IconWrapper>
-        <StepLabel 
-          onClick={onClick} 
-          isCompleted={isCompleted}
-          isActive={isActive}
-        >
-          {title}
-        </StepLabel>
-      </div>
-    );
-  }
-
-  return (
-    <IconWrapper
-      ref={ref}
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        width: size,
-        height: size,
-        backgroundColor: isActive
-          ? "#3498db"
-          : isCompleted
-          ? "#2ecc71"
-          : "white",
-      }}
-    >
-      <div>{stepNumber}</div>
-      <AnimatePresence>
-        {hovered && (
-          <TooltipContainer
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-          >
-            {title}
-          </TooltipContainer>
-        )}
-      </AnimatePresence>
-    </IconWrapper>
-  );
-};
+const StepPageCont = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
 
 const StepIndicator = () => {
   const [userId, setUserId] = useState(null);
@@ -379,20 +414,21 @@ const StepIndicator = () => {
     dispatch,
   } = useContext(DocumentsContext);
   const [currentStep, setCurrentStep] = useState(null);
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-  const isExtraSmallScreen = screenWidth < 710;
-  const mouseXContainer1 = useMotionValue(Infinity);
-  const mouseXContainer2 = useMotionValue(Infinity);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
+  // Kategori açılıp kapanma durumu - başlangıçta tüm kategoriler kapalı
+  const [openCategories, setOpenCategories] = useState({
+    hazir: false,
+    planla: false,
+    bizimle: false,
+  });
 
-    window.addEventListener("resize", handleResize);
-    handleResize(); // İlk yüklemede ekran genişliğini kontrol et
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // Kategoriyi açıp kapatan fonksiyon
+  const toggleCategory = (category) => {
+    setOpenCategories((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
 
   useEffect(() => {
     getCurrentUser().then((user) => {
@@ -433,10 +469,7 @@ const StepIndicator = () => {
     isError: isErrorDocuments,
   } = useQuery({
     queryKey: ["documentDetailsStep", documentNames],
-    queryFn: () =>
-      fetchDocumentDetails(documentNames).then((docs) =>
-        docs.filter((doc) => !doc.docName.startsWith("Sponsor"))
-      ),
+    queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !!documentNames.length,
   });
 
@@ -462,109 +495,123 @@ const StepIndicator = () => {
     }
   };
 
-  const handleStepClick = (index) => {
+  const handleDocumentClick = (index) => {
     const selectedDocument = documents[index];
     if (selectedDocument) {
-      setSelectedDocument(selectedDocument); // Belgeyi seç
-      navigate(`/documents/${applicationId}`); // /documents URL'sine yönlendir
+      setSelectedDocument(selectedDocument);
+      navigate(`/documents/${applicationId}`);
     }
   };
 
-  const firstSteps = documents.slice(0, 10);
-  const remainingSteps = documents.slice(10);
+  // docStage değerine göre dökümanları gruplandırma (sponsor belgeleri de kendi docStage değerlerine göre gruplandırılır)
+  const groupedDocuments = documents.reduce((acc, doc, index) => {
+    const stage = doc.docStage || "planla"; // Eğer docStage tanımlanmamışsa "planla" kategorisine ekle
+    if (!acc[stage]) acc[stage] = [];
+    acc[stage].push({ ...doc, index });
+    return acc;
+  }, {});
 
-  const isSmallScreen = screenWidth < 1450;
+  // Kategori sıralama fonksiyonu (hazir > planla > bizimle)
+  const categoryOrder = ["hazir", "planla", "bizimle"];
+
+  // Her kategori için tamamlanma yüzdesini hesaplama
+  const calculateCategoryProgress = (docs) => {
+    if (!docs || !docs.length) return 0;
+    const completedCount = docs.filter(
+      (doc) => completedDocuments[applicationId]?.[doc.docName]
+    ).length;
+    return Math.round((completedCount / docs.length) * 100);
+  };
 
   return (
     <StepPageCont>
-      {isExtraSmallScreen || !isSmallScreen ? (
-        <StepAndContinueContainer
-          onMouseMove={(e) => mouseXContainer1.set(e.pageX)}
-          onMouseLeave={() => mouseXContainer1.set(Infinity)}
-        >
-          <StepCircleContainer>
-            {documents.map((doc, index) => {
-              const isActive = index === currentStep;
-              const isCompleted =
-                completedDocuments[applicationId]?.[doc.docName];
+      <StepAndContinueContainer>
+        {/* Kategorileri sırayla göster */}
+        {categoryOrder.map((category) => {
+          // Bu kategoride döküman yoksa gösterme
+          if (
+            !groupedDocuments[category] ||
+            groupedDocuments[category].length === 0
+          ) {
+            return null;
+          }
 
-              return (
-                <IconContainer
-                  isExtraSmallScreen={isExtraSmallScreen}
-                  key={doc.id}
-                  isActive={isActive}
-                  isCompleted={isCompleted}
-                  onClick={() => handleStepClick(index)}
-                  title={doc.docName}
-                  mouseX={mouseXContainer1}
-                  stepNumber={index + 1}
-                  index={index}
-                  totalSteps={documents.length}
-                />
-              );
-            })}
-          </StepCircleContainer>
-          <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
-        </StepAndContinueContainer>
-      ) : (
-        <>
-          <StepAndContinueContainer
-            onMouseMove={(e) => mouseXContainer1.set(e.pageX)}
-            onMouseLeave={() => mouseXContainer1.set(Infinity)}
-          >
-            <StepCircleContainer>
-              {firstSteps.map((doc, index) => {
-                const isActive = index === currentStep;
-                const isCompleted =
-                  completedDocuments[applicationId]?.[doc.docName];
+          const docs = groupedDocuments[category];
+          const progress = calculateCategoryProgress(docs);
+          const colorSet = categoryColors[category];
 
-                return (
-                  <IconContainer
-                    key={doc.id}
-                    isActive={isActive}
-                    isCompleted={isCompleted}
-                    onClick={() => handleStepClick(index)}
-                    title={doc.docName}
-                    mouseX={mouseXContainer1}
-                    stepNumber={index + 1}
-                    index={index}
-                    totalSteps={firstSteps.length}
-                  />
-                );
-              })}
-            </StepCircleContainer>
-            <ContinueButton onClick={handleContinue}>Devam et</ContinueButton>
-          </StepAndContinueContainer>
-          {remainingSteps.length > 0 && (
-            <StepAndContinueContainer
-              onMouseMove={(e) => mouseXContainer2.set(e.pageX)}
-              onMouseLeave={() => mouseXContainer2.set(Infinity)}
-            >
-              <StepCircleContainer>
-                {remainingSteps.map((doc, index) => {
-                  const isActive = index + 10 === currentStep;
-                  const isCompleted =
-                    completedDocuments[applicationId]?.[doc.docName];
+          return (
+            <CategoryContainer key={category}>
+              <CategoryHeader
+                onClick={() => toggleCategory(category)}
+                color={colorSet}
+              >
+                <CategoryIcon>{colorSet.icon}</CategoryIcon>
+                <CategoryTitleContainer>
+                  <CategoryTitle color={colorSet}>
+                    {colorSet.title}
+                  </CategoryTitle>
+                  <CategoryDescription>
+                    {colorSet.description}
+                  </CategoryDescription>
+                </CategoryTitleContainer>
+                <CategoryProgress>
+                  <ProgressBar>
+                    <ProgressFill progress={progress} color={colorSet.border} />
+                  </ProgressBar>
+                  <ProgressText>{progress}%</ProgressText>
+                </CategoryProgress>
+                <ChevronIcon isOpen={openCategories[category]}>▼</ChevronIcon>
+              </CategoryHeader>
 
-                  return (
-                    <IconContainer
-                      key={doc.id}
-                      isActive={isActive}
-                      isCompleted={isCompleted}
-                      onClick={() => handleStepClick(index + 10)}
-                      title={doc.docName}
-                      mouseX={mouseXContainer2}
-                      stepNumber={index + 11}
-                      index={index}
-                      totalSteps={remainingSteps.length}
-                    />
-                  );
-                })}
-              </StepCircleContainer>
-            </StepAndContinueContainer>
-          )}
-        </>
-      )}
+              <DocumentListContainer isOpen={openCategories[category]}>
+                <DocsGrid>
+                  {docs.map((doc) => {
+                    const isActive = doc.index === currentStep;
+                    const isCompleted =
+                      completedDocuments[applicationId]?.[doc.docName];
+                    const isSponsor = doc.docName?.startsWith("Sponsor");
+
+                    return (
+                      <DocumentItem
+                        key={doc.id}
+                        isActive={isActive}
+                        isCompleted={isCompleted}
+                        isSponsor={isSponsor}
+                        onClick={() => handleDocumentClick(doc.index)}
+                      >
+                        <DocumentHeader>
+                          <DocumentNumber
+                            isActive={isActive}
+                            isCompleted={isCompleted}
+                          >
+                            {doc.index + 1}
+                          </DocumentNumber>
+                          <DocumentInfo>
+                            <DocumentTitle>{doc.docName}</DocumentTitle>
+                          </DocumentInfo>
+                        </DocumentHeader>
+                        <DocumentStatus
+                          isActive={isActive}
+                          isCompleted={isCompleted}
+                        >
+                          {isCompleted
+                            ? "Tamamlandı"
+                            : isActive
+                            ? "Mevcut Adım"
+                            : "Bekliyor"}
+                        </DocumentStatus>
+                      </DocumentItem>
+                    );
+                  })}
+                </DocsGrid>
+              </DocumentListContainer>
+            </CategoryContainer>
+          );
+        })}
+
+        <ContinueButton onClick={handleContinue}>Devam Et</ContinueButton>
+      </StepAndContinueContainer>
     </StepPageCont>
   );
 };

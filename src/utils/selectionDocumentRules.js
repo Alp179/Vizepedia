@@ -2,14 +2,14 @@ const selectionDocumentRules = {
   all: [
     "Biyometrik Fotoğraf",
     "Kimlik Fotokopisi",
-    "Nüfus Kaydı Örneği",
+    "Nüfus Kayıt Örneği",
     "Sağlık Sigortası",
     "İkametgah Belgesi",
     "Pasaport",
     "Malvarlık Belgeleri",
   ],
   sponsorAll: [
-    "Sponsor Nüfus Kaydı Örneği",
+    "Sponsor Nüfus Kayıt Örneği",
     "Sponsor Malvarlık Belgeleri",
     "Sponsor Kimlik Fotokopisi",
     "Sponsor İkametgah Belgesi",
@@ -69,7 +69,6 @@ const selectionDocumentRules = {
       "Sponsor Emeklilik Belgesi",
       "Sponsor 4A Emekli Aylık Bilgisi",
       "Sponsor SGK Tescil ve Hizmet Dökümü",
-      
       "Sponsor Emekli Maaşı Hesabı Dökümü",
 
     ],
