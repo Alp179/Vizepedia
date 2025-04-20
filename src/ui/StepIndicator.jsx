@@ -66,7 +66,7 @@ const IconPuzzle = () => (
     width="100%"
     height="100%"
   >
-    <path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925-.191-.482-.884-.850-1.471-.689l-1.514.345c-.906.212-1.538.991-1.538 1.916v2.91a.87.87 0 0 1-.876.865H10.32a.87.87 0 0 1-.876-.876v-3.369c0-.803-.509-1.587-1.228-1.909-.482-.21-1.187-.144-1.575.173-1.022.819-2.06.068-2.06-.911v-2.926c0-.89 1.116-1.639 2.063-.911.388.317 1.072.383 1.554.173.73-.317 1.246-1.113 1.246-1.916V4.484c0-.479.39-.83.87-.876h3.262a.87.87 0 0 1 .876.876v3.369c0 .803.507 1.587 1.228 1.909.482.21 1.187.144 1.575-.173.522-.425 1.154-.413 1.575.173.383.535.308 1.247.115 1.788z"></path>
+    <path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925-.191-.482-.884-.85-1.471-.689l-1.514.345c-.906.212-1.538.991-1.538 1.916v2.91a.87.87 0 0 1-.876.865H10.32a.87.87 0 0 1-.876-.876v-3.369c0-.803-.509-1.587-1.228-1.909-.482-.21-1.187-.144-1.575.173-1.022.819-2.06.068-2.06-.911v-2.926c0-.89 1.116-1.639 2.063-.911.388.317 1.072.383 1.554.173.73-.317 1.246-1.113 1.246-1.916V4.484c0-.479.39-.83.87-.876h3.262a.87.87 0 0 1 .876.876v3.369c0 .803.507 1.587 1.228 1.909.482.21 1.187.144 1.575-.173.522-.425 1.154-.413 1.575.173.383.535.308 1.247.115 1.788z"></path>
   </svg>
 );
 
@@ -723,7 +723,13 @@ const StepIndicator = () => {
     const selectedDocument = documents[currentStep];
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
-      navigate(`/documents/${applicationId}`);
+      
+      // Kategori bazında yönlendirme yapıyoruz
+      if (selectedDocument.docStage === "hazir") {
+        navigate(`/ready-documents/${applicationId}`);  // Hemen Hazır belgeleri için yeni sayfa
+      } else {
+        navigate(`/documents/${applicationId}`);  // Diğer belgeler için eski sayfa
+      }
     }
   };
 
@@ -731,7 +737,13 @@ const StepIndicator = () => {
     const selectedDocument = documents[index];
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
-      navigate(`/documents/${applicationId}`);
+      
+      // Kategori bazında yönlendirme yapıyoruz
+      if (selectedDocument.docStage === "hazir") {
+        navigate(`/ready-documents/${applicationId}`);  // Hemen Hazır belgeleri için yeni sayfa
+      } else {
+        navigate(`/documents/${applicationId}`);  // Diğer belgeler için eski sayfa
+      }
     }
   };
 

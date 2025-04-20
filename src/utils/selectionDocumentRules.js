@@ -29,7 +29,7 @@ const selectionDocumentRules = {
   },
   profession: {
     Emekli: [
-      "4A Emekli Aylık Bilgisi",
+      "Emekli Aylık Bilgisi",
       "SGK Tescil ve Hizmet Dökümü",
       "Son 3 Aylık Banka Hesap Dökümü",
       "Emekli Maaşı Hesabı Dökümü",
@@ -67,7 +67,7 @@ const selectionDocumentRules = {
     Emekli: [
       "Sponsor SGK Tescil ve Hizmet Dökümü",
       "Sponsor Emeklilik Belgesi",
-      "Sponsor 4A Emekli Aylık Bilgisi",
+      "Sponsor Emekli Aylık Bilgisi",
       "Sponsor SGK Tescil ve Hizmet Dökümü",
       "Sponsor Emekli Maaşı Hesabı Dökümü",
 

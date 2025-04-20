@@ -14,6 +14,7 @@ import ProtectedRoute from "./ui/ProtectedRoute";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
+import ReadyDocumentDetail from "./pages/ReadyDocumentDetail"; // Hemen Hazır belgeler için yeni bileşen
 import MainPage from "./pages/MainPage";
 import WellcomeA from "./features/wellcomes/WellcomeA";
 import WellcomeD from "./features/wellcomes/WellcomeD";
@@ -119,6 +120,8 @@ function App() {
                       }
                     >
                       <Route path="documents/:id" element={<Documents />} />
+                      {/* Hemen Hazır belgeler için yeni rota ekliyoruz */}
+                      <Route path="ready-documents/:id" element={<ReadyDocumentDetail />} />
                       <Route path="summary" element={<DocumentSummary />} />
                       <Route path="summary/:id" element={<DocumentSummary />} />
                     </Route>
