@@ -123,9 +123,18 @@ function App() {
                     >
                       <Route path="documents/:id" element={<Documents />} />
                       {/* Hemen Hazır belgeler için yeni rota ekliyoruz */}
-                      <Route path="ready-documents/:id" element={<ReadyDocumentDetail />} />
-                      <Route path="planned-documents/:id" element={<PlannedDocumentDetail />} />
-                      <Route path="withus-documents/:id" element={<WithUsDocumentDetail />} />
+                      <Route
+                        path="ready-documents/:id"
+                        element={<ReadyDocumentDetail />}
+                      />
+                      <Route
+                        path="planned-documents/:id"
+                        element={<PlannedDocumentDetail />}
+                      />
+                      <Route
+                        path="withus-documents/:id"
+                        element={<WithUsDocumentDetail />}
+                      />
                       <Route path="summary" element={<DocumentSummary />} />
                       <Route path="summary/:id" element={<DocumentSummary />} />
                     </Route>

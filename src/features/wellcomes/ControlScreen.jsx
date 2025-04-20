@@ -34,23 +34,31 @@ function ControlScreen() {
       return;
     }
 
-    const { error } = await supabase.from("userAnswers").upsert({
-      userId: user.id, // Mevcut kullanıcı ID'si
-      ans_country: state.country,
-      ans_purpose: state.purpose,
-      ans_profession: state.profession,
-      ans_vehicle: state.vehicle,
-      ans_kid: state.kid,
-      ans_accommodation: state.accommodation,
-      ans_hassponsor: state.hasSponsor,
-      ans_sponsor_profession: state.sponsorProfession || null, // Sponsor mesleği
-    });
+    const { data, error } = await supabase
+      .from("userAnswers")
+      .insert({
+        userId: user.id, // Mevcut kullanıcı ID'si
+        ans_country: state.country,
+        ans_purpose: state.purpose,
+        ans_profession: state.profession,
+        ans_vehicle: state.vehicle,
+        ans_kid: state.kid,
+        ans_accommodation: state.accommodation,
+        ans_hassponsor: state.hasSponsor,
+        ans_sponsor_profession: state.sponsorProfession || null, // Sponsor mesleği
+        has_appointment: null, // Randevu durumu başlangıçta null
+        has_filled_form: null, // Form durumu başlangıçta null
+      })
+      .select()
+      .single();
 
     if (error) {
       console.error("Seçimler kaydedilirken hata oluştu:", error);
     } else {
-      console.log("Kullanıcı seçimleri başarıyla kaydedildi.");
-      navigate("/dashboard"); // Kullanıcıyı yönlendir
+      console.log("Kullanıcı seçimleri başarıyla kaydedildi:", data);
+      // İlk giriş olduğunu işaretlemek için local storage'ı temizle
+      localStorage.removeItem(`visa_check_modal_shown_${data.id}`);
+      navigate(`/dashboard/${data.id}`); // Kullanıcıyı kayıt ID'si ile yönlendir
     }
   };
 
@@ -73,11 +81,11 @@ function ControlScreen() {
     width: calc(100vw - 180px);
     max-width: 370px;
     height: calc(100vh - 190px);
-   
+
     @media (max-width: 710px) {
       width: calc(100vw - 80px);
     }
-  
+
     @media (max-width: 300px) {
       position: fixed;
       top: 50%;
@@ -117,7 +125,10 @@ function ControlScreen() {
         hasSponsor={state.hasSponsor}
         sponsorProfession={state.sponsorProfession}
         onSponsorProfessionChange={(sponsorProfession) =>
-          dispatch({ type: "SET_SPONSOR_PROFESSION", payload: sponsorProfession })
+          dispatch({
+            type: "SET_SPONSOR_PROFESSION",
+            payload: sponsorProfession,
+          })
         }
       />
 

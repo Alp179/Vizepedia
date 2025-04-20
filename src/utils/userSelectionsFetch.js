@@ -4,7 +4,7 @@ export async function fetchUserSelectionsNav(userId) {
   const { data, error } = await supabase
     .from("userAnswers")
     .select(
-      "id, created_at, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession"
+      "id, created_at, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession, has_appointment, has_filled_form"
     )
     .eq("userId", userId);
 
@@ -25,7 +25,7 @@ export async function fetchUserSelectionsDash(userId, applicationId) {
   const { data, error } = await supabase
     .from("userAnswers")
     .select(
-      "id, created_at, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession"
+      "id, created_at, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession, has_appointment, has_filled_form"
     )
     .eq("userId", userId)
     .eq("id", applicationId);
@@ -47,7 +47,7 @@ export async function fetchLatestApplication(userId) {
   const { data, error } = await supabase
     .from("userAnswers")
     .select(
-      "id, created_at, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession"
+      "id, created_at, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession, has_appointment, has_filled_form"
     )
     .eq("userId", userId)
     .order("created_at", { ascending: false })

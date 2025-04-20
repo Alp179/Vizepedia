@@ -20,6 +20,8 @@ import ModalSignup from "../ui/ModalSignup";
 import FirmMap from "../ui/FirmMap";
 import AnimatedFlag from "../ui/AnimatedFlag";
 import MobileCarousel from "../ui/MobileCarousel";
+import VisaCheckModal from "../ui/VisaCheckModal";
+import VisaStatusBanner from "../ui/VisaStatusBanner";
 
 const CreatedAtContainer = styled.div`
   font-size: 1.5rem;
@@ -66,6 +68,7 @@ const DashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  align-items: flex-start;
 
   @media (max-width: 710px) {
     height: 100%;
@@ -80,6 +83,32 @@ const DashboardContainer = styled.div`
       rgba(0, 0, 0, 0.1) 40%,
       rgba(0, 0, 0, 0) 60%
     );
+    align-items: stretch;
+  }
+`;
+
+const BannersContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: calc(100% - 40px);
+  max-width: 800px;
+  margin: 0 0 0 20px;
+  padding: 0;
+  align-self: flex-start;
+
+  @media (max-width: 1300px) {
+    margin-left: 15px;
+  }
+
+  @media (max-width: 900px) {
+    margin-left: 10px;
+  }
+
+  @media (max-width: 710px) {
+    padding: 0 10px;
+    margin: 0;
+    width: 100%;
   }
 `;
 
@@ -201,6 +230,7 @@ const Dashboard = () => {
   const [createdAt, setCreatedAt] = useState(null);
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 710);
+  const [showVisaModal, setShowVisaModal] = useState(false);
 
   const {
     state: { completedDocuments },
@@ -210,6 +240,11 @@ const Dashboard = () => {
   const [isAnonymous, setIsAnonymous] = useState(
     localStorage.getItem("isAnonymous") === "true"
   );
+
+  // Yardımcı fonksiyon - değerin ayarlanmamış olup olmadığını kontrol eder
+  const isValueUnset = (value) => {
+    return value === null || value === undefined;
+  };
 
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -257,11 +292,51 @@ const Dashboard = () => {
     isSuccess: isUserSelectionsSuccess,
     isLoading: isUserSelectionsLoading,
     isError: isUserSelectionsError,
+    refetch: refetchUserSelections,
   } = useQuery({
     queryKey: ["userSelections", userId, applicationId],
     queryFn: () => fetchUserSelectionsDash(userId, applicationId),
     enabled: !!userId && !!applicationId,
+    staleTime: 0, // Her zaman yeni veri iste
+    gcTime: 0, // Garbage collection time (eski ismi cacheTime)
+    refetchOnWindowFocus: false, // Pencere odaklandığında veriyi yenileme
   });
+
+  // Modal kontrolü için useEffect - userSelections tanımlandıktan sonra
+  useEffect(() => {
+    if (
+      isUserSelectionsSuccess &&
+      userSelections &&
+      userSelections.length > 0
+    ) {
+      const currentSelection = userSelections[0];
+      console.log("Current selection:", currentSelection);
+      console.log("Has appointment:", currentSelection.has_appointment);
+      console.log("Has filled form:", currentSelection.has_filled_form);
+
+      // Eğer kullanıcı henüz randevu ve form durumu hakkında bilgi vermemişse, modal'ı göster
+      if (
+        isValueUnset(currentSelection.has_appointment) ||
+        isValueUnset(currentSelection.has_filled_form)
+      ) {
+        // Local storage'da bu modal daha önce gösterildi mi kontrol et
+        const modalShownKey = `visa_check_modal_shown_${applicationId}`;
+        const modalAlreadyShown = localStorage.getItem(modalShownKey);
+
+        if (!modalAlreadyShown) {
+          console.log(
+            "Showing modal because values are unset and modal never shown"
+          );
+          setShowVisaModal(true);
+          localStorage.setItem(modalShownKey, "true");
+        } else {
+          console.log("Not showing modal because it was already shown");
+        }
+      } else {
+        console.log("Not showing modal because values are set");
+      }
+    }
+  }, [isUserSelectionsSuccess, userSelections, applicationId]);
 
   const ansCountry = userSelections?.[0]?.ans_country;
 
@@ -279,9 +354,31 @@ const Dashboard = () => {
     return data;
   }
 
+  // Ülkeye özel vize linklerini fetch etme
+  async function fetchVisaCountryLinks(country) {
+    const { data, error } = await supabase
+      .from("visa_country_links")
+      .select("*")
+      .eq("country", country)
+      .single();
+
+    if (error) {
+      console.error("Error fetching visa country links:", error);
+      return null;
+    }
+
+    return data;
+  }
+
   const { data: firmLocation, isSuccess: isFirmLocationSuccess } = useQuery({
     queryKey: ["firmLocation", ansCountry],
     queryFn: () => fetchFirmLocation(ansCountry),
+    enabled: !!ansCountry,
+  });
+
+  const { data: countryLinks } = useQuery({
+    queryKey: ["visaCountryLinks", ansCountry],
+    queryFn: () => fetchVisaCountryLinks(ansCountry),
     enabled: !!ansCountry,
   });
 
@@ -383,6 +480,49 @@ const Dashboard = () => {
 
   return (
     <DashboardContainer>
+      {showVisaModal && (
+        <VisaCheckModal
+          onClose={() => {
+            setShowVisaModal(false);
+            // Modal kapandığında local storage'ı güncelle
+            const modalShownKey = `visa_check_modal_shown_${applicationId}`;
+            localStorage.setItem(modalShownKey, "true");
+
+            // Veriyi yeniden getir
+            refetchUserSelections();
+          }}
+          applicationId={applicationId}
+          userId={userId}
+          countryLinks={countryLinks}
+        />
+      )}
+
+      {/* Randevu ve form durumuna göre banner'ları göster */}
+      {isUserSelectionsSuccess && userSelections?.length > 0 && (
+        <BannersContainer>
+          {/* has_appointment false ise banner göster */}
+          {userSelections[0].has_appointment === false && (
+            <VisaStatusBanner
+              type="appointment"
+              applicationId={applicationId}
+              userId={userId}
+              countryLinks={countryLinks}
+              onSuccess={() => refetchUserSelections()}
+            />
+          )}
+          {/* has_filled_form false ise banner göster */}
+          {userSelections[0].has_filled_form === false && (
+            <VisaStatusBanner
+              type="form"
+              applicationId={applicationId}
+              userId={userId}
+              countryLinks={countryLinks}
+              onSuccess={() => refetchUserSelections()}
+            />
+          )}
+        </BannersContainer>
+      )}
+
       <AnimatedFlag countryCode={countryCode} />
 
       <CustomRow type="horizontal">
