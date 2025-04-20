@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import Heading from "../ui/Heading";
 import StepIndicator from "../ui/StepIndicator";
-import SponsorStepIndicator from "../ui/SponsorStepIndicator";
 import FirmMap from "../ui/FirmMap";
 
 // Geliştirilmiş Carousel stilleri
@@ -175,7 +174,6 @@ const MobileCarousel = ({
   handleStepClick,
   completedDocuments,
   documents,
-  hasSponsor,
   firmLocation,
   isFirmLocationSuccess,
 }) => {
@@ -190,9 +188,6 @@ const MobileCarousel = ({
   // Görünür kısmın genişliğini hesaplıyoruz
   const [containerWidth, setContainerWidth] = useState(0);
   
-  // Kenardan görünecek miktar
-  // Artık merkeze konumlandırma ile çalışacağız, peek amount'a gerek yok
-  
   // Her bir itemin gerçek genişliği (merkezdeki item için)
   const [itemWidth, setItemWidth] = useState(() => {
     if (window.innerWidth <= 389) {
@@ -203,8 +198,8 @@ const MobileCarousel = ({
     return window.innerWidth > 800 ? 800 : window.innerWidth;
   });
   
-  // Toplam öğe sayısı: sponsor varsa 3, yoksa 2
-  const totalItems = hasSponsor ? 3 : 2;
+  // Toplam öğe sayısı: her zaman 2 olacak
+  const totalItems = 2;
 
   // Sadece active index sıfırlanıyor
   const resetCarouselPosition = () => {
@@ -379,7 +374,6 @@ const MobileCarousel = ({
             ref={carouselRef}
             activeIndex={activeCardIndex}
             itemWidth={itemWidth}
-
             containerWidth={containerWidth}
           >
             <CarouselItem width={itemWidth} active={activeCardIndex === 0}>
@@ -395,24 +389,9 @@ const MobileCarousel = ({
               </StepIndicatorWrapper>
             </CarouselItem>
 
-            {hasSponsor && (
-              <CarouselItem width={itemWidth} active={activeCardIndex === 1}>
-                <StepIndicatorWrapper>
-                  <Heading as="h14">Sponsorun Belgeleri</Heading>
-                  <SponsorStepIndicator
-                    steps={stepLabels}
-                    currentStep={currentStep}
-                    onStepClick={handleStepClick}
-                    completedDocuments={completedDocuments}
-                    documents={documents}
-                  />
-                </StepIndicatorWrapper>
-              </CarouselItem>
-            )}
-
             <CarouselItem
               width={itemWidth}
-              active={activeCardIndex === (hasSponsor ? 2 : 1)}
+              active={activeCardIndex === 1}
             >
               <InfoContainerWrapper>
                 <Heading as="h14">Başvuru adresi</Heading>
