@@ -287,23 +287,6 @@ const ActionButton = styled.button`
   }
 `;
 
-const StartButton = styled(ActionButton)`
-  background-color: #00cc66;
-  margin-top: 30px;
-  
-  &:hover {
-    background-color: #009933;
-  }
-
-  @media (max-width: 680px) {
-    width: 100%;
-    max-width: 200px;
-    padding: 14px;
-    font-size: 16px;
-    margin: 20px auto 0;
-  }
-`;
-
 const DocumentImage = styled.img`
   width: 100%;
   height: auto;
@@ -478,6 +461,63 @@ const ProgressDot = styled.div`
     `}
 `;
 
+const SourceButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-top: 25px;
+  padding: 15px 20px;
+  background-color: #004466;
+  color: white;
+  border: 2px solid #00ffa2;
+  border-radius: 16px;
+  width: auto;
+  min-width: 150px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: #00ffa2;
+    transition: all 0.3s ease;
+    z-index: 0;
+  }
+
+  &:hover:before {
+    width: 100%;
+  }
+
+  svg {
+    margin-right: 8px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:hover {
+    color: #004466;
+  }
+
+  @media (max-width: 680px) {
+    font-size: 16px;
+    padding: 12px 15px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+`;
+
 const MetaInfo = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -538,7 +578,7 @@ const ReadyDocumentBadge = styled.div`
   svg {
     margin-right: 6px;
   }
-  
+
   @media (max-width: 680px) {
     font-size: 12px;
     padding: 4px 10px;
@@ -546,32 +586,9 @@ const ReadyDocumentBadge = styled.div`
   }
 `;
 
-// SVG ikonları için bileşenler
-const TimeIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-    />
-  </svg>
-);
 
 const RocketIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="#00cc66"
-  >
+  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#00cc66">
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -652,29 +669,6 @@ const WarningIcon = () => (
       strokeLinejoin="round"
       strokeWidth="2"
       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-    />
-  </svg>
-);
-
-const PlayIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-    />
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
     />
   </svg>
 );
@@ -844,9 +838,11 @@ const ReadyDocumentDetail = () => {
   useEffect(() => {
     if (isDocumentsSuccess && documents && !selectedDocument) {
       // Sadece "hazir" kategorisindeki belgeleri filtrele
-      const readyDocuments = documents.filter(doc => doc.docStage === "hazir");
+      const readyDocuments = documents.filter(
+        (doc) => doc.docStage === "hazir"
+      );
       const initialDocument = readyDocuments[0];
-      
+
       if (initialDocument) {
         setSelectedDocument(initialDocument);
         setCurrentDocumentIndex(0);
@@ -857,7 +853,9 @@ const ReadyDocumentDetail = () => {
   useEffect(() => {
     if (selectedDocument && documents) {
       // Sadece "hazir" kategorisindeki belgeleri filtrele
-      const readyDocuments = documents.filter(doc => doc.docStage === "hazir");
+      const readyDocuments = documents.filter(
+        (doc) => doc.docStage === "hazir"
+      );
       const index = readyDocuments.findIndex(
         (doc) => doc.docName === selectedDocument.docName
       );
@@ -901,10 +899,10 @@ const ReadyDocumentDetail = () => {
 
   const handleNavigation = (direction) => {
     if (!documents) return;
-    
+
     // Sadece "hazir" kategorisindeki belgeleri filtrele
-    const readyDocuments = documents.filter(doc => doc.docStage === "hazir");
-    
+    const readyDocuments = documents.filter((doc) => doc.docStage === "hazir");
+
     if (direction === "prev" && currentDocumentIndex > 0) {
       setSelectedDocument(readyDocuments[currentDocumentIndex - 1]);
     } else if (
@@ -913,12 +911,6 @@ const ReadyDocumentDetail = () => {
     ) {
       setSelectedDocument(readyDocuments[currentDocumentIndex + 1]);
     }
-  };
-
-  const handleStart = () => {
-    // Buraya belgelerle ilgili işlem başlatma yönlendirmesi eklenecek
-    alert("Belge işlemi başlatılıyor!");
-    // İstenirse farklı bir sayfaya yönlendirme eklenebilir
   };
 
   const handleImageClick = (imageSrc) => {
@@ -936,8 +928,26 @@ const ReadyDocumentDetail = () => {
     }, 300);
   };
 
+  const LinkIcon = () => (
+    <svg
+      width="16"
+      height="16"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+      />
+    </svg>
+  );
   // Filtrelenmiş "hazir" belgeleri
-  const readyDocuments = documents ? documents.filter(doc => doc.docStage === "hazir") : [];
+  const readyDocuments = documents
+    ? documents.filter((doc) => doc.docStage === "hazir")
+    : [];
 
   return (
     <>
@@ -953,16 +963,15 @@ const ReadyDocumentDetail = () => {
         <InfoContainer>
           <div>
             <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
-            
-            <ReadyDocumentBadge>
-              <RocketIcon />
-              Hemen Hazır
-            </ReadyDocumentBadge>
+
+           
 
             <MetaInfo>
               <MetaTag>
-                <TimeIcon />
-                {selectedDocument.estimatedCompletionTime || "5-10 dakika"}
+                <ReadyDocumentBadge>
+                  <RocketIcon />
+                  Hemen Hazır
+                </ReadyDocumentBadge>
               </MetaTag>
               {selectedDocument.docType && (
                 <MetaTag>{selectedDocument.docType}</MetaTag>
@@ -1012,11 +1021,22 @@ const ReadyDocumentDetail = () => {
                 </SectionContent>
               </SectionContainer>
             )}
-            
-            <StartButton id="startButton" onClick={handleStart}>
-              <PlayIcon />
-              <span>Hemen Başla</span>
-            </StartButton>
+
+            {selectedDocument.docSourceLink && (
+              <SourceButton
+                id="sourceButton"
+                onClick={() =>
+                  window.open(
+                    selectedDocument.docSourceLink,
+                    "_blank",
+                    "noopener,noreferrer"
+                  )
+                }
+              >
+                <LinkIcon />
+                <span>Bağlantı</span>
+              </SourceButton>
+            )}
           </div>
 
           <ActionButton onClick={handleAction} isCompleted={isCompleted}>
@@ -1043,7 +1063,9 @@ const ReadyDocumentDetail = () => {
           />
 
           <DocumentMeta>
-            {selectedDocument.docSource ? `Kaynak: ${selectedDocument.docSource}` : "Online işlem yapılabilir"}
+            {selectedDocument.docSource
+              ? `Kaynak: ${selectedDocument.docSource}`
+              : "Online işlem yapılabilir"}
           </DocumentMeta>
 
           <DocProgress>
@@ -1060,7 +1082,10 @@ const ReadyDocumentDetail = () => {
         <NavigationButton
           className="right"
           onClick={() => handleNavigation("next")}
-          disabled={!readyDocuments || currentDocumentIndex === readyDocuments.length - 1}
+          disabled={
+            !readyDocuments ||
+            currentDocumentIndex === readyDocuments.length - 1
+          }
         >
           &gt;
         </NavigationButton>

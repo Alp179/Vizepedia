@@ -687,7 +687,7 @@ const BookIcon = () => (
   </svg>
 );
 
-const DocumentDetail = () => {
+const WithUsDocumentDetail = () => {
   const imgRef = useRef(null);
   const [isClosing, setIsClosing] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -843,21 +843,30 @@ const DocumentDetail = () => {
 
   useEffect(() => {
     if (isDocumentsSuccess && documents && !selectedDocument) {
-      const initialDocument = documents[0];
-      if (initialDocument) {
-        setSelectedDocument(initialDocument);
-        setCurrentDocumentIndex(0);
+        // Sadece "hazir" kategorisindeki belgeleri filtrele
+        const withusDocuments = documents.filter(
+          (doc) => doc.docStage === "bizimle"
+        );
+        const initialDocument = withusDocuments[0];
+  
+        if (initialDocument) {
+          setSelectedDocument(initialDocument);
+          setCurrentDocumentIndex(0);
+        }
       }
-    }
   }, [isDocumentsSuccess, documents, selectedDocument, setSelectedDocument]);
 
   useEffect(() => {
     if (selectedDocument && documents) {
-      const index = documents.findIndex(
-        (doc) => doc.docName === selectedDocument.docName
-      );
-      setCurrentDocumentIndex(index);
-    }
+        // Sadece "hazir" kategorisindeki belgeleri filtrele
+        const withusDocuments = documents.filter(
+          (doc) => doc.docStage === "bizimle"
+        );
+        const index = withusDocuments.findIndex(
+          (doc) => doc.docName === selectedDocument.docName
+        );
+        setCurrentDocumentIndex(index);
+      }
   }, [selectedDocument, documents]);
 
   if (!selectedDocument) {
@@ -895,13 +904,18 @@ const DocumentDetail = () => {
   };
 
   const handleNavigation = (direction) => {
+    if (!documents) return;
+
+    // Sadece "hazir" kategorisindeki belgeleri filtrele
+    const withusDocuments = documents.filter((doc) => doc.docStage === "bizimle");
+
     if (direction === "prev" && currentDocumentIndex > 0) {
-      setSelectedDocument(documents[currentDocumentIndex - 1]);
+      setSelectedDocument(withusDocuments[currentDocumentIndex - 1]);
     } else if (
       direction === "next" &&
-      currentDocumentIndex < documents.length - 1
+      currentDocumentIndex < withusDocuments.length - 1
     ) {
-      setSelectedDocument(documents[currentDocumentIndex + 1]);
+      setSelectedDocument(withusDocuments[currentDocumentIndex + 1]);
     }
   };
 
@@ -930,6 +944,10 @@ const DocumentDetail = () => {
       );
     }
   };
+
+  const withusDocuments = documents
+    ? documents.filter((doc) => doc.docStage === "bizimle")
+    : [];
 
   return (
     <>
@@ -1054,15 +1072,17 @@ const DocumentDetail = () => {
             Temin Yeri: {selectedDocument.docSource || "Belirtilmemiş"}
           </DocumentMeta>
 
+          
           <DocProgress>
-            {documents &&
-              documents.map((_, index) => (
+            {withusDocuments &&
+              withusDocuments.map((_, index) => (
                 <ProgressDot
                   key={index}
                   active={index === currentDocumentIndex}
                 />
               ))}
           </DocProgress>
+         
 
           {selectedDocument.referenceName && (
             <SectionContainer
@@ -1098,9 +1118,12 @@ const DocumentDetail = () => {
         </ImageContainer>
 
         <NavigationButton
-          className="right"
-          onClick={() => handleNavigation("next")}
-          disabled={!documents || currentDocumentIndex === documents.length - 1}
+           className="right"
+           onClick={() => handleNavigation("next")}
+           disabled={
+             !withusDocuments ||
+             currentDocumentIndex === withusDocuments.length - 1
+           }
         >
           &gt;
         </NavigationButton>
@@ -1123,4 +1146,4 @@ const DocumentDetail = () => {
   );
 };
 
-export default DocumentDetail;
+export default WithUsDocumentDetail;

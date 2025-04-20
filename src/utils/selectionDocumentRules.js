@@ -13,7 +13,6 @@ const selectionDocumentRules = {
     "Sponsor Malvarlık Belgeleri",
     "Sponsor Kimlik Fotokopisi",
     "Sponsor İkametgah Belgesi",
-    
     "Sponsor Son 3 Aylık Banka Hesap Dökümü",
   ],
 
