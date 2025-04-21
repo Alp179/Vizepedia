@@ -97,17 +97,25 @@ const BannersContainer = styled.div`
   padding: 0;
   align-self: flex-start;
 
-  @media (max-width: 1300px) {
-    margin-left: 15px;
+  @media (max-width: 1550px) {
+    margin-left: -100px;
+  }
+
+  @media (max-width: 1200px) {
+    width: calc(100vw - 400px);
   }
 
   @media (max-width: 900px) {
-    margin-left: 10px;
+    width: 500px;
   }
 
-  @media (max-width: 710px) {
+  @media (max-width: 768px) {
     padding: 0 10px;
-    margin: 0;
+
+    width: 60%;
+  }
+  @media (max-width: 710px) {
+    margin: 0 auto 0 auto;
     width: 100%;
   }
 `;
@@ -480,23 +488,6 @@ const Dashboard = () => {
 
   return (
     <DashboardContainer>
-      {showVisaModal && (
-        <VisaCheckModal
-          onClose={() => {
-            setShowVisaModal(false);
-            // Modal kapandığında local storage'ı güncelle
-            const modalShownKey = `visa_check_modal_shown_${applicationId}`;
-            localStorage.setItem(modalShownKey, "true");
-
-            // Veriyi yeniden getir
-            refetchUserSelections();
-          }}
-          applicationId={applicationId}
-          userId={userId}
-          countryLinks={countryLinks}
-        />
-      )}
-
       {/* Randevu ve form durumuna göre banner'ları göster */}
       {isUserSelectionsSuccess && userSelections?.length > 0 && (
         <BannersContainer>
@@ -600,6 +591,31 @@ const Dashboard = () => {
               <SignupForm onSuccess={handleUserConversion} />
             </ModalSignup.Window>
           </ModalSignup>
+        </div>
+      )}
+
+      {showVisaModal && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: isMobile ? "-30px" : "20px",
+          }}
+        >
+          <VisaCheckModal
+            onClose={() => {
+              setShowVisaModal(false);
+              // Modal kapandığında local storage'ı güncelle
+              const modalShownKey = `visa_check_modal_shown_${applicationId}`;
+              localStorage.setItem(modalShownKey, "true");
+
+              // Veriyi yeniden getir
+              refetchUserSelections();
+            }}
+            applicationId={applicationId}
+            userId={userId}
+            countryLinks={countryLinks}
+          />
         </div>
       )}
     </DashboardContainer>

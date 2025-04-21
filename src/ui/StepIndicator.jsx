@@ -116,10 +116,17 @@ const StepAndContinueContainer = styled.div`
     margin-left: -100px;
   }
 
-  @media (max-width: 1200px) {
-    width: 65%;
+  @media (max-width: 1350px) {
+    width: 1000px;
   }
 
+  @media (max-width: 1200px) {
+    width: calc(100vw - 400px);
+  }
+
+  @media (max-width: 900px) {
+    width: 500px;
+  }
   @media (max-width: 710px) {
     width: 330px;
     margin: 0;

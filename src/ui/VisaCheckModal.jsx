@@ -6,17 +6,18 @@ import supabase from "../services/supabase";
 import { HiX } from "react-icons/hi";
 
 const Overlay = styled.div`
-  position: fixed;
+  position: fixed; /* Sayfanın tamamını kapsaması için fixed yapıyoruz */
+  z-index: 9999; /* En üstte görünecek şekilde ayarlanıyor */
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  width: 100vw; /* Tüm genişliği kapla */
+  height: 100vh; /* Tüm yüksekliği kapla */
+  background-color: var(--backdrop-color); /* Arka plan rengini ayarla */
+  backdrop-filter: blur(4px); /* Tüm arka planı blur yap */
+  transition: all 0.5s;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  backdrop-filter: blur(2px);
 `;
 
 const ModalContainer = styled.div`
