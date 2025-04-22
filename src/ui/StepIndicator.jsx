@@ -102,7 +102,7 @@ const categoryColors = {
 const StepAndContinueContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 24px; 
   width: 100%;
   max-width: 900px;
   padding: 20px;
@@ -146,6 +146,13 @@ const StepAndContinueContainer = styled.div`
     gap: 20px;
     overflow: visible;
   }
+  
+  @media (max-width: 345px) {
+    width: 100%;
+    padding: 12px 10px;
+    gap: 16px;
+    border-radius: 10px;
+  }
 `;
 
 // Kategori başlığı için konteyner
@@ -155,6 +162,11 @@ const CategoryContainer = styled.div`
   gap: 8px;
   width: 100%;
   margin-bottom: 8px;
+
+  @media (max-width: 345px) {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
 `;
 
 const CategoryHeader = styled.div`
@@ -176,14 +188,20 @@ const CategoryHeader = styled.div`
   }
 
   @media (max-width: 768px) {
-    padding: 10px 12px;
-    gap: 8px;
+    padding: 12px 14px;
+    gap: 10px;
   }
 
   @media (max-width: 480px) {
-    padding: 8px 10px;
+    padding: 12px;
+    gap: 8px;
+  }
+  
+  @media (max-width: 345px) {
+    padding: 10px 8px;
     gap: 6px;
-    flex-wrap: wrap;
+    border-radius: 8px;
+    border-left-width: 3px;
   }
 `;
 
@@ -198,15 +216,18 @@ const CategoryIcon = styled.div`
   color: ${(props) => props.color?.text || "#333"};
 
   @media (max-width: 768px) {
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
+    width: 30px;
+    height: 30px;
   }
 
   @media (max-width: 480px) {
-    width: 24px;
-    height: 24px;
-    font-size: 14px;
+    width: 28px;
+    height: 28px;
+  }
+  
+  @media (max-width: 345px) {
+    width: 22px;
+    height: 22px;
   }
 `;
 
@@ -223,11 +244,15 @@ const CategoryTitle = styled.h3`
   color: ${(props) => props.color?.text || "#333"};
 
   @media (max-width: 768px) {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   @media (max-width: 480px) {
-    font-size: 14px;
+    font-size: 15px;
+  }
+  
+  @media (max-width: 345px) {
+    font-size: 13px;
   }
 `;
 
@@ -241,13 +266,19 @@ const CategoryDescription = styled.p`
   overflow: hidden;
 
   @media (max-width: 768px) {
-    font-size: 12px;
+    font-size: 13px;
     -webkit-line-clamp: 1;
   }
 
   @media (max-width: 480px) {
-    font-size: 11px;
+    font-size: 12px;
+    margin-top: 3px;
+  }
+  
+  @media (max-width: 345px) {
+    font-size: 10px;
     margin-top: 2px;
+    -webkit-line-clamp: 1;
   }
 `;
 
@@ -255,6 +286,10 @@ const CategoryProgress = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  
+  @media (max-width: 345px) {
+    gap: 4px;
+  }
 `;
 
 const ChevronIcon = styled.div`
@@ -266,6 +301,15 @@ const ChevronIcon = styled.div`
   align-items: center;
   justify-content: center;
   color: rgba(0, 0, 0, 0.5);
+  
+  @media (max-width: 480px) {
+    font-size: 14px;
+  }
+  
+  @media (max-width: 345px) {
+    font-size: 12px;
+    margin-left: 4px;
+  }
 `;
 
 const ProgressBar = styled.div`
@@ -274,6 +318,16 @@ const ProgressBar = styled.div`
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 3px;
   overflow: hidden;
+  
+  @media (max-width: 480px) {
+    width: 50px;
+  }
+  
+  @media (max-width: 345px) {
+    height: 4px;
+    width: 40px;
+    border-radius: 2px;
+  }
 `;
 
 const ProgressFill = styled.div`
@@ -282,12 +336,28 @@ const ProgressFill = styled.div`
   background-color: ${(props) => props.color || "#004466"};
   border-radius: 3px;
   transition: width 0.5s ease;
+  
+  @media (max-width: 345px) {
+    border-radius: 2px;
+  }
 `;
 
 const ProgressText = styled.span`
   font-size: 12px;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.7);
+  
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
+  
+  @media (max-width: 345px) {
+    font-size: 10px;
+  }
 `;
 
 // Belge öğesi listesi konteyneri
@@ -303,12 +373,26 @@ const DocumentListContainer = styled.div`
   transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.3s ease-in-out, visibility 0.2s ease-in-out;
   margin-top: ${(props) => (props.isOpen ? "8px" : "0")};
+  
+  @media (max-width: 480px) {
+    padding-left: 6px;
+    padding-right: 4px; /* Sağ tarafta da biraz padding ekleyelim */
+    width: 100%;
+  }
+  
+  @media (max-width: 345px) {
+    gap: 8px;
+    padding-left: 4px;
+    padding-right: 2px;
+    margin-top: ${(props) => (props.isOpen ? "6px" : "0")};
+  }
 `;
 
 const DocsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 12px;
+  padding: 8px 0;
   width: 100%;
 
   @media (max-width: 1300px) {
@@ -324,13 +408,25 @@ const DocsGrid = styled.div`
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 10px;
+    padding: 8px 2px 8px 0; /* Sağ ve sol padding azaltıldı */
+    width: 100%;
   }
 
+  /* Mobil görünümlerde grid düzenini tek sütuna değiştiriyoruz */
   @media (max-width: 480px) {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 2px 8px 0; /* Sağ ve sol padding azaltıldı */
+    width: 100%;
+  }
+  
+  @media (max-width: 345px) {
     gap: 8px;
+    padding: 8px 0 8px 0;
   }
 `;
 
@@ -355,7 +451,7 @@ const DocumentItem = styled.div`
         ? "#8533ff"
         : "transparent"};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  height: 100%;
+  min-height: 90px; /* Minimum yükseklik belirleyerek içeriğin sığmasını sağlama */
   position: relative;
   display: flex;
   flex-direction: column;
@@ -399,11 +495,21 @@ const DocumentItem = styled.div`
   @media (max-width: 768px) {
     padding: 12px;
     gap: 6px;
+    width: 100%; /* Tam genişlik */
+    margin-right: 0; /* Sağ kenar boşluğunu kaldırma */
   }
 
   @media (max-width: 480px) {
+    padding: 12px;
+    gap: 6px;
+    width: 100%; /* Tam genişlik */
+    margin-right: 0; /* Sağ kenar boşluğunu kaldırma */
+  }
+  
+  @media (max-width: 345px) {
     padding: 10px;
     gap: 4px;
+    border-left-width: 2px;
   }
 `;
 
@@ -411,6 +517,14 @@ const DocumentHeader = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 8px;
+  
+  @media (max-width: 480px) {
+    gap: 10px;
+  }
+  
+  @media (max-width: 345px) {
+    gap: 8px;
+  }
 `;
 
 const DocumentNumber = styled.div`
@@ -434,12 +548,18 @@ const DocumentNumber = styled.div`
   transition: all 0.2s ease;
 
   @media (max-width: 768px) {
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
   }
 
   @media (max-width: 480px) {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  
+  @media (max-width: 345px) {
     width: 22px;
     height: 22px;
     font-size: 11px;
@@ -464,13 +584,20 @@ const DocumentTitle = styled.div`
   height: 40px;
 
   @media (max-width: 768px) {
-    font-size: 13px;
-    height: 36px;
+    font-size: 14px;
+    height: 38px;
   }
 
   @media (max-width: 480px) {
+    font-size: 14px;
+    height: 38px;
+    line-height: 1.35;
+  }
+  
+  @media (max-width: 345px) {
     font-size: 12px;
     height: 32px;
+    line-height: 1.3;
   }
 `;
 
@@ -487,21 +614,29 @@ const SponsorBadge = styled.div`
   font-weight: 500;
   width: fit-content;
   position: absolute;
-  bottom: 14px;
+  bottom: 0;
   right: 14px;
 
   @media (max-width: 768px) {
-    padding: 1px 4px;
-    font-size: 9px;
-    bottom: 12px;
-    right: 12px;
+    padding: 2px 6px;
+    font-size: 10px;
+    bottom: 0px;
+    right: 14px;
   }
 
   @media (max-width: 480px) {
-    padding: 1px 3px;
-    font-size: 8px;
+    padding: 2px 6px;
+    font-size: 11px;
+    bottom: 14px;
+    right: 14px;
+  }
+  
+  @media (max-width: 345px) {
+    padding: 1px 4px;
+    font-size: 9px;
     bottom: 10px;
     right: 10px;
+    border-radius: 3px;
   }
 `;
 
@@ -536,19 +671,29 @@ const DocumentStatus = styled.div`
   }
 
   @media (max-width: 768px) {
-    font-size: 11px;
-    gap: 3px;
+    font-size: 12px;
+    gap: 4px;
 
     &:before {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
     }
   }
 
   @media (max-width: 480px) {
-    font-size: 10px;
-    gap: 2px;
+    font-size: 13px;
+    gap: 4px;
 
+    &:before {
+      width: 8px;
+      height: 8px;
+    }
+  }
+  
+  @media (max-width: 345px) {
+    font-size: 11px;
+    gap: 3px;
+    
     &:before {
       width: 6px;
       height: 6px;
@@ -617,22 +762,29 @@ const ContinueButton = styled.button`
   }
 
   @media (max-width: 900px) {
-    font-size: 13px;
-    padding: 10px 20px;
+    font-size: 14px;
+    padding: 12px 22px;
   }
 
   @media (max-width: 768px) {
     align-self: center;
     width: 100%;
     max-width: 250px;
-    font-size: 12px;
-    padding: 10px 16px;
+    font-size: 14px;
+    padding: 12px 16px;
   }
 
   @media (max-width: 480px) {
     max-width: 200px;
-    font-size: 11px;
-    padding: 8px 16px;
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+  
+  @media (max-width: 345px) {
+    max-width: 180px;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 8px;
   }
 `;
 

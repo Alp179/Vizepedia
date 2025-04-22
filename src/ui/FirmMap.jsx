@@ -42,8 +42,8 @@ const InfoContainer = styled.div`
     margin: 0;
     gap: 8px;
     width: 330px;
-    height: 550px; /* 100px daha büyük yükseklik */
-    transform: scale(0.97); /* Daha az küçültme */
+    height: 550px;
+    transform: scale(0.97);
     transform-origin: top center;
   }
   @media (max-width: 389px) {
@@ -51,8 +51,17 @@ const InfoContainer = styled.div`
     padding: 18px;
     gap: 20px;
     overflow: visible;
-    height: 550px; /* Sabit yükseklik korunuyor */
-    transform: scale(0.92); /* Daha küçük ekranlarda biraz daha küçült */
+    height: 550px;
+    transform: scale(0.92);
+  }
+  @media (max-width: 345px) {
+    width: 100%;
+    padding: 15px 12px;
+    gap: 15px;
+    height: auto;
+    min-height: 520px;
+    transform: scale(1);
+    border-radius: 15px;
   }
 `;
 
@@ -81,17 +90,22 @@ const MapContainer = styled.div`
   }
   @media (max-width: 710px) {
     width: 100%;
-    height: 220px; /* Daha büyük harita yüksekliği */
+    height: 220px;
     border-radius: 10px;
   }
   @media (max-width: 500px) {
     width: 100%;
-    height: 220px; /* Aynı büyük yükseklik */
+    height: 220px;
     border-radius: 10px;
   }
   @media (max-width: 389px) {
-    height: 200px; /* En küçük ekranlarda da daha büyük */
+    height: 200px;
     width: 100%;
+  }
+  @media (max-width: 345px) {
+    height: 180px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -118,7 +132,12 @@ const InfoDetails = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 310px; /* InfoDetails için daha fazla alan */
+    height: 310px;
+  }
+  
+  @media (max-width: 345px) {
+    height: auto;
+    min-height: 280px;
   }
 `;
 
@@ -169,14 +188,29 @@ const InfoItem = styled.div`
   }
   
   @media (max-width: 710px) {
-    padding: 8px 5px 8px 12px; /* Padding'i azalt */
-    margin-bottom: 4px; /* Öğeler arası biraz boşluk ekle */
+    padding: 8px 5px 8px 12px;
+    margin-bottom: 4px;
   }
   
   @media (max-width: 389px) {
     font-size: 1.2rem;
-    padding: 6px 5px 6px 12px; /* Padding'i daha da azalt */
+    padding: 6px 5px 6px 12px;
     flex-wrap: wrap;
+  }
+  
+  @media (max-width: 345px) {
+    padding: 6px 3px 6px 10px;
+    margin-bottom: 2px;
+    
+    &:before {
+      top: 6px;
+      height: calc(100% - 12px);
+      width: 3px;
+    }
+    
+    &:hover:before {
+      width: 5px;
+    }
   }
 `;
 
@@ -191,6 +225,12 @@ const InfoLabel = styled.strong`
   @media (max-width: 710px) {
     font-size: 18px;
     min-width: 120px;
+  }
+  
+  @media (max-width: 345px) {
+    font-size: 14px;
+    min-width: 100px;
+    margin-right: 6px;
   }
 `;
 
@@ -208,6 +248,11 @@ const InfoValue = styled.span`
     font-size: 1.2rem;
     padding-left: 8px;
   }
+  
+  @media (max-width: 345px) {
+    font-size: 1.1rem;
+    padding-left: 4px;
+  }
 `;
 
 /* FirmName için güncelleme */
@@ -220,11 +265,16 @@ const FirmName = styled.h3`
   
   @media (max-width: 710px) {
     font-size: 28px;
-    margin-bottom: 15px; /* Başlık altında daha fazla boşluk */
+    margin-bottom: 15px;
     padding-bottom: 10px;
   }
   
-  
+  @media (max-width: 345px) {
+    font-size: 22px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom-width: 1px;
+  }
 `;
 
 /* FirmLink için güncelleme */
@@ -253,7 +303,7 @@ const FirmLink = styled.a`
     margin-top: 20px;
     padding: 12px 15px;
     font-size: 18px;
-    margin-bottom: 10px; /* Alt kısmında biraz boşluk bırak */
+    margin-bottom: 10px;
   }
   
   @media (max-width: 500px) {
@@ -267,12 +317,24 @@ const FirmLink = styled.a`
     white-space: normal;
     line-height: 1.4;
   }
+  
+  @media (max-width: 345px) {
+    font-size: 14px;
+    padding: 8px 10px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    border-radius: 20px;
+  }
 `;
 
 const PriceValue = styled(InfoValue)`
   font-weight: 600;
   font-size: 18px;
   color: #006699;
+  
+  @media (max-width: 345px) {
+    font-size: 15px;
+  }
 `;
 
 const FirmMap = ({ firmLocation }) => {
