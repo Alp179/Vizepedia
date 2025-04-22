@@ -93,7 +93,6 @@ const BannersContainer = styled.div`
   gap: 12px;
   width: calc(100% - 40px);
   max-width: 800px;
-  margin: 0 0 0 20px;
   padding: 0;
   align-self: flex-start;
 
@@ -115,7 +114,10 @@ const BannersContainer = styled.div`
     width: 60%;
   }
   @media (max-width: 710px) {
-    margin: 0 auto 0 auto;
+    margin: 30px auto 0 auto;
+    width: 450px;
+  }
+  @media (max-width: 500px) {
     width: 100%;
   }
 `;
@@ -595,28 +597,20 @@ const Dashboard = () => {
       )}
 
       {showVisaModal && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: isMobile ? "-30px" : "20px",
-          }}
-        >
-          <VisaCheckModal
-            onClose={() => {
-              setShowVisaModal(false);
-              // Modal kapandığında local storage'ı güncelle
-              const modalShownKey = `visa_check_modal_shown_${applicationId}`;
-              localStorage.setItem(modalShownKey, "true");
+        <VisaCheckModal
+          onClose={() => {
+            setShowVisaModal(false);
+            // Modal kapandığında local storage'ı güncelle
+            const modalShownKey = `visa_check_modal_shown_${applicationId}`;
+            localStorage.setItem(modalShownKey, "true");
 
-              // Veriyi yeniden getir
-              refetchUserSelections();
-            }}
-            applicationId={applicationId}
-            userId={userId}
-            countryLinks={countryLinks}
-          />
-        </div>
+            // Veriyi yeniden getir
+            refetchUserSelections();
+          }}
+          applicationId={applicationId}
+          userId={userId}
+          countryLinks={countryLinks}
+        />
       )}
     </DashboardContainer>
   );

@@ -127,6 +127,9 @@ const StepAndContinueContainer = styled.div`
   @media (max-width: 900px) {
     width: 500px;
   }
+  @media (max-width: 760px) {
+    width: 470px;
+  }
   @media (max-width: 710px) {
     width: 330px;
     margin: 0;

@@ -1,19 +1,19 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import styled from "styled-components";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import supabase from "../services/supabase";
 import { HiX } from "react-icons/hi";
 
 const Overlay = styled.div`
-  position: fixed; /* Sayfanın tamamını kapsaması için fixed yapıyoruz */
-  z-index: 9999; /* En üstte görünecek şekilde ayarlanıyor */
-  top: 0;
-  left: 0;
-  width: 100vw; /* Tüm genişliği kapla */
-  height: 100vh; /* Tüm yüksekliği kapla */
-  background-color: var(--backdrop-color); /* Arka plan rengini ayarla */
-  backdrop-filter: blur(4px); /* Tüm arka planı blur yap */
+  position: fixed;
+  z-index: 9999; /* En üst seviye z-index */
+  inset: 0; /* top, right, bottom, left: 0 için kısaltma */
+  width: 100%; /* Tam genişlik */
+  height: 100%; /* Tam yükseklik */
+  background-color: var(--backdrop-color);
+  backdrop-filter: blur(4px);
   transition: all 0.5s;
   display: flex;
   justify-content: center;
@@ -129,7 +129,7 @@ const StyledLink = styled.a`
 const SubmitButton = styled.button`
   width: 100%;
   padding: 12px;
-  background-color: var(--color-brand-600);
+  background-color: #004466;
   color: white;
   border: none;
   border-radius: 8px;
@@ -224,7 +224,8 @@ const VisaCheckModal = ({ onClose, applicationId, userId, countryLinks }) => {
 
   const isFormComplete = hasAppointment !== null && hasFilledForm !== null;
 
-  return (
+  // React Portal kullanarak modal'ı doğrudan body'e render ediyoruz
+  return createPortal(
     <Overlay>
       <ModalContainer>
         <CloseButton onClick={onClose}>
@@ -321,7 +322,8 @@ const VisaCheckModal = ({ onClose, applicationId, userId, countryLinks }) => {
           {isLoading ? "Kaydediliyor..." : "Devam Et"}
         </SubmitButton>
       </ModalContainer>
-    </Overlay>
+    </Overlay>,
+    document.body // Modal'ı doğrudan body'ye render ediyoruz
   );
 };
 
