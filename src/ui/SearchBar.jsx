@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { searchBlogs } from '../services/apiBlogs';
-import { FiSearch, FiX, FiClock, FiTag } from 'react-icons/fi';
+import { FiX, FiClock, FiTag } from 'react-icons/fi';
 
 // Animasyon tanımları
 const fadeIn = keyframes`
@@ -22,14 +22,21 @@ const shimmer = keyframes`
 const SearchContainer = styled.div`
   position: relative;
   max-width: 650px;
-  margin: 20px auto 0;
+  margin: 50px auto 0;
   width: 100%;
   z-index: 100;
+
+  @media (max-width: 910px) {
+    margin-top: 100px; 
+  }
   
   @media (max-width: 768px) {
     max-width: 100%;
-    margin-top: 15px;
+    
   }
+  @media (max-width: 550px) {
+    margin-top: 60px;
+  } 
 `;
 
 // Input wrapper için geliştirilmiş stil
@@ -82,6 +89,14 @@ const SearchInput = styled.input`
     font-size: 15px;
   }
 `;
+
+// Custom SVG Search Icon
+const SearchIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-grey-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+);
 
 // Arama butonu
 const SearchButton = styled.button`
@@ -152,7 +167,7 @@ const ResultsContainer = styled.div`
   top: calc(100% + 12px);
   left: 0;
   right: 0;
-  background-color: white;
+  background-color: var(--color-grey-912);
   border-radius: 16px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   max-height: 450px;
@@ -359,7 +374,6 @@ const SkeletonContent = styled.div`
   flex: 1;
 `;
 
-// Sonuç bulunamadı mesajı
 const NoResults = styled.div`
   padding: 24px;
   text-align: center;
@@ -377,15 +391,6 @@ const NoResults = styled.div`
     color: var(--color-grey-700, #374151);
     margin-bottom: 4px;
   }
-`;
-
-// Bilgi metni
-const SearchMessageText = styled.p`
-  text-align: center;
-  margin: 6px 0 0;
-  font-size: 13px;
-  color: var(--color-grey-500, #6b7280);
-  animation: ${fadeIn} 0.3s ease;
 `;
 
 // Highlight text (search term'i vurgulama)
@@ -494,19 +499,6 @@ function SearchBar() {
     onError: (err) => console.error('Arama hatası:', err)
   });
 
-  // Debug için konsol logları
-  useEffect(() => {
-    if (debouncedQuery.length >= 2) {
-      console.log('Arama durumu:', { 
-        query: debouncedQuery,
-        isLoading,
-        isError,
-        hata: error?.message || 'Yok',
-        sonuç_sayısı: searchResults?.length || 0
-      });
-    }
-  }, [debouncedQuery, isLoading, isError, error, searchResults]);
-
   function handleSearch() {
     if (query.trim().length >= 2) {
       setIsSearchOpen(true);
@@ -568,18 +560,11 @@ function SearchBar() {
           </ClearButton>
         )}
         <SearchButton onClick={handleSearch} aria-label="Ara">
-          <FiSearch size={18} />
+          <SearchIcon />
         </SearchButton>
       </SearchInputWrapper>
       
-      {isFocused && query.length === 1 && (
-        <SearchMessageText>En az 2 karakter girin</SearchMessageText>
-      )}
-      
-      {query.length === 0 && isFocused && (
-        <SearchMessageText>Kontrol+K ile hızlı arama yapabilirsiniz</SearchMessageText>
-      )}
-      
+      {/* NoResults component also uses the search icon */}
       <ResultsContainer show={showResults}>
         {isLoading ? (
           // Yükleme durumu için iskelet
@@ -598,13 +583,13 @@ function SearchBar() {
           </>
         ) : isError ? (
           <NoResults>
-            <FiSearch size={32} />
+            <SearchIcon />
             <strong>Arama sırasında bir hata oluştu</strong>
             <p>{error?.message || 'Lütfen tekrar deneyin veya yöneticinize başvurun'}</p>
           </NoResults>
         ) : !searchResults || searchResults.length === 0 ? (
           <NoResults>
-            <FiSearch size={32} />
+            <SearchIcon />
             <strong>Sonuç bulunamadı</strong>
             <p>Farklı anahtar kelimeler deneyin veya daha genel terimler arayın</p>
           </NoResults>
