@@ -43,10 +43,10 @@ const FlagContainer = styled.div`
   position: fixed;
   top: 0;
   right: 0;
-  width: 700px;
-  height: 450px;
+  width: 800px; /* Genişlik artırıldı */
+  height: 300px; /* Yükseklik azaltıldı */
   transform: translate(23%, -20%) rotate(31deg);
-  border-radius: 10%;
+  border-radius: 0; /* Şerit görünümü için radius kaldırıldı */
   overflow: hidden;
   z-index: 0;
   pointer-events: none;
@@ -60,28 +60,28 @@ const FlagContainer = styled.div`
   }
 
   @media (max-width: 1450px) {
-    width: 600px;
-    height: 360px;
+    width: 700px;
+    height: 250px;
   }
 
   @media (max-width: 1200px) {
-    width: 500px;
-    height: 300px;
+    width: 600px;
+    height: 220px;
   }
 
   @media (max-width: 900px) {
-    width: 400px;
-    height: 240px;
-  }
-
-  @media (max-width: 450px) {
-    width: 300px;
+    width: 500px;
     height: 180px;
   }
 
-  @media (max-width: 375px) {
-    width: 250px;
+  @media (max-width: 450px) {
+    width: 400px;
     height: 150px;
+  }
+
+  @media (max-width: 375px) {
+    width: 350px;
+    height: 130px;
   }
 `;
 
@@ -89,26 +89,32 @@ const BlurredFlagBackground = styled.div`
   position: fixed;
   top: -10%;
   right: -10%;
-  width: 1000px; // %50 daralma
-  height: 642px; // %50 daralma
+  width: 900px; /* Genişlik artırıldı */
+  height: 400px; /* Yükseklik azaltıldı */
   filter: blur(150px);
   z-index: 0;
-  animation: ${moveFlagAnimation} 14s linear infinite; // Akış alanı daraltıldı ve süre ayarlandı
+  animation: ${moveFlagAnimation} 14s linear infinite; // Animasyon değiştirilmedi
+  background-size: 100% 100%;
 
   @media (max-width: 1450px) {
     width: 800px;
-    height: 514px;
+    height: 350px;
   }
 
   @media (max-width: 1200px) {
+    width: 700px;
+    height: 300px;
+  }
+
+  @media (max-width: 900px) {
     width: 600px;
-    height: 385px;
+    height: 250px;
   }
 
   @media (max-width: 450px) {
     width: 500px !important;
     right: -20%;
-    height: 380px !important;
+    height: 200px !important;
   }
 `;
 

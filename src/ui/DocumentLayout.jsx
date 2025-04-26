@@ -1,8 +1,13 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import Header from "./Header";
 import BackButton from "./BackButton";
 import MobileMenu from "./MobileMenu";
+import AnimatedFlag from "./AnimatedFlag";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
+import { getCurrentUser } from "../services/apiAuth";
 
 const StyledAppLayout = styled.div`
   background: var(--color-grey-1);
@@ -10,6 +15,7 @@ const StyledAppLayout = styled.div`
   flex-direction: column;
   height: 100vh;
   width: 100%;
+  position: relative;
 `;
 
 const Main = styled.main`
@@ -21,6 +27,7 @@ const Main = styled.main`
   gap: 50px;
   justify-content: space-between;
   flex: 1;
+  position: relative;
   @media (max-width: 650px) {
     padding: 4rem 1rem;
   }
@@ -58,6 +65,69 @@ const MobileMenuContainer = styled.div`
 `;
 
 function DocumentLayout() {
+  const { id: applicationId } = useParams();
+  const [userId, setUserId] = useState(null);
+  const [countryCode, setCountryCode] = useState("");
+
+  useEffect(() => {
+    getCurrentUser().then((user) => {
+      if (user) {
+        setUserId(user.id);
+      }
+    });
+  }, []);
+
+  const { data: userSelections, isSuccess: isUserSelectionsSuccess } = useQuery({
+    queryKey: ["userSelections", userId, applicationId],
+    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
+    enabled: !!userId && !!applicationId,
+  });
+
+  useEffect(() => {
+    if (isUserSelectionsSuccess && userSelections?.length > 0) {
+      const ansCountry = userSelections[0]?.ans_country;
+      if (ansCountry) {
+        const countryToCode = {
+          Almanya: "de",
+          Avusturya: "at",
+          Belçika: "be",
+          Çekya: "cz",
+          Danimarka: "dk",
+          Estonya: "ee",
+          Finlandiya: "fi",
+          Fransa: "fr",
+          Yunanistan: "gr",
+          Macaristan: "hu",
+          İzlanda: "is",
+          İtalya: "it",
+          Letonya: "lv",
+          Litvanya: "lt",
+          Lüksemburg: "lu",
+          Malta: "mt",
+          Hollanda: "nl",
+          Norveç: "no",
+          Polonya: "pl",
+          Portekiz: "pt",
+          Slovakya: "sk",
+          Slovenya: "si",
+          İspanya: "es",
+          İsveç: "se",
+          İsviçre: "ch",
+          Lihtenştayn: "li",
+          Rusya: "ru",
+          ABD: "us",
+          Çin: "cn",
+          BAE: "ae",
+          Avustralya: "au",
+          Birleşik_Krallık: "gb",
+          Hırvatistan: "hr",
+        };
+
+        setCountryCode(countryToCode[ansCountry] || "");
+      }
+    }
+  }, [userSelections, isUserSelectionsSuccess]);
+
   return (
     <StyledAppLayout>
       <BackButton />
@@ -66,6 +136,7 @@ function DocumentLayout() {
         <MobileMenu />
       </MobileMenuContainer>
       <Main>
+        <AnimatedFlag countryCode={countryCode} />
         <Container>
           <Outlet />
         </Container>
