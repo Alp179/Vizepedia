@@ -68,12 +68,14 @@ const BlogLogo = styled.img`
   transform: translate(-50%, -50%);
   height: auto;
   flex-shrink: 0;
-  
+
   &:hover {
     transform: translate(-50%, -52%) scale(1.05);
-    animation: ${props => props.isDarkMode ? shineEffectBlogDark : shineEffectBlog} 2s infinite;
+    animation: ${(props) =>
+        props.isDarkMode ? shineEffectBlogDark : shineEffectBlog}
+      2s infinite;
   }
-  
+
   @media (max-width: 1300px) {
     width: 140px;
   }
@@ -82,13 +84,15 @@ const BlogLogo = styled.img`
       isHovered || isActive
         ? "translate(-120%, -50%)"
         : "translate(-50%, -50%)"};
-        
+
     &:hover {
       transform: ${({ isHovered, isActive }) =>
         isHovered || isActive
           ? "translate(-120%, -52%) scale(1.05)"
           : "translate(-50%, -52%) scale(1.05)"};
-      animation: ${props => props.isDarkMode ? shineEffectBlogDark : shineEffectBlog} 2s infinite;
+      animation: ${(props) =>
+          props.isDarkMode ? shineEffectBlogDark : shineEffectBlog}
+        2s infinite;
     }
   }
   @media (max-width: 910px) {
@@ -102,7 +106,7 @@ const BlogLogo = styled.img`
       isHovered || isActive
         ? "translate(-150%, -50%)"
         : "translate(-50%, -50%)"};
-        
+
     &:hover {
       transform: ${({ isHovered, isActive }) =>
         isHovered || isActive
@@ -116,7 +120,7 @@ const BlogLogo = styled.img`
         ? "translate(-170%, -50%)"
         : "translate(-50%, -50%)"};
     width: 80px;
-    
+
     &:hover {
       transform: ${({ isHovered, isActive }) =>
         isHovered || isActive
@@ -129,7 +133,7 @@ const BlogLogo = styled.img`
       isHovered || isActive
         ? "translate(-170%, -50%)"
         : "translate(-50%, -50%)"};
-        
+
     &:hover {
       transform: ${({ isHovered, isActive }) =>
         isHovered || isActive
@@ -146,12 +150,14 @@ const Logo = styled.img`
   transform: translate(0, 0);
   height: auto;
   flex-shrink: 0;
-  
+
   &:hover {
     transform: translateY(-2px) scale(1.05);
-    animation: ${props => props.isDarkMode ? shineEffectMainDark : shineEffectMain} 2s infinite;
+    animation: ${(props) =>
+        props.isDarkMode ? shineEffectMainDark : shineEffectMain}
+      2s infinite;
   }
-  
+
   @media (max-width: 1300px) {
     width: 140px;
     position: relavite;
@@ -165,10 +171,12 @@ const Logo = styled.img`
   @media (max-width: 470px) {
     transform: ${({ isHovered, isActive }) =>
       isHovered || isActive ? "translate(-150%, 0%)" : "translate(0%, 0%)"};
-      
+
     &:hover {
       transform: ${({ isHovered, isActive }) =>
-        isHovered || isActive ? "translate(-150%, -2px) scale(1.05)" : "translate(0%, -2px) scale(1.05)"};
+        isHovered || isActive
+          ? "translate(-150%, -2px) scale(1.05)"
+          : "translate(0%, -2px) scale(1.05)"};
     }
   }
   @media (max-width: 380px) {
@@ -338,7 +346,7 @@ const ArrowIcon = styled.div`
     width: 24px;
     height: 24px;
     stroke-width: 2px;
-    @media (max-width: 470px){
+    @media (max-width: 470px) {
       top: 4px;
     }
   }
@@ -542,31 +550,17 @@ function BlogHeader() {
           <BlogInputWrapper isActive={isActive}>
             <SearchIcon isActive={isActive} onClick={handleSearchClick}>
               <svg
-                xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                width={24}
-                height={24}
-                color={"var(--color-grey-600)"}
-                fill={"none"}
+                fill="none"
+                stroke="var(--color-grey-600)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                width="18"
+                height="18"
               >
-                <path
-                  d="M14 14L16.5 16.5"
-                  stroke="var(--color-grey-600)"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M16.4333 18.5252C15.8556 17.9475 15.8556 17.0109 16.4333 16.4333C17.0109 15.8556 17.9475 15.8556 18.5252 16.4333L21.5667 19.4748C22.1444 20.0525 22.1444 20.9891 21.5667 21.5667C20.9891 22.1444 20.0525 22.1444 19.4748 21.5667L16.4333 18.5252Z"
-                  stroke="var(--color-grey-600)"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M16 9C16 5.13401 12.866 2 9 2C5.13401 2 2 5.13401 2 9C2 12.866 5.13401 16 9 16C12.866 16 16 12.866 16 9Z"
-                  stroke="var(--color-grey-600)"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </SearchIcon>
             <BlogInput
@@ -591,7 +585,6 @@ function BlogHeader() {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                
               >
                 <path d="M5 12l14 0" />
                 <path d="M13 18l6 -6" />

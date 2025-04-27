@@ -100,7 +100,7 @@ const SearchIcon = () => (
 
 // Arama butonu
 const SearchButton = styled.button`
-  background: var(--color-grey-900, #111827);
+  background: var(--color-grey-300);
   color: white;
   border: none;
   height: 46px;
