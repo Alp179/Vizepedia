@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
+import { useEffect, useRef } from "react";
 import styled, { keyframes } from "styled-components";
-import "flag-icons/css/flag-icons.min.css";
 
 // Sürekli ve kesintisiz yukarıdan aşağıya akan animasyon
 const moveFlagAnimation = keyframes`
@@ -43,21 +43,13 @@ const FlagContainer = styled.div`
   position: fixed;
   top: 0;
   right: 0;
-  width: 800px; /* Genişlik artırıldı */
-  height: 300px; /* Yükseklik azaltıldı */
+  width: 800px;
+  height: 300px;
   transform: translate(23%, -20%) rotate(31deg);
-  border-radius: 0; /* Şerit görünümü için radius kaldırıldı */
+  border-radius: 0;
   overflow: hidden;
   z-index: 0;
   pointer-events: none;
-
-  & > span {
-    width: 100%;
-    height: 100%;
-    display: block;
-    background-size: cover;
-    background-position: center;
-  }
 
   @media (max-width: 1450px) {
     width: 700px;
@@ -89,12 +81,13 @@ const BlurredFlagBackground = styled.div`
   position: fixed;
   top: -10%;
   right: -10%;
-  width: 900px; /* Genişlik artırıldı */
-  height: 400px; /* Yükseklik azaltıldı */
+  width: 900px;
+  height: 400px;
   filter: blur(150px);
   z-index: 0;
-  animation: ${moveFlagAnimation} 14s linear infinite; // Animasyon değiştirilmedi
-  background-size: 100% 100%;
+  animation: ${moveFlagAnimation} 14s linear infinite;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
 
   @media (max-width: 1450px) {
     width: 800px;
@@ -106,26 +99,90 @@ const BlurredFlagBackground = styled.div`
     height: 300px;
   }
 
+  @media (max-width: 900px) {
+    width: 650px;
+    height: 300px;
+    right: -15%;
+  }
+
+  @media (max-width: 768px) {
+    width: 600px;
+    height: 350px;
+    right: -15%;
+  }
 
   @media (max-width: 450px) {
-    width: 500px !important;
+    width: 550px !important;
     right: -20%;
-    height: 300px !important;
+    height: 350px !important;
+  }
+
+  @media (max-width: 375px) {
+    width: 500px !important;
+    right: -25%;
+    height: 350px !important;
   }
 `;
 
 const AnimatedFlag = ({ countryCode }) => {
-  if (!countryCode) return null;
+  // 1) Hook’lar en üstte
+  const svgContainerRef = useRef(null);
+  const flagUrl = countryCode
+    ? `https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode.toUpperCase()}.svg`
+    : null;
+
+  useEffect(() => {
+    if (!flagUrl) return; // countryCode yoksa hiçbir şey yapma
+
+    const fetchAndStretchSVG = async () => {
+      try {
+        const response = await fetch(flagUrl);
+        const svgText = await response.text();
+        const modifiedSvg = svgText.replace(
+          "<svg",
+          '<svg preserveAspectRatio="none"'
+        );
+
+        if (svgContainerRef.current) {
+          svgContainerRef.current.innerHTML = modifiedSvg;
+          const svgEl = svgContainerRef.current.querySelector("svg");
+          if (svgEl) {
+            svgEl.style.width = "100%";
+            svgEl.style.height = "100%";
+          }
+        }
+      } catch (error) {
+        console.error("Bayrak yüklenirken hata oluştu:", error);
+      }
+    };
+
+    fetchAndStretchSVG();
+  }, [flagUrl]); // sadece flagUrl değiştiğinde çalış
+
+  // 2) countryCode yoksa render etme
+  if (!countryCode) {
+    return null;
+  }
 
   return (
     <>
+      {/* Bulanık arka plan */}
       <BlurredFlagBackground
         style={{
-          backgroundImage: `url(https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode.toUpperCase()}.svg)`,
+          backgroundImage: `url(${flagUrl})`,
         }}
       />
+
+      {/* Ana bayrak container'ı */}
       <FlagContainer>
-        <span className={`fi fi-${countryCode}`}></span>
+        {/* SVG'nin ekleneceği div */}
+        <div
+          ref={svgContainerRef}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        />
       </FlagContainer>
     </>
   );
