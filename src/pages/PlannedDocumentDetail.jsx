@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
@@ -13,32 +13,17 @@ import { fetchDocumentDetails } from "../utils/documentFetch";
 import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
 
-// Animasyon tanımlamaları
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
 // Tekrar kullanılabilir stiller
 const PageContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
   height: 100%;
   padding: 25px;
-  background: var(--color-grey-51);
-  border-radius: 24px;
-  box-sizing: border-box;
   position: relative;
-  animation: ${fadeIn} 0.5s ease-in-out;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 
   @media (max-width: 680px) {
     flex-direction: column;
@@ -46,9 +31,8 @@ const PageContainer = styled.div`
     height: 100%;
   }
   @media (max-width: 450px) {
-    width: 95%;
+    width: 100%;
     margin: 0 auto;
-    padding: 12px;
   }
 `;
 
@@ -57,39 +41,45 @@ const InfoContainer = styled.div`
   padding: 30px;
   border-radius: 20px;
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
   color: #333;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 
   @media (max-width: 680px) {
     padding: 20px;
     margin-bottom: 20px;
   }
+  @media (max-width: 600px) {
+    flex-flow: column;
+  }
+`;
+
+const DocTitleCont = styled.div`
+  margin: 0 0 48px 32px;
+  @media (max-width: 600px) {
+    margin-left: 16px;
+  }
 `;
 
 const DocumentTitle = styled.h1`
-  font-size: 35px;
+  font-size: 42px;
+  display: inline-block;
   font-weight: bold;
   color: var(--color-grey-52);
-  margin-bottom: 16px;
-  text-align: left;
-  border-bottom: 3px solid #00ffa2;
-  padding-bottom: 8px;
-  display: inline-block;
+  text-wrap: wrap;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 600px) {
+    font-size: 32px;
+    text-align: center;
+  }
+  @media (max-width: 300px) {
     font-size: 24px;
   }
-
-  @media (max-width: 680px) {
-    font-size: 20px;
-    text-align: center;
-    display: block;
-  }
 `;
-
 const DocumentDescription = styled.p`
   margin-top: 20px;
   color: var(--color-grey-53);
@@ -99,12 +89,12 @@ const DocumentDescription = styled.p`
   padding: 16px;
   border-radius: 12px;
   border-left: 4px solid #004466;
+  display: flex;
+`;
 
-  @media (max-width: 680px) {
-    font-size: 16px;
-    text-align: center;
-    padding: 12px;
-  }
+const DescriptionLayout = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const MetaTag = styled.span`
@@ -443,11 +433,11 @@ const PlannedDocumentDetail = () => {
           }
           targetButtonId="sourceButton"
         />
-
+        <DocTitleCont>
+          <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
+        </DocTitleCont>
         <InfoContainer>
           <div>
-            <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
-
             <MetaInfo>
               <MetaTag>{selectedDocument.estimatedCompletionTime}</MetaTag>
               {selectedDocument.docType && (
@@ -456,80 +446,80 @@ const PlannedDocumentDetail = () => {
             </MetaInfo>
 
             <DocumentDescription>
-              {selectedDocument.docDescription}
-            </DocumentDescription>
+              <DescriptionLayout>
+                {selectedDocument.docDescription}
+                {selectedDocument.docImportant && (
+                  <SectionContainer color="#e74c3c">
+                    <SectionHeading>Dikkat</SectionHeading>
+                    <SectionContent>
+                      {selectedDocument.docImportant
+                        .split("\\n-")
+                        .map((item, index) =>
+                          index === 0 ? (
+                            <p key={index}>{item}</p>
+                          ) : (
+                            <div
+                              key={index}
+                              style={{
+                                display: "flex",
+                                alignItems: "flex-start",
+                                marginTop: "8px",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  display: "inline-block",
+                                  width: "6px",
+                                  height: "6px",
+                                  borderRadius: "50%",
+                                  backgroundColor: "#e74c3c",
+                                  marginRight: "8px",
+                                  marginTop: "8px",
+                                }}
+                              ></span>
+                              <span>{item.trim()}</span>
+                            </div>
+                          )
+                        )}
+                    </SectionContent>
+                  </SectionContainer>
+                )}
 
-            {selectedDocument.docImportant && (
-              <SectionContainer color="#e74c3c">
-                <SectionHeading>Dikkat</SectionHeading>
-                <SectionContent>
-                  {selectedDocument.docImportant
-                    .split("\\n-")
-                    .map((item, index) =>
-                      index === 0 ? (
-                        <p key={index}>{item}</p>
-                      ) : (
-                        <div
-                          key={index}
-                          style={{
-                            display: "flex",
-                            alignItems: "flex-start",
-                            marginTop: "8px",
-                          }}
-                        >
-                          <span
-                            style={{
-                              display: "inline-block",
-                              width: "6px",
-                              height: "6px",
-                              borderRadius: "50%",
-                              backgroundColor: "#e74c3c",
-                              marginRight: "8px",
-                              marginTop: "8px",
-                            }}
-                          ></span>
-                          <span>{item.trim()}</span>
-                        </div>
+                {selectedDocument.docWhere && (
+                  <SectionContainer color="#3498db">
+                    <SectionHeading>Temin yeri</SectionHeading>
+                    <SectionContent>{selectedDocument.docWhere}</SectionContent>
+                  </SectionContainer>
+                )}
+
+                {selectedDocument.docSourceLink && (
+                  <SourceButton
+                    id="sourceButton"
+                    onClick={() =>
+                      window.open(
+                        selectedDocument.docSourceLink,
+                        "_blank",
+                        "noopener,noreferrer"
                       )
-                    )}
-                </SectionContent>
-              </SectionContainer>
-            )}
+                    }
+                  >
+                    <span>Bağlantı</span>
+                  </SourceButton>
+                )}
 
-            {selectedDocument.docWhere && (
-              <SectionContainer color="#3498db">
-                <SectionHeading>Temin yeri</SectionHeading>
-                <SectionContent>{selectedDocument.docWhere}</SectionContent>
-              </SectionContainer>
-            )}
-
-            {selectedDocument.docSourceLink && (
-              <SourceButton
-                id="sourceButton"
-                onClick={() =>
-                  window.open(
-                    selectedDocument.docSourceLink,
-                    "_blank",
-                    "noopener,noreferrer"
-                  )
-                }
-              >
-                <span>Bağlantı</span>
-              </SourceButton>
-            )}
+                <ActionButton onClick={handleAction} isCompleted={isCompleted}>
+                  {isCompleted ? "Tamamlandı" : "Tamamla"}
+                </ActionButton>
+              </DescriptionLayout>
+              <ImageViewer
+                imageSrc={selectedDocument.docImage}
+                altText={selectedDocument.docName}
+                readyDocuments={plannedDocuments}
+                currentIndex={currentDocumentIndex}
+              />
+            </DocumentDescription>
           </div>
-
-          <ActionButton onClick={handleAction} isCompleted={isCompleted}>
-            <span>{isCompleted ? "Tamamlandı" : "Tamamla"}</span>
-          </ActionButton>
         </InfoContainer>
-
-        <ImageViewer
-          imageSrc={selectedDocument.docImage}
-          altText={selectedDocument.docName}
-          readyDocuments={plannedDocuments}
-          currentIndex={currentDocumentIndex}
-        />
 
         {selectedDocument.referenceName && (
           <SectionContainer
@@ -570,10 +560,7 @@ const PlannedDocumentDetail = () => {
         {/* DocProgress component moved here from ImageViewer.jsx */}
         <DocProgress>
           {plannedDocuments.map((_, index) => (
-            <ProgressDot
-              key={index}
-              active={index === currentDocumentIndex}
-            />
+            <ProgressDot key={index} active={index === currentDocumentIndex} />
           ))}
         </DocProgress>
       </PageContainer>

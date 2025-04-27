@@ -1,7 +1,6 @@
 import Logo from "./Logo";
 import BlogLogo from "./BlogLogo";
 import styled from "styled-components";
-import DarkModeToggle from "./DarkModeToggle";
 
 const StyledHeader = styled.div`
   @media (min-width: 710px) {
@@ -33,12 +32,6 @@ const LogoContainer = styled.div`
   }
 `;
 
-const DarkModeToggleWrapper = styled.div`
-  position: absolute;
-  top: 20px;
-  right: 60px;
-`;
-
 function DashboardMobileHeader() {
   return (
     <StyledHeader>
@@ -46,9 +39,7 @@ function DashboardMobileHeader() {
         <BlogLogo variant="dashmobile" />
         <Logo variant="dashmobile" />
       </LogoContainer>
-      <DarkModeToggleWrapper>
-        <DarkModeToggle />
-      </DarkModeToggleWrapper>
+     
     </StyledHeader>
   );
 }

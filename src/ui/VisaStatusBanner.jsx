@@ -31,7 +31,7 @@ const BannerContainer = styled.div`
   width: 100%;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  background: rgba(232, 244, 253, 0.9);
+  background: rgba(232, 244, 253, 0.5);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 102, 204, 0.3);
   border-radius: 12px;
@@ -43,17 +43,17 @@ const BannerContainer = styled.div`
   z-index: 5000;
   animation: ${slideIn} 0.4s ease-out;
   transition: all 0.3s ease;
-  
+
   &:hover {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
   }
 
   @media (max-width: 710px) {
-    margin-top: 16px;
+    margin-top: 12px;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
     text-align: center;
-    padding: 16px;
+    padding: 12px;
   }
 `;
 
@@ -67,6 +67,7 @@ const BannerContent = styled.div`
     height: 100%;
     width: 100%;
     text-align: center;
+    gap: 5px;
   }
 `;
 
@@ -82,10 +83,10 @@ const WarningIcon = styled.div`
   svg {
     width: 32px;
     height: 32px;
-  }
-
-  @media (max-width: 710px) {
-    margin-bottom: 4px;
+    @media (max-width: 710px) {
+      width: 28px;
+      height: 28px;
+    }
   }
 `;
 
@@ -112,7 +113,7 @@ const StyledLink = styled.a`
   transition: all 0.2s;
 
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     width: 100%;
     transform: scaleX(0);
@@ -126,7 +127,7 @@ const StyledLink = styled.a`
 
   &:hover {
     color: #0052a3;
-    
+
     &:after {
       transform: scaleX(1);
       transform-origin: bottom left;
@@ -150,7 +151,7 @@ const ActionButton = styled.button`
   white-space: nowrap;
   box-shadow: 0 2px 6px rgba(0, 102, 204, 0.3);
   min-width: 140px;
-  
+
   &:hover {
     background: linear-gradient(to right, #0052a3, #004080);
     transform: translateY(-2px);
@@ -168,13 +169,22 @@ const ActionButton = styled.button`
     transform: none;
     box-shadow: none;
   }
-  
+
   @media (max-width: 710px) {
     width: 100%;
     padding: 12px 18px;
   }
 `;
 
+const WarningAndText = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-right: 12px;
+  @media (max-width: 710px) {
+    gap: 8px;
+  }
+`;
 const VisaStatusBanner = ({
   type,
   applicationId,
@@ -241,7 +251,15 @@ const VisaStatusBanner = ({
 
   // Info/Alert SVG Icon - More informational style than warning
   const AlertIconSVG = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#004466" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#004466"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <circle cx="12" cy="12" r="10"></circle>
       <line x1="12" y1="8" x2="12" y2="12"></line>
       <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -251,21 +269,23 @@ const VisaStatusBanner = ({
   return (
     <BannerContainer>
       <BannerContent>
-        <WarningIcon>
-          <AlertIconSVG />
-        </WarningIcon>
-        <BannerText>
-          {bannerText}{" "}
-          {linkUrl && (
-            <StyledLink
-              href={linkUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {linkText}
-            </StyledLink>
-          )}
-        </BannerText>
+        <WarningAndText>
+          <WarningIcon>
+            <AlertIconSVG />
+          </WarningIcon>
+          <BannerText>
+            {bannerText}{" "}
+            {linkUrl && (
+              <StyledLink
+                href={linkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {linkText}
+              </StyledLink>
+            )}
+          </BannerText>
+        </WarningAndText>
       </BannerContent>
       <ActionButton onClick={handleButtonClick} disabled={isLoading}>
         {isLoading ? "Kaydediliyor..." : buttonText}

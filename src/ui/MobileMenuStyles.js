@@ -239,7 +239,7 @@ export const ProfileInfoContainer = styled.div`
   margin-top: 16px;
   padding: 12px;
   border-radius: 12px;
-  background: var(--profile-bg, rgba(0, 68, 102, 0.05));
+ 
 
   @media (max-height: 830px) {
     margin-top: 8px;
