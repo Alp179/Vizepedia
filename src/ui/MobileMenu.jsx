@@ -1,603 +1,71 @@
-/* eslint-disable no-unused-vars */
+// MobileMenu.jsx - Dark Mode Toggle eklenmiş versiyon
 import { useState, useEffect, useRef } from "react";
-import styled, { keyframes } from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi";
-import { MdClose, MdDelete } from "react-icons/md"; // MdDelete ikonu eklendi
+import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../features/authentication/useLogout";
 import { useVisaApplications } from "../context/VisaApplicationContext";
-import { useSelectedDocument } from "../context/SelectedDocumentContext";
-import { useDocuments } from "../context/DocumentsContext";
+
 import { getCurrentUser } from "../services/apiAuth";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
-import UserAvatar from "../features/authentication/UserAvatar";
 import AllDocs from "./AllDocs";
 import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
-import { NavLink } from "react-router-dom";
-import supabase from "../services/supabase"; // Supabase import ediyoruz
-import ModalSignup from "../ui/ModalSignup"; // Modal bileşenini import ediyoruz
-import SignupForm from "../features/authentication/SignupForm"; // Signup formunu import ediyoruz
-import { useUser } from "../features/authentication/useUser"; // useUser hook'unu import ediyoruz
+import ModalSignup from "../ui/ModalSignup";
+import SignupForm from "../features/authentication/SignupForm";
+import { useUser } from "../features/authentication/useUser";
+import DarkModeToggle from "./DarkModeToggle"; // Dark Mode Toggle bileşenini import ediyoruz
 
-// Animasyonlar
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-`;
+// İkon ve Animasyonlar
+import {
+  IconClose,
+  IconLogout,
+  IconUpgrade,
+  HamburgerIcon,
+} from "./MobileMenuIcons";
 
-const modalFadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+// Stil bileşenleri
+import {
+  MenuIcon,
+  MenuContainer,
+  CloseButton,
+  MenuContents,
+  ProfileInfoContainer,
+  ProfileHeader,
+  Avatar,
+  UserDetails,
+  UserName,
+  UserEmail,
+  NavButton,
+  CreateAccountButton,
+  ApplicationLink,
+  AppInfo,
+  AppTitle,
+  AppSubtitle,
+  ActionButton,
+  Divider,
+  Overlay,
+  DocsModalOverlay,
+  DocsModalContainer,
+  DocsModalCloseButton,
+  ModalOverlay,
+  ConfirmationModal,
+  ModalHeader,
+  ModalContent,
+  ModalActions,
+  CancelButton,
+  DeleteButton,
+} from "./MobileMenuStyles";
 
-const modalFadeOut = keyframes`
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-`;
-
-// Hamburger menü ikonu
-const MenuIcon = styled.div.attrs((props) => ({
-  style: { display: props.isDocsModalOpen ? "none" : "block" },
-}))`
-  background: ${(props) =>
-    props.isOpen ? "transparent" : "rgba(255, 255, 255, 0.5)"};
-  border-radius: 6px;
-  display: flex;
-  height: 42px;
-  position: fixed;
-  top: 20px;
-  right: 12px;
-  z-index: 3000; /* z-index değerini modallara göre daha düşük ayarladık */
-  @media (min-width: 710px) {
-    display: none;
-  }
-  .ham {
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition: transform 400ms;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  .hamRotate.active {
-    transform: rotate(45deg);
-  }
-  .hamRotate180.active {
-    transform: rotate(180deg);
-  }
-  .line {
-    fill: none;
-    transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
-    stroke: ${(props) => (props.isOpen ? "var(--stroke-ham-1)" : "black")};
-    stroke-width: 5.5;
-    stroke-linecap: round;
-  }
-
-  .ham8 .top {
-    stroke-dasharray: 40 160;
-  }
-  .ham8 .middle {
-    stroke-dasharray: 40 142;
-    transform-origin: 50%;
-    transition: transform 400ms;
-  }
-  .ham8 .bottom {
-    stroke-dasharray: 40 85;
-    transform-origin: 50%;
-    transition: transform 400ms, stroke-dashoffset 400ms;
-  }
-  .ham8.active .top {
-    stroke-dashoffset: -64px;
-  }
-  .ham8.active .middle {
-    transform: rotate(90deg);
-  }
-  .ham8.active .bottom {
-    stroke-dashoffset: -64px;
-  }
-`;
-
-// Ana menü konteyner
-const MenuContainer = styled.div`
-  z-index: 2992;
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 60%;
-  opacity: var(--opacity-1);
-  @media (max-width: 500px) {
-    width: 80%;
-  }
-  height: 100vh;
-  background: var(--color-grey-55);
-  border-top-left-radius: 16px;
-  border-bottom-left-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  transform: ${(props) =>
-    props.isOpen ? "translateX(0)" : "translateX(100%)"};
-  transition: transform 0.3s ease-in-out;
-  @media (min-width: 710px) {
-    display: none;
-  }
-`;
-
-// Menü başlık
-const MenuHeader = styled.div`
-  z-index: 3000;
-  display: flex;
-  justify-content: flex-start;
-  gap: 42px;
-  align-items: center;
-  @media (max-width: 370px) {
-    gap: 16px;
-  }
-  @media (max-width: 350px) {
-    gap: 8px;
-  }
-`;
-
-// Menü içerik
-const MenuContent = styled.div`
-  z-index: 3000;
-  margin-top: 2.5rem;
-  display: flex;
-  height: 90%;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-// Gezinme bağlantıları
-const StyledNavLink = styled.div`
-  width: 90%;
-  gap: 16px;
-  min-height: 60px;
-  z-index: 3000;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-size: 18px;
-  padding: 0 8px;
-
-  &:hover,
-  &:active {
-    background-color: var(--color-grey-3);
-  }
-`;
-
-// Silme butonu
-const ActionButton = styled.button`
-  background-color: rgba(231, 76, 60, 0.15);
-  border: none;
-  color: #e74c3c;
-  cursor: pointer;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  position: absolute;
-  right: 15px;
-  opacity: 1;
-
-  & svg {
-    width: 26px;
-    height: 26px;
-  }
-
-  &:hover,
-  &:active {
-    background-color: rgba(231, 76, 60, 0.25);
-    transform: scale(1.05);
-  }
-
-  @media (max-width: 370px) {
-    width: 40px;
-    height: 40px;
-    right: 10px;
-    & svg {
-      width: 24px;
-      height: 24px;
-    }
-  }
-`;
-
-// Mobil nav link container
-const MobileNavLinkContainer = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 100%;
-
-  .mobile-navlink {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    border-radius: 14px;
-    margin: 10px 0;
-    color: var(--color-grey-600);
-    text-decoration: none;
-    width: 100%;
-    position: relative;
-    padding-right: 60px; /* Silme butonu için daha fazla yer */
-    transition: all 0.2s ease;
-    font-size: 18px;
-
-    &.mobile-navlink-active {
-      background-color: var(--color-grey-920);
-      color: var(--color-brand-600);
-      font-weight: 600;
-    }
-  }
-`;
-
-// Overlay
-const Overlay = styled.div`
-  position: fixed;
-  backdrop-filter: blur(4px);
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--backdrop-color);
-  z-index: 2292;
-  display: ${(props) =>
-    props.isOpen || props.isDocsModalOpen ? "block" : "none"};
-`;
-
-// Dokümanlar modalı için overlay
-const DocsModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-  z-index: 9000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: ${(props) => (props.isClosing ? modalFadeOut : modalFadeIn)} 0.3s
-    ease forwards;
-`;
-
-// Dokümanlar modalı için konteyner
-const DocsModalContainer = styled.div`
-  background-color: var(--color-grey-51);
-  border-radius: 20px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 85vh;
-  overflow-y: auto;
-  position: relative;
-  padding: 3rem 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  animation: ${(props) => (props.isClosing ? modalFadeOut : modalFadeIn)} 0.3s
-    ease forwards;
-
-  @media (max-width: 450px) {
-    width: 95%;
-    padding: 2.5rem 1.5rem;
-  }
-`;
-
-// Dokümanlar modalı için kapatma butonu
-const DocsModalCloseButton = styled.button`
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--color-grey-905);
-  color: var(--color-grey-600);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  cursor: pointer;
-  transition: all 0.2s;
-  z-index: 1;
-
-  &:hover {
-    background-color: var(--color-grey-900);
-    color: white;
-  }
-`;
-
-// Silme işlemi onay modalı için overlay
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9000;
-  opacity: 0;
-  animation: ${fadeIn} 0.3s forwards;
-`;
-
-// Silme işlemi onay modalı için konteyner
-const ConfirmationModal = styled.div`
-  background-color: var(--color-grey-914);
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  padding: 28px;
-  width: 90%;
-  max-width: 360px;
-  animation: ${modalFadeIn} 0.3s ease;
-  border: 1px solid var(--color-grey-920);
-
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-`;
-
-// Silme işlemi onay modalı için başlık
-const ModalHeader = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-  color: var(--color-grey-600);
-
-  svg {
-    margin-right: 16px;
-    color: #e74c3c;
-    width: 28px;
-    height: 28px;
-  }
-
-  h3 {
-    font-size: 22px;
-    font-weight: 600;
-    margin: 0;
-  }
-`;
-
-// Silme işlemi onay modalı için içerik
-const ModalContent = styled.p`
-  color: var(--color-grey-600);
-  font-size: 18px;
-  line-height: 1.5;
-  margin: 0 0 20px 0;
-`;
-
-// Silme işlemi onay modalı için butonlar
-const ModalActions = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-`;
-
-// Genel buton stilini
-const Button = styled.button`
-  padding: 14px 24px;
-  border-radius: 10px;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-
-  &:focus {
-    outline: none;
-  }
-`;
-
-// İptal butonu
-const CancelButton = styled(Button)`
-  background-color: var(--color-grey-920);
-  color: var(--color-grey-600);
-
-  &:hover {
-    background-color: var(--color-grey-905);
-  }
-`;
-
-// Silme butonu
-const DeleteButton = styled(Button)`
-  background-color: #e74c3c;
-  color: white;
-
-  &:hover {
-    background-color: #c0392b;
-  }
-`;
-
-// Divider
-const Divider = styled.div`
-  height: 2px;
-  width: 95%;
-  background: var(--color-grey-600);
-  margin: 12px auto 12px auto;
-`;
-
-// Uygulama bilgisi için stiller
-const AppInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-width: 75%;
-  overflow: hidden;
-`;
-
-const AppTitle = styled.span`
-  font-weight: 700;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 18px;
-  margin-bottom: 4px;
-`;
-
-const AppSubtitle = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 16px;
-  opacity: 0.9;
-`;
-
-// Anonim kullanıcı olduğunu belirten avatar stili
-const AnonymousIndicator = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  padding: 10px;
-  color: var(--color-grey-600);
-  background-color: var(--color-grey-920);
-  border-radius: 10px;
-
-  span {
-    font-size: 16px;
-    opacity: 0.9;
-  }
-`;
-
-// Yükleniyor göstergesi
-const LoadingSpinner = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-
-  svg {
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
-
-// Hesap oluştur buton
-const CreateAccountButton = styled.button`
-  width: 95%;
-  margin: 15px auto;
-  padding: 14px 24px;
-  border-radius: 16px;
-  background-color: #004466;
-  color: #00ffa2;
-  border: 2px solid #00ffa2;
-  font-size: 18px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #00ffa2;
-    color: #004466;
-  }
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
-// İkonlar
-const IconLogout = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    style={{ width: "26px", height: "26px", color: "rgb(229, 57, 53)" }}
-  >
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-    <polyline points="16 17 21 12 16 7"></polyline>
-    <line x1="21" y1="12" x2="9" y2="12"></line>
-  </svg>
-);
-
-const IconUpgrade = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="#00ffa2"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="16 16 12 12 8 16"></polyline>
-    <line x1="12" y1="12" x2="12" y2="21"></line>
-    <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
-    <polyline points="16 16 12 12 8 16"></polyline>
-  </svg>
-);
-
-const IconLoading = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeDashoffset="8" />
-  </svg>
-);
 const MobileMenu = () => {
   // State yönetimi
   const [isOpen, setIsOpen] = useState(false);
+  const [hasTransitionEnded, setHasTransitionEnded] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAppId, setSelectedAppId] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // Yükleniyor durumu için state
 
   // Tüm Belgeler modalı için state yönetimi
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
@@ -605,19 +73,16 @@ const MobileMenu = () => {
 
   // Kullanıcının anonim olup olmadığını kontrol etmek için state
   const [isAnonymous, setIsAnonymous] = useState(false);
-  // Modal kontrol state'i
-  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
 
   const navigate = useNavigate();
   const { logout } = useLogout();
   const { applications, dispatch: applicationsDispatch } =
     useVisaApplications();
-  const { setSelectedDocument } = useSelectedDocument();
-  const { state: completedDocuments } = useDocuments();
+
   const [userId, setUserId] = useState(null);
   const menuRef = useRef();
   const iconRef = useRef();
-  const { user } = useUser(); // useUser hook'unu kullanıyoruz
+  const { user } = useUser();
 
   // Kullanıcı bilgilerini ve dışarı tıklama olayını yönetme
   useEffect(() => {
@@ -648,11 +113,27 @@ const MobileMenu = () => {
     };
   }, []);
 
+  // Menü geçiş animasyonu için
+  useEffect(() => {
+    if (!isOpen) {
+      const timeout = setTimeout(() => {
+        setHasTransitionEnded(true);
+      }, 400); // Animasyon süresiyle eşleştirildi
+      return () => clearTimeout(timeout);
+    } else {
+      setHasTransitionEnded(false);
+    }
+  }, [isOpen]);
+
   // ESC tuşu ile modal kapatma
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === "Escape" && isDocsModalOpen) {
-        closeDocsModal();
+      if (e.key === "Escape") {
+        if (isDocsModalOpen) {
+          closeDocsModal();
+        } else if (isOpen) {
+          setIsOpen(false);
+        }
       }
     };
 
@@ -660,7 +141,7 @@ const MobileMenu = () => {
     return () => {
       window.removeEventListener("keydown", handleEscape);
     };
-  }, [isDocsModalOpen]);
+  }, [isDocsModalOpen, isOpen]);
 
   // Kullanıcı seçimleri ve belge bilgilerini alma
   const userSelectionsQuery = useQuery({
@@ -711,22 +192,6 @@ const MobileMenu = () => {
     return user.email;
   };
 
-  // Belgeye devam etme fonksiyonu
-  const continueToDocument = () => {
-    if (!documentsQuery.data) return;
-
-    const firstIncompleteIndex = documentsQuery.data.findIndex(
-      (doc) => !completedDocuments[doc.docName]
-    );
-
-    if (firstIncompleteIndex !== -1) {
-      const selectedDocument = documentsQuery.data[firstIncompleteIndex];
-      setSelectedDocument(selectedDocument);
-      navigate(`/documents/${selectedDocument.id}`);
-      setIsOpen(false);
-    }
-  };
-
   // Tüm Belgeler modalını açma fonksiyonu
   const openDocsModal = () => {
     setIsDocsModalOpen(true);
@@ -759,12 +224,6 @@ const MobileMenu = () => {
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedAppId(null);
-  };
-
-  // Signup modal kontrolü
-  const closeSignupModal = () => {
-    setIsSignupModalOpen(false);
-    setIsOpen(false);
   };
 
   // Silme işlemi
@@ -802,95 +261,12 @@ const MobileMenu = () => {
     }
   };
 
-  // Oturum kapatma işlemi
-  const handleLogout = async () => {
-    const confirmLogout = await new Promise((resolve) => {
-      toast(
-        (t) => (
-          <span>
-            Oturumu kapatmak istediğinizden emin misiniz?
-            <br />
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                resolve(true);
-              }}
-              style={{
-                marginRight: "8px",
-                color: "white",
-                backgroundColor: "red",
-                padding: "5px",
-                border: "none",
-              }}
-            >
-              Evet
-            </button>
-            <button
-              onClick={() => {
-                toast.dismiss(t.id);
-                resolve(false);
-              }}
-              style={{ padding: "5px", border: "none" }}
-            >
-              Hayır
-            </button>
-          </span>
-        ),
-        {
-          duration: Infinity,
-        }
-      );
-    });
-
-    if (confirmLogout) {
-      logout();
-      localStorage.removeItem("isAnonymous"); // Logout olunca anonim bilgisini temizle
-      localStorage.removeItem("wellcomesAnswered"); // wellcomes bilgisini de temizle
-      setIsOpen(false);
-    }
-  };
-
-  // Anonim giriş fonksiyonu
-  const handleAnonymousSignIn = async () => {
-    try {
-      // Eğer zaten yükleniyorsa, fonksiyondan çık
-      if (isLoading) return;
-
-      setIsLoading(true); // Yükleniyor durumunu başlat
-
-      // Supabase anonim oturum açma fonksiyonu
-      const { data, error } = await supabase.auth.signInAnonymously();
-      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
-
-      if (error) {
-        console.error("Anonim oturum açma hatası:", error.message);
-        setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
-        return;
-      }
-
-      if (data) {
-        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
-        const wellcomesAnswered =
-          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
-
-        // Menüyü kapat
-        setIsOpen(false);
-
-        if (wellcomesAnswered === "true") {
-          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
-          navigate("/dashboard");
-        } else {
-          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
-          navigate("/wellcome-2");
-        }
-
-        // Yükleniyor durumunu kapat (navigate işlemi gerçekleştiğinde otomatik kapanacak)
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Oturum açma sırasında hata oluştu:", error.message);
-      setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
-    }
+  // Oturum kapatma işlemi - Direkt olarak çalışacak şekilde düzenlendi
+  const handleLogout = () => {
+    logout();
+    localStorage.removeItem("isAnonymous"); // Logout olunca anonim bilgisini temizle
+    localStorage.removeItem("wellcomesAnswered"); // wellcomes bilgisini de temizle
+    setIsOpen(false);
   };
 
   if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
@@ -907,87 +283,74 @@ const MobileMenu = () => {
       <MenuIcon
         ref={iconRef}
         isOpen={isOpen}
-        onClick={() => {
-          setIsOpen(!isOpen);
-        }}
+        onClick={() => setIsOpen(!isOpen)}
         isDocsModalOpen={isDocsModalOpen}
       >
-        <svg
-          className={`ham hamRotate ham8 ${isOpen ? "active" : ""}`}
-          viewBox="0 0 100 100"
-          width="40"
-        >
-          <path
-            className="line top"
-            d="m 30,33 h 40 c 3.722839,0 7.5,3.126468 7.5,8.578427 0,5.451959 -2.727029,8.421573 -7.5,8.421573 h -20"
-          />
-          <path className="line middle" d="m 30,50 h 40" />
-          <path
-            className="line bottom"
-            d="m 70,67 h -40 c 0,0 -7.5,-0.802118 -7.5,-8.365747 0,-7.563629 7.5,-8.634253 7.5,-8.634253 h 20"
-          />
-        </svg>
+        <HamburgerIcon isOpen={isOpen} />
       </MenuIcon>
-      <Overlay isOpen={isOpen} isDocsModalOpen={isDocsModalOpen} />
-      <MenuContainer isOpen={isOpen} ref={menuRef}>
-        <MenuHeader>
-          <UserAvatar />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              marginLeft: "10px",
-            }}
-          >
-            <span style={{ fontWeight: "600", fontSize: "16px" }}>
-              {getDisplayName()}
-            </span>
-            <span style={{ fontSize: "14px", opacity: "0.7" }}>
-              {getEmail()}
-            </span>
-          </div>
-        </MenuHeader>
 
-        {/* Anonim kullanıcı bilgisi */}
-        {isAnonymous && (
-          <AnonymousIndicator>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="16" x2="12" y2="12"></line>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
-            </svg>
-            <span>Anonim Olarak Giriş Yaptınız</span>
-          </AnonymousIndicator>
-        )}
+      <Overlay
+        isOpen={isOpen}
+        isDocsModalOpen={isDocsModalOpen}
+        onClick={() => isOpen && setIsOpen(false)}
+      />
 
-        <MenuContent>
-          <StyledNavLink style={{ marginLeft: "12px" }} onClick={openDocsModal}>
-            <HiDocument size={26} style={{ color: "var(--color-grey-924)" }} />
-            <span style={{ fontSize: "18px" }}>Tüm Belgeler</span>
-          </StyledNavLink>
-          <div className="mobile-scrolldiv">
-            {applications.map((app) => (
-              <MobileNavLinkContainer key={app.id}>
-                <NavLink
+      <MenuContainer
+        isOpen={isOpen}
+        hasTransitionEnded={hasTransitionEnded}
+        ref={menuRef}
+      >
+        {/* Kapatma Butonu */}
+        <CloseButton onClick={() => setIsOpen(false)} aria-label="Menüyü Kapat">
+          <IconClose />
+        </CloseButton>
+
+        <MenuContents>
+          <div className="top-section">
+            {/* Profil bilgileri bölümü */}
+            <ProfileInfoContainer>
+              <ProfileHeader>
+                <Avatar isAnonymous={isAnonymous}>{getInitial()}</Avatar>
+                <UserDetails>
+                  <UserName>{getDisplayName()}</UserName>
+                  <UserEmail>{getEmail()}</UserEmail>
+                </UserDetails>
+              </ProfileHeader>
+            </ProfileInfoContainer>
+
+            {/* Anonim kullanıcı için hesap oluştur */}
+            {isAnonymous && (
+              <ModalSignup>
+                <ModalSignup.Open opens="mobileSignUpForm">
+                  <CreateAccountButton>
+                    <IconUpgrade />
+                    Hesap Oluştur
+                  </CreateAccountButton>
+                </ModalSignup.Open>
+                <ModalSignup.Window name="mobileSignUpForm">
+                  <SignupForm
+                    onCloseModal={() => {
+                      setIsOpen(false);
+                    }}
+                  />
+                </ModalSignup.Window>
+              </ModalSignup>
+            )}
+
+            <NavButton onClick={openDocsModal}>
+              <HiDocument size={22} />
+              <span>Tüm Belgeler</span>
+            </NavButton>
+
+            <Divider />
+
+            <div className="applications-section">
+              {applications.map((app) => (
+                <ApplicationLink
+                  key={app.id}
                   to={`/dashboard/${app.id}`}
-                  className={({ isActive }) =>
-                    isActive
-                      ? "mobile-navlink mobile-navlink-active"
-                      : "mobile-navlink"
-                  }
-                  onClick={() => {
-                    setIsOpen(false);
-                  }}
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                  onClick={() => setIsOpen(false)}
                 >
                   <AppInfo>
                     <AppTitle>{app.ans_country}</AppTitle>
@@ -995,56 +358,43 @@ const MobileMenu = () => {
                       {app.ans_purpose} - {app.ans_profession}
                     </AppSubtitle>
                   </AppInfo>
-                </NavLink>
-                {applications.length > 1 && (
-                  <ActionButton
-                    onClick={(e) => openDeleteModal(app.id, e)}
-                    aria-label="Vize başvurusunu sil"
-                    title="Vize başvurusunu sil"
-                  >
-                    <MdDelete />
-                  </ActionButton>
-                )}
-              </MobileNavLinkContainer>
-            ))}
+                  {applications.length > 1 && (
+                    <ActionButton
+                      onClick={(e) => openDeleteModal(app.id, e)}
+                      aria-label="Vize başvurusunu sil"
+                      title="Vize başvurusunu sil"
+                    >
+                      <MdDelete size={20} />
+                    </ActionButton>
+                  )}
+                </ApplicationLink>
+              ))}
+            </div>
+
+            <NavButton
+              onClick={() => {
+                navigate("/wellcome-2");
+                setIsOpen(false);
+              }}
+            >
+              <HiPlus size={22} />
+              <span>Yeni Başvuru</span>
+            </NavButton>
           </div>
-          <StyledNavLink
-            style={{ marginLeft: "12px" }}
-            onClick={() => {
-              navigate("/wellcome-2");
-              setIsOpen(false);
-            }}
-          >
-            <HiPlus size={26} style={{ color: "var(--color-grey-924)" }} />
-            <span style={{ fontSize: "18px" }}>Yeni</span>
-          </StyledNavLink>
 
-          <Divider />
+          <div className="bottom-section">
+            <Divider />
+            <NavButton onClick={handleLogout} style={{ color: "#e74c3c" }}>
+              <IconLogout />
+              <span>Oturumu Kapat</span>
+            </NavButton>
 
-          {/* Anonim kullanıcı için Hesap oluştur butonu ve modal */}
-          {isAnonymous && (
-            <ModalSignup>
-              <ModalSignup.Open opens="mobileSignUpForm">
-                <CreateAccountButton>
-                  <IconUpgrade />
-                  Hesap Oluştur
-                </CreateAccountButton>
-              </ModalSignup.Open>
-              <ModalSignup.Window name="mobileSignUpForm">
-                <SignupForm
-                  onCloseModal={() => {
-                    setIsOpen(false);
-                  }}
-                />
-              </ModalSignup.Window>
-            </ModalSignup>
-          )}
+            <Divider />
 
-          <StyledNavLink style={{ marginLeft: "12px" }} onClick={handleLogout}>
-            <IconLogout />
-            <span style={{ color: "rgb(229, 57, 53)" }}>Oturumu Kapat</span>
-          </StyledNavLink>
-        </MenuContent>
+            {/* Dark Mode Toggle */}
+            <DarkModeToggle />
+          </div>
+        </MenuContents>
       </MenuContainer>
 
       {/* Silme Onay Modalı */}
@@ -1067,7 +417,7 @@ const MobileMenu = () => {
         </ModalOverlay>
       )}
 
-      {/* Yeni Tüm Belgeler Modal */}
+      {/* Tüm Belgeler Modal */}
       {isDocsModalOpen && (
         <DocsModalOverlay
           isClosing={isDocsModalClosing}
@@ -1078,7 +428,7 @@ const MobileMenu = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <DocsModalCloseButton onClick={closeDocsModal}>
-              &times;
+              <IconClose />
             </DocsModalCloseButton>
 
             <AllDocs />
