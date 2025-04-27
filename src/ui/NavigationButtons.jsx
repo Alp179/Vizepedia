@@ -61,15 +61,14 @@ const NavigationButtons = ({
   onPrevClick, 
   onNextClick, 
   isPrevDisabled, 
-  isNextDisabled, 
-  targetButtonId 
+  isNextDisabled,
 }) => {
   
   useEffect(() => {
-    // SourceButton ile NavigationButton'ları hizalama fonksiyonu
+    // ActionButton ile NavigationButton'ları hizalama fonksiyonu
     const adjustNavigationButtons = () => {
       if (window.innerWidth <= 680) {
-        const targetButton = document.getElementById(targetButtonId);
+        const targetButton = document.querySelector(".action-button");
         if (targetButton) {
           const buttonRect = targetButton.getBoundingClientRect();
           const leftButton = document.querySelector(".left");
@@ -127,7 +126,7 @@ const NavigationButtons = ({
       window.removeEventListener("resize", handleScroll);
       clearInterval(intervalId);
     };
-  }, [targetButtonId]);
+  }, []);
 
   return (
     <>

@@ -253,6 +253,52 @@ const SectionContent = styled.div`
   line-height: 1.6;
 `;
 
+// DocProgress component moved from ImageViewer.jsx
+const DocProgress = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  background: rgba(0, 68, 102, 0.05);
+  padding: 10px;
+  border-radius: 30px;
+  width: fit-content;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+
+  @media (max-width: 1300px) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 4px;
+  }
+
+  @media (max-width: 680px) {
+    position: static;
+    transform: none;
+    margin: 20px auto 10px;
+  }
+`;
+
+const ProgressDot = styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${(props) => (props.active ? "#004466" : "#cbd5e0")};
+  margin: 0 5px;
+  transition: all 0.3s ease;
+  box-shadow: ${(props) =>
+    props.active ? "0 0 6px rgba(0, 68, 102, 0.5)" : "none"};
+
+  ${(props) =>
+    props.active &&
+    `
+      transform: scale(1.4);
+    `}
+`;
+
 const PlannedDocumentDetail = () => {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
@@ -520,6 +566,16 @@ const PlannedDocumentDetail = () => {
             <SectionContent>{selectedDocument.referenceName}</SectionContent>
           </SectionContainer>
         )}
+
+        {/* DocProgress component moved here from ImageViewer.jsx */}
+        <DocProgress>
+          {plannedDocuments.map((_, index) => (
+            <ProgressDot
+              key={index}
+              active={index === currentDocumentIndex}
+            />
+          ))}
+        </DocProgress>
       </PageContainer>
     </>
   );

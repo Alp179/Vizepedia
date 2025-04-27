@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import styled, { keyframes } from "styled-components";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -28,17 +30,11 @@ const fadeIn = keyframes`
 // Tekrar kullanılabilir stiller
 const PageContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   width: 100%;
   height: 100%;
   padding: 25px;
-  background: var(--color-grey-51);
-  border-radius: 24px;
-  box-sizing: border-box;
-  position: relative;
-  animation: ${fadeIn} 0.5s ease-in-out;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 
   @media (max-width: 680px) {
     flex-direction: column;
@@ -57,34 +53,36 @@ const InfoContainer = styled.div`
   padding: 30px;
   border-radius: 20px;
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
   color: #333;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 
   @media (max-width: 680px) {
     padding: 20px;
     margin-bottom: 20px;
   }
+  @media (max-width: 600px) {
+    flex-flow: column;
+  }
 `;
 
 const DocumentTitle = styled.h1`
-  font-size: 35px;
+  font-size: 42px;
+  max-width: 300px;
   font-weight: bold;
   color: var(--color-grey-52);
-  margin-bottom: 16px;
+  margin-bottom: 32px;
   text-align: left;
-  border-bottom: 3px solid #00ffa2;
-  padding-bottom: 8px;
   display: inline-block;
 
-  @media (max-width: 1000px) {
-    font-size: 24px;
-  }
-
-  @media (max-width: 680px) {
-    font-size: 20px;
+  @media (max-width: 600px) {
+    font-size: 32px;
+    max-width: 60%;
     text-align: center;
     display: block;
   }
@@ -92,13 +90,11 @@ const DocumentTitle = styled.h1`
 
 const DocumentDescription = styled.p`
   margin-top: 20px;
+  display: flex;
   color: var(--color-grey-53);
-  font-size: 18px;
+  font-size: 24px;
   line-height: 1.6;
-  background: rgba(0, 68, 102, 0.03);
   padding: 16px;
-  border-radius: 12px;
-  border-left: 4px solid #004466;
 
   @media (max-width: 680px) {
     font-size: 16px;
@@ -110,14 +106,14 @@ const DocumentDescription = styled.p`
 const MetaTag = styled.span`
   display: inline-flex;
   align-items: center;
-  background-color: rgba(0, 68, 102, 0.1);
+
   color: #004466;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
   margin-right: 12px;
   font-weight: 600;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
   transition: all 0.3s ease;
 
   &:hover {
@@ -224,8 +220,58 @@ const SourceButton = styled.button`
 const MetaInfo = styled.div`
   display: flex;
   flex-wrap: wrap;
+  background: var(--color-grey-51);
   gap: 10px;
+  border-radius: 24px;
+  box-sizing: border-box;
+  position: relative;
+  animation: ${fadeIn} 0.5s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
   margin-top: 16px;
+`;
+
+// DocProgress component moved from ImageViewer.jsx
+const DocProgress = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  padding: 10px;
+  border-radius: 30px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 1300px) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 4px;
+  }
+`;
+
+const ProgressDot = styled.div`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${(props) => (props.active ? "#004466" : "#cbd5e0")};
+  margin: 0 5px;
+  transition: all 0.3s ease;
+  box-shadow: ${(props) =>
+    props.active ? "0 0 6px rgba(0, 68, 102, 0.5)" : "none"};
+
+  ${(props) =>
+    props.active &&
+    `
+      transform: scale(1.4);
+    `}
+`;
+const DescriptionLayout = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
 
 const ReadyDocumentDetail = () => {
@@ -349,7 +395,7 @@ const ReadyDocumentDetail = () => {
   return (
     <>
       <PageContainer>
-        <NavigationButtons 
+        <NavigationButtons
           onPrevClick={() => handleNavigation("prev")}
           onNextClick={() => handleNavigation("next")}
           isPrevDisabled={currentDocumentIndex === 0}
@@ -357,50 +403,56 @@ const ReadyDocumentDetail = () => {
             !readyDocuments ||
             currentDocumentIndex === readyDocuments.length - 1
           }
-          targetButtonId="sourceButton"
         />
+        <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
 
         <InfoContainer>
-          <div>
-            <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
-
-            <MetaInfo>
-              {selectedDocument.docType && (
-                <MetaTag>{selectedDocument.docType}</MetaTag>
-              )}
-            </MetaInfo>
-
-            <DocumentDescription>
-              {selectedDocument.docDescription}
-            </DocumentDescription>
-
-            {selectedDocument.docSourceLink && (
-              <SourceButton
-                id="sourceButton"
-                onClick={() =>
-                  window.open(
-                    selectedDocument.docSourceLink,
-                    "_blank",
-                    "noopener,noreferrer"
-                  )
-                }
-              >
-                <span>Bağlantı</span>
-              </SourceButton>
+          <MetaInfo>
+            {selectedDocument.docType && (
+              <MetaTag>{selectedDocument.docType}</MetaTag>
             )}
-          </div>
+          </MetaInfo>
 
-          <ActionButton onClick={handleAction} isCompleted={isCompleted}>
-            <span>{isCompleted ? "Tamamlandı" : "Tamamla"}</span>
-          </ActionButton>
+          <DocumentDescription>
+            <DescriptionLayout>
+              {selectedDocument.docDescription}
+              {selectedDocument.docSourceLink && (
+                <SourceButton
+                  id="sourceButton"
+                  onClick={() =>
+                    window.open(
+                      selectedDocument.docSourceLink,
+                      "_blank",
+                      "noopener,noreferrer"
+                    )
+                  }
+                >
+                  <span>Bağlantı</span>
+                </SourceButton>
+              )}
+              <ActionButton 
+                onClick={handleAction} 
+                isCompleted={isCompleted} 
+                className="action-button"
+              >
+                <span>{isCompleted ? "Tamamlandı" : "Tamamla"}</span>
+              </ActionButton>
+            </DescriptionLayout>
+          </DocumentDescription>
+          <ImageViewer
+            imageSrc={selectedDocument.docImage}
+            altText={selectedDocument.docName}
+            readyDocuments={readyDocuments}
+            currentIndex={currentDocumentIndex}
+          />
         </InfoContainer>
 
-        <ImageViewer 
-          imageSrc={selectedDocument.docImage}
-          altText={selectedDocument.docName}
-          readyDocuments={readyDocuments}
-          currentIndex={currentDocumentIndex}
-        />
+        {/* DocProgress component moved here from ImageViewer.jsx */}
+        <DocProgress>
+          {readyDocuments.map((_, index) => (
+            <ProgressDot key={index} active={index === currentDocumentIndex} />
+          ))}
+        </DocProgress>
       </PageContainer>
     </>
   );

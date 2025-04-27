@@ -141,45 +141,10 @@ const ModalImage = styled.img`
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 `;
 
-const DocProgress = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 16px;
-  background: rgba(0, 68, 102, 0.05);
-  padding: 10px;
-  border-radius: 30px;
-  width: fit-content;
-
-  @media (max-width: 1300px) {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 4px;
-  }
-`;
-
-const ProgressDot = styled.div`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: ${(props) => (props.active ? "#004466" : "#cbd5e0")};
-  margin: 0 5px;
-  transition: all 0.3s ease;
-  box-shadow: ${(props) =>
-    props.active ? "0 0 6px rgba(0, 68, 102, 0.5)" : "none"};
-
-  ${(props) =>
-    props.active &&
-    `
-      transform: scale(1.4);
-    `}
-`;
 
 const ImageViewer = ({ 
   imageSrc, 
   altText, 
-  readyDocuments = [], 
-  currentIndex = 0 
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -262,14 +227,7 @@ const ImageViewer = ({
           onClick={() => handleImageClick(imageSrc)}
         />
 
-        <DocProgress>
-          {readyDocuments.map((_, index) => (
-            <ProgressDot
-              key={index}
-              active={index === currentIndex}
-            />
-          ))}
-        </DocProgress>
+        
       </ImageContainer>
 
       {isModalOpen && (
