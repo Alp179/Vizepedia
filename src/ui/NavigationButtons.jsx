@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import  { useEffect } from "react";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 const NavigationButton = styled.button`
@@ -42,11 +42,20 @@ const NavigationButton = styled.button`
   }
 
   &.left {
-    left: -60px;
+    left: 10px;
   }
 
   &.right {
-    right: -60px;
+    right: 10px;
+  }
+
+  @media (min-width: 681px) {
+    &.left {
+      left: 20px;
+    }
+    &.right {
+      right: 20px;
+    }
   }
 
   @media (max-width: 680px) {
@@ -55,6 +64,16 @@ const NavigationButton = styled.button`
     font-size: 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
+`;
+
+const NavigationButtonsContainer = styled.div`
+  position: fixed;
+  width: 100%;
+  height: 0;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  pointer-events: none;
 `;
 
 const NavigationButtons = ({ 
@@ -67,45 +86,43 @@ const NavigationButtons = ({
   useEffect(() => {
     // ActionButton ile NavigationButton'ları hizalama fonksiyonu
     const adjustNavigationButtons = () => {
-      if (window.innerWidth <= 680) {
-        const targetButton = document.querySelector(".action-button");
-        if (targetButton) {
-          const buttonRect = targetButton.getBoundingClientRect();
-          const leftButton = document.querySelector(".left");
-          const rightButton = document.querySelector(".right");
+      const targetButton = document.querySelector(".action-button");
+      if (targetButton) {
+        const buttonRect = targetButton.getBoundingClientRect();
+        const leftButton = document.querySelector(".left");
+        const rightButton = document.querySelector(".right");
+        const container = document.querySelector(".nav-buttons-container");
 
-          if (leftButton && rightButton) {
-            // Butonların yüksekliklerini targetButton ile hizala
-            const verticalCenter = buttonRect.top + buttonRect.height / 2;
+        if (leftButton && rightButton && container) {
+          // Butonların yüksekliklerini targetButton ile hizala
+          const verticalCenter = buttonRect.top + buttonRect.height / 2;
+          
+          container.style.top = `${verticalCenter}px`;
+          container.style.position = "fixed";
+          container.style.zIndex = "1000";
+          
+          // Mobil görünümde farklı stil
+          if (window.innerWidth <= 680) {
             const buttonRadius = 22.5; // Button height (45px) / 2
 
-            leftButton.style.position = "fixed";
-            leftButton.style.top = `${verticalCenter - buttonRadius}px`;
-            leftButton.style.transform = "none";
+            leftButton.style.position = "absolute";
+            leftButton.style.top = `${-buttonRadius}px`;
             leftButton.style.left = "10px";
 
-            rightButton.style.position = "fixed";
-            rightButton.style.top = `${verticalCenter - buttonRadius}px`;
-            rightButton.style.transform = "none";
+            rightButton.style.position = "absolute";
+            rightButton.style.top = `${-buttonRadius}px`;
             rightButton.style.right = "10px";
+          } else {
+            // Desktop görünümde stiller
+            leftButton.style.position = "absolute";
+            leftButton.style.top = "-25px"; // Button height (50px) / 2
+            leftButton.style.left = "20px";
+
+            rightButton.style.position = "absolute";
+            rightButton.style.top = "-25px"; // Button height (50px) / 2
+            rightButton.style.right = "20px";
           }
         }
-      } else {
-        // Desktop görünümde eski konumlarına getir
-        const navigationButtons = document.querySelectorAll(".left, .right");
-        navigationButtons.forEach((button) => {
-          button.style.position = "absolute";
-          button.style.top = "50%";
-          button.style.transform = "translateY(-50%)";
-
-          if (button.classList.contains("left")) {
-            button.style.left = "-60px";
-            button.style.right = "auto";
-          } else {
-            button.style.right = "-60px";
-            button.style.left = "auto";
-          }
-        });
       }
     };
 
@@ -129,11 +146,12 @@ const NavigationButtons = ({
   }, []);
 
   return (
-    <>
+    <NavigationButtonsContainer className="nav-buttons-container">
       <NavigationButton
         className="left"
         onClick={onPrevClick}
         disabled={isPrevDisabled}
+        style={{ pointerEvents: "auto" }}
       >
         &lt;
       </NavigationButton>
@@ -142,10 +160,11 @@ const NavigationButtons = ({
         className="right"
         onClick={onNextClick}
         disabled={isNextDisabled}
+        style={{ pointerEvents: "auto" }}
       >
         &gt;
       </NavigationButton>
-    </>
+    </NavigationButtonsContainer>
   );
 };
 

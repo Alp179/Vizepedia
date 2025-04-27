@@ -33,8 +33,11 @@ const PageContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
   height: 100%;
   padding: 25px;
+  position: relative;
 
   @media (max-width: 680px) {
     flex-direction: column;
@@ -42,9 +45,8 @@ const PageContainer = styled.div`
     height: 100%;
   }
   @media (max-width: 450px) {
-    width: 95%;
+    width: 100%;
     margin: 0 auto;
-    padding: 12px;
   }
 `;
 
@@ -57,7 +59,6 @@ const InfoContainer = styled.div`
   color: #333;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -71,20 +72,26 @@ const InfoContainer = styled.div`
   }
 `;
 
+const DocTitleCont = styled.div`
+  margin: 0 0 48px 32px;
+  @media (max-width: 600px) {
+    margin-left: 16px;
+  }
+`;
+
 const DocumentTitle = styled.h1`
   font-size: 42px;
-  max-width: 300px;
+  display: inline-block;
   font-weight: bold;
   color: var(--color-grey-52);
-  margin-bottom: 32px;
-  text-align: left;
-  display: inline-block;
+  text-wrap: wrap;
 
   @media (max-width: 600px) {
     font-size: 32px;
-    max-width: 60%;
     text-align: center;
-    display: block;
+  }
+  @media (max-width: 300px) {
+    font-size: 24px;
   }
 `;
 
@@ -93,13 +100,18 @@ const DocumentDescription = styled.p`
   display: flex;
   color: var(--color-grey-53);
   font-size: 24px;
+  width: 70%;
   line-height: 1.6;
   padding: 16px;
 
   @media (max-width: 680px) {
-    font-size: 16px;
+    margin-top: 0;
+    font-size: 20px;
     text-align: center;
     padding: 12px;
+  }
+  @media (max-width: 600px) {
+    width: 100%;
   }
 `;
 
@@ -146,6 +158,8 @@ const ActionButton = styled.button`
   width: auto;
   min-width: 200px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 100;
 
   &:hover {
     background-color: ${(props) => (props.isCompleted ? "#c0392b" : "#27ae60")};
@@ -157,6 +171,10 @@ const ActionButton = styled.button`
     padding: 14px;
     font-size: 16px;
     margin: 20px auto 0;
+  }
+
+  @media (max-width: 300px) {
+    min-width: 100px !important;
   }
 `;
 
@@ -171,9 +189,11 @@ const SourceButton = styled.button`
   color: white;
   border: 2px solid #00ffa2;
   border-radius: 16px;
-  width: auto;
+  width: 120px;
+  height: 60px;
   min-width: 150px;
   transition: all 0.3s ease;
+  font-size: 18px;
   position: relative;
   overflow: hidden;
 
@@ -212,6 +232,7 @@ const SourceButton = styled.button`
   @media (max-width: 680px) {
     font-size: 16px;
     padding: 12px 15px;
+    min-width: 100px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -236,7 +257,7 @@ const DocProgress = styled.div`
   align-items: center;
   justify-content: center;
   margin-top: 16px;
-  
+
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -393,68 +414,66 @@ const ReadyDocumentDetail = () => {
     : [];
 
   return (
-    <>
-      <PageContainer>
-        <NavigationButtons
-          onPrevClick={() => handleNavigation("prev")}
-          onNextClick={() => handleNavigation("next")}
-          isPrevDisabled={currentDocumentIndex === 0}
-          isNextDisabled={
-            !readyDocuments ||
-            currentDocumentIndex === readyDocuments.length - 1
-          }
-        />
+    <PageContainer>
+      <DocTitleCont>
         <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
+      </DocTitleCont>
+      <InfoContainer>
+        <MetaInfo>
+          {selectedDocument.docType && (
+            <MetaTag>{selectedDocument.docType}</MetaTag>
+          )}
+        </MetaInfo>
 
-        <InfoContainer>
-          <MetaInfo>
-            {selectedDocument.docType && (
-              <MetaTag>{selectedDocument.docType}</MetaTag>
-            )}
-          </MetaInfo>
-
-          <DocumentDescription>
-            <DescriptionLayout>
-              {selectedDocument.docDescription}
-              {selectedDocument.docSourceLink && (
-                <SourceButton
-                  id="sourceButton"
-                  onClick={() =>
-                    window.open(
-                      selectedDocument.docSourceLink,
-                      "_blank",
-                      "noopener,noreferrer"
-                    )
-                  }
-                >
-                  <span>Bağlantı</span>
-                </SourceButton>
-              )}
-              <ActionButton 
-                onClick={handleAction} 
-                isCompleted={isCompleted} 
-                className="action-button"
+        <DocumentDescription>
+          <DescriptionLayout>
+            {selectedDocument.docDescription}
+            {selectedDocument.docSourceLink && (
+              <SourceButton
+                id="sourceButton"
+                onClick={() =>
+                  window.open(
+                    selectedDocument.docSourceLink,
+                    "_blank",
+                    "noopener,noreferrer"
+                  )
+                }
               >
-                <span>{isCompleted ? "Tamamlandı" : "Tamamla"}</span>
-              </ActionButton>
-            </DescriptionLayout>
-          </DocumentDescription>
-          <ImageViewer
-            imageSrc={selectedDocument.docImage}
-            altText={selectedDocument.docName}
-            readyDocuments={readyDocuments}
-            currentIndex={currentDocumentIndex}
-          />
-        </InfoContainer>
+                <span>Bağlantı</span>
+              </SourceButton>
+            )}
+            <ActionButton
+              onClick={handleAction}
+              isCompleted={isCompleted}
+              className="action-button"
+            >
+              {isCompleted ? "Tamamlandı" : "Tamamla"}
+            </ActionButton>
+          </DescriptionLayout>
+        </DocumentDescription>
+        <ImageViewer
+          imageSrc={selectedDocument.docImage}
+          altText={selectedDocument.docName}
+          readyDocuments={readyDocuments}
+          currentIndex={currentDocumentIndex}
+        />
+      </InfoContainer>
 
-        {/* DocProgress component moved here from ImageViewer.jsx */}
-        <DocProgress>
-          {readyDocuments.map((_, index) => (
-            <ProgressDot key={index} active={index === currentDocumentIndex} />
-          ))}
-        </DocProgress>
-      </PageContainer>
-    </>
+      <DocProgress>
+        {readyDocuments.map((_, index) => (
+          <ProgressDot key={index} active={index === currentDocumentIndex} />
+        ))}
+      </DocProgress>
+
+      <NavigationButtons
+        onPrevClick={() => handleNavigation("prev")}
+        onNextClick={() => handleNavigation("next")}
+        isPrevDisabled={currentDocumentIndex === 0}
+        isNextDisabled={
+          !readyDocuments || currentDocumentIndex === readyDocuments.length - 1
+        }
+      />
+    </PageContainer>
   );
 };
 

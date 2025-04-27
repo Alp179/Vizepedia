@@ -28,6 +28,7 @@ const Main = styled.main`
   justify-content: space-between;
   flex: 1;
   position: relative;
+ 
   @media (max-width: 650px) {
     padding: 4rem 1rem;
   }

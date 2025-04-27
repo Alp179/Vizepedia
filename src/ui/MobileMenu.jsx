@@ -31,7 +31,6 @@ import {
 import {
   MenuIcon,
   MenuContainer,
-  CloseButton,
   MenuContents,
   ProfileInfoContainer,
   ProfileHeader,
@@ -301,9 +300,7 @@ const MobileMenu = () => {
         ref={menuRef}
       >
         {/* Kapatma Butonu */}
-        <CloseButton onClick={() => setIsOpen(false)} aria-label="Menüyü Kapat">
-          <IconClose />
-        </CloseButton>
+        
 
         <MenuContents>
           <div className="top-section">

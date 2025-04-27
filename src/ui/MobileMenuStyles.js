@@ -67,6 +67,12 @@ export const MenuIcon = styled.div`
   .ham.active .bottom {
     stroke-dashoffset: -64px;
   }
+
+  .ham.active {
+    transform: rotate(45deg);
+  }
+
+  
 `;
 
 // Ana menü konteyner
