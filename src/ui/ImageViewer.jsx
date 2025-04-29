@@ -34,7 +34,7 @@ const ImageContainer = styled.div`
   flex-direction: column;
   align-items: center;
   margin-left: 20px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  
   transition: all 0.3s ease;
 
   @media (max-width: 680px) {
