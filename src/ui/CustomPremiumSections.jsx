@@ -153,7 +153,7 @@ const Dot = styled.div`
   }
 `;
 
-// ContentPanel - Mobil için aşağı konumlandırma
+// ContentPanel - Z-index değeri 10'dan 20'ye yükseltildi, mobilde yazı kısmının daha önde görünmesi için
 const ContentPanel = styled.div`
   position: absolute;
   width: ${(props) => (props.isMobile ? "90%" : "40%")};
@@ -166,7 +166,7 @@ const ContentPanel = styled.div`
       ? "15%"
       : "35%"}; // Mobilde daha aşağı konumlandırma: 5%'ten 15%'e
   transform: translateY(${(props) => props.translateY || "0px"});
-  z-index: 10;
+  z-index: 20; // Z-index değeri 10'dan 20'ye yükseltildi - yazıların her zaman görsellerin üstünde kalması için
   transition: transform 0.8s ${(props) => props.theme.easing.default},
     opacity 0.8s ${(props) => props.theme.easing.default};
   opacity: ${(props) => (props.visible ? 1 : 0)};
@@ -274,7 +274,7 @@ const Description = styled.p`
   }
 `;
 
-// 3D Frame Effect - Kare görünüm ve daha yukarı konumlandırma için güncellendi
+// 3D Frame Effect - Z-index değeri düşürüldü ve mobil görünümde boyut küçültüldü
 const ThreeDFrame = styled.div`
   width: ${(props) => (props.isMobile ? "70%" : "35%")};
   height: ${(props) => (props.isMobile ? "35%" : "35vw")};
@@ -289,7 +289,7 @@ const ThreeDFrame = styled.div`
   ${(props) => props.isMobile && "left: 15%;"}
   transform: translateY(-50%) translateY(${(props) =>
     props.translateY || "0px"}) ${(props) => props.transform || ""};
-  z-index: 10;
+  z-index: 5; // Z-index 10'dan 5'e düşürüldü - içeriğin yazıların altında kalması için
   transition: transform 0.8s ${(props) => props.theme.easing.default},
     opacity 0.8s ${(props) => props.theme.easing.default};
   opacity: ${(props) => (props.visible ? 1 : 0)};
@@ -304,9 +304,9 @@ const ThreeDFrame = styled.div`
   }
 
   @media (max-width: 480px) {
-    width: 85%;
-    height: 85vw;
-    left: 5.5%;
+    width: 68%; // %16 küçültüldü 
+    height: 68vw; // %16 küçültüldü
+    left: 14.3%; // Ortalamak için ayarlandı
     top: 70%; // Mobilde daha da yukarı çekildi
     aspect-ratio: 1/1;
   }
@@ -513,6 +513,7 @@ const SwipeIndicator = styled.div`
     bottom: 0.6rem;
     font-size: 1.5rem; // Büyütüldü
     padding: 8px 20px; // Tıklama alanı genişletildi
+    z-index: 50; // Üstte görünmesi için z-index eklendi
   }
 
   svg {
@@ -523,13 +524,13 @@ const SwipeIndicator = styled.div`
     margin-right: 6px;
 
     @media (max-width: 480px) {
-      width: 24px; // Büyütüldü
-      height: 24px; // Büyütüldü
+      width: 20px; // %16 küçültüldü (24px - (24px * 0.16) ≈ 20px)
+      height: 20px; // %16 küçültüldü (24px - (24px * 0.16) ≈ 20px)
     }
   }
 `;
 
-// Model Display Component - Dark/Light mode için güncellendi
+// Model Display Component - Dark/Light mode için güncellendi ve mobil için boyut küçültüldü
 const ModelDisplay = ({ image, accentColor, isDarkMode }) => {
   return (
     <div
@@ -741,6 +742,12 @@ const CustomPremiumSections = ({ onComplete }) => {
       }
     };
   }, []);
+  
+  // Komponent yüklenirken mevcut mobil durumunu kontrol et
+  useEffect(() => {
+    // Sayfa yüklendiğinde mobil kontrolü
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
 
   // Komponent görünür alanı izleme
   useEffect(() => {
@@ -870,6 +877,27 @@ const CustomPremiumSections = ({ onComplete }) => {
 
     return { translateY, opacity };
   };
+
+  // Son section'a gelince onComplete çağrısını yapmak için bir kontrol ekleyelim
+  useEffect(() => {
+    if (currentSectionIndex === sections.length - 1 && typeof onComplete === "function") {
+      // Son section'a gelindiğinde başka bir tıklama veya kaydırma olursa onComplete çağrılsın
+      const handleLastSectionInteraction = () => {
+        onComplete();
+      };
+
+      const lastSection = sectionsRef.current[sections.length - 1];
+      if (lastSection) {
+        lastSection.addEventListener("click", handleLastSectionInteraction);
+      }
+
+      return () => {
+        if (lastSection) {
+          lastSection.removeEventListener("click", handleLastSectionInteraction);
+        }
+      };
+    }
+  }, [currentSectionIndex, onComplete, sections.length]);
 
   return (
     <ThemeProvider theme={theme}>
