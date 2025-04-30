@@ -1,7 +1,7 @@
-/* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from "react";
 import styled, { keyframes, ThemeProvider } from "styled-components";
-import { useDarkMode } from "../context/DarkModeContext"; // Dark mode context'i import ediyoruz
+import { useDarkMode } from "../context/DarkModeContext";
+import PropTypes from "prop-types"; // prop-types ekledik
 
 // Theme
 const theme = {
@@ -59,13 +59,13 @@ const SectionsContainer = styled.div`
   position: relative;
   width: 100%;
 `;
-
-// Section - Dark/Light mode için güncellendi
+// Section - min-height değeri ayarlandı ve içerik yerleşimi düzenlendi
 const Section = styled.section`
   position: relative;
   width: 100%;
   height: 100vh;
-  overflow: hidden;
+  min-height: 600px;
+  overflow: auto;
   background: ${(props) =>
     props.isDarkMode
       ? props.bgColor || "#090909"
@@ -80,11 +80,14 @@ const Section = styled.section`
   justify-content: center;
 
   @media (max-width: 768px) {
-    height: 100vh;
+    height: auto;
+    min-height: 100vh;
+    padding: 80px 15px; // 60px yerine 80px ile daha fazla boşluk
+    justify-content: center; // flex-start yerine center
   }
 `;
 
-// Progress Indicator - Dark/Light mode için güncellendi
+// Progress Indicator
 const ProgressIndicator = styled.div`
   position: fixed;
   right: 2rem;
@@ -108,7 +111,7 @@ const ProgressIndicator = styled.div`
   }
 `;
 
-// Dark/Light mode için güncellendi
+// Dot
 const Dot = styled.div`
   position: relative;
   width: 12px;
@@ -153,49 +156,46 @@ const Dot = styled.div`
   }
 `;
 
-// ContentPanel - Z-index değeri 10'dan 20'ye yükseltildi, mobilde yazı kısmının daha önde görünmesi için
+// ContentPanel - mobile görünümü için değiştirildi
+
+
 const ContentPanel = styled.div`
-  position: absolute;
-  width: ${(props) => (props.isMobile ? "90%" : "40%")};
+  position: ${props => props.isMobile ? "relative" : "absolute"};
+  width: ${(props) => (props.isMobile ? "100%" : "40%")};
   ${(props) =>
     !props.isMobile &&
     `${props.position === "left" ? "left: 10%;" : "right: 10%;"}`}
-  ${(props) => props.isMobile && "left: 5%;"}
-  top: ${(props) =>
-    props.isMobile
-      ? "15%"
-      : "35%"}; // Mobilde daha aşağı konumlandırma: 5%'ten 15%'e
-  transform: translateY(${(props) => props.translateY || "0px"});
-  z-index: 20; // Z-index değeri 10'dan 20'ye yükseltildi - yazıların her zaman görsellerin üstünde kalması için
+  ${(props) => props.isMobile && "left: 0;"}
+  top: ${(props) => (props.isMobile ? "0" : "35%")};
+  transform: translateY(${(props) => (props.isMobile ? "0" : props.translateY || "0px")});
+  z-index: 10;
   transition: transform 0.8s ${(props) => props.theme.easing.default},
     opacity 0.8s ${(props) => props.theme.easing.default};
   opacity: ${(props) => (props.visible ? 1 : 0)};
+  margin-bottom: ${props => props.isMobile ? "35px" : "0"}; // 20px yerine 35px
   animation: ${contentFadeIn} 0.8s ${(props) => props.theme.easing.spring}
     forwards;
 
   @media (max-width: 768px) {
-    width: 90%;
-    left: 5%;
+    width: 100%;
+    position: relative;
+    left: 0;
     right: auto;
-    top: 18%; // Daha aşağı konumlandırma: 8%'den 18%'e
-  }
-
-  @media (max-width: 480px) {
-    width: 90%;
-    left: 5%;
-    top: 15%; // Daha aşağı konumlandırma: 5%'ten 15%'e
+    top: 0;
+    transform: none;
+    margin-bottom: 35px; // 20px yerine 35px
   }
 `;
 
-// Title - Yazı boyutu %50 daha büyütüldü
+// Title - mobile görünümü için font size düzenlendi
 const Title = styled.h1`
-  font-size: 6.5rem; // %50 daha büyütüldü (önceki: 4.5rem)
+  font-size: 6.5rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;
   position: relative;
   margin-bottom: 1.2rem;
-
+  padding-bottom: 6px;
   background: linear-gradient(
     to right,
     ${(props) =>
@@ -214,21 +214,23 @@ const Title = styled.h1`
   animation: ${shimmer} 5s linear infinite;
 
   @media (max-width: 768px) {
-    font-size: 5.2rem; // %50 daha büyütüldü (önceki: 3.5rem)
+   
+    font-size: 4.2rem; // Küçültüldü - overflow önlemek için
     margin-bottom: 1rem;
+    margin-top: 4rem;
     line-height: 1;
   }
 
   @media (max-width: 480px) {
-    font-size: 5rem; // %50 daha büyütüldü (önceki: 3.3rem)
+    font-size: 3.5rem; // Daha da küçültüldü
     margin-bottom: 0.8rem;
     line-height: 1;
   }
 `;
 
-// Subtitle - Yazı boyutu %50 daha büyütüldü
+// Subtitle - mobile görünümü için font size düzenlendi
 const Subtitle = styled.h2`
-  font-size: 3rem; // %50 daha büyütüldü (önceki: 2rem)
+  font-size: 3rem;
   font-weight: 500;
   margin-bottom: 1.8rem;
   color: ${(props) =>
@@ -238,21 +240,21 @@ const Subtitle = styled.h2`
   position: relative;
 
   @media (max-width: 768px) {
-    font-size: 2.7rem; // %50 daha büyütüldü (önceki: 1.8rem)
+    font-size: 2.1rem; // Küçültüldü - overflow önlemek için
     margin-bottom: 1.2rem;
     line-height: 1.2;
   }
 
   @media (max-width: 480px) {
-    font-size: 2.7rem; // %50 daha büyütüldü (önceki: 1.8rem)
+    font-size: 1.9rem; // Daha da küçültüldü
     margin-bottom: 1rem;
     line-height: 1.2;
   }
 `;
 
-// Description - Yazı boyutu %50 daha büyütüldü
+// Description - mobile görünümü için font size düzenlendi
 const Description = styled.p`
-  font-size: 1.65rem; // %15 küçültüldü (önceki: 1.95rem)
+  font-size: 1.65rem;
   line-height: 1.6;
   position: relative;
   max-width: 95%;
@@ -262,57 +264,54 @@ const Description = styled.p`
       : props.lightColor || "rgba(0, 0, 0, 0.7)"};
 
   @media (max-width: 768px) {
-    font-size: 1.75rem; // %15 küçültüldü (önceki: 1.95rem)
-    line-height: 1.6;
+    font-size: 1.8rem; // Büyütüldü (1.4rem yerine)
+    line-height: 1.5;
     max-width: 100%;
   }
 
   @media (max-width: 480px) {
-    font-size: 1.6rem; // %15 küçültüldü (önceki: 2rem)
-    line-height: 1.6;
+    font-size: 1.7rem; // Büyütüldü (1.3rem yerine)
+    line-height: 1.4;
     max-width: 100%;
   }
 `;
 
-// 3D Frame Effect - Z-index değeri düşürüldü ve mobil görünümde boyut küçültüldü
 const ThreeDFrame = styled.div`
-  width: ${(props) => (props.isMobile ? "70%" : "35%")};
-  height: ${(props) => (props.isMobile ? "35%" : "35vw")};
-  position: absolute;
-  top: ${(props) =>
-    props.isMobile
-      ? "60%"
-      : "50%"}; // Daha yukarı konumlandırma için 70%'den 60%'e düşürüldü
+  width: ${(props) => (props.isMobile ? "65%" : "35%")}; // 70% yerine 65%
+  height: ${(props) => (props.isMobile ? "33vw" : "35vw")}; // 35vw yerine 33vw
+  position: ${props => props.isMobile ? "relative" : "absolute"};
+  top: ${(props) => (!props.isMobile ? "50%" : "auto")};
+  margin-top: ${props => props.isMobile ? "25px" : "0"}; // 20px yerine 25px
   ${(props) =>
     !props.isMobile &&
     `${props.position === "left" ? "left: 10%;" : "right: 10%;"}`}
-  ${(props) => props.isMobile && "left: 15%;"}
-  transform: translateY(-50%) translateY(${(props) =>
-    props.translateY || "0px"}) ${(props) => props.transform || ""};
-  z-index: 5; // Z-index 10'dan 5'e düşürüldü - içeriğin yazıların altında kalması için
+  ${(props) => props.isMobile && "left: auto;"}
+  transform: ${props => props.isMobile ? "none" : `translateY(-50%) translateY(${props.translateY || "0px"}) ${props.transform || ""}`};
+  z-index: 10;
   transition: transform 0.8s ${(props) => props.theme.easing.default},
     opacity 0.8s ${(props) => props.theme.easing.default};
   opacity: ${(props) => (props.visible ? 1 : 0)};
   aspect-ratio: 1/1;
 
   @media (max-width: 768px) {
-    width: 70%;
-    height: 70vw;
-    left: 15%;
-    top: 67%; // Mobilde de yukarı çekildi
+    width: 70%; // 60% -> 70% - orijinalden biraz küçük
+    height: auto;
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    margin: 0 auto;
     aspect-ratio: 1/1;
   }
 
   @media (max-width: 480px) {
-    width: 68%; // %16 küçültüldü 
-    height: 68vw; // %16 küçültüldü
-    left: 14.3%; // Ortalamak için ayarlandı
-    top: 70%; // Mobilde daha da yukarı çekildi
+    width: 80%; // 75% -> 80% - orijinalden biraz küçük
     aspect-ratio: 1/1;
   }
 `;
 
-// 3D Model Frame - Transform değerleri güncellendi
+
+// 3D Model Frame
 const ModelFrame = styled.div`
   width: 100%;
   height: 100%;
@@ -336,7 +335,7 @@ const ModelFrame = styled.div`
   }
 `;
 
-// Model Display Card - Border-radius değerleri güncellendi
+// Model Display Card
 const ModelCard = styled.div`
   width: 100%;
   height: 100%;
@@ -387,7 +386,8 @@ const ModelCard = styled.div`
         : "0 10px 25px rgba(0, 0, 0, 0.08)"};
   }
 `;
-// Scroll Arrow - Pozisyonu güncellendi
+
+// Scroll Arrow - mobile'da gösterilmeyecek
 const ScrollArrow = styled.div`
   position: absolute;
   bottom: 2rem;
@@ -411,25 +411,11 @@ const ScrollArrow = styled.div`
   }
 
   @media (max-width: 768px) {
-    bottom: 1.5rem;
-
-    svg {
-      width: 30px;
-      height: 30px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    bottom: 1rem;
-
-    svg {
-      width: 24px;
-      height: 24px;
-    }
+    display: none; // Mobile'da gösterme
   }
 `;
 
-// Background Effects - Dark/Light mode için güncellendi
+// Background Effects
 const BackgroundGlow = styled.div`
   position: absolute;
   width: ${(props) => props.size || "50vw"};
@@ -457,7 +443,7 @@ const BackgroundGlow = styled.div`
   }
 `;
 
-// Background Dots - Dark/Light mode için güncellendi
+// Background Dots
 const BackgroundDots = styled.div`
   position: absolute;
   top: 0;
@@ -477,10 +463,10 @@ const BackgroundDots = styled.div`
   }
 `;
 
-// Swipe Indicator - Tıklanabilir olarak güncellendi
+// Swipe Indicator - pozisyonu aşağıda, sabit
 const SwipeIndicator = styled.div`
-  position: absolute;
-  bottom: 1.8rem;
+  position: fixed;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   display: none;
@@ -488,16 +474,17 @@ const SwipeIndicator = styled.div`
   justify-content: center;
   color: ${(props) =>
     props.isDarkMode ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)"};
-  font-size: 1.2rem; // Büyütüldü
+  font-size: 1.2rem;
   letter-spacing: 0.5px;
   opacity: ${(props) => (props.hidden ? 0 : 1)};
   transition: opacity 0.5s ease, transform 0.3s ease;
-  padding: 8px 16px; // Click alanını genişletmek için padding eklendi
+  padding: 8px 16px;
   background-color: ${(props) =>
     props.isDarkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.3)"};
   backdrop-filter: blur(5px);
   border-radius: 20px;
-  cursor: pointer; // Pointer cursor gösterilmesi sağlandı
+  cursor: pointer;
+  z-index: 200; // Yüksek z-index ile her şeyin üzerinde
 
   &:hover {
     transform: translateX(-50%) translateY(3px);
@@ -505,32 +492,19 @@ const SwipeIndicator = styled.div`
 
   @media (max-width: 768px) {
     display: flex;
-    bottom: 0.8rem;
-    font-size: 1.4rem; // Büyütüldü
-  }
-
-  @media (max-width: 480px) {
-    bottom: 0.6rem;
-    font-size: 1.5rem; // Büyütüldü
-    padding: 8px 20px; // Tıklama alanı genişletildi
-    z-index: 50; // Üstte görünmesi için z-index eklendi
+    position: fixed;
   }
 
   svg {
-    width: 22px; // Büyütüldü
-    height: 22px; // Büyütüldü
+    width: 22px;
+    height: 22px;
     fill: ${(props) =>
       props.isDarkMode ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)"};
     margin-right: 6px;
-
-    @media (max-width: 480px) {
-      width: 20px; // %16 küçültüldü (24px - (24px * 0.16) ≈ 20px)
-      height: 20px; // %16 küçültüldü (24px - (24px * 0.16) ≈ 20px)
-    }
   }
 `;
 
-// Model Display Component - Dark/Light mode için güncellendi ve mobil için boyut küçültüldü
+// Model Display Component
 const ModelDisplay = ({ image, accentColor, isDarkMode }) => {
   return (
     <div
@@ -542,18 +516,18 @@ const ModelDisplay = ({ image, accentColor, isDarkMode }) => {
         justifyContent: "center",
         alignItems: "center",
         color: accentColor,
-        padding: "8%", // Görselin boyutunu artırmak için padding azaltıldı
+        padding: "8%",
       }}
     >
       <img
         src={image}
         alt="Feature visualization"
         style={{
-          width: "96%", // %20 artırıldı (80% → 96%)
-          height: "96%", // %20 artırıldı (80% → 96%)
-          objectFit: "contain", // İçeriği bozmadan sığdır
-          objectPosition: "center", // Merkeze hizala
-          borderRadius: "18px", // Görsele yuvarlatılmış köşeler eklendi
+          width: "96%",
+          height: "96%",
+          objectFit: "contain",
+          objectPosition: "center",
+          borderRadius: "18px",
           filter: `drop-shadow(0 0 20px ${accentColor}${
             isDarkMode ? "66" : "40"
           })`,
@@ -562,41 +536,43 @@ const ModelDisplay = ({ image, accentColor, isDarkMode }) => {
     </div>
   );
 };
-// Light mode için renk ayarlamaları
+
+// ModelDisplay için prop-types tanımla
+ModelDisplay.propTypes = {
+  image: PropTypes.string.isRequired,
+  accentColor: PropTypes.string.isRequired,
+  isDarkMode: PropTypes.bool.isRequired
+};
+
+// Light mode renk ayarlamaları
 const getLightModeColors = (accent) => {
   const colors = {
     "#6366F1": {
-      // mor için
       bg: "#f2f3ff",
       text: "#4f46e5",
       accent: "#4f46e5",
     },
     "#10B981": {
-      // yeşil için
       bg: "#f0fdf6",
       text: "#047857",
       accent: "#047857",
     },
     "#EC4899": {
-      // pembe için
       bg: "#fdf2f8",
       text: "#be185d",
       accent: "#be185d",
     },
     "#3B82F6": {
-      // mavi için
       bg: "#eff6ff",
       text: "#1d4ed8",
       accent: "#1d4ed8",
     },
     "#F59E0B": {
-      // turuncu için
       bg: "#fffbeb",
       text: "#b45309",
       accent: "#b45309",
     },
     "#8B5CF6": {
-      // mor için
       bg: "#f5f3ff",
       text: "#6d28d9",
       accent: "#6d28d9",
@@ -607,7 +583,7 @@ const getLightModeColors = (accent) => {
 };
 
 const CustomPremiumSections = ({ onComplete }) => {
-  const { isDarkMode } = useDarkMode(); // Dark mode durumunu alıyoruz
+  const { isDarkMode } = useDarkMode();
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -707,7 +683,7 @@ const CustomPremiumSections = ({ onComplete }) => {
     },
   ];
 
-  // Kullanıcının görüş alanına giren bölümleri izleyen Intersection Observer
+  // Intersection Observer
   useEffect(() => {
     const options = {
       root: null,
@@ -715,7 +691,6 @@ const CustomPremiumSections = ({ onComplete }) => {
       threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
     };
 
-    // Section görünürlüğünü takip et
     const handleIntersect = (entries) => {
       entries.forEach((entry) => {
         const index = parseInt(entry.target.dataset.index, 10);
@@ -729,7 +704,6 @@ const CustomPremiumSections = ({ onComplete }) => {
 
     observerRef.current = new IntersectionObserver(handleIntersect, options);
 
-    // Referansları kaydet ve observer ekle
     sectionsRef.current.forEach((section) => {
       if (section) {
         observerRef.current.observe(section);
@@ -742,14 +716,8 @@ const CustomPremiumSections = ({ onComplete }) => {
       }
     };
   }, []);
-  
-  // Komponent yüklenirken mevcut mobil durumunu kontrol et
-  useEffect(() => {
-    // Sayfa yüklendiğinde mobil kontrolü
-    setIsMobile(window.innerWidth <= 768);
-  }, []);
 
-  // Komponent görünür alanı izleme
+  // Visibility Observer
   useEffect(() => {
     const options = {
       root: null,
@@ -777,7 +745,7 @@ const CustomPremiumSections = ({ onComplete }) => {
     };
   }, []);
 
-  // Seçili section'a scroll
+  // Section scroll func
   const scrollToSection = (index) => {
     if (sectionsRef.current[index]) {
       sectionsRef.current[index].scrollIntoView({
@@ -787,7 +755,7 @@ const CustomPremiumSections = ({ onComplete }) => {
     }
   };
 
-  // Bir sonraki section'a scroll
+  // Next section scroll
   const scrollToNextSection = () => {
     if (currentSectionIndex < sections.length - 1) {
       scrollToSection(currentSectionIndex + 1);
@@ -796,7 +764,7 @@ const CustomPremiumSections = ({ onComplete }) => {
     }
   };
 
-  // Klavye navigasyonu
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "ArrowDown" || e.key === "ArrowRight") {
@@ -814,263 +782,252 @@ const CustomPremiumSections = ({ onComplete }) => {
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [currentSectionIndex, onComplete, sections.length]);
-
-  // Mobil swipe olaylarını yönet
-  const handleTouchStart = (e) => {
-    setTouchStart(e.targetTouches[0].clientY);
-  };
-
-  const handleTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientY);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isSwipeDown = distance < -50;
-    const isSwipeUp = distance > 50;
-
-    if (isSwipeUp) {
-      // Aşağı kaydırma - sonraki bölüm
-      if (currentSectionIndex < sections.length - 1) {
-        scrollToSection(currentSectionIndex + 1);
-      } else if (typeof onComplete === "function") {
-        onComplete();
-      }
-    } else if (isSwipeDown) {
-      // Yukarı kaydırma - önceki bölüm
-      if (currentSectionIndex > 0) {
-        scrollToSection(currentSectionIndex - 1);
-      }
-    }
-
-    // Dokunmatik durum sıfırlama
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
-
-  // Transform değerleri hesapla
-  const getTransformValues = (index) => {
-    const isCurrent = index === currentSectionIndex;
-    const isPrevious = index === currentSectionIndex - 1;
-    const isNext = index === currentSectionIndex + 1;
-
-    let translateY = "0px";
-    let opacity = 0;
-
-    if (isCurrent) {
-      translateY = "0px";
-      opacity = 1;
-    } else if (isPrevious) {
-      translateY = "-100px";
-      opacity = 0.3;
-    } else if (isNext) {
-      translateY = "100px";
-      opacity = 0.3;
-    }
-
-    return { translateY, opacity };
-  };
-
-  // Son section'a gelince onComplete çağrısını yapmak için bir kontrol ekleyelim
-  useEffect(() => {
-    if (currentSectionIndex === sections.length - 1 && typeof onComplete === "function") {
-      // Son section'a gelindiğinde başka bir tıklama veya kaydırma olursa onComplete çağrılsın
-      const handleLastSectionInteraction = () => {
-        onComplete();
-      };
-
-      const lastSection = sectionsRef.current[sections.length - 1];
-      if (lastSection) {
-        lastSection.addEventListener("click", handleLastSectionInteraction);
-      }
-
+      window.addEventListener("keydown", handleKeyDown);
       return () => {
-        if (lastSection) {
-          lastSection.removeEventListener("click", handleLastSectionInteraction);
-        }
+        window.removeEventListener("keydown", handleKeyDown);
       };
-    }
-  }, [currentSectionIndex, onComplete, sections.length]);
-
-  return (
-    <ThemeProvider theme={theme}>
-      <RootContainer
-        ref={containerRef}
-        onTouchStart={isMobile ? handleTouchStart : undefined}
-        onTouchMove={isMobile ? handleTouchMove : undefined}
-        onTouchEnd={isMobile ? handleTouchEnd : undefined}
-      >
-        <SectionsContainer>
-          {sections.map((section, index) => {
-            const { translateY, opacity } = getTransformValues(index);
-            const addRef = (el) => {
-              sectionsRef.current[index] = el;
-            };
-            const lightColors = getLightModeColors(section.accent);
-
-            return (
-              <Section
-                key={section.id}
-                ref={addRef}
-                data-index={index}
-                bgColor={section.bgColor}
-                lightBgColor={lightColors.bg}
-                isDarkMode={isDarkMode}
-              >
-                {/* Background Effects */}
-                <BackgroundDots isDarkMode={isDarkMode} />
-
-                <BackgroundGlow
-                  color={`${section.accent}40`}
-                  lightColor={`${lightColors.accent}15`}
-                  top="10%"
-                  right="10%"
-                  size="40vw"
-                  blur="70px"
-                  mobileBlur="40px"
-                  opacity="0.4"
+    }, [currentSectionIndex, onComplete, sections.length]);
+  
+    // Mobil swipe olaylarını yönet
+    const handleTouchStart = (e) => {
+      setTouchStart(e.targetTouches[0].clientY);
+    };
+  
+    const handleTouchMove = (e) => {
+      setTouchEnd(e.targetTouches[0].clientY);
+    };
+  
+    const handleTouchEnd = () => {
+      if (!touchStart || !touchEnd) return;
+  
+      const distance = touchStart - touchEnd;
+      const isSwipeDown = distance < -50;
+      const isSwipeUp = distance > 50;
+  
+      if (isSwipeUp) {
+        // Aşağı kaydırma - sonraki bölüm
+        if (currentSectionIndex < sections.length - 1) {
+          scrollToSection(currentSectionIndex + 1);
+        } else if (typeof onComplete === "function") {
+          onComplete();
+        }
+      } else if (isSwipeDown) {
+        // Yukarı kaydırma - önceki bölüm
+        if (currentSectionIndex > 0) {
+          scrollToSection(currentSectionIndex - 1);
+        }
+      }
+  
+      // Dokunmatik durum sıfırlama
+      setTouchStart(null);
+      setTouchEnd(null);
+    };
+  
+    // Transform değerleri hesapla
+    const getTransformValues = (index) => {
+      const isCurrent = index === currentSectionIndex;
+      const isPrevious = index === currentSectionIndex - 1;
+      const isNext = index === currentSectionIndex + 1;
+  
+      let translateY = "0px";
+      let opacity = 0;
+  
+      if (isCurrent) {
+        translateY = "0px";
+        opacity = 1;
+      } else if (isPrevious) {
+        translateY = "-100px";
+        opacity = 0.3;
+      } else if (isNext) {
+        translateY = "100px";
+        opacity = 0.3;
+      }
+  
+      return { translateY, opacity };
+    };
+  
+    return (
+      <ThemeProvider theme={theme}>
+        <RootContainer
+          ref={containerRef}
+          onTouchStart={isMobile ? handleTouchStart : undefined}
+          onTouchMove={isMobile ? handleTouchMove : undefined}
+          onTouchEnd={isMobile ? handleTouchEnd : undefined}
+        >
+          <SectionsContainer>
+            {sections.map((section, index) => {
+              const { translateY, opacity } = getTransformValues(index);
+              const addRef = (el) => {
+                sectionsRef.current[index] = el;
+              };
+              const lightColors = getLightModeColors(section.accent);
+  
+              return (
+                <Section
+                  key={section.id}
+                  ref={addRef}
+                  data-index={index}
+                  bgColor={section.bgColor}
+                  lightBgColor={lightColors.bg}
                   isDarkMode={isDarkMode}
-                />
-
-                <BackgroundGlow
-                  color={`${section.accent}30`}
-                  lightColor={`${lightColors.accent}10`}
-                  bottom="10%"
-                  left="10%"
-                  size="35vw"
-                  blur="60px"
-                  mobileBlur="35px"
-                  opacity="0.3"
-                  isDarkMode={isDarkMode}
-                />
-
-                {/* Text Content */}
-                {/* Text Content - ikonlar kaldırıldı */}
-                <ContentPanel
-                  position={section.textPositioning}
-                  translateY={translateY}
-                  visible={opacity > 0}
-                  isMobile={isMobile}
                 >
-                  {/* IconWrapper kaldırıldı */}
-
-                  <Title
-                    gradientStart="#fff"
-                    lightGradientStart="#000"
-                    gradientMid={section.accent}
-                    gradientEnd="#f5f5f5"
-                    lightGradientEnd="#333"
+                  {/* Background Effects */}
+                  <BackgroundDots isDarkMode={isDarkMode} />
+  
+                  <BackgroundGlow
+                    color={`${section.accent}40`}
+                    lightColor={`${lightColors.accent}15`}
+                    top="10%"
+                    right="10%"
+                    size="40vw"
+                    blur="70px"
+                    mobileBlur="40px"
+                    opacity="0.4"
                     isDarkMode={isDarkMode}
-                  >
-                    {section.title}
-                  </Title>
-
-                  <Subtitle
-                    color={`${section.accent}DD`}
-                    lightColor={lightColors.accent}
+                  />
+  
+                  <BackgroundGlow
+                    color={`${section.accent}30`}
+                    lightColor={`${lightColors.accent}10`}
+                    bottom="10%"
+                    left="10%"
+                    size="35vw"
+                    blur="60px"
+                    mobileBlur="35px"
+                    opacity="0.3"
                     isDarkMode={isDarkMode}
+                  />
+  
+                  {/* Text Content */}
+                  <ContentPanel
+                    position={section.textPositioning}
+                    translateY={translateY}
+                    visible={opacity > 0}
+                    isMobile={isMobile}
                   >
-                    {section.subtitle}
-                  </Subtitle>
-
-                  <Description
-                    isDarkMode={isDarkMode}
-                    color="rgba(255, 255, 255, 0.8)"
-                    lightColor="rgba(0, 0, 0, 0.7)"
-                  >
-                    {section.description}
-                  </Description>
-                </ContentPanel>
-
-                {/* 3D Model Display */}
-                <ThreeDFrame
-                  position={
-                    section.textPositioning === "left" ? "right" : "left"
-                  }
-                  translateY={translateY}
-                  visible={opacity > 0}
-                  transform={
-                    index === currentSectionIndex
-                      ? `rotateY(${
-                          section.textPositioning === "left"
-                            ? "15deg"
-                            : "-15deg"
-                        })`
-                      : ""
-                  }
-                  isMobile={isMobile}
-                >
-                  <ModelFrame>
-                    <ModelCard
-                      gradient={`linear-gradient(135deg, ${section.accent}15, ${section.accent}05)`}
-                      lightGradient={`linear-gradient(135deg, ${lightColors.accent}10, ${lightColors.accent}01)`}
-                      shine={`radial-gradient(circle at 70% 30%, ${section.accent}40, transparent 50%)`}
-                      lightShine={`radial-gradient(circle at 70% 30%, ${lightColors.accent}20, transparent 50%)`}
+                    <Title
+                      gradientStart="#fff"
+                      lightGradientStart="#000"
+                      gradientMid={section.accent}
+                      gradientEnd="#f5f5f5"
+                      lightGradientEnd="#333"
                       isDarkMode={isDarkMode}
                     >
-                      <ModelDisplay
-                        image={section.image}
-                        accentColor={
-                          isDarkMode ? section.accent : lightColors.accent
-                        }
+                      {section.title}
+                    </Title>
+  
+                    <Subtitle
+                      color={`${section.accent}DD`}
+                      lightColor={lightColors.accent}
+                      isDarkMode={isDarkMode}
+                    >
+                      {section.subtitle}
+                    </Subtitle>
+  
+                    <Description
+                      isDarkMode={isDarkMode}
+                      color="rgba(255, 255, 255, 0.8)"
+                      lightColor="rgba(0, 0, 0, 0.7)"
+                    >
+                      {section.description}
+                    </Description>
+                  </ContentPanel>
+  
+                  {/* 3D Model Display */}
+                  <ThreeDFrame
+                    position={
+                      section.textPositioning === "left" ? "right" : "left"
+                    }
+                    translateY={translateY}
+                    visible={opacity > 0}
+                    transform={
+                      index === currentSectionIndex
+                        ? `rotateY(${
+                            section.textPositioning === "left"
+                              ? "15deg"
+                              : "-15deg"
+                          })`
+                        : ""
+                    }
+                    isMobile={isMobile}
+                  >
+                    <ModelFrame
+                      rotate={
+                        isMobile
+                          ? "rotateY(0deg)"
+                          : section.textPositioning === "left"
+                          ? "rotateY(15deg)"
+                          : "rotateY(-15deg)"
+                      }
+                    >
+                      <ModelCard
+                        gradient={`linear-gradient(135deg, ${section.accent}15, ${section.accent}05)`}
+                        lightGradient={`linear-gradient(135deg, ${lightColors.accent}10, ${lightColors.accent}01)`}
+                        shine={`radial-gradient(circle at 70% 30%, ${section.accent}40, transparent 50%)`}
+                        lightShine={`radial-gradient(circle at 70% 30%, ${lightColors.accent}20, transparent 50%)`}
                         isDarkMode={isDarkMode}
-                      />
-                    </ModelCard>
-                  </ModelFrame>
-                </ThreeDFrame>
-
-                {/* Scroll Arrow - Son section'da gizle */}
-                {index === currentSectionIndex && !isMobile && (
-                  <ScrollArrow
-                    onClick={scrollToNextSection}
-                    hidden={index === sections.length - 1}
-                    isDarkMode={isDarkMode}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
-                    </svg>
-                  </ScrollArrow>
-                )}
-
-                {/* Swipe indicator - Sadece mobilde görünür ve tıklanabilir */}
-                {index === currentSectionIndex && isMobile && (
-                  <SwipeIndicator
-                    hidden={index === sections.length - 1}
-                    isDarkMode={isDarkMode}
-                    onClick={scrollToNextSection} // Tıklama ile kaydırma eklendi
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" transform="rotate(90 12 12)" />
-                    </svg>
-                    <span>Kaydır</span>
-                  </SwipeIndicator>
-                )}
-              </Section>
-            );
-          })}
-        </SectionsContainer>
-
-        {/* Progress Indicator */}
-        <ProgressIndicator visible={isVisible}>
-          {sections.map((_, index) => (
-            <Dot
-              key={index}
-              active={index === currentSectionIndex}
-              onClick={() => scrollToSection(index)}
-              isDarkMode={isDarkMode}
-            />
-          ))}
-        </ProgressIndicator>
-      </RootContainer>
-    </ThemeProvider>
-  );
-};
-
-export default CustomPremiumSections;
+                      >
+                        <ModelDisplay
+                          image={section.image}
+                          accentColor={
+                            isDarkMode ? section.accent : lightColors.accent
+                          }
+                          isDarkMode={isDarkMode}
+                        />
+                      </ModelCard>
+                    </ModelFrame>
+                  </ThreeDFrame>
+  
+                  {/* Scroll Arrow - Son section'da gizle */}
+                  {index === currentSectionIndex && !isMobile && (
+                    <ScrollArrow
+                      onClick={scrollToNextSection}
+                      hidden={index === sections.length - 1}
+                      isDarkMode={isDarkMode}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                      </svg>
+                    </ScrollArrow>
+                  )}
+  
+                  {/* Swipe indicator - Sadece mobilde görünür ve tıklanabilir */}
+                  {index === currentSectionIndex && (
+                    <SwipeIndicator
+                      hidden={index === sections.length - 1}
+                      isDarkMode={isDarkMode}
+                      onClick={scrollToNextSection}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" transform="rotate(90 12 12)" />
+                      </svg>
+                      <span>Kaydır</span>
+                    </SwipeIndicator>
+                  )}
+                </Section>
+              );
+            })}
+          </SectionsContainer>
+  
+          {/* Progress Indicator */}
+          <ProgressIndicator visible={isVisible}>
+            {sections.map((_, index) => (
+              <Dot
+                key={index}
+                active={index === currentSectionIndex}
+                onClick={() => scrollToSection(index)}
+                isDarkMode={isDarkMode}
+              />
+            ))}
+          </ProgressIndicator>
+        </RootContainer>
+      </ThemeProvider>
+    );
+  };
+  
+  // Ana bileşen için prop-types tanımlama
+  CustomPremiumSections.propTypes = {
+    onComplete: PropTypes.func
+  };
+  
+  export default CustomPremiumSections;
