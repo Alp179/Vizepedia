@@ -21,8 +21,6 @@ const MainContent = styled.div`
 
 // İçindekiler tablosunu sticky olmaktan çıkarıyoruz
 const TableOfContentsContainer = styled.div`
-  /* position: sticky; - Bu satırı kaldırdık */
-  /* top: 2rem; - Bu satırı kaldırdık */
   margin-bottom: 2rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 1rem;
@@ -32,24 +30,25 @@ const TableOfContentsContainer = styled.div`
   display: ${(props) => (props.headings.length > 1 && !props.hideTableOfContents ? "block" : "none")};
 
   @media (max-width: 768px) {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    width: 85%;
-    max-width: 400px;
-    max-height: 80vh;
-    overflow-y: auto;
-    display: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    opacity: 0;
-    transform: translate(-50%, -45%);
-
+    position: relative; // fixed'dan relative'e değiştirildi
+    top: auto; // Konumlandırma kaldırıldı
+    left: auto; // Konumlandırma kaldırıldı
+    transform: none; // Konumlandırma kaldırıldı
+    z-index: 1;
+    width: 100%; // 85%'den 100%'e değiştirildi
+    max-width: none; // Maksimum genişlik kaldırıldı
+    max-height: none; // Maksimum yükseklik kaldırıldı
+    overflow-y: visible; // Auto'dan visible'a değiştirildi
+    display: block; // none'dan block'a değiştirildi
+    opacity: 1; // Opacity kaldırıldı
+    margin-bottom: 2rem;
+    padding: 0; // Padding kaldırıldı
+    background: transparent; // Arkaplan kaldırıldı
+    box-shadow: none; // Gölge kaldırıldı
+    border: none; // Kenarlık kaldırıldı
+    
     &.visible {
-      display: ${(props) => (props.hideTableOfContents ? "none" : "block")};
-      opacity: 1;
-      transform: translate(-50%, -50%);
+      display: block;
     }
   }
 `;
@@ -66,12 +65,31 @@ const TableOfContentsTitle = styled.h3`
     width: 20px;
     height: 20px;
   }
+  
+  @media (max-width: 768px) {
+    display: none; // Mobil'de akordiyon başlığını gizle (buton onun yerine kullanılacak)
+  }
 `;
 
 const TableOfContentsList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  
+  @media (max-width: 768px) {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: none;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    padding: ${props => props.isOpen ? '0.8rem 0' : '0'};
+    max-height: ${props => props.isOpen ? '500px' : '0'};
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    opacity: ${props => props.isOpen ? '1' : '0'};
+    visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
+    margin-top: ${props => props.isOpen ? '0' : '-1px'}; // Kapalı olduğunda üst kenarlık görünmemesi için
+  }
 `;
 
 const TableOfContentsItem = styled.li`
@@ -100,20 +118,39 @@ const TableOfContentsItem = styled.li`
       opacity: 1;
     }
   }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 0.6rem;
+    
+    a {
+      padding: 0.4rem 1rem;
+      font-size: ${(props) => (props.level === 2 ? "15px" : "0.9rem")};
+    }
+  }
 `;
 
 // Bölüm stilleri
 const SectionContainer = styled.section`
   margin-bottom: 4rem;
+  scroll-margin-top: 100px; // Header için ek scroll margin
+  
+  @media (max-width: 768px) {
+    scroll-margin-top: 90px;
+  }
+  
+  @media (max-width: 450px) {
+    scroll-margin-top: 85px;
+  }
 `;
 
+// SectionTitle bileşeni tanımlaması
 const SectionTitle = styled.h2`
   font-size: 36px;
   font-weight: 600;
   margin: 3rem 0 1.5rem;
   color: var(--color-grey-600);
   letter-spacing: -0.02em;
-  scroll-margin-top: 2rem;
+  scroll-margin-top: 100px; // Header yüksekliği + ekstra boşluk için 100px
   position: relative;
 
   &::before {
@@ -130,6 +167,7 @@ const SectionTitle = styled.h2`
 
   @media (max-width: 768px) {
     font-size: 32px;
+    scroll-margin-top: 90px; // Mobil cihazlar için biraz daha az
 
     &::before {
       height: 1.75rem;
@@ -137,23 +175,24 @@ const SectionTitle = styled.h2`
   }
   @media (max-width: 450px) {
     font-size: 24px;
+    scroll-margin-top: 85px; // Daha küçük cihazlar için
   }
 `;
 
 const SectionContent = styled.div`
   margin-bottom: 2rem;
   font-size: 16px;
-  line-height: 1.8;
+  line-height: 1.6; // 1.8'den 1.6'ya düşürüldü
   color: var(--color-grey-600);
 
   p {
-    margin-bottom: 1.8rem;
+    margin-bottom: 1.4rem; // 1.8rem'den 1.4rem'e düşürüldü
   }
 
   h3 {
     font-size: 1.8rem;
     font-weight: 600;
-    margin: 2.5rem 0 1.2rem;
+    margin: 2.2rem 0 1rem; // 2.5rem 0 1.2rem'den düşürüldü
     color: var(--color-grey-600);
     letter-spacing: -0.01em;
     scroll-margin-top: 2rem;
@@ -162,7 +201,7 @@ const SectionContent = styled.div`
   blockquote {
     border-left: 5px solid #0071e3;
     padding: 1.5rem 0 1.5rem 2rem;
-    margin: 2.5rem 0;
+    margin: 2.2rem 0; // 2.5rem'den 2.2rem'e düşürüldü
     font-style: italic;
     font-size: 1.4rem;
     color: var(--color-grey-600);
@@ -172,12 +211,12 @@ const SectionContent = styled.div`
 
   ul,
   ol {
-    margin: 1.8rem 0 1.8rem 1rem;
+    margin: 1.4rem 0 1.4rem 1rem; // 1.8rem'den 1.4rem'e düşürüldü
     padding-left: 1.5rem;
   }
 
   li {
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.6rem; // 0.8rem'den 0.6rem'e düşürüldü
     position: relative;
   }
 
@@ -217,7 +256,7 @@ const SectionContent = styled.div`
     padding: 1.5rem;
     border-radius: 0.8rem;
     overflow-x: auto;
-    margin: 2rem 0;
+    margin: 1.8rem 0; // 2rem'den 1.8rem'e düşürüldü
     border: 1px solid rgba(255, 255, 255, 0.1);
 
     code {
@@ -229,7 +268,7 @@ const SectionContent = styled.div`
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 2rem 0;
+    margin: 1.8rem 0; // 2rem'den 1.8rem'e düşürüldü
     overflow: hidden;
     border-radius: 0.8rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -252,14 +291,21 @@ const SectionContent = styled.div`
 
   @media (max-width: 768px) {
     font-size: 16px;
+    line-height: 1.55; // Mobil için line-height daha da azaltıldı
 
     h3 {
       font-size: 1.5rem;
+      margin: 2rem 0 0.9rem; // Mobil için marjinler azaltıldı
     }
 
     blockquote {
       font-size: 1.2rem;
       padding: 1.2rem 0 1.2rem 1.5rem;
+      margin: 2rem 0; // Mobil için marjinler azaltıldı
+    }
+
+    p {
+      margin-bottom: 1.2rem; // Mobil için marjinler azaltıldı
     }
   }
 `;
@@ -287,7 +333,7 @@ const SectionImage = styled.div`
 // Meta Bilgiler ve Paylaşım
 const MetaSection = styled.div`
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: 4rem;
+  margin-top: 3.5rem; // 4rem'den 3.5rem'e düşürüldü
   padding-top: 2.5rem;
   display: flex;
   justify-content: space-between;
@@ -298,6 +344,8 @@ const MetaSection = styled.div`
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
+    margin-top: 3rem; // Mobil için daha küçük marjin
+    padding-top: 2rem; // Mobil için daha küçük padding
   }
 `;
 
@@ -355,65 +403,43 @@ const ShareButton = styled.button`
   }
 `;
 
-// Mobil için içindekiler toggle butonu
+// Mobil için içindekiler toggle butonu - akordiyon stili
 const TableToggleButton = styled.button`
-  display: ${(props) => (props.hideTableOfContents ? "none" : "none")};
+  display: none; // Varsayılan olarak gizli
   align-items: center;
   gap: 0.5rem;
   padding: 0.8rem 1.2rem;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
+  border-radius: ${props => props.isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem'};
   color: var(--color-grey-600);
   font-size: 16px!important;
   font-weight: 500;
   cursor: pointer;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
   width: 100%;
-  justify-content: center;
+  justify-content: space-between; // İçeriği yayar
+  transition: all 0.3s ease;
+  position: relative;
 
   svg {
     width: 18px;
     height: 18px;
+    transition: transform 0.3s ease;
+  }
+  
+  &.active {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 0;
+    
+    svg:last-child {
+      transform: rotate(180deg);
+    }
   }
 
   @media (max-width: 768px) {
     display: ${(props) => (props.hideTableOfContents ? "none" : "flex")};
-  }
-`;
-
-// Kapat butonu
-const CloseButton = styled.button`
-  display: none;
-  background: none;
-  border: none;
-  color: var(--color-grey-600);
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0;
-  margin-left: auto;
-  line-height: 1;
-
-  @media (max-width: 768px) {
-    display: block;
-  }
-`;
-
-// Overlay
-const Overlay = styled.div`
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-
-  @media (max-width: 768px) {
-    &.visible {
-      display: block;
-    }
   }
 `;
 
@@ -424,8 +450,11 @@ function BlogContentSection({
   setActiveHeading,
   hideTableOfContents = false,
 }) {
-  // Mobil cihazlar için içindekiler görünürlüğünü takip etmek için state
-  const [tableVisible, setTableVisible] = useState(false);
+  // Akordiyon açılma durumu için state
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  
+  // Başlıklara kaydırma için sabit header yüksekliği
+  const HEADER_HEIGHT = 80; // Blog header yüksekliği (piksel cinsinden)
 
   // Scroll olaylarını izleme - eğer BlogDetail.js'den aktif başlık gönderilmezse
   useEffect(() => {
@@ -456,23 +485,79 @@ function BlogContentSection({
     }
   }, [headings, setActiveHeading]);
 
-  // ESC tuşu ile mobil menüyü kapatma
+  // Sayfa değiştiğinde akordiyonu kapat
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape" && tableVisible) {
-        setTableVisible(false);
-      }
-    };
+    setIsAccordionOpen(false);
+  }, []);  // blog referansını kaldırıyorum, sayfa ilk yüklendiğinde çalışacak
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [tableVisible]);
+  // Geliştirilmiş smooth scroll fonksiyonu - header yüksekliğini hesaba katan
+  const scrollToHeadingWithOffset = (id) => {
+    const element = document.getElementById(id);
+
+    if (element) {
+      try {
+        // Header yüksekliği için ilave boşluk ekliyoruz
+        const headerOffset = HEADER_HEIGHT + 200; // Header + ekstra boşluk
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+        console.log("Scrolling to element:", id);
+        console.log("Header offset:", headerOffset);
+        console.log("Element position:", elementPosition);
+        console.log("Window scrollY:", window.scrollY);
+        console.log("Target position:", offsetPosition);
+
+        // Alternatif yöntem 1: scrollTo
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+        
+        // Alternatif yöntem 2: setTimeout ile bir an gecikme ekleyerek deneyelim
+        setTimeout(() => {
+          console.log("Fallback scroll attempt");
+          window.scroll({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+          
+          // Son çare: Alternatif yöntem 3: Native scrollIntoView with offset calculation
+          setTimeout(() => {
+            console.log("Last resort scroll attempt");
+            const scrolledY = window.scrollY;
+            
+            element.scrollIntoView({ behavior: "smooth" });
+            
+            if (scrolledY) {
+              window.scrollBy(0, -headerOffset);
+            }
+          }, 100);
+        }, 10);
+
+        // Aktif başlığı güncelleme (eğer dış state varsa)
+        if (setActiveHeading) {
+          setActiveHeading(id);
+        }
+
+        // Erişilebilirlik için başlığa odaklanma
+        setTimeout(() => {
+          element.setAttribute("tabindex", "-1");
+          element.focus({ preventScroll: true });
+        }, 600);
+      } catch (error) {
+        console.error("Error during scroll:", error);
+      }
+    } else {
+      console.warn("Element not found:", id);
+    }
+  };
 
   // Paylaşım fonksiyonları
   const shareOnTwitter = () => {
+    const title = blog?.title || "Blog İçeriği";
     window.open(
       `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-        blog.title
+        title
       )}&url=${encodeURIComponent(window.location.href)}`,
       "_blank"
     );
@@ -501,22 +586,41 @@ function BlogContentSection({
     alert("Link kopyalandı!");
   };
 
-  const tags = blog.tags ? blog.tags.split(",").map((tag) => tag.trim()) : [];
-
-  // İçindekiler mobil görünürlük toggla butonu
-  const toggleTableOfContents = () => {
-    setTableVisible(!tableVisible);
+  // Akordiyon açma/kapama fonksiyonu
+  const toggleAccordion = () => {
+    setIsAccordionOpen(!isAccordionOpen);
   };
+
+  const tags = blog?.tags ? blog.tags.split(",").map((tag) => tag.trim()) : [];
 
   return (
     <MainContent>
       {headings.length > 0 && !hideTableOfContents && (
         <>
-          {/* Mobil cihazlar için toggle buton */}
+          {/* Mobil cihazlar için akordiyon buton */}
           <TableToggleButton 
-            onClick={toggleTableOfContents} 
+            onClick={toggleAccordion} 
             hideTableOfContents={hideTableOfContents}
+            className={isAccordionOpen ? "active" : ""}
+            isOpen={isAccordionOpen}
           >
+            <span className="button-text">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ marginRight: "8px" }}
+              >
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
+              İçindekiler
+            </span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -526,22 +630,12 @@ function BlogContentSection({
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
+              <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
-            İçindekiler
           </TableToggleButton>
-
-          {/* Mobil overlay */}
-          <Overlay
-            className={tableVisible ? "visible" : ""}
-            onClick={() => setTableVisible(false)}
-          />
 
           <TableOfContentsContainer
             headings={headings}
-            className={tableVisible ? "visible" : ""}
             hideTableOfContents={hideTableOfContents}
           >
             <TableOfContentsTitle>
@@ -560,20 +654,19 @@ function BlogContentSection({
                 <line x1="21" y1="18" x2="7" y2="18"></line>
               </svg>
               İçindekiler
-              <CloseButton onClick={() => setTableVisible(false)}>
-                ×
-              </CloseButton>
             </TableOfContentsTitle>
-            <TableOfContentsList>
+            <TableOfContentsList isOpen={isAccordionOpen}>
               {headings.map((heading) => (
                 <TableOfContentsItem key={heading.id} level={heading.level}>
                   <a
                     href={`#${heading.id}`}
                     onClick={(e) => {
                       e.preventDefault();
-                      const element = document.getElementById(heading.id);
-                      if (element) {
-                        element.scrollIntoView({ behavior: "smooth" });
+                      // Yönlendirme fonksiyonunu çağırıyoruz
+                      scrollToHeadingWithOffset(heading.id);
+                      // Mobil cihazda akordiyon kapanır
+                      if (window.innerWidth <= 768) {
+                        setIsAccordionOpen(false);
                       }
                     }}
                     className={activeHeading === heading.id ? "active" : ""}
@@ -588,7 +681,7 @@ function BlogContentSection({
       )}
 
       {/* Bölüm 1 */}
-      {blog.section1_title && (
+      {blog?.section1_title && (
         <SectionContainer id="section1">
           <SectionTitle>{blog.section1_title}</SectionTitle>
           <SectionContent
@@ -603,7 +696,7 @@ function BlogContentSection({
       )}
 
       {/* Bölüm 2 */}
-      {blog.section2_title && (
+      {blog?.section2_title && (
         <SectionContainer id="section2">
           <SectionTitle>{blog.section2_title}</SectionTitle>
           <SectionContent
@@ -618,7 +711,7 @@ function BlogContentSection({
       )}
 
       {/* Bölüm 3 */}
-      {blog.section3_title && (
+      {blog?.section3_title && (
         <SectionContainer id="section3">
           <SectionTitle>{blog.section3_title}</SectionTitle>
           <SectionContent

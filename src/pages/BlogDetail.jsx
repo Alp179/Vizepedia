@@ -28,6 +28,7 @@ const PageContainer = styled.div`
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   font-size: 16px;
   color: var(--color-grey-600);
+  overflow-x: hidden; // Yatay kaydırmayı önlemek için eklendi
 
   @media (min-width: 768px) {
     font-size: 18px;
@@ -95,15 +96,20 @@ const HeroContent = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2.5rem;
+  padding: 0 4rem; // 3rem'den 4rem'e arttırıldı
   position: relative;
   z-index: 2;
   padding-bottom: 4rem;
   animation: ${fadeIn} 1.2s ease-in-out;
 
   @media (max-width: 768px) {
-    padding: 0 1.5rem;
+    padding: 0 3rem; // 2.5rem'den 3rem'e arttırıldı
     padding-bottom: 3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 2.5rem; // 2rem'den 2.5rem'e arttırıldı
+    padding-bottom: 2.5rem;
   }
 `;
 
@@ -130,6 +136,13 @@ const Category = styled.div`
   @media (max-width: 768px) {
     font-size: 1rem;
     padding: 0.6rem 1.2rem;
+    margin-bottom: 1.25rem; // Biraz daha küçük ekranlarda daha iyi marj
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
   }
 `;
 
@@ -199,7 +212,13 @@ const Title = styled.h1`
   }
 
   @media (max-width: 768px) {
-    font-size: 2.5rem;
+    font-size: 2.7rem; // 2.5rem'den 2.7rem'e arttırıldı
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2.3rem; // Daha küçük ekranlar için daha küçük boyut
+    margin-bottom: 1rem;
   }
 `;
 
@@ -209,7 +228,7 @@ const ContentSection = styled.div`
   justify-content: space-between;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 4.5rem 3rem;
+  padding: 4.5rem 4rem; // 3.5rem'den 4rem'e arttırıldı
   gap: 5rem;
 
   @media (max-width: 1400px) {
@@ -218,22 +237,27 @@ const ContentSection = styled.div`
   }
 
   @media (max-width: 1024px) {
-    padding: 3.5rem 2.5rem;
+    padding: 3.5rem 3.5rem; // 3rem'den 3.5rem'e arttırıldı
     gap: 3.5rem;
   }
 
   @media (max-width: 768px) {
     flex-direction: column;
-    padding: 2.5rem 1.5rem;
+    padding: 3rem 3rem; // 2.5rem'den 3rem'e arttırıldı
     gap: 3.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 2.5rem 2.5rem; // 2rem'den 2.5rem'e arttırıldı
+    gap: 3rem;
   }
 `;
 
 // Yukarı Kaydırma Butonu
 const ScrollToTop = styled.button`
   position: fixed;
-  bottom: 2.5rem;
-  right: 2.5rem;
+  bottom: 3.5rem; // 3rem'den 3.5rem'e arttırıldı
+  right: 3.5rem; // 3rem'den 3.5rem'e arttırıldı
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -265,10 +289,17 @@ const ScrollToTop = styled.button`
   }
 
   @media (max-width: 768px) {
-    bottom: 1.5rem;
-    right: 1.5rem;
-    width: 48px;
-    height: 48px;
+    bottom: 3rem; // 2.5rem'den 3rem'e arttırıldı
+    right: 3rem; // 2.5rem'den 3rem'e arttırıldı
+    width: 50px;
+    height: 50px;
+  }
+
+  @media (max-width: 480px) {
+    bottom: 2.5rem; // 2rem'den 2.5rem'e arttırıldı
+    right: 2.5rem; // 2rem'den 2.5rem'e arttırıldı
+    width: 46px;
+    height: 46px;
   }
 `;
 
@@ -488,7 +519,8 @@ function BlogDetail() {
           background: "var(--color-grey-909)",
           color: "var(--color-grey-600)",
           fontSize: "1.5rem",
-          padding: "2rem",
+          padding: "3rem", // 2rem'den 3rem'e arttırıldı
+          textAlign: "center",
         }}
       >
         Blog içeriği yüklenirken bir hata oluştu. Lütfen daha sonra tekrar
