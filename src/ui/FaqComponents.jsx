@@ -122,23 +122,24 @@ const FaqItemContainer = styled.div`
   &:nth-child(5) { animation: ${fadeIn} 0.7s ease-out; }
 `;
 
-// Soru başlığı konteynerı - şimdi tıklanabilir olarak ayarlandı
+// Soru başlığı konteynerı - padding-right değeri artırıldı ve media query'lerde ayarlandı
 const FaqHeader = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 24px 28px;
+  padding-right: 50px; /* '+' ikonu için daha fazla alan */
   background: transparent;
   text-align: left;
   font-size: 18px;
   font-weight: 600;
   color: var(--color-grey-904);
   transition: all 0.3s ease;
-  cursor: pointer; // Tıklanabilir olduğunu belirtmek için imleç stili
-  user-select: none; // Metin seçimini engelleyerek kullanıcı deneyimini iyileştirme
-  position: relative; // Açma/kapama göstergesi eklemek için
-  
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+
   &:after,
   &:before {
     content: '';
@@ -171,6 +172,7 @@ const FaqHeader = styled.div`
   
   @media (max-width: 768px) {
     padding: 18px 22px;
+    padding-right: 45px; /* Mobilde de yeterli alan sağla */
     font-size: 16px;
     
     &:before {
@@ -180,6 +182,10 @@ const FaqHeader = styled.div`
     &:after {
       right: 27px;
     }
+  }
+  
+  @media (max-width: 480px) {
+    padding-right: 40px; /* Daha küçük ekranlarda biraz daha azalt */
   }
   
   &:hover {

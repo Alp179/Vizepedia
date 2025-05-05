@@ -195,6 +195,7 @@ const Title = styled.h1`
   line-height: 1.1;
   position: relative;
   margin-bottom: 1.2rem;
+  padding-bottom: 4px;
 
   background: linear-gradient(
     to right,
