@@ -18,7 +18,7 @@ const RegionContainer = styled.div`
   }
 `;
 
-const RegionHeader = styled.button`
+const RegionHeader = styled.div`
   width: 100%;
   padding: 12px 16px;
   display: flex;
@@ -31,14 +31,17 @@ const RegionHeader = styled.button`
   font-size: 17px;
   font-weight: 600;
   color: var(--color-grey-800);
+  position: relative;
+  user-select: none;
   
   &:hover {
     background-color: rgba(0, 255, 162, 0.08);
   }
-  
-  &:focus {
-    outline: none;
-  }
+`;
+
+const StatusIndicator = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const ExpandIcon = styled.span`
@@ -46,13 +49,14 @@ const ExpandIcon = styled.span`
   width: 20px;
   height: 20px;
   position: relative;
+  margin-left: 8px;
   
   &::before,
   &::after {
     content: '';
     position: absolute;
     background-color: var(--color-grey-600);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
   &::before {
@@ -67,7 +71,7 @@ const ExpandIcon = styled.span`
     left: 9px;
     width: 2px;
     height: 12px;
-    transform: ${props => props.isOpen ? 'scaleY(0)' : 'scaleY(1)'};
+    transform: ${props => props.isOpen ? 'rotate(90deg) scale(0)' : 'rotate(0deg) scale(1)'};
   }
 `;
 
@@ -116,7 +120,6 @@ const CountryCount = styled.span`
   border-radius: 12px;
   padding: 2px 8px;
   font-size: 14px;
-  margin-left: 8px;
 `;
 
 const CountryTotal = styled.div`
@@ -167,24 +170,24 @@ const GroupedCountryList = () => {
   });
   
   const toggleGroup = (groupName) => {
-  setOpenGroups(prev => {
-    const newState = {
-      ...prev,
-      [groupName]: !prev[groupName]
-    };
-    
-    // Durum değiştikten sonra üst Faq komponenti yüksekliğini güncellemek için
-    // setTimeout kullanarak DOM'un güncellenmesini bekleyelim
-    setTimeout(() => {
-      // Global olarak tanımladığımız updateFaqContentHeight fonksiyonunu çağır
-      if (window.updateFaqContentHeight) {
-        window.updateFaqContentHeight();
-      }
-    }, 300); // Geçiş animasyonunun tamamlanması için yeterli süre (300ms)
-    
-    return newState;
-  });
-};
+    setOpenGroups(prev => {
+      const newState = {
+        ...prev,
+        [groupName]: !prev[groupName]
+      };
+      
+      // Durum değiştikten sonra üst Faq komponenti yüksekliğini güncellemek için
+      // setTimeout kullanarak DOM'un güncellenmesini bekleyelim
+      setTimeout(() => {
+        // Global olarak tanımladığımız updateFaqContentHeight fonksiyonunu çağır
+        if (window.updateFaqContentHeight) {
+          window.updateFaqContentHeight();
+        }
+      }, 300); // Geçiş animasyonunun tamamlanması için yeterli süre (300ms)
+      
+      return newState;
+    });
+  };
   
   // Toplam ülke sayısını hesapla
   const totalCountries = Object.values(groupedCountries).flat().length;
@@ -193,12 +196,13 @@ const GroupedCountryList = () => {
     <GroupedCountryContainer>
       {Object.entries(groupedCountries).map(([region, countries]) => (
         <RegionContainer key={region}>
+          {/* onClick olayını direkt RegionHeader'a taşıdık */}
           <RegionHeader onClick={() => toggleGroup(region)}>
             {region}
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <StatusIndicator>
               <CountryCount>{countries.length}</CountryCount>
               <ExpandIcon isOpen={openGroups[region]} />
-            </div>
+            </StatusIndicator>
           </RegionHeader>
           <CountriesContainer isOpen={openGroups[region]}>
             {countries.map((country, index) => (
@@ -214,8 +218,5 @@ const GroupedCountryList = () => {
     </GroupedCountryContainer>
   );
 };
-
-// PropTypes tanımını kaldırdık çünkü artık prop almıyoruz
-// Eğer prop kullanımı istenirse, yukardaki işlevsiz PropTypes tanımı yerine gerçek kullanım eklenebilir
 
 export default GroupedCountryList;

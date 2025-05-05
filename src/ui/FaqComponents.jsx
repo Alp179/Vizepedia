@@ -122,77 +122,74 @@ const FaqItemContainer = styled.div`
   &:nth-child(5) { animation: ${fadeIn} 0.7s ease-out; }
 `;
 
-const FaqHeader = styled.button`
+// Soru başlığı konteynerı - şimdi tıklanabilir olarak ayarlandı
+const FaqHeader = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 24px 28px;
   background: transparent;
-  border: none;
   text-align: left;
-  cursor: pointer!important;
   font-size: 18px;
   font-weight: 600;
   color: var(--color-grey-904);
   transition: all 0.3s ease;
-  outline: none;
-  border-radius: 12px;
+  cursor: pointer; // Tıklanabilir olduğunu belirtmek için imleç stili
+  user-select: none; // Metin seçimini engelleyerek kullanıcı deneyimini iyileştirme
+  position: relative; // Açma/kapama göstergesi eklemek için
+  
+  &:after,
+  &:before {
+    content: '';
+    position: absolute;
+    background-color: var(--color-grey-600);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  &:before {
+    width: 12px;
+    height: 2px;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  &:after {
+    width: 2px;
+    height: 12px;
+    right: 33px;
+    top: 50%;
+    transform: translateY(-50%) ${props => props.isOpen ? 'rotate(90deg) scale(0)' : 'rotate(0deg) scale(1)'};
+  }
+  
+  ${props => props.isOpen && `
+    &:before {
+      background-color: var(--color-grey-800);
+    }
+  `}
   
   @media (max-width: 768px) {
     padding: 18px 22px;
     font-size: 16px;
+    
+    &:before {
+      right: 22px;
+    }
+    
+    &:after {
+      right: 27px;
+    }
   }
   
   &:hover {
     background: rgba(0, 0, 0, 0.02);
     color: var(--color-grey-900);
   }
-  
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 255, 162, 0.2);
-  }
-`;
-
-const FaqIcon = styled.span`
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  position: relative;
-  flex-shrink: 0;
-  margin-left: 15px;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  background: ${({ isOpen }) => isOpen ? 'rgba(0, 68, 102, 0.1)' : 'rgba(0, 255, 162, 0.1)'};
-  
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    background-color: ${({ isOpen }) => isOpen ? 'var(--color-grey-800)' : 'var(--color-grey-600)'};
-    transition: all 0.3s ease;
-    border-radius: 1px;
-  }
-  
-  &::before {
-    top: 11px;
-    left: 6px;
-    width: 12px;
-    height: 2px;
-  }
-  
-  &::after {
-    top: 6px;
-    left: 11px;
-    width: 2px;
-    height: 12px;
-    transform: ${({ isOpen }) => (isOpen ? 'scaleY(0)' : 'scaleY(1)')};
-  }
 `;
 
 // isOpen prop için prop-types tanımı
-FaqIcon.propTypes = {
+FaqHeader.propTypes = {
   isOpen: PropTypes.bool
 };
 
@@ -201,6 +198,7 @@ const FaqContentWrapper = styled.div`
   max-height: ${({ isOpen, height }) => (isOpen ? `${height}px` : "0")};
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: ${({ isOpen }) => (isOpen ? "1" : "0")};
+  overflow: hidden;
   
   @media (max-width: 768px) {
     padding: ${({ isOpen }) => (isOpen ? "0 22px 22px" : "0 22px")};
@@ -290,13 +288,13 @@ const CountryItem = styled.div`
   }
 `;
 
+// Yeniden düzenlenmiş Faq bileşeni
 function Faq({ title, children }) {
   const [isOpen, setIsOpen] = useState(false);
   const [contentHeight, setContentHeight] = useState(0);
   const contentRef = useRef(null);
 
-   // GroupedCountryList'in içindeki açılır kapanır bileşenler açıldığında
-  // yüksekliği yeniden hesaplamak için bir fonksiyon
+  // İçerik yüksekliğini güncelleme fonksiyonu
   const updateContentHeight = useCallback(() => {
     if (contentRef.current && isOpen) {
       setContentHeight(contentRef.current.scrollHeight);
@@ -314,39 +312,39 @@ function Faq({ title, children }) {
   useEffect(() => {
     if (!contentRef.current || !isOpen) return;
 
-    // ResizeObserver, DOM elemanının boyutu değiştiğinde tetiklenir
     const resizeObserver = new ResizeObserver(() => {
       if (contentRef.current) {
         setContentHeight(contentRef.current.scrollHeight);
       }
     });
 
-    // contentRef'i izlemeye başla
     resizeObserver.observe(contentRef.current);
 
-    // Temizleme fonksiyonu
     return () => {
       resizeObserver.disconnect();
     };
   }, [isOpen]);
 
   // updateContentHeight fonksiyonunu global window nesnesine ekle
-  // böylece GroupedCountryList içinden çağrılabilir
   useEffect(() => {
     if (isOpen) {
       window.updateFaqContentHeight = updateContentHeight;
     }
     return () => {
-      // Component unmount olduğunda temizle
       window.updateFaqContentHeight = undefined;
     };
   }, [isOpen, updateContentHeight]);
 
+  // SADECE başlık için tıklama olayı
+  const toggleFaq = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <FaqItemContainer>
-      <FaqHeader isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
+      {/* onClick olayı artık SADECE başlık kısmında */}
+      <FaqHeader onClick={toggleFaq} isOpen={isOpen}>
         {title}
-        <FaqIcon isOpen={isOpen} />
       </FaqHeader>
       <FaqContentWrapper isOpen={isOpen} height={contentHeight}>
         <FaqContent ref={contentRef}>
