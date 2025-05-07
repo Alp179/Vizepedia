@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styled, { keyframes } from "styled-components";
+import PropTypes from 'prop-types';
 
 // Animasyonlar
 const slideUp = keyframes`
@@ -17,6 +18,7 @@ const slideUp = keyframes`
 const MainContent = styled.div`
   flex: 2;
   animation: ${slideUp} 0.8s ease-in-out;
+  position: relative; // ProgressIndicator için relative pozisyon
 `;
 
 // İçindekiler tablosunu sticky olmaktan çıkarıyoruz
@@ -443,113 +445,181 @@ const TableToggleButton = styled.button`
   }
 `;
 
+// Progress Indicator - Ekranın sağında sabit pozisyon
+const ProgressIndicator = styled.div`
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  z-index: 1000; /* Daha yüksek z-index değeri */
+  opacity: ${(props) => (props.visible ? 1 : 0)};
+  transition: opacity 0.5s ease;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px 8px;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  pointer-events: auto; /* Tıklanabilir olması için */
+`;
+
+// Dot komponenti - Daha görünür olması için iyileştirildi
+const Dot = styled.div`
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, ${(props) => (props.active ? 1 : 0.8)});
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: ${(props) => (props.active ? "6px" : "0")};
+    height: ${(props) => (props.active ? "6px" : "0")};
+    background-color: #fff;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  &:hover {
+    &::before {
+      width: 6px;
+      height: 6px;
+    }
+  }
+`;
+
 function BlogContentSection({
   blog,
   headings,
-  activeHeading,
-  setActiveHeading,
   hideTableOfContents = false,
 }) {
   // Akordiyon açılma durumu için state
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
+  // Progress indicator'ın görünürlüğü için state
+  const [isProgressVisible, setIsProgressVisible] = useState(false);
+  // Aktif bölüm için state
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   
-  // Başlıklara kaydırma için sabit header yüksekliği
-  const HEADER_HEIGHT = 80; // Blog header yüksekliği (piksel cinsinden)
-
-  // Scroll olaylarını izleme - eğer BlogDetail.js'den aktif başlık gönderilmezse
-  useEffect(() => {
-    if (!setActiveHeading) {
-      const handleScroll = () => {
-        if (headings.length > 0) {
-          const headingElements = headings.map((heading) =>
-            document.getElementById(heading.id)
-          );
-
-          // En son görünür başlığı bul
-          for (let i = headingElements.length - 1; i >= 0; i--) {
-            const element = headingElements[i];
-            if (element) {
-              const rect = element.getBoundingClientRect();
-              if (rect.top <= 150) {
-                // State'i bu bileşen içinde yönetmek istiyorsak:
-                // setActiveHeading(headings[i].id);
-                break;
-              }
-            }
-          }
-        }
-      };
-
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    }
-  }, [headings, setActiveHeading]);
+  // Bölüm referansları
+  const sectionsRef = useRef([]);
+  // Ana içerik referansı
+  const contentRef = useRef(null);
+  // Observer referansı
+  const observerRef = useRef(null);
 
   // Sayfa değiştiğinde akordiyonu kapat
   useEffect(() => {
     setIsAccordionOpen(false);
-  }, []);  // blog referansını kaldırıyorum, sayfa ilk yüklendiğinde çalışacak
 
-  // Geliştirilmiş smooth scroll fonksiyonu - header yüksekliğini hesaba katan
-  const scrollToHeadingWithOffset = (id) => {
-    const element = document.getElementById(id);
+    // Sayfa yüklendiğinde bölüm referanslarını hazırla
+    sectionsRef.current = [];
+    
+    // Mevcut bölümler
+    const sections = ['section1', 'section2', 'section3'].filter(id => 
+      document.getElementById(id)
+    );
+    
+    // Progress indicator'ı göster veya gizle
+    setIsProgressVisible(sections.length > 0);
 
-    if (element) {
-      try {
-        // Header yüksekliği için ilave boşluk ekliyoruz
-        const headerOffset = HEADER_HEIGHT + 200; // Header + ekstra boşluk
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.scrollY - headerOffset;
-
-        console.log("Scrolling to element:", id);
-        console.log("Header offset:", headerOffset);
-        console.log("Element position:", elementPosition);
-        console.log("Window scrollY:", window.scrollY);
-        console.log("Target position:", offsetPosition);
-
-        // Alternatif yöntem 1: scrollTo
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: "smooth",
-        });
-        
-        // Alternatif yöntem 2: setTimeout ile bir an gecikme ekleyerek deneyelim
-        setTimeout(() => {
-          console.log("Fallback scroll attempt");
-          window.scroll({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
-          
-          // Son çare: Alternatif yöntem 3: Native scrollIntoView with offset calculation
-          setTimeout(() => {
-            console.log("Last resort scroll attempt");
-            const scrolledY = window.scrollY;
-            
-            element.scrollIntoView({ behavior: "smooth" });
-            
-            if (scrolledY) {
-              window.scrollBy(0, -headerOffset);
-            }
-          }, 100);
-        }, 10);
-
-        // Aktif başlığı güncelleme (eğer dış state varsa)
-        if (setActiveHeading) {
-          setActiveHeading(id);
-        }
-
-        // Erişilebilirlik için başlığa odaklanma
-        setTimeout(() => {
-          element.setAttribute("tabindex", "-1");
-          element.focus({ preventScroll: true });
-        }, 600);
-      } catch (error) {
-        console.error("Error during scroll:", error);
+    return () => {
+      // Component unmount olduğunda observer'ı temizle
+      if (observerRef.current) {
+        observerRef.current.disconnect();
       }
-    } else {
-      console.warn("Element not found:", id);
+    };
+  }, [blog]);
+  
+  // Bölümleri izlemek için Intersection Observer kurulumu
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: "-50% 0px",
+      threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+    };
+
+    // Section görünürlüğünü takip et
+    const handleIntersect = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          const sectionIndex = ['section1', 'section2', 'section3'].indexOf(id);
+          if (sectionIndex !== -1) {
+            setCurrentSectionIndex(sectionIndex);
+          }
+        }
+      });
+    };
+
+    observerRef.current = new IntersectionObserver(handleIntersect, options);
+
+    // Bölüm elementlerini observer'a ekle
+    ['section1', 'section2', 'section3'].forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        observerRef.current.observe(element);
+      }
+    });
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [blog]);
+  
+  // Ana içeriğin görünürlüğünü izleyen observer
+  useEffect(() => {
+    const options = {
+      root: null,
+      rootMargin: "-20% 0px",
+      threshold: 0.1,
+    };
+
+    const handleContentVisibility = (entries) => {
+      entries.forEach((entry) => {
+        setIsProgressVisible(entry.isIntersecting);
+      });
+    };
+
+    const contentObserver = new IntersectionObserver(
+      handleContentVisibility,
+      options
+    );
+
+    if (contentRef.current) {
+      contentObserver.observe(contentRef.current);
     }
+
+    return () => {
+      contentObserver.disconnect();
+    };
+  }, []);
+
+  // Seçili bölüme kaydırma fonksiyonu
+  const scrollToSection = (index) => {
+    const sectionIds = ['section1', 'section2', 'section3'];
+    const sectionId = sectionIds[index];
+    const sectionElement = document.getElementById(sectionId);
+    
+    if (sectionElement) {
+      sectionElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  // Akordiyon açma/kapama fonksiyonu
+  const toggleAccordion = () => {
+    setIsAccordionOpen(!isAccordionOpen);
   };
 
   // Paylaşım fonksiyonları
@@ -586,15 +656,17 @@ function BlogContentSection({
     alert("Link kopyalandı!");
   };
 
-  // Akordiyon açma/kapama fonksiyonu
-  const toggleAccordion = () => {
-    setIsAccordionOpen(!isAccordionOpen);
-  };
-
   const tags = blog?.tags ? blog.tags.split(",").map((tag) => tag.trim()) : [];
 
+  // Bölümleri filtreleme (null olmayanları al)
+  const sections = [
+    blog?.section1_title ? { id: 'section1', title: blog.section1_title } : null,
+    blog?.section2_title ? { id: 'section2', title: blog.section2_title } : null,
+    blog?.section3_title ? { id: 'section3', title: blog.section3_title } : null,
+  ].filter(Boolean);
+
   return (
-    <MainContent>
+    <MainContent ref={contentRef}>
       {headings.length > 0 && !hideTableOfContents && (
         <>
           {/* Mobil cihazlar için akordiyon buton */}
@@ -658,26 +730,67 @@ function BlogContentSection({
             <TableOfContentsList isOpen={isAccordionOpen}>
               {headings.map((heading) => (
                 <TableOfContentsItem key={heading.id} level={heading.level}>
-                  <a
-                    href={`#${heading.id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      // Yönlendirme fonksiyonunu çağırıyoruz
-                      scrollToHeadingWithOffset(heading.id);
-                      // Mobil cihazda akordiyon kapanır
-                      if (window.innerWidth <= 768) {
-                        setIsAccordionOpen(false);
+                  <span
+                    style={{
+                      color: "var(--color-grey-600)",
+                      textDecoration: "none",
+                      display: "block",
+                      padding: "0.5rem 0.8rem",
+                      borderRadius: "0.5rem",
+                      transition: "all 0.2s ease",
+                      opacity: "0.85",
+                      cursor: "pointer",
+                      background: "transparent",
+                      border: "none"
+                    }}
+                    onClick={() => {
+                      // Heading ID'sine karşılık gelen section ID'sini bul ve ona kaydır
+                      const headingText = heading.text.toLowerCase();
+                      
+                      // Section başlıkları ile karşılaştır
+                      let targetId = null;
+                      if (blog?.section1_title && blog.section1_title.toLowerCase().includes(headingText)) {
+                        targetId = "section1";
+                      } else if (blog?.section2_title && blog.section2_title.toLowerCase().includes(headingText)) {
+                        targetId = "section2";
+                      } else if (blog?.section3_title && blog.section3_title.toLowerCase().includes(headingText)) {
+                        targetId = "section3";
+                      }
+                      
+                      // Eğer eşleşen bir section bulunduysa ona kaydır
+                      if (targetId) {
+                        const element = document.getElementById(targetId);
+                        if (element) {
+                          element.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                          });
+                          // Accordion'u kapat
+                          setIsAccordionOpen(false);
+                        }
                       }
                     }}
-                    className={activeHeading === heading.id ? "active" : ""}
                   >
                     {heading.text}
-                  </a>
+                  </span>
                 </TableOfContentsItem>
               ))}
             </TableOfContentsList>
           </TableOfContentsContainer>
         </>
+      )}
+
+      {/* Progress Indicator - Sadece 2+ bölüm varsa göster */}
+      {sections.length >= 2 && (
+        <ProgressIndicator visible={isProgressVisible}>
+          {sections.map((section, index) => (
+            <Dot
+              key={index}
+              active={index === currentSectionIndex}
+              onClick={() => scrollToSection(index)}
+            />
+          ))}
+        </ProgressIndicator>
       )}
 
       {/* Bölüm 1 */}
@@ -807,5 +920,40 @@ function BlogContentSection({
     </MainContent>
   );
 }
+
+// PropTypes tanımlaması
+BlogContentSection.propTypes = {
+  blog: PropTypes.shape({
+    title: PropTypes.string,
+    tags: PropTypes.string,
+    section1_title: PropTypes.string,
+    section1_content: PropTypes.string,
+    section1_image: PropTypes.string,
+    section2_title: PropTypes.string,
+    section2_content: PropTypes.string,
+    section2_image: PropTypes.string,
+    section3_title: PropTypes.string,
+    section3_content: PropTypes.string,
+    section3_image: PropTypes.string
+  }),
+  headings: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+      level: PropTypes.number.isRequired
+    })
+  ).isRequired,
+  activeHeading: PropTypes.string,
+  setActiveHeading: PropTypes.func,
+  hideTableOfContents: PropTypes.bool
+};
+
+// Varsayılan prop değerleri
+BlogContentSection.defaultProps = {
+  blog: {},
+  activeHeading: '',
+  setActiveHeading: null,
+  hideTableOfContents: false
+};
 
 export default BlogContentSection;

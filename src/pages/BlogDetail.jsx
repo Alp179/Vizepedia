@@ -7,7 +7,7 @@ import Footer from "../ui/Footer";
 import styled, { keyframes } from "styled-components";
 import SidebarBlogList from "../ui/SidebarBlogList";
 import BlogContentSection from "../ui/BlogContentSection";
-import PaginationDots from "../ui/PaginationDots"; // Yeni bileşen importu
+// PaginationDots import'u kaldırıldı
 
 // Animasyonlar
 const fadeIn = keyframes`
@@ -159,7 +159,7 @@ const BlogMeta = styled.div`
 `;
 
 const PublishDate = styled.div`
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   color: var(--color-grey-600);
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -179,7 +179,7 @@ const PublishDate = styled.div`
 `;
 
 const ReadTime = styled.div`
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   color: var(--color-grey-600);
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -374,40 +374,6 @@ function BlogDetail() {
     return headings;
   };
 
-  // Geliştirilmiş smooth scroll fonksiyonu
-  const scrollToHeading = (id) => {
-    console.log("scrollToHeading called with id:", id); // Debug için log
-    const element = document.getElementById(id);
-
-    if (element) {
-      console.log("Element found:", element); // Element bulundu mu?
-
-      // Başlık alanı için boşluk bırakıyoruz
-      const headerOffset = 120;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition =
-        elementPosition + window.pageYOffset - headerOffset;
-
-      console.log("Scrolling to position:", offsetPosition); // Scroll pozisyonu
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
-
-      // Aktif başlığı güncelleme
-      setActiveHeading(id);
-
-      // Erişilebilirlik için başlığa odaklanma
-      setTimeout(() => {
-        element.setAttribute("tabindex", "-1");
-        element.focus({ preventScroll: true });
-      }, 500);
-    } else {
-      console.warn("Element not found with id:", id); // Element bulunamadı
-    }
-  };
-
   // Sayfa scroll olaylarını izleme
   useEffect(() => {
     const handleScroll = () => {
@@ -448,19 +414,6 @@ function BlogDetail() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [headings, activeHeading]);
-
-  // History API olayları için izleyici (opsiyonel)
-  useEffect(() => {
-    const handlePopState = (event) => {
-      if (event.state && event.state.headingId) {
-        const id = event.state.headingId;
-        scrollToHeading(id);
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -534,9 +487,7 @@ function BlogDetail() {
     <PageContainer>
       <ReadingProgress progress={readingProgress} />
 
-      {headings.length > 0 && (
-        <PaginationDots headings={headings} activeHeading={activeHeading} />
-      )}
+      {/* PaginationDots bileşeni tamamen kaldırıldı */}
 
       <HeroSection>
         <HeroImage src={blog.cover_image} />
