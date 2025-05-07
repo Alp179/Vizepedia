@@ -448,20 +448,25 @@ const TableToggleButton = styled.button`
 // Progress Indicator - Ekranın sağında sabit pozisyon
 const ProgressIndicator = styled.div`
   position: fixed;
-  right: 20px;
+  right: 10px; 
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
-  z-index: 1000; /* Daha yüksek z-index değeri */
+  gap: 1rem;
+  z-index: 3000;
   opacity: ${(props) => (props.visible ? 1 : 0)};
   transition: opacity 0.5s ease;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 10px 8px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px 6px;
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  pointer-events: auto; /* Tıklanabilir olması için */
+  pointer-events: auto;
+  
+  @media (max-width: 480px) {
+    right: 5px;
+    padding: 8px 4px;
+  }
 `;
 
 // Dot komponenti - Daha görünür olması için iyileştirildi
@@ -513,31 +518,33 @@ function BlogContentSection({
   const contentRef = useRef(null);
   // Observer referansı
   const observerRef = useRef(null);
+  // Bölüm görünürlük durumlarını izlemek için ref
+  const sectionVisibilityRef = useRef({});
+
+  // Bölümleri filtreleme (null olmayanları al)
+  const sections = [
+    blog?.section1_title ? { id: 'section1', title: blog.section1_title } : null,
+    blog?.section2_title ? { id: 'section2', title: blog.section2_title } : null,
+    blog?.section3_title ? { id: 'section3', title: blog.section3_title } : null,
+  ].filter(Boolean);
 
   // Sayfa değiştiğinde akordiyonu kapat
   useEffect(() => {
     setIsAccordionOpen(false);
-
-    // Sayfa yüklendiğinde bölüm referanslarını hazırla
     sectionsRef.current = [];
+    setIsProgressVisible(false);
     
-    // Mevcut bölümler
-    const sections = ['section1', 'section2', 'section3'].filter(id => 
-      document.getElementById(id)
-    );
-    
-    // Progress indicator'ı göster veya gizle
-    setIsProgressVisible(sections.length > 0);
+    // Görünürlük ref'ini sıfırla
+    sectionVisibilityRef.current = {};
 
     return () => {
-      // Component unmount olduğunda observer'ı temizle
       if (observerRef.current) {
         observerRef.current.disconnect();
       }
     };
   }, [blog]);
   
-  // Bölümleri izlemek için Intersection Observer kurulumu
+  // Bölümleri izlemek için Intersection Observer kurulumu (aktif bölümü belirlemek için)
   useEffect(() => {
     const options = {
       root: null,
@@ -575,33 +582,79 @@ function BlogContentSection({
     };
   }, [blog]);
   
-  // Ana içeriğin görünürlüğünü izleyen observer
+  // Progress Indicator görünürlüğünü yöneten observer
   useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: "-20% 0px",
-      threshold: 0.1,
-    };
-
-    const handleContentVisibility = (entries) => {
-      entries.forEach((entry) => {
-        setIsProgressVisible(entry.isIntersecting);
-      });
-    };
-
-    const contentObserver = new IntersectionObserver(
-      handleContentVisibility,
-      options
-    );
-
-    if (contentRef.current) {
-      contentObserver.observe(contentRef.current);
+    // Sadece 2 veya daha fazla bölüm varsa Progress Indicator'ı göstermeyi düşün
+    if (sections.length < 2) {
+      setIsProgressVisible(false);
+      return;
     }
-
-    return () => {
-      contentObserver.disconnect();
+    
+    // Her bölüm için görünürlük takibi başlat
+    sections.forEach(section => {
+      sectionVisibilityRef.current[section.id] = false;
+    });
+    
+    // Tüm bölümlerin görünürlüğünü takip et (hem yukarı hem aşağı kaydırma için)
+    const visibilityObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = entry.target.id;
+          
+          // Bölüm görünürlüğünü güncelle (en az %10 görünür olmalı)
+          sectionVisibilityRef.current[id] = 
+            entry.isIntersecting && entry.intersectionRatio >= 0.1;
+        });
+        
+        // Herhangi bir bölüm yeterince görünür mü kontrol et
+        const anyVisible = Object.values(sectionVisibilityRef.current).some(isVisible => isVisible);
+        
+        // Indicator'ı görünürlük durumuna göre güncelle
+        setIsProgressVisible(anyVisible);
+      },
+      {
+        threshold: [0.1], // %10 eşiği
+        rootMargin: "0px"
+      }
+    );
+    
+    // Tüm bölümleri izle
+    sections.forEach(section => {
+      const element = document.getElementById(section.id);
+      if (element) {
+        visibilityObserver.observe(element);
+      }
+    });
+    
+    // Sayfanın en altına gelindiğinde kontrol et
+    const checkFooterVisibility = () => {
+      // Sayfanın en altındaysa ve tüm bölümler viewport'un üstünde kaldıysa (yani kaydırma sona erdiyse)
+      const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 50;
+      
+      if (isAtBottom) {
+        // Son bölümün konumunu kontrol et
+        const lastSectionId = sections[sections.length - 1].id;
+        const lastSectionElement = document.getElementById(lastSectionId);
+        
+        if (lastSectionElement) {
+          const rect = lastSectionElement.getBoundingClientRect();
+          // Son bölüm büyük oranda viewport dışındaysa
+          if (rect.bottom < window.innerHeight * 0.2) {
+            setIsProgressVisible(false);
+          }
+        }
+      }
     };
-  }, []);
+    
+    // Scroll olayını dinle
+    window.addEventListener('scroll', checkFooterVisibility);
+    
+    // Cleanup
+    return () => {
+      visibilityObserver.disconnect();
+      window.removeEventListener('scroll', checkFooterVisibility);
+    };
+  }, [sections]);
 
   // Seçili bölüme kaydırma fonksiyonu
   const scrollToSection = (index) => {
@@ -657,13 +710,6 @@ function BlogContentSection({
   };
 
   const tags = blog?.tags ? blog.tags.split(",").map((tag) => tag.trim()) : [];
-
-  // Bölümleri filtreleme (null olmayanları al)
-  const sections = [
-    blog?.section1_title ? { id: 'section1', title: blog.section1_title } : null,
-    blog?.section2_title ? { id: 'section2', title: blog.section2_title } : null,
-    blog?.section3_title ? { id: 'section3', title: blog.section3_title } : null,
-  ].filter(Boolean);
 
   return (
     <MainContent ref={contentRef}>
@@ -747,7 +793,7 @@ function BlogContentSection({
                       // Heading ID'sine karşılık gelen section ID'sini bul ve ona kaydır
                       const headingText = heading.text.toLowerCase();
                       
-                      // Section başlıkları ile karşılaştır
+                      // Section// Section başlıkları ile karşılaştır
                       let targetId = null;
                       if (blog?.section1_title && blog.section1_title.toLowerCase().includes(headingText)) {
                         targetId = "section1";
