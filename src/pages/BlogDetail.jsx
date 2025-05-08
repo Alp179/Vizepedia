@@ -140,7 +140,7 @@ const Category = styled.div`
   }
 
   @media (max-width: 480px) {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     padding: 0.5rem 1rem;
     margin-bottom: 1rem;
   }
@@ -217,7 +217,7 @@ const Title = styled.h1`
   }
 
   @media (max-width: 480px) {
-    font-size: 2.3rem; // Daha küçük ekranlar için daha küçük boyut
+    font-size: 2.5rem; // Daha küçük ekranlar için daha küçük boyut
     margin-bottom: 1rem;
   }
 `;
