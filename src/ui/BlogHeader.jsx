@@ -86,7 +86,7 @@ const BlogLogo = styled.img`
     width: 100px!important;
   }
   @media (max-width: 380px) {
-    width: 75px;
+    width: 75px!important;
   }
 `;
 
