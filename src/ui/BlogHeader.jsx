@@ -82,17 +82,11 @@ const BlogLogo = styled.img`
   @media (max-width: 910px) {
     width: 120px;
   }
-  @media (max-width: 710px) {
-    width: 100px;
-  }
-  @media (max-width: 470px) {
-    width: 80px;
+  @media (max-width: 870px) {
+    width: 100px!important;
   }
   @media (max-width: 380px) {
-    width: 80px;
-  }
-  @media (max-width: 300px) {
-    width: 70px;
+    width: 75px;
   }
 `;
 
@@ -118,14 +112,11 @@ const Logo = styled.img`
   @media (max-width: 910px) {
     width: 120px;
   }
-  @media (max-width: 710px) {
-    width: 75px;
-  }
-  @media (max-width: 470px) {
-    width: 60px;
+  @media (max-width: 732px) {
+    width: 98px;
   }
   @media (max-width: 380px) {
-    width: 60px;
+    width: 80px;
   }
 `;
 

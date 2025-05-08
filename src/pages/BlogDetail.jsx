@@ -62,7 +62,7 @@ const HeroSection = styled.div`
   }
 
   @media (max-width: 768px) {
-    height: 55vh;
+    height: 65vh;
     min-height: 420px;
   }
 `;

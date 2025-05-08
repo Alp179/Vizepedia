@@ -84,17 +84,35 @@ const NavigationButtons = ({
 }) => {
   
   useEffect(() => {
-    // ActionButton ile NavigationButton'ları hizalama fonksiyonu
+    // Butonları konumlandırma fonksiyonu
     const adjustNavigationButtons = () => {
       const targetButton = document.querySelector(".action-button");
-      if (targetButton) {
-        const buttonRect = targetButton.getBoundingClientRect();
-        const leftButton = document.querySelector(".left");
-        const rightButton = document.querySelector(".right");
-        const container = document.querySelector(".nav-buttons-container");
+      const leftButton = document.querySelector(".left");
+      const rightButton = document.querySelector(".right");
+      const container = document.querySelector(".nav-buttons-container");
+      
+      if (!leftButton || !rightButton || !container) return;
 
-        if (leftButton && rightButton && container) {
-          // Butonların yüksekliklerini targetButton ile hizala
+      // 710px değerine göre farklı konumlandırma
+      if (window.innerWidth > 710) {
+        // Büyük ekranlarda ekranın dikey ortasına hizala
+        container.style.top = "50%";
+        container.style.position = "fixed";
+        container.style.zIndex = "1000";
+        
+        const buttonRadius = window.innerWidth <= 680 ? 22.5 : 25; // Button height / 2
+
+        leftButton.style.position = "absolute";
+        leftButton.style.top = `${-buttonRadius}px`;
+        leftButton.style.left = window.innerWidth <= 680 ? "10px" : "20px";
+
+        rightButton.style.position = "absolute";
+        rightButton.style.top = `${-buttonRadius}px`;
+        rightButton.style.right = window.innerWidth <= 680 ? "10px" : "20px";
+      } else {
+        // 710px ve altında "Tamamla" butonuyla hizala
+        if (targetButton) {
+          const buttonRect = targetButton.getBoundingClientRect();
           const verticalCenter = buttonRect.top + buttonRect.height / 2;
           
           container.style.top = `${verticalCenter}px`;
@@ -113,7 +131,7 @@ const NavigationButtons = ({
             rightButton.style.top = `${-buttonRadius}px`;
             rightButton.style.right = "10px";
           } else {
-            // Desktop görünümde stiller
+            // 680px ile 710px arası görünümde stiller
             leftButton.style.position = "absolute";
             leftButton.style.top = "-25px"; // Button height (50px) / 2
             leftButton.style.left = "20px";
