@@ -31,12 +31,11 @@ const fadeIn = keyframes`
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   height: 100%;
-  padding: 25px;
+  padding: 30px;
   position: relative;
 
   @media (max-width: 680px) {
@@ -55,6 +54,9 @@ const InfoContainer = styled.div`
   padding: 30px;
   border-radius: 20px;
   display: flex;
+  flex-direction: row;
+  max-width: 1000px;
+  margin: 0 auto;
   justify-content: space-between;
   color: #333;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
@@ -63,31 +65,28 @@ const InfoContainer = styled.div`
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
 
-  @media (max-width: 680px) {
+  @media (max-width: 800px) {
+    flex-direction: column;
     padding: 20px;
     margin-bottom: 20px;
-  }
-  @media (max-width: 600px) {
-    flex-flow: column;
   }
 `;
 
 const DocTitleCont = styled.div`
-  margin: 0 0 48px 32px;
-  @media (max-width: 600px) {
-    margin-left: 16px;
-  }
+  margin: 0 0 20px 0;
+  text-align: center;
 `;
 
 const DocumentTitle = styled.h1`
-  font-size: 42px;
+  font-size: 36px;
   display: inline-block;
   font-weight: bold;
   color: var(--color-grey-52);
   text-wrap: wrap;
+  margin-bottom: 10px;
 
   @media (max-width: 600px) {
-    font-size: 32px;
+    font-size: 28px;
     text-align: center;
   }
   @media (max-width: 300px) {
@@ -95,37 +94,34 @@ const DocumentTitle = styled.h1`
   }
 `;
 
-const DocumentDescription = styled.p`
-  margin-top: 20px;
-  display: flex;
+const DocumentDescription = styled.div`
   color: var(--color-grey-53);
-  font-size: 24px;
-  width: 70%;
+  font-size: 18px;
+  width: 60%;
   line-height: 1.6;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
 
-  @media (max-width: 680px) {
-    margin-top: 0;
-    font-size: 20px;
+  @media (max-width: 800px) {
+    width: 100%;
+    order: 1;
     text-align: center;
     padding: 12px;
-  }
-  @media (max-width: 600px) {
-    width: 100%;
+    margin-top: 0;
   }
 `;
 
 const MetaTag = styled.span`
   display: inline-flex;
   align-items: center;
-
+  background-color: rgba(255, 255, 255, 0.2);
   color: #004466;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
   margin-right: 12px;
   font-weight: 600;
-
   transition: all 0.3s ease;
 
   &:hover {
@@ -136,6 +132,18 @@ const MetaTag = styled.span`
   svg {
     margin-right: 5px;
     color: #00ffa2;
+  }
+`;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  
+  @media (max-width: 680px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
   }
 `;
 
@@ -151,10 +159,7 @@ const ActionButton = styled.button`
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
-  margin-top: 25px;
   transition: background-color 0.3s ease;
-  margin-left: auto;
-  margin-right: auto;
   width: auto;
   min-width: 200px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -170,7 +175,6 @@ const ActionButton = styled.button`
     max-width: 200px;
     padding: 14px;
     font-size: 16px;
-    margin: 20px auto 0;
   }
 
   @media (max-width: 300px) {
@@ -183,7 +187,6 @@ const SourceButton = styled.button`
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  margin-top: 25px;
   padding: 15px 20px;
   background-color: #004466;
   color: white;
@@ -241,36 +244,25 @@ const SourceButton = styled.button`
 const MetaInfo = styled.div`
   display: flex;
   flex-wrap: wrap;
-  background: var(--color-grey-51);
   gap: 10px;
-  border-radius: 24px;
-  box-sizing: border-box;
-  position: relative;
+  margin-bottom: 15px;
+  justify-content: center;
   animation: ${fadeIn} 0.5s ease-in-out;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-  margin-top: 16px;
 `;
 
-// DocProgress component moved from ImageViewer.jsx
 const DocProgress = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 16px;
-
   background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
   padding: 10px;
   border-radius: 30px;
+  margin: 0 auto 15px;
   width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
+  z-index: 10;
 
-  @media (max-width: 1300px) {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 4px;
+  @media (max-width: 680px) {
+    margin: 10px auto;
   }
 `;
 
@@ -290,9 +282,29 @@ const ProgressDot = styled.div`
       transform: scale(1.4);
     `}
 `;
+
 const DescriptionLayout = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
+`;
+
+const MainText = styled.div`
+  flex: 1;
+  margin-bottom: 20px;
+`;
+
+const ImageContainer = styled.div`
+  width: 35%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  @media (max-width: 800px) {
+    width: 100%;
+    order: 2;
+    margin: 20px auto;
+  }
 `;
 
 const ReadyDocumentDetail = () => {
@@ -415,56 +427,6 @@ const ReadyDocumentDetail = () => {
 
   return (
     <PageContainer>
-      <DocTitleCont>
-        <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
-      </DocTitleCont>
-      <InfoContainer>
-        <MetaInfo>
-          {selectedDocument.docType && (
-            <MetaTag>{selectedDocument.docType}</MetaTag>
-          )}
-        </MetaInfo>
-
-        <DocumentDescription>
-          <DescriptionLayout>
-            {selectedDocument.docDescription}
-            {selectedDocument.docSourceLink && (
-              <SourceButton
-                id="sourceButton"
-                onClick={() =>
-                  window.open(
-                    selectedDocument.docSourceLink,
-                    "_blank",
-                    "noopener,noreferrer"
-                  )
-                }
-              >
-                <span>Bağlantı</span>
-              </SourceButton>
-            )}
-            <ActionButton
-              onClick={handleAction}
-              isCompleted={isCompleted}
-              className="action-button"
-            >
-              {isCompleted ? "Tamamlandı" : "Tamamla"}
-            </ActionButton>
-          </DescriptionLayout>
-        </DocumentDescription>
-        <ImageViewer
-          imageSrc={selectedDocument.docImage}
-          altText={selectedDocument.docName}
-          readyDocuments={readyDocuments}
-          currentIndex={currentDocumentIndex}
-        />
-      </InfoContainer>
-
-      <DocProgress>
-        {readyDocuments.map((_, index) => (
-          <ProgressDot key={index} active={index === currentDocumentIndex} />
-        ))}
-      </DocProgress>
-
       <NavigationButtons
         onPrevClick={() => handleNavigation("prev")}
         onNextClick={() => handleNavigation("next")}
@@ -473,6 +435,63 @@ const ReadyDocumentDetail = () => {
           !readyDocuments || currentDocumentIndex === readyDocuments.length - 1
         }
       />
+      
+      <DocProgress>
+        {readyDocuments.map((_, index) => (
+          <ProgressDot key={index} active={index === currentDocumentIndex} />
+        ))}
+      </DocProgress>
+      
+      <DocTitleCont>
+        <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
+        <MetaInfo>
+          {selectedDocument.docType && (
+            <MetaTag>{selectedDocument.docType}</MetaTag>
+          )}
+        </MetaInfo>
+      </DocTitleCont>
+      
+      <InfoContainer>
+        <DocumentDescription>
+          <DescriptionLayout>
+            <MainText>{selectedDocument.docDescription}</MainText>
+            
+            <ButtonsContainer>
+              {selectedDocument.docSourceLink && (
+                <SourceButton
+                  id="sourceButton"
+                  onClick={() =>
+                    window.open(
+                      selectedDocument.docSourceLink,
+                      "_blank",
+                      "noopener,noreferrer"
+                    )
+                  }
+                >
+                  <span>Bağlantı</span>
+                </SourceButton>
+              )}
+            
+              <ActionButton
+                onClick={handleAction}
+                isCompleted={isCompleted}
+                className="action-button"
+              >
+                {isCompleted ? "Tamamlandı" : "Tamamla"}
+              </ActionButton>
+            </ButtonsContainer>
+          </DescriptionLayout>
+        </DocumentDescription>
+        
+        <ImageContainer>
+          <ImageViewer
+            imageSrc={selectedDocument.docImage}
+            altText={selectedDocument.docName}
+            readyDocuments={readyDocuments}
+            currentIndex={currentDocumentIndex}
+          />
+        </ImageContainer>
+      </InfoContainer>
     </PageContainer>
   );
 };

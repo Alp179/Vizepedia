@@ -18,10 +18,10 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   height: 100%;
-  padding: 25px;
+  padding: 30px;
   position: relative;
 
   @media (max-width: 680px) {
@@ -41,6 +41,7 @@ const InfoContainer = styled.div`
   border-radius: 20px;
   display: flex;
   max-width: 1000px;
+  margin: 0 auto;
   justify-content: space-between;
   color: #333;
   transition: all 0.3s ease;
@@ -55,28 +56,31 @@ const InfoContainer = styled.div`
 `;
 
 const DocTitleCont = styled.div`
-  margin: 0 0 0 32px;
+  margin: 0 0 20px 32px;
+  text-align: center;
   @media (max-width: 600px) {
     margin-left: 16px;
   }
 `;
 
 const DocumentTitle = styled.h1`
-  font-size: 42px;
+  font-size: 36px;
   display: inline-block;
   font-weight: bold;
   color: var(--color-grey-52);
   text-wrap: wrap;
+  margin-bottom: 10px;
 
   @media (max-width: 600px) {
-    font-size: 32px;
+    font-size: 28px;
     text-align: center;
   }
   @media (max-width: 300px) {
     font-size: 24px;
   }
 `;
-const DocumentDescription = styled.p`
+
+const DocumentDescription = styled.div`
   margin-top: 20px;
   color: var(--color-grey-53);
   font-size: 18px;
@@ -84,15 +88,25 @@ const DocumentDescription = styled.p`
   padding: 16px;
   border-radius: 12px;
   display: flex;
+  gap: 25px;
+  flex-direction: row-reverse;
 
   @media (max-width: 800px) {
     flex-flow: column;
+    gap: 15px;
+    margin-top: 10px;
   }
 `;
 
 const DescriptionLayout = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
+  gap: 18px;
+
+  @media (max-width: 800px) {
+    order: 1;
+  }
 `;
 
 const MetaTag = styled.span`
@@ -119,7 +133,6 @@ const SourceButton = styled.button`
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  margin-top: 25px;
   padding: 15px 20px;
   background-color: #004466;
   color: white;
@@ -174,6 +187,18 @@ const SourceButton = styled.button`
   }
 `;
 
+const ButtonsContainer = styled.div`
+  display: flex;
+  gap: 15px;
+  margin-top: 5px;
+  
+  @media (max-width: 680px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+`;
+
 const ActionButton = styled.button`
   display: flex;
   align-items: center;
@@ -186,10 +211,7 @@ const ActionButton = styled.button`
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
-  margin-top: 25px;
   transition: background-color 0.3s ease;
-  margin-left: auto;
-  margin-right: auto;
   width: auto;
   min-width: 200px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -205,7 +227,6 @@ const ActionButton = styled.button`
     max-width: 200px;
     padding: 14px;
     font-size: 16px;
-    margin: 20px auto 0;
   }
 
   @media (max-width: 300px) {
@@ -217,6 +238,8 @@ const MetaInfo = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  margin-bottom: 15px;
+  justify-content: center;
 `;
 
 const SectionContainer = styled.div`
@@ -254,32 +277,16 @@ const SourceSectionContainer = styled.div`
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  position: absolute;
-  bottom: 40px;
-  right: 30px;
-  width: 300px;
-  z-index: 10;
+  margin-bottom: 20px;
 
-  @media (max-width: 1150px) {
-    width: 250px;
-  }
-
-  @media (max-width: 1060px) {
-    position: relative;
-    width: 100%;
-    right: 0;
-    bottom: 0;
-    margin-left: 12px;
-  }
-
-  @media (max-width: 800px) {
-    margin-left: 0;
-  }
-  
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     background-color: rgba(142, 68, 173, 0.05);
+  }
+  
+  @media (max-width: 800px) {
+    order: 6;
   }
 `;
 
@@ -300,7 +307,6 @@ const SectionContent = styled.div`
   line-height: 1.6;
 `;
 
-// DocProgress component moved from ImageViewer.jsx
 const DocProgress = styled.div`
   display: flex;
   align-items: center;
@@ -308,24 +314,14 @@ const DocProgress = styled.div`
   background: rgba(255, 255, 255, 0.2);
   padding: 10px;
   border-radius: 30px;
-  margin-top: 32px;
+  margin: 0 auto 10px;
   width: fit-content;
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
   z-index: 10;
-
-  @media (max-width: 1300px) {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 4px;
-  }
 
   @media (max-width: 680px) {
     position: static;
     transform: none;
-    margin: 20px auto 10px;
+    margin: 10px auto;
   }
 `;
 
@@ -365,14 +361,43 @@ const MainText = styled.div`
       background-color: rgba(142, 68, 173, 0.05);
     `}
   }
+
+  @media (max-width: 800px) {
+    order: 1;
+    margin-top: 0;
+  }
 `;
 
 const SideComponents = styled.div`
   display: flex;
   width: 40%;
   flex-direction: column;
+  gap: 20px;
+  
   @media (max-width: 800px) {
     width: 100%;
+    order: 5;
+  }
+`;
+
+// Dikkat ve Temin Yeri bölümleri için özel stilizasyonlar
+const AttentionSection = styled(SectionContainer)`
+  margin-top: 0;
+  @media (max-width: 800px) {
+    order: 2;
+  }
+`;
+
+const LocationSection = styled(SectionContainer)`
+  margin-top: 18px;
+  @media (max-width: 800px) {
+    order: 3;
+  }
+`;
+
+const StyledButtonsContainer = styled(ButtonsContainer)`
+  @media (max-width: 800px) {
+    order: 4;
   }
 `;
 
@@ -519,67 +544,116 @@ const WithUsDocumentDetail = () => {
             currentDocumentIndex === withusDocuments.length - 1
           }
         />
+        
+        <DocProgress>
+          {withusDocuments.map((_, index) => (
+            <ProgressDot key={index} active={index === currentDocumentIndex} />
+          ))}
+        </DocProgress>
+        
         <DocTitleCont>
           <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
+          <MetaInfo>
+            <MetaTag>
+              {selectedDocument.estimatedCompletionTime}
+            </MetaTag>
+            {selectedDocument.docType && (
+              <MetaTag>{selectedDocument.docType}</MetaTag>
+            )}
+          </MetaInfo>
         </DocTitleCont>
+        
         <InfoContainer>
-          <div>
-            <MetaInfo>
-              <MetaTag>
-                {selectedDocument.estimatedCompletionTime}
-              </MetaTag>
-              {selectedDocument.docType && (
-                <MetaTag>{selectedDocument.docType}</MetaTag>
+          <DocumentDescription>
+            <SideComponents>
+              <ImageViewer
+                imageSrc={selectedDocument.docImage}
+                altText={selectedDocument.docName}
+                readyDocuments={withusDocuments}
+                currentIndex={currentDocumentIndex}
+              />
+              
+              {selectedDocument.referenceName && (
+                <SourceSectionContainer
+                  color="#8e44ad"
+                  isLink={!!selectedDocument.referenceLinks}
+                  onClick={
+                    selectedDocument.referenceLinks
+                      ? handleReferenceClick
+                      : undefined
+                  }
+                >
+                  <SectionHeading>
+                    Kaynak
+                    {selectedDocument.referenceLinks && (
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          backgroundColor: "rgba(142, 68, 173, 0.1)",
+                          padding: "2px 6px",
+                          borderRadius: "4px",
+                          color: "#8e44ad",
+                        }}
+                      >
+                        Bağlantıya git
+                      </span>
+                    )}
+                  </SectionHeading>
+                  <SectionContent>
+                    {selectedDocument.referenceName}
+                  </SectionContent>
+                </SourceSectionContainer>
               )}
-            </MetaInfo>
-
-            <DocumentDescription>
-              <DescriptionLayout>
-                <MainText>{selectedDocument.docDescription}</MainText>
-                {selectedDocument.docImportant && (
-                  <SectionContainer>
-                    <SectionHeading>Dikkat</SectionHeading>
-                    <SectionContent>
-                      {selectedDocument.docImportant
-                        .split("\\n-")
-                        .map((item, index) =>
-                          index === 0 ? (
-                            <p key={index}>{item}</p>
-                          ) : (
-                            <div
-                              key={index}
+            </SideComponents>
+            
+            <DescriptionLayout>
+              <MainText>{selectedDocument.docDescription}</MainText>
+              
+              {selectedDocument.docImportant && (
+                <AttentionSection>
+                  <SectionHeading>Dikkat</SectionHeading>
+                  <SectionContent>
+                    {selectedDocument.docImportant
+                      .split("\\n-")
+                      .map((item, index) =>
+                        index === 0 ? (
+                          <p key={index}>{item}</p>
+                        ) : (
+                          <div
+                            key={index}
+                            style={{
+                              display: "flex",
+                              alignItems: "flex-start",
+                              marginTop: "8px",
+                            }}
+                          >
+                            <span
                               style={{
-                                display: "flex",
-                                alignItems: "flex-start",
+                                display: "inline-block",
+                                width: "6px",
+                                height: "6px",
+                                borderRadius: "50%",
+                                backgroundColor: "#e74c3c",
+                                marginRight: "8px",
                                 marginTop: "8px",
                               }}
-                            >
-                              <span
-                                style={{
-                                  display: "inline-block",
-                                  width: "6px",
-                                  height: "6px",
-                                  borderRadius: "50%",
-                                  backgroundColor: "#e74c3c",
-                                  marginRight: "8px",
-                                  marginTop: "8px",
-                                }}
-                              ></span>
-                              <span>{item.trim()}</span>
-                            </div>
-                          )
-                        )}
-                    </SectionContent>
-                  </SectionContainer>
-                )}
+                            ></span>
+                            <span>{item.trim()}</span>
+                          </div>
+                        )
+                      )}
+                  </SectionContent>
+                </AttentionSection>
+              )}
 
-                {selectedDocument.docWhere && (
-                  <SectionContainer color="#3498db">
-                    <SectionHeading>Temin yeri</SectionHeading>
-                    <SectionContent>{selectedDocument.docWhere}</SectionContent>
-                  </SectionContainer>
-                )}
+              {selectedDocument.docWhere && (
+                <LocationSection color="#3498db">
+                  <SectionHeading>Temin yeri</SectionHeading>
+                  <SectionContent>{selectedDocument.docWhere}</SectionContent>
+                </LocationSection>
+              )}
 
+              <StyledButtonsContainer>
                 {selectedDocument.docSourceLink && (
                   <SourceButton
                     id="sourceButton"
@@ -602,57 +676,10 @@ const WithUsDocumentDetail = () => {
                 >
                   {isCompleted ? "Tamamlandı" : "Tamamla"}
                 </ActionButton>
-              </DescriptionLayout>
-              <SideComponents>
-                <ImageViewer
-                  imageSrc={selectedDocument.docImage}
-                  altText={selectedDocument.docName}
-                  readyDocuments={withusDocuments}
-                  currentIndex={currentDocumentIndex}
-                />
-                {selectedDocument.referenceName && (
-                  <SourceSectionContainer
-                    color="#8e44ad"
-                    isLink={!!selectedDocument.referenceLinks}
-                    onClick={
-                      selectedDocument.referenceLinks
-                        ? handleReferenceClick
-                        : undefined
-                    }
-                   
-                  >
-                    <SectionHeading>
-                      Kaynak
-                      {selectedDocument.referenceLinks && (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            backgroundColor: "rgba(142, 68, 173, 0.1)",
-                            padding: "2px 6px",
-                            borderRadius: "4px",
-                            color: "#8e44ad",
-                          }}
-                        >
-                          Bağlantıya git
-                        </span>
-                      )}
-                    </SectionHeading>
-                    <SectionContent>
-                      {selectedDocument.referenceName}
-                    </SectionContent>
-                  </SourceSectionContainer>
-                )}
-              </SideComponents>
-            </DocumentDescription>
-          </div>
+              </StyledButtonsContainer>
+            </DescriptionLayout>
+          </DocumentDescription>
         </InfoContainer>
-
-        {/* DocProgress component moved here from ImageViewer.jsx */}
-        <DocProgress>
-          {withusDocuments.map((_, index) => (
-            <ProgressDot key={index} active={index === currentDocumentIndex} />
-          ))}
-        </DocProgress>
       </PageContainer>
     </>
   );
