@@ -8,8 +8,8 @@ import { getCurrentUser } from "../services/apiAuth"; // Bu import'u kendi proje
 
 // Styled Components tanımları
 const ParallaxContainer = styled.div`
-  height: 300vh;
-  padding: 10rem 0;
+  height: 210vh; /* 230vh'den 210vh'ye düşürüldü */
+  padding: 6rem 0 3rem 0; /* alt padding'i azalttık */
   overflow: hidden;
   position: relative;
   display: flex;
@@ -23,25 +23,25 @@ const HeaderContainer = styled.div`
   max-width: 80rem;
   position: relative;
   margin: 0 auto;
-  padding: 5rem 1rem;
+  padding: 3rem 1rem; /* 5rem'den 3rem'e düşürüldü */
   width: 100%;
   left: 0;
   top: 0;
   z-index: 10;
 
   @media (min-width: 768px) {
-    padding: 10rem 1rem;
+    padding: 5rem 1rem; /* 10rem'den 5rem'e düşürüldü */
   }
 `;
 
 const HeaderTitle = styled.h1`
-  font-size: 1.8rem; /* %20 büyütüldü: 1.5rem * 1.2 = 1.8rem */
+  font-size: 1.8rem; 
   font-weight: 600;
   color: ${props => props.theme.isDark ? "white" : "black"};
   text-align: center;
   max-width: 100%;
   transition: transform 0.2s ease, opacity 0.2s ease;
-  font-size: 84px; /* %20 büyütüldü: 70px * 1.2 = 84px */
+  font-size: 84px;
   
   /* Gradient efekti */
   background: linear-gradient(135deg, #004466, #00ffa2);
@@ -49,97 +49,110 @@ const HeaderTitle = styled.h1`
   -webkit-text-fill-color: transparent;
   
   @media (max-width: 1410px) {
-    font-size: 72px; /* %20 büyütüldü: 60px * 1.2 = 72px */
+    font-size: 72px;
   }
   @media (max-width: 1200px) {
-    font-size: 66px; /* %20 büyütüldü: 55px * 1.2 = 66px */
+    font-size: 66px;
   }
   @media (max-width: 1050px) {
-    font-size: 60px; /* %20 büyütüldü: 50px * 1.2 = 60px */
+    font-size: 60px;
   }
   @media (max-width: 930px) {
-    font-size: 54px; /* %20 büyütüldü: 45px * 1.2 = 54px */
+    font-size: 54px;
   }
   @media (max-width: 830px) {
-    font-size: 48px; /* %20 büyütüldü: 40px * 1.2 = 48px */
+    font-size: 48px;
   }
   @media (max-width: 730px) {
-    font-size: 42px; /* %20 büyütüldü: 35px * 1.2 = 42px */
+    font-size: 42px;
   }
   
   @media (min-width: 768px) {
-    font-size: 5.4rem; /* %20 büyütüldü: 4.5rem * 1.2 = 5.4rem */
+    font-size: 5.4rem;
   }
 `;
 
 const HeaderDescription = styled.p`
-  max-width: 50.4rem; /* %20 büyütüldü: 42rem * 1.2 = 50.4rem */
-  font-size: 1.2rem; /* %20 büyütüldü: 1rem * 1.2 = 1.2rem */
+  max-width: 50.4rem;
+  font-size: 1.2rem;
   margin-top: 2rem;
   color: ${props => props.theme.isDark ? "rgba(229, 229, 229)" : "rgba(23, 23, 23)"};
   text-align: center;
   margin: 2rem auto 0;
 
   @media (min-width: 768px) {
-    font-size: 1.5rem; /* %20 büyütüldü: 1.25rem * 1.2 = 1.5rem */
+    font-size: 1.5rem;
   }
 `;
 
 const RowContainer = styled(motion.div)`
   display: flex;
-  margin-bottom: 5rem;
+  margin-bottom: 2.5rem; /* 3rem'den 2.5rem'e düşürüldü - satırlar arası mesafe */
   ${props => props.reverse ? "flex-direction: row-reverse; space-x-reverse: 1;" : "flex-direction: row;"}
-  gap: 5rem;
+  gap: 3rem; /* bayraklar arası mesafe korundu */
 `;
 
-const ProductCardContainer = styled(motion.div)`
-  height: 24rem;
-  width: 30rem;
+const CountryCardContainer = styled(motion.div)`
+  height: 20rem; /* 24rem'den 20rem'e düşürüldü */
+  width: 25rem; /* 30rem'den 25rem'e düşürüldü */
   position: relative;
   flex-shrink: 0;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 `;
 
-const ProductLink = styled.a`
-  display: block;
-  &:hover {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+const FlagContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #f5f5f5;
+`;
+
+const FlagImage = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  
+  svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 `;
 
-const ProductImage = styled.img`
-  object-fit: cover;
-  object-position: left top;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  inset: 0;
-`;
-
-const ProductOverlay = styled.div`
+const CountryOverlay = styled.div`
   position: absolute;
   inset: 0;
   height: 100%;
   width: 100%;
   opacity: 0;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.7);
   pointer-events: none;
   transition: opacity 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  ${ProductCardContainer}:hover & {
-    opacity: 0.8;
+  ${CountryCardContainer}:hover & {
+    opacity: 1;
   }
 `;
 
-const ProductTitle = styled.h2`
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  opacity: 0;
+const CountryName = styled.h2`
   color: white;
-  transition: opacity 0.3s ease;
-
-  ${ProductCardContainer}:hover & {
-    opacity: 1;
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  transition: transform 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  
+  ${CountryCardContainer}:hover & {
+    transform: translateY(0);
   }
 `;
 
@@ -320,12 +333,11 @@ export const Header = () => {
   return (
     <HeaderContainer>
       <HeaderTitle>
-        Düşlerinizdeki Seyahatin İlk Adımı <br />
+        Avrupa&apos;nın Kapılarını Size Açıyoruz <br />
       </HeaderTitle>
       <HeaderDescription>
-        We build beautiful products with the latest technologies and frameworks.
-        We are a team of passionate developers and designers that love to build
-        amazing products.
+        Schengen Vizesi, Birleşik Krallık Vizesi ve Amerika Vizesi başvurularınızı
+        profesyonel ekibimizle kolayca tamamlayın.
       </HeaderDescription>
       <ButtonWrapper>
         <StyledCeper>
@@ -371,36 +383,109 @@ export const Header = () => {
   );
 };
 
-export const ProductCard = ({ product, translate }) => {
+// Ülke kartı bileşeni
+export const CountryCard = ({ country, translate }) => {
+  const flagRef = useRef(null);
+  const [loaded, setLoaded] = useState(false);
+  
+  const flagUrl = country.code
+    ? `https://purecatamphetamine.github.io/country-flag-icons/3x2/${country.code.toUpperCase()}.svg`
+    : null;
+
+  useEffect(() => {
+    if (!flagUrl) return; // country.code yoksa hiçbir şey yapma
+
+    const fetchAndStretchSVG = async () => {
+      try {
+        const response = await fetch(flagUrl);
+        const svgText = await response.text();
+        const modifiedSvg = svgText.replace(
+          "<svg",
+          '<svg preserveAspectRatio="none"'
+        );
+
+        if (flagRef.current) {
+          flagRef.current.innerHTML = modifiedSvg;
+          const svgEl = flagRef.current.querySelector("svg");
+          if (svgEl) {
+            svgEl.style.width = "100%";
+            svgEl.style.height = "100%";
+          }
+          setLoaded(true);
+        }
+      } catch (error) {
+        console.error("Bayrak yüklenirken hata oluştu:", error);
+      }
+    };
+
+    fetchAndStretchSVG();
+  }, [flagUrl]);
+
   return (
-    <ProductCardContainer
+    <CountryCardContainer
       style={{
         x: translate,
+        opacity: loaded ? 1 : 0.3, // Bayrak yüklendikçe opaklığı artır
       }}
       whileHover={{
         y: -20,
+        transition: { duration: 0.3 }
       }}
-      key={product.title}
+      key={country.name}
     >
-      <ProductLink href={product.link}>
-        <ProductImage
-          src={product.thumbnail}
-          height="600"
-          width="600"
-          alt={product.title}
-        />
-      </ProductLink>
-      <ProductOverlay />
-      <ProductTitle>{product.title}</ProductTitle>
-    </ProductCardContainer>
+      <FlagContainer>
+        <FlagImage ref={flagRef} />
+      </FlagContainer>
+      <CountryOverlay>
+        <CountryName>{country.name}</CountryName>
+      </CountryOverlay>
+    </CountryCardContainer>
   );
 };
 
-export const HeroParallax = ({ products = [] }) => {
+export const HeroParallax = ({ countries = [] }) => {
+  // Eğer countries prop'u gönderilmediyse, Schengen ülkeleri, ABD ve İngiltere'yi içeren default dizi
+  const defaultCountries = [
+    // Başlangıçta görünecek önemli ülkeler
+    { name: "Amerika Birleşik Devletleri", code: "US" },
+    { name: "Birleşik Krallık", code: "GB" },
+    // Schengen Ülkeleri
+    { name: "Almanya", code: "DE" },
+    { name: "Fransa", code: "FR" },
+    { name: "İtalya", code: "IT" },
+    { name: "İspanya", code: "ES" },
+    { name: "Hollanda", code: "NL" },
+    { name: "Belçika", code: "BE" },
+    { name: "Lüksemburg", code: "LU" },
+    { name: "İsveç", code: "SE" },
+    { name: "Finlandiya", code: "FI" },
+    { name: "Danimarka", code: "DK" },
+    { name: "Avusturya", code: "AT" },
+    { name: "Çek Cumhuriyeti", code: "CZ" },
+    { name: "Estonya", code: "EE" },
+    { name: "Macaristan", code: "HU" },
+    { name: "Letonya", code: "LV" },
+    { name: "Litvanya", code: "LT" },
+    { name: "Malta", code: "MT" },
+    { name: "Polonya", code: "PL" },
+    { name: "Portekiz", code: "PT" },
+    { name: "Slovakya", code: "SK" },
+    { name: "Slovenya", code: "SI" },
+    { name: "Yunanistan", code: "GR" },
+    { name: "İsviçre", code: "CH" }, // Schengen ama AB üyesi değil
+    { name: "Norveç", code: "NO" }, // Schengen ama AB üyesi değil
+    { name: "İzlanda", code: "IS" }, // Schengen ama AB üyesi değil
+    { name: "Lihtenştayn", code: "LI" }, // Schengen ama AB üyesi değil
+  ];
+
+  // Kullanılacak ülkeler dizisi (prop geldiyse onu, yoksa default olanı kullan)
+  const usedCountries = countries.length > 0 ? countries : defaultCountries;
+
   // Default boş array ve güvenli slice işlemleri için kontrol
-  const firstRow = products.length ? products.slice(0, 5) : [];
-  const secondRow = products.length >= 6 ? products.slice(5, 10) : [];
-  const thirdRow = products.length >= 11 ? products.slice(10, 15) : [];
+  const firstRow = usedCountries.length ? usedCountries.slice(0, 8) : [];
+  const secondRow = usedCountries.length >= 9 ? usedCountries.slice(8, 16) : [];
+  const thirdRow = usedCountries.length >= 17 ? usedCountries.slice(16, 28) : [];
+  
   const ref = useRef(null);
   
   const { scrollYProgress } = useScroll({
@@ -436,7 +521,7 @@ export const HeroParallax = ({ products = [] }) => {
   );
   
   const translateY = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [-700, 500]), 
+    useTransform(scrollYProgress, [0, 0.2], [-500, 300]), // -700, 500'den -500, 300'e değiştirildi
     springConfig
   );
 
@@ -449,32 +534,33 @@ export const HeroParallax = ({ products = [] }) => {
           rotateZ,
           translateY,
           opacity,
+          paddingTop: "2rem", /* Header ve bayraklar arasında daha fazla boşluk */
         }}
       >
         <RowContainer reverse>
-          {firstRow.map((product) => (
-            <ProductCard 
-              product={product} 
+          {firstRow.map((country) => (
+            <CountryCard 
+              country={country} 
               translate={translateX} 
-              key={product.title} 
+              key={country.code} 
             />
           ))}
         </RowContainer>
         <RowContainer>
-          {secondRow.map((product) => (
-            <ProductCard 
-              product={product} 
+          {secondRow.map((country) => (
+            <CountryCard 
+              country={country} 
               translate={translateXReverse} 
-              key={product.title} 
+              key={country.code} 
             />
           ))}
         </RowContainer>
         <RowContainer reverse>
-          {thirdRow.map((product) => (
-            <ProductCard 
-              product={product} 
+          {thirdRow.map((country) => (
+            <CountryCard 
+              country={country} 
               translate={translateX} 
-              key={product.title} 
+              key={country.code} 
             />
           ))}
         </RowContainer>
