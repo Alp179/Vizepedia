@@ -63,9 +63,11 @@ const HeaderveOk = styled.div`
 `;
 
 const BlogHeader = styled.h1`
-  text-shadow: 0px 0px 25px rgba(0, 0, 0, 0.5);
+  /* Keep original text color but enhance with shadows */
+  text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5),
+               0px 0px 10px rgba(0, 0, 0, 0.3);
   font-weight: 100;
-  color: var(--color-grey-916);
+  color: var(--color-grey-916); /* Restore original color */
   margin-left: auto;
   margin-right: auto;
   text-align: center;
@@ -73,6 +75,10 @@ const BlogHeader = styled.h1`
   font-size: 72px;
   line-height: 1.1;
   letter-spacing: -0.5px;
+  position: relative;
+  
+  /* Optional: add a very subtle outline to increase edge definition */
+  -webkit-text-stroke: 0.2px rgba(0, 0, 0, 0.2);
   
   @media (max-width: 1300px) {
     font-size: 60px;
@@ -104,6 +110,31 @@ const BlogHeader = styled.h1`
   }
   @media (max-width: 320px) {
     font-size: 18px;
+  }
+`;
+
+// For the "Seyahat Edin" text - keep original strong styling with subtle enhancements
+const StrongText = styled.strong`
+  font-weight: 700;
+  position: relative;
+  
+  /* Add just enough shadow to make it stand out without changing its appearance */
+  text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5),
+               0px 0px 12px rgba(0, 0, 0, 0.3);
+  
+  /* Optional: add a semi-transparent background to increase contrast with gradient behind */
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.05);
+    pointer-events: none;
   }
 `;
 
@@ -180,7 +211,7 @@ function BlogHome() {
           <BlogHeaders>
             <BlogHeader>Başlayın Keşfedin Vize Alın</BlogHeader>
             <BlogHeader>
-              <strong>Seyahat Edin</strong>
+              <StrongText>Seyahat Edin</StrongText>
             </BlogHeader>
           </BlogHeaders>
           <VectorOk variant="blogpage"/>

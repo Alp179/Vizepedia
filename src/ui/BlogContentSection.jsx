@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useRef } from "react";
 import styled, { keyframes } from "styled-components";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 // Animasyonlar
 const slideUp = keyframes`
@@ -29,7 +29,8 @@ const TableOfContentsContainer = styled.div`
   padding: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  display: ${(props) => (props.headings.length > 1 && !props.hideTableOfContents ? "block" : "none")};
+  display: ${(props) =>
+    props.headings.length > 1 && !props.hideTableOfContents ? "block" : "none"};
 
   @media (max-width: 768px) {
     position: relative; // fixed'dan relative'e değiştirildi
@@ -48,7 +49,7 @@ const TableOfContentsContainer = styled.div`
     background: transparent; // Arkaplan kaldırıldı
     box-shadow: none; // Gölge kaldırıldı
     border: none; // Kenarlık kaldırıldı
-    
+
     &.visible {
       display: block;
     }
@@ -67,7 +68,7 @@ const TableOfContentsTitle = styled.h3`
     width: 20px;
     height: 20px;
   }
-  
+
   @media (max-width: 768px) {
     display: none; // Mobil'de akordiyon başlığını gizle (buton onun yerine kullanılacak)
   }
@@ -77,20 +78,23 @@ const TableOfContentsList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
-  
+
   @media (max-width: 768px) {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-top: none;
     border-bottom-left-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
-    padding: ${props => props.isOpen ? '0.8rem 0' : '0'};
-    max-height: ${props => props.isOpen ? '500px' : '0'};
+    padding: ${(props) => (props.isOpen ? "0.8rem 0" : "0")};
+    max-height: ${(props) => (props.isOpen ? "500px" : "0")};
     overflow: hidden;
     transition: all 0.3s ease-in-out;
-    opacity: ${props => props.isOpen ? '1' : '0'};
-    visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
-    margin-top: ${props => props.isOpen ? '0' : '-1px'}; // Kapalı olduğunda üst kenarlık görünmemesi için
+    opacity: ${(props) => (props.isOpen ? "1" : "0")};
+    visibility: ${(props) => (props.isOpen ? "visible" : "hidden")};
+    margin-top: ${(props) =>
+      props.isOpen
+        ? "0"
+        : "-1px"}; // Kapalı olduğunda üst kenarlık görünmemesi için
   }
 `;
 
@@ -120,10 +124,10 @@ const TableOfContentsItem = styled.li`
       opacity: 1;
     }
   }
-  
+
   @media (max-width: 768px) {
     margin-bottom: 0.6rem;
-    
+
     a {
       padding: 0.4rem 1rem;
       font-size: ${(props) => (props.level === 2 ? "15px" : "0.9rem")};
@@ -135,11 +139,11 @@ const TableOfContentsItem = styled.li`
 const SectionContainer = styled.section`
   margin-bottom: 4rem;
   scroll-margin-top: 100px; // Header için ek scroll margin
-  
+
   @media (max-width: 768px) {
     scroll-margin-top: 90px;
   }
-  
+
   @media (max-width: 450px) {
     scroll-margin-top: 85px;
   }
@@ -413,9 +417,9 @@ const TableToggleButton = styled.button`
   padding: 0.8rem 1.2rem;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: ${props => props.isOpen ? '0.5rem 0.5rem 0 0' : '0.5rem'};
+  border-radius: ${(props) => (props.isOpen ? "0.5rem 0.5rem 0 0" : "0.5rem")};
   color: var(--color-grey-600);
-  font-size: 16px!important;
+  font-size: 16px !important;
   font-weight: 500;
   cursor: pointer;
   margin-bottom: 0;
@@ -429,12 +433,12 @@ const TableToggleButton = styled.button`
     height: 18px;
     transition: transform 0.3s ease;
   }
-  
+
   &.active {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     margin-bottom: 0;
-    
+
     svg:last-child {
       transform: rotate(180deg);
     }
@@ -448,7 +452,7 @@ const TableToggleButton = styled.button`
 // Progress Indicator - Ekranın sağında sabit pozisyon
 const ProgressIndicator = styled.div`
   position: fixed;
-  right: 10px; 
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
@@ -462,7 +466,7 @@ const ProgressIndicator = styled.div`
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   pointer-events: auto;
-  
+
   @media (max-width: 480px) {
     right: 5px;
     padding: 8px 4px;
@@ -500,18 +504,14 @@ const Dot = styled.div`
   }
 `;
 
-function BlogContentSection({
-  blog,
-  headings,
-  hideTableOfContents = false,
-}) {
+function BlogContentSection({ blog, headings, hideTableOfContents = false }) {
   // Akordiyon açılma durumu için state
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   // Progress indicator'ın görünürlüğü için state
   const [isProgressVisible, setIsProgressVisible] = useState(false);
   // Aktif bölüm için state
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  
+
   // Bölüm referansları
   const sectionsRef = useRef([]);
   // Ana içerik referansı
@@ -523,9 +523,15 @@ function BlogContentSection({
 
   // Bölümleri filtreleme (null olmayanları al)
   const sections = [
-    blog?.section1_title ? { id: 'section1', title: blog.section1_title } : null,
-    blog?.section2_title ? { id: 'section2', title: blog.section2_title } : null,
-    blog?.section3_title ? { id: 'section3', title: blog.section3_title } : null,
+    blog?.section1_title
+      ? { id: "section1", title: blog.section1_title }
+      : null,
+    blog?.section2_title
+      ? { id: "section2", title: blog.section2_title }
+      : null,
+    blog?.section3_title
+      ? { id: "section3", title: blog.section3_title }
+      : null,
   ].filter(Boolean);
 
   // Sayfa değiştiğinde akordiyonu kapat
@@ -533,7 +539,7 @@ function BlogContentSection({
     setIsAccordionOpen(false);
     sectionsRef.current = [];
     setIsProgressVisible(false);
-    
+
     // Görünürlük ref'ini sıfırla
     sectionVisibilityRef.current = {};
 
@@ -543,7 +549,7 @@ function BlogContentSection({
       }
     };
   }, [blog]);
-  
+
   // Bölümleri izlemek için Intersection Observer kurulumu (aktif bölümü belirlemek için)
   useEffect(() => {
     const options = {
@@ -557,7 +563,7 @@ function BlogContentSection({
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const id = entry.target.id;
-          const sectionIndex = ['section1', 'section2', 'section3'].indexOf(id);
+          const sectionIndex = ["section1", "section2", "section3"].indexOf(id);
           if (sectionIndex !== -1) {
             setCurrentSectionIndex(sectionIndex);
           }
@@ -568,7 +574,7 @@ function BlogContentSection({
     observerRef.current = new IntersectionObserver(handleIntersect, options);
 
     // Bölüm elementlerini observer'a ekle
-    ['section1', 'section2', 'section3'].forEach(id => {
+    ["section1", "section2", "section3"].forEach((id) => {
       const element = document.getElementById(id);
       if (element) {
         observerRef.current.observe(element);
@@ -581,7 +587,7 @@ function BlogContentSection({
       }
     };
   }, [blog]);
-  
+
   // Progress Indicator görünürlüğünü yöneten observer
   useEffect(() => {
     // Sadece 2 veya daha fazla bölüm varsa Progress Indicator'ı göstermeyi düşün
@@ -589,53 +595,56 @@ function BlogContentSection({
       setIsProgressVisible(false);
       return;
     }
-    
+
     // Her bölüm için görünürlük takibi başlat
-    sections.forEach(section => {
+    sections.forEach((section) => {
       sectionVisibilityRef.current[section.id] = false;
     });
-    
+
     // Tüm bölümlerin görünürlüğünü takip et (hem yukarı hem aşağı kaydırma için)
     const visibilityObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const id = entry.target.id;
-          
+
           // Bölüm görünürlüğünü güncelle (en az %10 görünür olmalı)
-          sectionVisibilityRef.current[id] = 
+          sectionVisibilityRef.current[id] =
             entry.isIntersecting && entry.intersectionRatio >= 0.1;
         });
-        
+
         // Herhangi bir bölüm yeterince görünür mü kontrol et
-        const anyVisible = Object.values(sectionVisibilityRef.current).some(isVisible => isVisible);
-        
+        const anyVisible = Object.values(sectionVisibilityRef.current).some(
+          (isVisible) => isVisible
+        );
+
         // Indicator'ı görünürlük durumuna göre güncelle
         setIsProgressVisible(anyVisible);
       },
       {
         threshold: [0.1], // %10 eşiği
-        rootMargin: "0px"
+        rootMargin: "0px",
       }
     );
-    
+
     // Tüm bölümleri izle
-    sections.forEach(section => {
+    sections.forEach((section) => {
       const element = document.getElementById(section.id);
       if (element) {
         visibilityObserver.observe(element);
       }
     });
-    
+
     // Sayfanın en altına gelindiğinde kontrol et
     const checkFooterVisibility = () => {
       // Sayfanın en altındaysa ve tüm bölümler viewport'un üstünde kaldıysa (yani kaydırma sona erdiyse)
-      const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 50;
-      
+      const isAtBottom =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 50;
+
       if (isAtBottom) {
         // Son bölümün konumunu kontrol et
         const lastSectionId = sections[sections.length - 1].id;
         const lastSectionElement = document.getElementById(lastSectionId);
-        
+
         if (lastSectionElement) {
           const rect = lastSectionElement.getBoundingClientRect();
           // Son bölüm büyük oranda viewport dışındaysa
@@ -645,23 +654,23 @@ function BlogContentSection({
         }
       }
     };
-    
+
     // Scroll olayını dinle
-    window.addEventListener('scroll', checkFooterVisibility);
-    
+    window.addEventListener("scroll", checkFooterVisibility);
+
     // Cleanup
     return () => {
       visibilityObserver.disconnect();
-      window.removeEventListener('scroll', checkFooterVisibility);
+      window.removeEventListener("scroll", checkFooterVisibility);
     };
   }, [sections]);
 
   // Seçili bölüme kaydırma fonksiyonu
   const scrollToSection = (index) => {
-    const sectionIds = ['section1', 'section2', 'section3'];
+    const sectionIds = ["section1", "section2", "section3"];
     const sectionId = sectionIds[index];
     const sectionElement = document.getElementById(sectionId);
-    
+
     if (sectionElement) {
       sectionElement.scrollIntoView({
         behavior: "smooth",
@@ -716,13 +725,16 @@ function BlogContentSection({
       {headings.length > 0 && !hideTableOfContents && (
         <>
           {/* Mobil cihazlar için akordiyon buton */}
-          <TableToggleButton 
-            onClick={toggleAccordion} 
+          <TableToggleButton
+            onClick={toggleAccordion}
             hideTableOfContents={hideTableOfContents}
             className={isAccordionOpen ? "active" : ""}
             isOpen={isAccordionOpen}
           >
-            <span style={{display: "flex", alignItems: "center"}} className="button-text">
+            <span
+              style={{ display: "flex", alignItems: "center" }}
+              className="button-text"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -787,22 +799,31 @@ function BlogContentSection({
                       opacity: "0.85",
                       cursor: "pointer",
                       background: "transparent",
-                      border: "none"
+                      border: "none",
                     }}
                     onClick={() => {
                       // Heading ID'sine karşılık gelen section ID'sini bul ve ona kaydır
                       const headingText = heading.text.toLowerCase();
-                      
+
                       // Section// Section başlıkları ile karşılaştır
                       let targetId = null;
-                      if (blog?.section1_title && blog.section1_title.toLowerCase().includes(headingText)) {
+                      if (
+                        blog?.section1_title &&
+                        blog.section1_title.toLowerCase().includes(headingText)
+                      ) {
                         targetId = "section1";
-                      } else if (blog?.section2_title && blog.section2_title.toLowerCase().includes(headingText)) {
+                      } else if (
+                        blog?.section2_title &&
+                        blog.section2_title.toLowerCase().includes(headingText)
+                      ) {
                         targetId = "section2";
-                      } else if (blog?.section3_title && blog.section3_title.toLowerCase().includes(headingText)) {
+                      } else if (
+                        blog?.section3_title &&
+                        blog.section3_title.toLowerCase().includes(headingText)
+                      ) {
                         targetId = "section3";
                       }
-                      
+
                       // Eğer eşleşen bir section bulunduysa ona kaydır
                       if (targetId) {
                         const element = document.getElementById(targetId);
@@ -892,19 +913,18 @@ function BlogContentSection({
         </TagsContainer>
 
         <ShareContainer>
-          <ShareButton aria-label="Twitter'da paylaş" onClick={shareOnTwitter}>
+          <ShareButton aria-label="X'de paylaş" onClick={shareOnTwitter}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
               height="18"
-              viewBox="0 0 24 24"
+              viewBox="0 0 1200 1227"
               fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
             >
-              <path d="M22 4s-.7 2.1-2 3.4c1.6-1 3.2-2.2 3.2-2.2a8.1 8.1 0 0 1-2.3.6A4 4 0 0 0 21 3a8 8 0 0 1-2.5 1A4 4 0 0 0 16 3c-2.2 0-4 1.8-4 4 0 .3 0 .6.1.9A11.3 11.3 0 0 1 3 4s-4 9 5 13a4.5 4.5 0 0 1-1 4 4 4 0 0 1-7-3.6c0-.1 0-.2 0-.3A8 8 0 0 0 7 19a4 4 0 0 1-1 2.3 4 4 0 0 1-1.8.7" />
+              <path
+                d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z"
+                fill="currentColor"
+              />
             </svg>
           </ShareButton>
           <ShareButton
@@ -980,26 +1000,26 @@ BlogContentSection.propTypes = {
     section2_image: PropTypes.string,
     section3_title: PropTypes.string,
     section3_content: PropTypes.string,
-    section3_image: PropTypes.string
+    section3_image: PropTypes.string,
   }),
   headings: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       text: PropTypes.string.isRequired,
-      level: PropTypes.number.isRequired
+      level: PropTypes.number.isRequired,
     })
   ).isRequired,
   activeHeading: PropTypes.string,
   setActiveHeading: PropTypes.func,
-  hideTableOfContents: PropTypes.bool
+  hideTableOfContents: PropTypes.bool,
 };
 
 // Varsayılan prop değerleri
 BlogContentSection.defaultProps = {
   blog: {},
-  activeHeading: '',
+  activeHeading: "",
   setActiveHeading: null,
-  hideTableOfContents: false
+  hideTableOfContents: false,
 };
 
 export default BlogContentSection;

@@ -222,13 +222,32 @@ const VisaCheckModal = ({ onClose, applicationId, userId, countryLinks }) => {
     }
   };
 
+  // Kullanıcı modal'ı kapatmaya çalıştığında çağrılacak fonksiyon
+  const handleClose = () => {
+    // Eğer kullanıcı herhangi bir soruyu cevaplamamışsa, bu cevapları "hayır" olarak ayarla
+    const finalHasAppointment = hasAppointment === null ? false : hasAppointment;
+    const finalHasFilledForm = hasFilledForm === null ? false : hasFilledForm;
+    
+    // Eğer herhangi bir değişiklik yapıldıysa (yani kullanıcı bir soruyu cevaplayıp diğerini cevaplamamışsa)
+    // veya hiçbir soru cevaplanmadıysa, API'ye kaydedelim
+    if (hasAppointment === null || hasFilledForm === null) {
+      updateStatus({ 
+        hasAppointment: finalHasAppointment, 
+        hasFilledForm: finalHasFilledForm
+      });
+    } else {
+      // Tüm sorular cevaplanmışsa normal kapanış
+      onClose();
+    }
+  };
+
   const isFormComplete = hasAppointment !== null && hasFilledForm !== null;
 
   // React Portal kullanarak modal'ı doğrudan body'e render ediyoruz
   return createPortal(
     <Overlay>
       <ModalContainer>
-        <CloseButton onClick={onClose}>
+        <CloseButton onClick={handleClose}>
           <HiX />
         </CloseButton>
         <ModalTitle>Vize Başvuru Süreciniz</ModalTitle>
