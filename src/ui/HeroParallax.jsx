@@ -26,7 +26,7 @@ const HeaderContainer = styled.div`
   padding: 3rem 1rem; /* 5rem'den 3rem'e düşürüldü */
   width: 100%;
   left: 0;
-  top: 0;
+  top: 150px;
   z-index: 10;
 
   @media (min-width: 768px) {
@@ -35,40 +35,40 @@ const HeaderContainer = styled.div`
 `;
 
 const HeaderTitle = styled.h1`
-  font-size: 1.8rem; 
-  font-weight: 600;
+  font-size: 2.8rem; /* %20 büyütüldü: 1.5rem * 1.2 = 1.8rem */
+  font-weight: 700;
   color: ${props => props.theme.isDark ? "white" : "black"};
   text-align: center;
   max-width: 100%;
   transition: transform 0.2s ease, opacity 0.2s ease;
-  font-size: 84px;
+  
   
   /* Gradient efekti */
-  background: linear-gradient(135deg, #004466, #00ffa2);
+  background: linear-gradient(15deg, #004466, #00ffa2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   
   @media (max-width: 1410px) {
-    font-size: 72px;
+    font-size: 82px; /* %20 büyütüldü: 60px * 1.2 = 72px */
   }
   @media (max-width: 1200px) {
-    font-size: 66px;
+    font-size: 76px; /* %20 büyütüldü: 55px * 1.2 = 66px */
   }
   @media (max-width: 1050px) {
-    font-size: 60px;
+    font-size: 70px; /* %20 büyütüldü: 50px * 1.2 = 60px */
   }
   @media (max-width: 930px) {
-    font-size: 54px;
+    font-size: 64px; /* %20 büyütüldü: 45px * 1.2 = 54px */
   }
   @media (max-width: 830px) {
-    font-size: 48px;
+    font-size: 58px; /* %20 büyütüldü: 40px * 1.2 = 48px */
   }
   @media (max-width: 730px) {
-    font-size: 42px;
+    font-size: 52px; /* %20 büyütüldü: 35px * 1.2 = 42px */
   }
   
   @media (min-width: 768px) {
-    font-size: 5.4rem;
+    font-size: 6.4rem; /* %20 büyütüldü: 4.5rem * 1.2 = 5.4rem */
   }
 `;
 
@@ -333,7 +333,7 @@ export const Header = () => {
   return (
     <HeaderContainer>
       <HeaderTitle>
-        Avrupa&apos;nın Kapılarını Size Açıyoruz <br />
+        Düşlerinizdeki Seyahatin İlk Adımı <br />
       </HeaderTitle>
       <HeaderDescription>
         Schengen Vizesi, Birleşik Krallık Vizesi ve Amerika Vizesi başvurularınızı
