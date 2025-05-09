@@ -40,6 +40,7 @@ import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
 import WellcomeDa from "./features/wellcomes/WellcomeDa";
 import ResetPassword from "./features/authentication/ResetPassword";
+import CerezPolitikasi from "./pages/CerezPolitikasi";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -166,6 +167,8 @@ function App() {
                     <Route path="reset-password" element={<ResetPassword />} />
 
                     <Route path="kisisel-verilerin-korunmasi" element={<Kvkk />} />
+
+                    <Route path="cerez-politikasi" element={<CerezPolitikasi />} />
 
                     <Route path="*" element={<PageNotFound />} />
                   </Routes>

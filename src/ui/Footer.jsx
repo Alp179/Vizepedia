@@ -57,6 +57,7 @@ function Footer() {
   const handleButtonClick = async () => {
     // Kullanıcı zaten giriş yapmışsa direkt dashboard'a yönlendir
     if (isLoggedIn) {
+      window.scrollTo(0, 0);
       navigate("/dashboard");
       return;
     }
@@ -88,6 +89,7 @@ function Footer() {
         const wellcomesAnswered =
           localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
 
+        window.scrollTo(0, 0);
         if (wellcomesAnswered === "true") {
           // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
           navigate("/dashboard");
@@ -106,11 +108,27 @@ function Footer() {
   };
 
   const handleMainPageClick = () => {
+    window.scrollTo(0, 0);
     navigate("/mainpage"); // /mainpage yoluna yönlendir
   };
 
   const handleBlogClick = () => {
+    window.scrollTo(0, 0);
     navigate("/blog"); // /blog yoluna yönlendir
+  };
+
+  // KVKK sayfasına yönlendirme fonksiyonu
+  const handleKvkkClick = () => {
+    // Sayfayı en üste kaydır ve yönlendir
+    window.scrollTo(0, 0);
+    navigate("/kisisel-verilerin-korunmasi");
+  };
+
+  // Çerez Politikası sayfasına yönlendirme fonksiyonu
+  const handleCerezPolitikasiClick = () => {
+    // Sayfayı en üste kaydır ve yönlendir
+    window.scrollTo(0, 0);
+    navigate("/cerez-politikasi");
   };
 
   // Yükleniyor ikonu
@@ -200,13 +218,25 @@ function Footer() {
         }}
       >
         <Logo variant="footer" />
-        <div style={{ display: "flex", gap: "30px" }}>
-          <div className="footer-links" onClick={handleMainPageClick}>
-            Ana Sayfa
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
+          <div style={{ display: "flex", gap: "30px" }}>
+            <div className="footer-links" onClick={handleMainPageClick}>
+              Ana Sayfa
+            </div>
+            <div className="footer-links">Hakkında</div>
+            <div className="footer-links" onClick={handleBlogClick}>
+              Blog
+            </div>
           </div>
-          <div className="footer-links">Hakkında</div>
-          <div className="footer-links" onClick={handleBlogClick}>
-            Blog
+          
+          {/* Alt bölüm - KVKK ve Çerez Politikası linkleri */}
+          <div style={{ display: "flex", gap: "30px", fontSize: "14px" }}>
+            <div className="footer-links" onClick={handleKvkkClick}>
+              KVKK
+            </div>
+            <div className="footer-links" onClick={handleCerezPolitikasiClick}>
+              Çerez Politikası
+            </div>
           </div>
         </div>
         <div style={{ display: "flex", gap: "25px" }}>
