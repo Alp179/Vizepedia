@@ -43,13 +43,17 @@ const SlideExplanation = styled.div`
 `;
 
 const SlideText = styled.p`
-  font-weight: 500;
+  font-weight: 600;
   font-size: 32px;
-  background: linear-gradient(180deg, #1500ff 4.17%, #5900ff 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  hyphens: none;
-  -webkit-text-fill-color: transparent;
+  /* Change from blue gradient to white with text shadow for readability */
+  color: white;
+  text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3), 
+               0px 0px 10px rgba(0, 0, 255, 0.5),
+               0px 0px 20px rgba(0, 255, 162, 0.3);
+  /* Remove gradient background and transparent text fill */
+  /* Add a subtle highlight effect that matches your theme */
+  position: relative;
+  z-index: 10;
   @media (max-width: 1250px) {
     font-size: 28px;
   }
