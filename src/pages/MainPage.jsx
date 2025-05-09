@@ -4,10 +4,90 @@ import styled from "styled-components";
 import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
-import HeroScrollDemo from "../ui/HeroScrollDemo";
+
 import CustomPremiumSections from "../ui/CustomPremiumSections";
 import CountriesMarquee from "../ui/CountriesMarquee";
 import FaqSectionComponent from "../ui/FaqSectionComponent";
+import HeroParallax from "../ui/HeroParallax";
+
+// MainPage.jsx'e eklemek için örnek ürün verileri
+const products = [
+  {
+    title: "Web Development",
+    link: "/services/web-development",
+    thumbnail: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Mobile App Development",
+    link: "/services/mobile-development",
+    thumbnail: "https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "UI/UX Design",
+    link: "/services/ui-ux-design",
+    thumbnail: "https://images.unsplash.com/photo-1545235617-7a424c1a60cc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Cloud Services",
+    link: "/services/cloud-services",
+    thumbnail: "https://images.unsplash.com/photo-1614624532983-4ce03382d63d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "DevOps Solutions",
+    link: "/services/devops",
+    thumbnail: "https://images.unsplash.com/photo-1633998805650-511bb6c7953b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Artificial Intelligence",
+    link: "/services/ai",
+    thumbnail: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Blockchain Development",
+    link: "/services/blockchain",
+    thumbnail: "https://images.unsplash.com/photo-1639762681057-408e52192e55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Data Analytics",
+    link: "/services/data-analytics",
+    thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "IoT Solutions",
+    link: "/services/iot",
+    thumbnail: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "E-commerce Solutions",
+    link: "/services/ecommerce",
+    thumbnail: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "API Development",
+    link: "/services/api-development",
+    thumbnail: "https://images.unsplash.com/photo-1623282033815-40b05d96c333?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Digital Marketing",
+    link: "/services/digital-marketing",
+    thumbnail: "https://images.unsplash.com/photo-1533750516457-a7f992034fec?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "CMS Development",
+    link: "/services/cms-development",
+    thumbnail: "https://images.unsplash.com/photo-1614332287897-cdc485fa562d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Cybersecurity",
+    link: "/services/cybersecurity",
+    thumbnail: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "AR/VR Development",
+    link: "/services/ar-vr",
+    thumbnail: "https://images.unsplash.com/photo-1626379953822-baec19c3accd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+  }
+];
 
 // Main container
 const MainContainer = styled.div`
@@ -146,7 +226,7 @@ function MainPage() {
       {/* Scroll indicator */}
       <ScrollIndicator ref={scrollIndicatorRef} />
       
-      <HeroScrollDemo />
+      <HeroParallax products={products} />
 
       {/* Premium Features Section */}
       <PremiumSectionContainer ref={premiumRef}>
