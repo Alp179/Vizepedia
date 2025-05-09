@@ -5,7 +5,6 @@ import Heading from "./Heading";
 import Button from "./Button";
 import DarkModeToggle from "./DarkModeToggle";
 import PropTypes from "prop-types";
-
 import MainPageHamburger from "./MainPageHamburger";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";

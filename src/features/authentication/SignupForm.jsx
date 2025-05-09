@@ -194,6 +194,34 @@ function SignupForm({ onCloseModal }) {
         />
       </FormRow>
       <FormRow orientation="vertical">
+        <label
+          style={{
+            display: "flex",
+            gap: "8px",
+            fontSize: "0.85rem",
+            color: "var(--color-grey-600)",
+            alignItems: "center",
+          }}
+        >
+          <input
+            type="checkbox"
+            required
+            style={{ width: "16px", height: "16px" }}
+          />
+          <span style={{fontSize: "12px"}}>
+            <a
+              href="/kisisel-verilerin-korunmasi"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "var(--color-grey-600)", textDecoration: "underline" }}
+            >
+              KVKK Aydınlatma Metni
+            </a>
+            ’ni okudum ve kabul ediyorum.
+          </span>
+        </label>
+      </FormRow>
+      <FormRow orientation="vertical">
         <Button size="login" variation="login" disabled={isLoading}>
           {!isLoading ? "Hesap oluştur" : <SpinnerMini />}
         </Button>

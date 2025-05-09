@@ -34,7 +34,7 @@ import QuestionsLayout from "./ui/QuesitonsLayout";
 import MainPageLayout from "./ui/MainPageLayout";
 import BlogHome from "./pages/BlogHome";
 import BlogDetail from "./pages/BlogDetail";
-
+import Kvkk from "./pages/Kvkk";
 import { useEffect } from "react";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
@@ -164,6 +164,8 @@ function App() {
                     />
                     {/* Yeni şifre sıfırlama sayfası rotası */}
                     <Route path="reset-password" element={<ResetPassword />} />
+
+                    <Route path="kisisel-verilerin-korunmasi" element={<Kvkk />} />
 
                     <Route path="*" element={<PageNotFound />} />
                   </Routes>

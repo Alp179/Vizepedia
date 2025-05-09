@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Input = styled.input`
   margin: 0 auto;
   height: 44px;
-  width: 360px !important;
+  width: 360px;
   border: 1px solid var(--color-grey-300);
   background-color: var(--color-grey-0);
   border-radius: var(--border-radius-sm);
@@ -13,14 +13,14 @@ export const Input = styled.input`
     width: 350px;
     height: 38px;
     @media (max-height: 800px) {
-      width: 306px !important;
-      height: 36px !important;
-      font-size: 13px !important;
+      width: 306px ;
+      height: 36px ;
+      font-size: 13px;
     }
   }
   @media (max-width: 450px) {
     @media (max-width: 380px) {
-      width: calc(100vw - 20px) !important;
+      width: calc(100vw - 20px) ;
     }
   }
 `;
