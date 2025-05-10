@@ -18,12 +18,13 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 16px; /* Mobil cihazlar için padding ekledik */
 `;
 
 const ModalContainer = styled.div`
   background-color: #ffffff;
   border-radius: 20px;
-  width: 90%;
+  width: 100%; /* Genişlik değiştirildi */
   max-width: 600px;
   padding: 36px 32px;
   position: relative;
@@ -32,7 +33,10 @@ const ModalContainer = styled.div`
   transition: transform 0.3s ease;
   animation: fadeIn 0.4s ease-out;
   overflow: hidden;
-  z-index: 10000; /* Maksimum z-index */
+  z-index: 10000;
+  margin: 0 auto; /* Merkezleme için auto margin */
+  max-height: 90vh; /* Maksimum yükseklik */
+  overflow-y: auto; /* İçerik çok uzunsa scroll */
 
   &:before {
     content: "";
@@ -49,9 +53,15 @@ const ModalContainer = styled.div`
     to { opacity: 1; transform: translateY(0); }
   }
 
-  @media (max-width: 710px) {
-    padding: 28px 20px;
-    width: 95%;
+  /* Mobil için padding ayarları */
+  @media (max-width: 768px) {
+    padding: 28px 24px;
+    border-radius: 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 24px 20px;
+    border-radius: 14px;
   }
 `;
 
@@ -65,6 +75,16 @@ const ModalTitle = styled.h2`
   position: relative;
   margin: 0 0 40px;
   letter-spacing: 0.3px;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 32px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 22px;
+    margin-bottom: 28px;
+  }
 `;
 
 const ProgressIndicator = styled.div`
@@ -84,6 +104,14 @@ const ProgressIndicator = styled.div`
     z-index: 0;
     transform: translateY(-50%);
   }
+
+  @media (max-width: 768px) {
+    margin: 5px 10px 32px;
+  }
+
+  @media (max-width: 480px) {
+    margin: 0 5px 25px;
+  }
 `;
 
 const StepLine = styled.div`
@@ -100,6 +128,11 @@ const StepLine = styled.div`
   z-index: 0;
   transform: translateY(-50%);
   transition: width 0.5s ease-in-out;
+
+  @media (max-width: 480px) {
+    left: 22px;
+    right: 22px;
+  }
 `;
 
 const ProgressStep = styled.div`
@@ -134,6 +167,30 @@ const ProgressStep = styled.div`
     font-weight: ${props => props.active ? '600' : '500'};
     letter-spacing: 0.3px;
   }
+
+  /* Mobil cihazlarda daha küçük adım göstergeleri */
+  @media (max-width: 768px) {
+    width: 48px;
+    height: 48px;
+    font-size: 16px;
+
+    &:after {
+      font-size: 12px;
+      bottom: -24px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    border-width: 2px;
+
+    &:after {
+      font-size: 10px;
+      bottom: -20px;
+    }
+  }
 `;
 
 const StepContainer = styled.div`
@@ -154,12 +211,28 @@ const StepContainer = styled.div`
   &:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   }
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
 `;
 
 const StepTitleWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 16px;
+
+  @media (max-width: 480px) {
+    margin-bottom: 12px;
+  }
 `;
 
 const StepNumber = styled.div`
@@ -175,6 +248,13 @@ const StepNumber = styled.div`
   font-size: 16px;
   margin-right: 12px;
   transition: all 0.3s ease;
+
+  @media (max-width: 480px) {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    margin-right: 10px;
+  }
 `;
 
 const StepTitle = styled.h3`
@@ -184,6 +264,14 @@ const StepTitle = styled.h3`
   display: flex;
   align-items: center;
   gap: 10px;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
 `;
 
 const StepDescription = styled.p`
@@ -192,6 +280,19 @@ const StepDescription = styled.p`
   margin-bottom: 22px;
   line-height: 1.6;
   padding-left: 44px;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    margin-bottom: 18px;
+    padding-left: 38px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+    margin-bottom: 16px;
+    padding-left: 36px;
+    line-height: 1.5;
+  }
 `;
 
 const RadioGroup = styled.div`
@@ -201,9 +302,15 @@ const RadioGroup = styled.div`
   flex-wrap: wrap;
   padding-left: 44px;
 
-  @media (max-width: 500px) {
-    flex-direction: column;
+  @media (max-width: 768px) {
+    padding-left: 38px;
     gap: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding-left: 0; /* Mobilde padding kaldırıldı */
+    flex-direction: column; /* Mobilde altalta sırala */
+    gap: 10px;
   }
 `;
 
@@ -251,8 +358,25 @@ const RadioLabel = styled.label`
     height: 20px;
     accent-color: #004466;
   }
-`;
 
+  @media (max-width: 768px) {
+    padding: 12px 20px;
+    font-size: 14px;
+    min-width: 160px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px 16px;
+    font-size: 14px;
+    min-width: 0; /* Mobilde min-width sıfırlandı */
+    width: 100%; /* Tam genişlik */
+
+    input[type="radio"] {
+      width: 18px;
+      height: 18px;
+    }
+  }
+`;
 const StyledLink = styled.a`
   color: #004466;
   text-decoration: none;
@@ -283,12 +407,33 @@ const StyledLink = styled.a`
   &:hover:after {
     transform: translateX(3px);
   }
+
+  @media (max-width: 768px) {
+    padding: 4px 10px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-top: 4px;
+    display: inline-block;
+    width: auto;
+  }
 `;
 
 const ButtonWrapper = styled.div`
   margin-top: 38px;
   position: relative;
   z-index: 5;
+
+  @media (max-width: 768px) {
+    margin-top: 30px;
+  }
+
+  @media (max-width: 480px) {
+    margin-top: 24px;
+  }
 `;
 
 const SubmitButton = styled.button`
@@ -341,6 +486,18 @@ const SubmitButton = styled.button`
     cursor: not-allowed;
     box-shadow: none;
   }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 8px;
+  }
 `;
 
 // Animasyon için yardımcı bileşen - Success Animation
@@ -357,6 +514,7 @@ const SuccessAnimationContainer = styled.div`
   pointer-events: ${props => props.show ? 'auto' : 'none'};
   transition: opacity 0.5s ease;
   opacity: ${props => props.show ? 1 : 0};
+  padding: 0 16px; /* Mobil için padding */
 `;
 
 const SuccessContent = styled.div`
@@ -369,6 +527,7 @@ const SuccessContent = styled.div`
   border-radius: 20px;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
   max-width: 400px;
+  width: 100%; /* Tam genişlik */
   animation: ${props => props.show ? 'popUpSuccess 0.5s ease-out forwards' : 'none'};
   
   @keyframes popUpSuccess {
@@ -405,6 +564,44 @@ const SuccessContent = styled.div`
     70% { transform: scale(0.9); }
     100% { transform: scale(1); }
   }
+
+  @media (max-width: 768px) {
+    padding: 30px;
+    border-radius: 16px;
+    
+    svg {
+      font-size: 70px;
+      margin-bottom: 20px;
+    }
+    
+    h3 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    
+    p {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 24px;
+    border-radius: 14px;
+    
+    svg {
+      font-size: 60px;
+      margin-bottom: 16px;
+    }
+    
+    h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    
+    p {
+      font-size: 14px;
+    }
+  }
 `;
 
 // Kendi kendini kontrol eden modal bileşeni
@@ -414,25 +611,55 @@ const VisaCheckModal = ({ userId, applicationId }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [hideModal, setHideModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [ setIsMobile] = useState(window.innerWidth <= 480);
   const queryClient = useQueryClient();
 
+  // Ekran boyutunu izle
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   // Kullanıcı cevaplarını getir
-  const { data: userSelections, isLoading: isLoadingSelections } = useQuery({
+  const { 
+    data: userSelections, 
+    isLoading: isLoadingSelections, 
+    isError: isSelectionsError
+  } = useQuery({
     queryKey: ['userSelections', userId, applicationId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("userAnswers")
-        .select("*")
-        .eq("id", applicationId)
-        .eq("user_id", userId);
+      try {
+        const { data, error } = await supabase
+          .from("userAnswers")
+          .select("*")
+          .eq("id", applicationId)
+          .eq("user_id", userId);
 
-      if (error) throw error;
-      return data || [];
+        if (error) throw error;
+        
+        // Veri yoksa boş dizi dön (hata fırlatma)
+        return data || [];
+      } catch (err) {
+        console.error("VisaCheckModal data fetch error:", err);
+        throw err;
+      }
     },
+    enabled: !!userId && !!applicationId,
+    staleTime: 1000 * 60 * 5, // 5 dakika önbellek
+    retry: 1, // Sadece 1 kez yeniden dene
+    onError: (err) => {
+      console.error("VisaCheckModal query error:", err);
+    }
   });
 
   // Konsolosluk linklerini getir
-  const { data: countryLinks, isLoading: isLoadingLinks } = useQuery({
+  const { 
+    data: countryLinks, 
+    isLoading: isLoadingLinks
+  } = useQuery({
     queryKey: ['countryLinks', userSelections?.[0]?.country_id],
     queryFn: async () => {
       if (!userSelections?.[0]?.country_id) return null;
@@ -443,10 +670,18 @@ const VisaCheckModal = ({ userId, applicationId }) => {
         .eq('id', userSelections[0].country_id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        // Bu durumda sessizce null dön, hata fırlatma
+        if (error.message.includes("JSON object requested, multiple (or no) rows returned")) {
+          return null;
+        }
+        throw error;
+      }
       return data;
     },
     enabled: !!userSelections?.[0]?.country_id,
+    staleTime: 1000 * 60 * 60, // 1 saat önbellek
+    retry: 1
   });
 
   // Veritabanından gelen başlangıç değerlerini state'e aktar
@@ -467,16 +702,22 @@ const VisaCheckModal = ({ userId, applicationId }) => {
   useEffect(() => {
     if (isLoadingSelections) return;
     
+    // DÜZELTME: Hata veya veri yoksa modalı gösterme, sessizce çık
+    if (isSelectionsError || !userSelections || userSelections.length === 0) {
+      console.error("Visa check modal error or missing data:", isSelectionsError);
+      return;
+    }
+    
     // Veritabanındaki değerleri kontrol et
-    const dbAppointment = userSelections?.[0]?.has_appointment;
-    const dbFilledForm = userSelections?.[0]?.has_filled_form;
+    const dbAppointment = userSelections[0]?.has_appointment;
+    const dbFilledForm = userSelections[0]?.has_filled_form;
     
     // Database'de bu alanlardan herhangi biri null veya undefined ise, modalı göster
     const needsModal = dbAppointment === null || dbAppointment === undefined || 
                       dbFilledForm === null || dbFilledForm === undefined;
 
     setShowModal(needsModal);
-  }, [isLoadingSelections, userSelections]);
+  }, [isLoadingSelections, isSelectionsError, userSelections]);
 
   const { mutate: updateStatus, isLoading } = useMutation({
     mutationFn: async ({ hasAppointment, hasFilledForm }) => {
@@ -529,9 +770,6 @@ const VisaCheckModal = ({ userId, applicationId }) => {
           updatedData
         );
       }
-
-      // Query'yi yeniden çalıştır
-      queryClient.invalidateQueries(["userSelections", userId, applicationId]);
       
       // Modal arka planını gizle ve başarı mesajını göster
       setHideModal(true);
@@ -576,7 +814,6 @@ const VisaCheckModal = ({ userId, applicationId }) => {
 
   // Veri yükleniyorsa veya modal gösterilmeyecekse, hiçbir şey render etme
   if (isLoadingSelections || isLoadingLinks || !showModal) return null;
-
   return (
     <>
       {/* Ana Modal */}
