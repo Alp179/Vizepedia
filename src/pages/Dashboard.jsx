@@ -240,7 +240,6 @@ const Dashboard = () => {
   const [createdAt, setCreatedAt] = useState(null);
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 710);
-  const [showVisaModal, setShowVisaModal] = useState(false);
 
   const {
     state: { completedDocuments },
@@ -250,11 +249,6 @@ const Dashboard = () => {
   const [isAnonymous, setIsAnonymous] = useState(
     localStorage.getItem("isAnonymous") === "true"
   );
-
-  // Yardımcı fonksiyon - değerin ayarlanmamış olup olmadığını kontrol eder
-  const isValueUnset = (value) => {
-    return value === null || value === undefined;
-  };
 
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -307,46 +301,8 @@ const Dashboard = () => {
     queryKey: ["userSelections", userId, applicationId],
     queryFn: () => fetchUserSelectionsDash(userId, applicationId),
     enabled: !!userId && !!applicationId,
-    staleTime: 0, // Her zaman yeni veri iste
-    gcTime: 0, // Garbage collection time (eski ismi cacheTime)
-    refetchOnWindowFocus: false, // Pencere odaklandığında veriyi yenileme
+  
   });
-
-  // Modal kontrolü için useEffect - userSelections tanımlandıktan sonra
-  useEffect(() => {
-    if (
-      isUserSelectionsSuccess &&
-      userSelections &&
-      userSelections.length > 0
-    ) {
-      const currentSelection = userSelections[0];
-      console.log("Current selection:", currentSelection);
-      console.log("Has appointment:", currentSelection.has_appointment);
-      console.log("Has filled form:", currentSelection.has_filled_form);
-
-      // Eğer kullanıcı henüz randevu ve form durumu hakkında bilgi vermemişse, modal'ı göster
-      if (
-        isValueUnset(currentSelection.has_appointment) ||
-        isValueUnset(currentSelection.has_filled_form)
-      ) {
-        // Local storage'da bu modal daha önce gösterildi mi kontrol et
-        const modalShownKey = `visa_check_modal_shown_${applicationId}`;
-        const modalAlreadyShown = localStorage.getItem(modalShownKey);
-
-        if (!modalAlreadyShown) {
-          console.log(
-            "Showing modal because values are unset and modal never shown"
-          );
-          setShowVisaModal(true);
-          localStorage.setItem(modalShownKey, "true");
-        } else {
-          console.log("Not showing modal because it was already shown");
-        }
-      } else {
-        console.log("Not showing modal because values are set");
-      }
-    }
-  }, [isUserSelectionsSuccess, userSelections, applicationId]);
 
   const ansCountry = userSelections?.[0]?.ans_country;
 
@@ -475,7 +431,7 @@ const Dashboard = () => {
   }
 
   if (isUserSelectionsError || isDocumentsError) {
-    return <div>Error loading data.</div>;
+    return <div>Error loadiing data.</div>;
   }
 
   const handleStepClick = (step) => {
@@ -596,20 +552,11 @@ const Dashboard = () => {
         </div>
       )}
 
-      {showVisaModal && (
+      {/* Kendi kendini kontrol eden VisaCheckModal */}
+      {userId && applicationId && (
         <VisaCheckModal
-          onClose={() => {
-            setShowVisaModal(false);
-            // Modal kapandığında local storage'ı güncelle
-            const modalShownKey = `visa_check_modal_shown_${applicationId}`;
-            localStorage.setItem(modalShownKey, "true");
-
-            // Veriyi yeniden getir
-            refetchUserSelections();
-          }}
-          applicationId={applicationId}
           userId={userId}
-          countryLinks={countryLinks}
+          applicationId={applicationId}
         />
       )}
     </DashboardContainer>
