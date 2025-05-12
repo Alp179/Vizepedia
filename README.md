@@ -1,3 +1,3 @@
 # Vizepedia
 
-King of the visa taptaptaptaptaptaptaptaptaptaptaptapkonfiraknonstopprealtaprealtaptap
+King of the visa taptaptaptaptaptaptaptaptaptaptaptapkonfiraknonstopprealtaprealtaptaptap
