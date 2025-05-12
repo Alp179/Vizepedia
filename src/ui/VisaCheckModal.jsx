@@ -18,25 +18,33 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 16px; /* Mobil cihazlar için padding ekledik */
+  padding: 0 16px;
 `;
 
 const ModalContainer = styled.div`
   background-color: #ffffff;
   border-radius: 20px;
-  width: 100%; /* Genişlik değiştirildi */
+  width: 100%;
   max-width: 600px;
-  padding: 36px 32px;
+  padding: 28px 32px;
   position: relative;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: transform 0.3s ease;
   animation: fadeIn 0.4s ease-out;
-  overflow: hidden;
   z-index: 10000;
-  margin: 0 auto; /* Merkezleme için auto margin */
-  max-height: 90vh; /* Maksimum yükseklik */
-  overflow-y: auto; /* İçerik çok uzunsa scroll */
+  margin: 0 auto;
+  
+  /* Improved height handling */
+  max-height: 90vh;
+  overflow-y: auto; /* Only apply scroll when needed */
+  display: flex;
+  flex-direction: column;
+
+  /* Keyboard open handling */
+  &.compact-view {
+    max-height: 95vh;
+  }
 
   &:before {
     content: "";
@@ -53,44 +61,99 @@ const ModalContainer = styled.div`
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Mobil için padding ayarları */
+  /* Responsive adjustments for better fit on different devices */
   @media (max-width: 768px) {
-    padding: 28px 24px;
+    padding: 24px 24px;
     border-radius: 16px;
+    max-height: 85vh;
   }
 
+  /* Standard iPhone sizes */
   @media (max-width: 480px) {
-    padding: 24px 20px;
+    padding: 20px 16px;
     border-radius: 14px;
+    max-height: 80vh;
+  }
+
+  /* iPhone 12/13/14 and similar sized devices */
+  @media (max-height: 844px) and (max-width: 480px) {
+    padding: 16px 14px;
+    
+    /* Optimize content to avoid scrolling on iPhone 12 */
+    & > * {
+      transform-origin: top center;
+      transform: scale(0.95);
+      margin-bottom: -5px; /* Compensate for the scaling */
+    }
+  }
+
+  /* iPhone 11/XR and similar sized devices */
+  @media (max-height: 896px) and (min-height: 845px) and (max-width: 480px) {
+    padding: 18px 15px;
+  }
+
+  /* iPhone SE and smaller devices */
+  @media (max-height: 700px) and (max-width: 380px) {
+    padding: 14px 12px;
+    max-height: 85vh;
+    
+    & > * {
+      transform-origin: top center;
+      transform: scale(0.9);
+      margin-bottom: -8px;
+    }
+  }
+  
+  /* Extra small devices like Galaxy Fold */
+  @media (max-height: 600px), (max-width: 320px) {
+    padding: 12px 10px;
+    
+    & > * {
+      transform-origin: top center;
+      transform: scale(0.85);
+      margin-bottom: -10px;
+    }
   }
 `;
 
 const ModalTitle = styled.h2`
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 800;
   background: linear-gradient(90deg, #004466, #0077b6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: center;
   position: relative;
-  margin: 0 0 40px;
+  margin: 0 0 24px;
   letter-spacing: 0.3px;
 
   @media (max-width: 768px) {
-    font-size: 24px;
-    margin-bottom: 32px;
+    font-size: 22px;
+    margin-bottom: 20px;
   }
 
   @media (max-width: 480px) {
-    font-size: 22px;
-    margin-bottom: 28px;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  
+  /* Extra small devices */
+  @media (max-height: 700px) {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    font-size: 18px;
+    margin-bottom: 10px;
   }
 `;
 
 const ProgressIndicator = styled.div`
   display: flex;
   justify-content: space-between;
-  margin: 10px 20px 40px;
+  margin: 10px 20px 30px;
   position: relative;
   
   &:after {
@@ -106,11 +169,21 @@ const ProgressIndicator = styled.div`
   }
 
   @media (max-width: 768px) {
-    margin: 5px 10px 32px;
+    margin: 5px 10px 24px;
   }
 
   @media (max-width: 480px) {
-    margin: 0 5px 25px;
+    margin: 0 5px 20px;
+  }
+  
+  /* Smaller height for smaller devices */
+  @media (max-height: 700px) {
+    margin: 0 5px 16px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    margin: 0 5px 14px;
   }
 `;
 
@@ -133,11 +206,16 @@ const StepLine = styled.div`
     left: 22px;
     right: 22px;
   }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    left: 18px;
+  }
 `;
 
 const ProgressStep = styled.div`
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background-color: ${props => props.active ? 'white' : 'white'};
   border: 3px solid ${props => props.active ? '#004466' : '#e9ecef'};
@@ -146,7 +224,7 @@ const ProgressStep = styled.div`
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 16px;
   position: relative;
   z-index: 1;
   transition: all 0.3s ease;
@@ -160,29 +238,29 @@ const ProgressStep = styled.div`
   &:after {
     content: '${props => props.label}';
     position: absolute;
-    bottom: -30px;
-    font-size: 14px;
+    bottom: -25px;
+    font-size: 13px;
     white-space: nowrap;
     color: ${props => props.active ? '#004466' : '#adb5bd'};
     font-weight: ${props => props.active ? '600' : '500'};
     letter-spacing: 0.3px;
   }
 
-  /* Mobil cihazlarda daha küçük adım göstergeleri */
+  /* Responsive size adjustments */
   @media (max-width: 768px) {
-    width: 48px;
-    height: 48px;
-    font-size: 16px;
+    width: 44px;
+    height: 44px;
+    font-size: 15px;
 
     &:after {
       font-size: 12px;
-      bottom: -24px;
+      bottom: -22px;
     }
   }
 
   @media (max-width: 480px) {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     font-size: 14px;
     border-width: 2px;
 
@@ -191,13 +269,38 @@ const ProgressStep = styled.div`
       bottom: -20px;
     }
   }
+  
+  /* Extra small heights */
+  @media (max-height: 700px) {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+    
+    &:after {
+      font-size: 9px;
+      bottom: -18px;
+    }
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    width: 32px;
+    height: 32px;
+    font-size: 11px;
+    border-width: 2px;
+    
+    &:after {
+      font-size: 8px;
+      bottom: -16px;
+    }
+  }
 `;
 
 const StepContainer = styled.div`
-  margin-bottom: 32px;
+  margin-bottom: 18px;
   background-color: #f8f9fa;
   border-radius: 14px;
-  padding: 24px;
+  padding: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e9ecef;
   transition: all 0.2s ease;
@@ -213,31 +316,53 @@ const StepContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    padding: 20px;
-    margin-bottom: 24px;
+    padding: 14px;
+    margin-bottom: 16px;
     border-radius: 12px;
   }
 
   @media (max-width: 480px) {
-    padding: 16px;
-    margin-bottom: 20px;
+    padding: 12px;
+    margin-bottom: 14px;
     border-radius: 10px;
+  }
+  
+  /* Further reduce margins and padding for smaller heights */
+  @media (max-height: 700px) {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
   }
 `;
 
 const StepTitleWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 
   @media (max-width: 480px) {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+  }
+  
+  @media (max-height: 700px) {
+    margin-bottom: 8px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    margin-bottom: 6px;
   }
 `;
 
 const StepNumber = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: ${props => props.answered ? 'linear-gradient(135deg, #004466, #0077b6)' : '#e9ecef'};
   color: ${props => props.answered ? 'white' : '#6c757d'};
@@ -245,20 +370,35 @@ const StepNumber = styled.div`
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 16px;
-  margin-right: 12px;
+  font-size: 14px;
+  margin-right: 10px;
   transition: all 0.3s ease;
 
   @media (max-width: 480px) {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
-    margin-right: 10px;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    margin-right: 8px;
+  }
+  
+  @media (max-height: 700px) {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    margin-right: 7px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    margin-right: 6px;
   }
 `;
 
 const StepTitle = styled.h3`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #343a40;
   display: flex;
@@ -266,70 +406,105 @@ const StepTitle = styled.h3`
   gap: 10px;
 
   @media (max-width: 768px) {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   @media (max-width: 480px) {
-    font-size: 15px;
+    font-size: 14px;
+  }
+  
+  @media (max-height: 700px) {
+    font-size: 13px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    font-size: 12px;
   }
 `;
 
 const StepDescription = styled.p`
-  font-size: 15px;
+  font-size: 14px;
   color: #495057;
-  margin-bottom: 22px;
-  line-height: 1.6;
-  padding-left: 44px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  padding-left: 40px;
 
   @media (max-width: 768px) {
-    font-size: 14px;
-    margin-bottom: 18px;
-    padding-left: 38px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    padding-left: 34px;
   }
 
   @media (max-width: 480px) {
-    font-size: 13px;
-    margin-bottom: 16px;
-    padding-left: 36px;
-    line-height: 1.5;
+    font-size: 12px;
+    margin-bottom: 12px;
+    padding-left: 32px;
+    line-height: 1.4;
+  }
+  
+  @media (max-height: 700px) {
+    font-size: 11px;
+    margin-bottom: 10px;
+    padding-left: 28px;
+    line-height: 1.3;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    font-size: 10px;
+    margin-bottom: 8px;
+    padding-left: 26px;
+    line-height: 1.2;
   }
 `;
 
 const RadioGroup = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 12px;
   margin-top: 8px;
   flex-wrap: wrap;
-  padding-left: 44px;
+  padding-left: 40px;
 
   @media (max-width: 768px) {
-    padding-left: 38px;
-    gap: 12px;
+    padding-left: 34px;
+    gap: 10px;
   }
 
   @media (max-width: 480px) {
-    padding-left: 0; /* Mobilde padding kaldırıldı */
-    flex-direction: column; /* Mobilde altalta sırala */
-    gap: 10px;
+    padding-left: 0;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  @media (max-height: 700px) {
+    margin-top: 6px;
+    gap: 6px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    margin-top: 5px;
+    gap: 5px;
   }
 `;
 
 const RadioLabel = styled.label`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: ${props => props.checked ? '600' : '500'};
   color: ${props => props.checked ? '#004466' : '#495057'};
-  padding: 14px 24px;
+  padding: 12px 16px;
   border-radius: 10px;
   transition: all 0.2s ease;
   background-color: white;
   border: 2px solid ${props => props.checked ? '#004466' : '#e9ecef'};
   box-shadow: ${props => props.checked ? '0 4px 12px rgba(0, 68, 102, 0.15)' : '0 2px 8px rgba(0, 0, 0, 0.03)'};
   flex: 1;
-  min-width: 200px;
+  min-width: 180px;
   position: relative;
   z-index: 1;
 
@@ -354,43 +529,67 @@ const RadioLabel = styled.label`
 
   input[type="radio"] {
     cursor: pointer;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     accent-color: #004466;
   }
 
   @media (max-width: 768px) {
-    padding: 12px 20px;
-    font-size: 14px;
+    padding: 10px 14px;
+    font-size: 13px;
     min-width: 160px;
   }
 
   @media (max-width: 480px) {
-    padding: 12px 16px;
-    font-size: 14px;
-    min-width: 0; /* Mobilde min-width sıfırlandı */
-    width: 100%; /* Tam genişlik */
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: 0;
+    width: 100%;
 
     input[type="radio"] {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  @media (max-height: 700px) {
+    padding: 8px 10px;
+    font-size: 12px;
+    
+    input[type="radio"] {
+      width: 14px;
+      height: 14px;
+    }
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    padding: 6px 8px;
+    font-size: 11px;
+    border-width: 1px;
+    
+    input[type="radio"] {
+      width: 12px;
+      height: 12px;
     }
   }
 `;
+
 const StyledLink = styled.a`
   color: #004466;
   text-decoration: none;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.2s;
-  padding: 6px 14px;
+  padding: 5px 12px;
   margin-left: 0;
   margin-top: 2px;
   border-radius: 8px;
   background-color: rgba(0, 68, 102, 0.08);
   box-shadow: 0 2px 5px rgba(0, 68, 102, 0.1);
+  font-size: 13px;
 
   &:hover {
     background-color: rgba(0, 68, 102, 0.15);
@@ -400,7 +599,7 @@ const StyledLink = styled.a`
 
   &:after {
     content: "→";
-    font-size: 17px;
+    font-size: 15px;
     transition: transform 0.2s ease;
   }
 
@@ -410,40 +609,66 @@ const StyledLink = styled.a`
 
   @media (max-width: 768px) {
     padding: 4px 10px;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   @media (max-width: 480px) {
-    padding: 4px 8px;
-    font-size: 12px;
+    padding: 3px 8px;
+    font-size: 11px;
     margin-top: 4px;
     display: inline-block;
     width: auto;
   }
+  
+  @media (max-height: 700px) {
+    padding: 2px 6px;
+    font-size: 10px;
+    margin-top: 3px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    padding: 2px 5px;
+    font-size: 9px;
+    margin-top: 2px;
+    
+    &:after {
+      font-size: 11px;
+    }
+  }
 `;
 
 const ButtonWrapper = styled.div`
-  margin-top: 38px;
+  margin-top: 24px;
   position: relative;
   z-index: 5;
 
   @media (max-width: 768px) {
-    margin-top: 30px;
+    margin-top: 20px;
   }
 
   @media (max-width: 480px) {
-    margin-top: 24px;
+    margin-top: 16px;
+  }
+  
+  @media (max-height: 700px) {
+    margin-top: 14px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    margin-top: 10px;
   }
 `;
 
 const SubmitButton = styled.button`
   width: 100%;
-  padding: 18px;
+  padding: 16px;
   background: linear-gradient(135deg, #004466, #0077b6);
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
@@ -488,19 +713,31 @@ const SubmitButton = styled.button`
   }
 
   @media (max-width: 768px) {
-    padding: 16px;
-    font-size: 16px;
+    padding: 14px;
+    font-size: 15px;
     border-radius: 10px;
   }
 
   @media (max-width: 480px) {
-    padding: 14px;
-    font-size: 15px;
+    padding: 12px;
+    font-size: 14px;
     border-radius: 8px;
+  }
+  
+  @media (max-height: 700px) {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  /* When keyboard is open */
+  .compact-view & {
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 6px;
   }
 `;
 
-// Animasyon için yardımcı bileşen - Success Animation
+// Success Animation
 const SuccessAnimationContainer = styled.div`
   position: fixed;
   top: 0;
@@ -514,7 +751,7 @@ const SuccessAnimationContainer = styled.div`
   pointer-events: ${props => props.show ? 'auto' : 'none'};
   transition: opacity 0.5s ease;
   opacity: ${props => props.show ? 1 : 0};
-  padding: 0 16px; /* Mobil için padding */
+  padding: 0 16px;
 `;
 
 const SuccessContent = styled.div`
@@ -523,11 +760,11 @@ const SuccessContent = styled.div`
   align-items: center;
   justify-content: center;
   background-color: white;
-  padding: 40px;
+  padding: 32px;
   border-radius: 20px;
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
   max-width: 400px;
-  width: 100%; /* Tam genişlik */
+  width: 100%;
   animation: ${props => props.show ? 'popUpSuccess 0.5s ease-out forwards' : 'none'};
   
   @keyframes popUpSuccess {
@@ -538,21 +775,21 @@ const SuccessContent = styled.div`
   
   svg {
     color: #00b074;
-    font-size: 80px;
-    margin-bottom: 25px;
+    font-size: 70px;
+    margin-bottom: 20px;
     animation: ${props => props.show ? 'successIconAnim 0.7s ease-out' : 'none'};
   }
   
   h3 {
-    font-size: 28px;
+    font-size: 24px;
     color: #343a40;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     font-weight: 700;
     text-align: center;
   }
   
   p {
-    font-size: 18px;
+    font-size: 16px;
     color: #6c757d;
     text-align: center;
     line-height: 1.5;
@@ -566,21 +803,21 @@ const SuccessContent = styled.div`
   }
 
   @media (max-width: 768px) {
-    padding: 30px;
+    padding: 28px;
     border-radius: 16px;
     
     svg {
-      font-size: 70px;
-      margin-bottom: 20px;
+      font-size: 60px;
+      margin-bottom: 18px;
     }
     
     h3 {
-      font-size: 24px;
-      margin-bottom: 12px;
+      font-size: 22px;
+      margin-bottom: 10px;
     }
     
     p {
-      font-size: 16px;
+      font-size: 15px;
     }
   }
 
@@ -589,41 +826,88 @@ const SuccessContent = styled.div`
     border-radius: 14px;
     
     svg {
-      font-size: 60px;
-      margin-bottom: 16px;
+      font-size: 50px;
+      margin-bottom: 14px;
     }
     
     h3 {
       font-size: 20px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     
     p {
       font-size: 14px;
     }
   }
+  
+  @media (max-height: 700px) {
+    padding: 20px;
+    
+    svg {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+    
+    h3 {
+      font-size: 18px;
+    }
+    
+    p {
+      font-size: 13px;
+    }
+  }
 `;
 
-// Kendi kendini kontrol eden modal bileşeni
+// Main component
 const VisaCheckModal = ({ userId, applicationId }) => {
   const [hasAppointment, setHasAppointment] = useState(null);
   const [hasFilledForm, setHasFilledForm] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [hideModal, setHideModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [ setIsMobile] = useState(window.innerWidth <= 480);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  // Ekran boyutunu izle
+  // Track screen dimensions and detect keyboard
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 480);
+      const newHeight = window.innerHeight;
+      setViewportHeight(newHeight);
+      
+      // On mobile, detect if keyboard might be open (significant height decrease)
+      if (window.innerWidth <= 480) {
+        // Original height we recorded on component mount
+        const originalHeight = window.outerHeight;
+        // If height reduced by more than 25%, keyboard might be open
+        setIsKeyboardOpen(newHeight < originalHeight * 0.75);
+      }
     };
     
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  // Kullanıcı cevaplarını getir
+    window.addEventListener('focusin', () => {
+      // When an input is focused on mobile, adjust container
+      if (isMobile && document.activeElement.tagName === 'INPUT') {
+        setIsKeyboardOpen(true);
+      }
+    });
+    window.addEventListener('focusout', () => {
+      // When input loses focus
+      if (isMobile && document.activeElement.tagName !== 'INPUT') {
+        setIsKeyboardOpen(false);
+      }
+    });
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('focusin', () => {});
+      window.removeEventListener('focusout', () => {});
+    };
+  }, [isMobile]);
+
+  // Get user selections
   const { 
     data: userSelections, 
     isLoading: isLoadingSelections, 
@@ -640,7 +924,6 @@ const VisaCheckModal = ({ userId, applicationId }) => {
 
         if (error) throw error;
         
-        // Veri yoksa boş dizi dön (hata fırlatma)
         return data || [];
       } catch (err) {
         console.error("VisaCheckModal data fetch error:", err);
@@ -648,14 +931,14 @@ const VisaCheckModal = ({ userId, applicationId }) => {
       }
     },
     enabled: !!userId && !!applicationId,
-    staleTime: 1000 * 60 * 5, // 5 dakika önbellek
-    retry: 1, // Sadece 1 kez yeniden dene
+    staleTime: 1000 * 60 * 5, // 5 minute cache
+    retry: 1,
     onError: (err) => {
       console.error("VisaCheckModal query error:", err);
     }
   });
 
-  // Konsolosluk linklerini getir
+  // Get consulate links
   const { 
     data: countryLinks, 
     isLoading: isLoadingLinks
@@ -671,7 +954,6 @@ const VisaCheckModal = ({ userId, applicationId }) => {
         .single();
 
       if (error) {
-        // Bu durumda sessizce null dön, hata fırlatma
         if (error.message.includes("JSON object requested, multiple (or no) rows returned")) {
           return null;
         }
@@ -680,15 +962,14 @@ const VisaCheckModal = ({ userId, applicationId }) => {
       return data;
     },
     enabled: !!userSelections?.[0]?.country_id,
-    staleTime: 1000 * 60 * 60, // 1 saat önbellek
+    staleTime: 1000 * 60 * 60, // 1 hour cache
     retry: 1
   });
 
-  // Veritabanından gelen başlangıç değerlerini state'e aktar
+  // Set initial values from database
   useEffect(() => {
     if (isLoadingSelections || !userSelections?.length) return;
     
-    // Sadece null ise state'i güncelle, yoksa kullanıcının seçimini koru
     if (hasAppointment === null) {
       setHasAppointment(userSelections[0]?.has_appointment ?? null);
     }
@@ -698,27 +979,25 @@ const VisaCheckModal = ({ userId, applicationId }) => {
     }
   }, [userSelections, isLoadingSelections, hasAppointment, hasFilledForm]);
 
-  // Modal'ın gösterilip gösterilmeyeceğini kontrol et
+  // Control modal visibility
   useEffect(() => {
     if (isLoadingSelections) return;
     
-    // DÜZELTME: Hata veya veri yoksa modalı gösterme, sessizce çık
     if (isSelectionsError || !userSelections || userSelections.length === 0) {
       console.error("Visa check modal error or missing data:", isSelectionsError);
       return;
     }
     
-    // Veritabanındaki değerleri kontrol et
     const dbAppointment = userSelections[0]?.has_appointment;
     const dbFilledForm = userSelections[0]?.has_filled_form;
     
-    // Database'de bu alanlardan herhangi biri null veya undefined ise, modalı göster
     const needsModal = dbAppointment === null || dbAppointment === undefined || 
                       dbFilledForm === null || dbFilledForm === undefined;
 
     setShowModal(needsModal);
   }, [isLoadingSelections, isSelectionsError, userSelections]);
 
+  // Update mutation
   const { mutate: updateStatus, isLoading } = useMutation({
     mutationFn: async ({ hasAppointment, hasFilledForm }) => {
       console.log("Updating values:", { hasAppointment, hasFilledForm });
@@ -744,7 +1023,6 @@ const VisaCheckModal = ({ userId, applicationId }) => {
     onSuccess: (data) => {
       console.log("Success callback - updated data:", data);
 
-      // Önce mevcut veriyi al
       const existingData = queryClient.getQueryData([
         "userSelections",
         userId,
@@ -753,7 +1031,6 @@ const VisaCheckModal = ({ userId, applicationId }) => {
       console.log("Existing data before update:", existingData);
 
       if (existingData && existingData.length > 0) {
-        // Cache'i güncelle
         const updatedData = existingData.map((item, index) =>
           index === 0
             ? {
@@ -771,19 +1048,15 @@ const VisaCheckModal = ({ userId, applicationId }) => {
         );
       }
       
-      // Modal arka planını gizle ve başarı mesajını göster
       setHideModal(true);
       setShowSuccess(true);
       
-      // 3 saniye sonra başarı mesajını gizle
       setTimeout(() => {
         setShowSuccess(false);
         
-        // Animasyon için biraz bekle sonra tamamen kapat
         setTimeout(() => {
-          // Modalı tamamen kapat
           setShowModal(false);
-          console.log("İşlem tamamlandı, modal kapatıldı");
+          console.log("Process completed, modal closed");
         }, 500);
       }, 3000);
     },
@@ -799,7 +1072,7 @@ const VisaCheckModal = ({ userId, applicationId }) => {
     }
   };
 
-  // Progress hesaplama
+  // Progress calculation
   const calculateProgress = () => {
     let completed = 0;
     if (hasAppointment !== null) completed += 1;
@@ -812,14 +1085,18 @@ const VisaCheckModal = ({ userId, applicationId }) => {
   const isStep2Answered = hasFilledForm !== null;
   const isFormComplete = hasAppointment !== null && hasFilledForm !== null;
 
-  // Veri yükleniyorsa veya modal gösterilmeyecekse, hiçbir şey render etme
+  // Determine if we need to use more compact styling based on viewport height or keyboard state
+  const isCompactView = viewportHeight < 700 || isKeyboardOpen;
+
+  // Don't render if loading or modal shouldn't be shown
   if (isLoadingSelections || isLoadingLinks || !showModal) return null;
+
   return (
     <>
-      {/* Ana Modal */}
+      {/* Main Modal */}
       {!hideModal && createPortal(
         <Overlay>
-          <ModalContainer>
+          <ModalContainer className={isCompactView ? 'compact-view' : ''}>
             <ModalTitle>Vize Başvuru Süreciniz</ModalTitle>
             
             <ProgressIndicator>
@@ -940,7 +1217,7 @@ const VisaCheckModal = ({ userId, applicationId }) => {
         document.body
       )}
       
-      {/* Bağımsız Başarı Mesajı */}
+      {/* Success Animation */}
       {createPortal(
         <SuccessAnimationContainer show={showSuccess}>
           <SuccessContent show={showSuccess}>
