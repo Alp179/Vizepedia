@@ -91,29 +91,6 @@ const ModalContainer = styled.div`
   @media (max-height: 896px) and (min-height: 845px) and (max-width: 480px) {
     padding: 18px 15px;
   }
-
-  /* iPhone SE and smaller devices */
-  @media (max-height: 700px) and (max-width: 380px) {
-    padding: 14px 12px;
-    max-height: 85vh;
-    
-    & > * {
-      transform-origin: top center;
-      transform: scale(0.9);
-      margin-bottom: -8px;
-    }
-  }
-  
-  /* Extra small devices like Galaxy Fold */
-  @media (max-height: 600px), (max-width: 320px) {
-    padding: 12px 10px;
-    
-    & > * {
-      transform-origin: top center;
-      transform: scale(0.85);
-      margin-bottom: -10px;
-    }
-  }
 `;
 
 const ModalTitle = styled.h2`
@@ -135,12 +112,6 @@ const ModalTitle = styled.h2`
   @media (max-width: 480px) {
     font-size: 20px;
     margin-bottom: 16px;
-  }
-  
-  /* Extra small devices */
-  @media (max-height: 700px) {
-    font-size: 18px;
-    margin-bottom: 12px;
   }
   
   /* When keyboard is open */
@@ -174,11 +145,6 @@ const ProgressIndicator = styled.div`
 
   @media (max-width: 480px) {
     margin: 0 5px 20px;
-  }
-  
-  /* Smaller height for smaller devices */
-  @media (max-height: 700px) {
-    margin: 0 5px 16px;
   }
   
   /* When keyboard is open */
@@ -270,18 +236,6 @@ const ProgressStep = styled.div`
     }
   }
   
-  /* Extra small heights */
-  @media (max-height: 700px) {
-    width: 34px;
-    height: 34px;
-    font-size: 12px;
-    
-    &:after {
-      font-size: 9px;
-      bottom: -18px;
-    }
-  }
-  
   /* When keyboard is open */
   .compact-view & {
     width: 32px;
@@ -327,12 +281,6 @@ const StepContainer = styled.div`
     border-radius: 10px;
   }
   
-  /* Further reduce margins and padding for smaller heights */
-  @media (max-height: 700px) {
-    padding: 10px;
-    margin-bottom: 12px;
-  }
-  
   /* When keyboard is open */
   .compact-view & {
     padding: 10px;
@@ -348,10 +296,6 @@ const StepTitleWrapper = styled.div`
 
   @media (max-width: 480px) {
     margin-bottom: 10px;
-  }
-  
-  @media (max-height: 700px) {
-    margin-bottom: 8px;
   }
   
   /* When keyboard is open */
@@ -381,13 +325,6 @@ const StepNumber = styled.div`
     margin-right: 8px;
   }
   
-  @media (max-height: 700px) {
-    width: 22px;
-    height: 22px;
-    font-size: 11px;
-    margin-right: 7px;
-  }
-  
   /* When keyboard is open */
   .compact-view & {
     width: 20px;
@@ -411,10 +348,6 @@ const StepTitle = styled.h3`
 
   @media (max-width: 480px) {
     font-size: 14px;
-  }
-  
-  @media (max-height: 700px) {
-    font-size: 13px;
   }
   
   /* When keyboard is open */
@@ -443,13 +376,6 @@ const StepDescription = styled.p`
     line-height: 1.4;
   }
   
-  @media (max-height: 700px) {
-    font-size: 11px;
-    margin-bottom: 10px;
-    padding-left: 28px;
-    line-height: 1.3;
-  }
-  
   /* When keyboard is open */
   .compact-view & {
     font-size: 10px;
@@ -475,11 +401,6 @@ const RadioGroup = styled.div`
     padding-left: 0;
     flex-direction: column;
     gap: 8px;
-  }
-  
-  @media (max-height: 700px) {
-    margin-top: 6px;
-    gap: 6px;
   }
   
   /* When keyboard is open */
@@ -620,12 +541,6 @@ const StyledLink = styled.a`
     width: auto;
   }
   
-  @media (max-height: 700px) {
-    padding: 2px 6px;
-    font-size: 10px;
-    margin-top: 3px;
-  }
-  
   /* When keyboard is open */
   .compact-view & {
     padding: 2px 5px;
@@ -649,10 +564,6 @@ const ButtonWrapper = styled.div`
 
   @media (max-width: 480px) {
     margin-top: 16px;
-  }
-  
-  @media (max-height: 700px) {
-    margin-top: 14px;
   }
   
   /* When keyboard is open */
@@ -722,11 +633,6 @@ const SubmitButton = styled.button`
     padding: 12px;
     font-size: 14px;
     border-radius: 8px;
-  }
-  
-  @media (max-height: 700px) {
-    padding: 10px;
-    font-size: 13px;
   }
   
   /* When keyboard is open */
@@ -839,23 +745,6 @@ const SuccessContent = styled.div`
       font-size: 14px;
     }
   }
-  
-  @media (max-height: 700px) {
-    padding: 20px;
-    
-    svg {
-      font-size: 40px;
-      margin-bottom: 12px;
-    }
-    
-    h3 {
-      font-size: 18px;
-    }
-    
-    p {
-      font-size: 13px;
-    }
-  }
 `;
 
 // Main component
@@ -866,7 +755,6 @@ const VisaCheckModal = ({ userId, applicationId }) => {
   const [hideModal, setHideModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
-  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -874,13 +762,12 @@ const VisaCheckModal = ({ userId, applicationId }) => {
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 480);
-      const newHeight = window.innerHeight;
-      setViewportHeight(newHeight);
       
       // On mobile, detect if keyboard might be open (significant height decrease)
       if (window.innerWidth <= 480) {
         // Original height we recorded on component mount
         const originalHeight = window.outerHeight;
+        const newHeight = window.innerHeight;
         // If height reduced by more than 25%, keyboard might be open
         setIsKeyboardOpen(newHeight < originalHeight * 0.75);
       }
@@ -1085,8 +972,8 @@ const VisaCheckModal = ({ userId, applicationId }) => {
   const isStep2Answered = hasFilledForm !== null;
   const isFormComplete = hasAppointment !== null && hasFilledForm !== null;
 
-  // Determine if we need to use more compact styling based on viewport height or keyboard state
-  const isCompactView = viewportHeight < 700 || isKeyboardOpen;
+  // Determine if we need to use compact styling based on keyboard state only
+  const isCompactView = isKeyboardOpen;
 
   // Don't render if loading or modal shouldn't be shown
   if (isLoadingSelections || isLoadingLinks || !showModal) return null;
