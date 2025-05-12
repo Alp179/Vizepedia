@@ -34,17 +34,34 @@ const ModalContainer = styled.div`
   animation: fadeIn 0.4s ease-out;
   z-index: 10000;
   margin: 0 auto;
-  
+
   /* Improved height handling */
   max-height: 90vh;
   overflow-y: auto; /* Only apply scroll when needed */
   display: flex;
   flex-direction: column;
+  padding-right: 4px; /* Add slight padding for scrollbar */
 
-  /* Keyboard open handling */
-  &.compact-view {
-    max-height: 95vh;
+  /* Scrollbar styling - refined from AllDocs.jsx */
+  &::-webkit-scrollbar {
+    width: 8px;
   }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+    border-radius: 10px;
+    margin: 10px 0; /* Add margin to the track for better positioning */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-grey-54);
+    border-radius: 10px;
+    border: 2px solid var(--color-grey-2); /* Slightly thinner border for better appearance */
+    min-height: 40px; /* Minimum thumb height for better usability */
+  }
+  
+  /* Ensure scrollbar doesn't affect content positioning */
+  scrollbar-width: thin; /* For Firefox */
 
   &:before {
     content: "";
@@ -57,8 +74,14 @@ const ModalContainer = styled.div`
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   /* Responsive adjustments for better fit on different devices */
@@ -78,7 +101,7 @@ const ModalContainer = styled.div`
   /* iPhone 12/13/14 and similar sized devices */
   @media (max-height: 844px) and (max-width: 480px) {
     padding: 16px 14px;
-    
+
     /* Optimize content to avoid scrolling on iPhone 12 */
     & > * {
       transform-origin: top center;
@@ -113,12 +136,6 @@ const ModalTitle = styled.h2`
     font-size: 20px;
     margin-bottom: 16px;
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
 `;
 
 const ProgressIndicator = styled.div`
@@ -126,9 +143,9 @@ const ProgressIndicator = styled.div`
   justify-content: space-between;
   margin: 10px 20px 30px;
   position: relative;
-  
+
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 30px;
@@ -146,21 +163,16 @@ const ProgressIndicator = styled.div`
   @media (max-width: 480px) {
     margin: 0 5px 20px;
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    margin: 0 5px 14px;
-  }
 `;
 
 const StepLine = styled.div`
   position: absolute;
   top: 50%;
   left: 30px;
-  width: ${props => {
-    if (props.progress === 0) return '0%';
-    if (props.progress === 1) return '50%';
-    return '100%';
+  width: ${(props) => {
+    if (props.progress === 0) return "0%";
+    if (props.progress === 1) return "50%";
+    return "100%";
   }};
   height: 3px;
   background: linear-gradient(90deg, #004466, #0077b6);
@@ -172,20 +184,15 @@ const StepLine = styled.div`
     left: 22px;
     right: 22px;
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    left: 18px;
-  }
 `;
 
 const ProgressStep = styled.div`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: ${props => props.active ? 'white' : 'white'};
-  border: 3px solid ${props => props.active ? '#004466' : '#e9ecef'};
-  color: ${props => props.active ? '#004466' : '#adb5bd'};
+  background-color: ${(props) => (props.active ? "white" : "white")};
+  border: 3px solid ${(props) => (props.active ? "#004466" : "#e9ecef")};
+  color: ${(props) => (props.active ? "#004466" : "#adb5bd")};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -194,21 +201,24 @@ const ProgressStep = styled.div`
   position: relative;
   z-index: 1;
   transition: all 0.3s ease;
-  box-shadow: ${props => props.active ? '0 5px 15px rgba(0, 68, 102, 0.2)' : 'none'};
-  
-  ${props => props.completed && `
+  box-shadow: ${(props) =>
+    props.active ? "0 5px 15px rgba(0, 68, 102, 0.2)" : "none"};
+
+  ${(props) =>
+    props.completed &&
+    `
     background-color: #004466;
     color: white;
   `}
 
   &:after {
-    content: '${props => props.label}';
+    content: "${(props) => props.label}";
     position: absolute;
     bottom: -25px;
     font-size: 13px;
     white-space: nowrap;
-    color: ${props => props.active ? '#004466' : '#adb5bd'};
-    font-weight: ${props => props.active ? '600' : '500'};
+    color: ${(props) => (props.active ? "#004466" : "#adb5bd")};
+    font-weight: ${(props) => (props.active ? "600" : "500")};
     letter-spacing: 0.3px;
   }
 
@@ -235,19 +245,6 @@ const ProgressStep = styled.div`
       bottom: -20px;
     }
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    width: 32px;
-    height: 32px;
-    font-size: 11px;
-    border-width: 2px;
-    
-    &:after {
-      font-size: 8px;
-      bottom: -16px;
-    }
-  }
 `;
 
 const StepContainer = styled.div`
@@ -264,7 +261,7 @@ const StepContainer = styled.div`
   &:last-child {
     margin-bottom: 0;
   }
-  
+
   &:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   }
@@ -280,13 +277,6 @@ const StepContainer = styled.div`
     margin-bottom: 14px;
     border-radius: 10px;
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-  }
 `;
 
 const StepTitleWrapper = styled.div`
@@ -297,19 +287,15 @@ const StepTitleWrapper = styled.div`
   @media (max-width: 480px) {
     margin-bottom: 10px;
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    margin-bottom: 6px;
-  }
 `;
 
 const StepNumber = styled.div`
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: ${props => props.answered ? 'linear-gradient(135deg, #004466, #0077b6)' : '#e9ecef'};
-  color: ${props => props.answered ? 'white' : '#6c757d'};
+  background: ${(props) =>
+    props.answered ? "linear-gradient(135deg, #004466, #0077b6)" : "#e9ecef"};
+  color: ${(props) => (props.answered ? "white" : "#6c757d")};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -323,14 +309,6 @@ const StepNumber = styled.div`
     height: 24px;
     font-size: 12px;
     margin-right: 8px;
-  }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
-    margin-right: 6px;
   }
 `;
 
@@ -348,11 +326,6 @@ const StepTitle = styled.h3`
 
   @media (max-width: 480px) {
     font-size: 14px;
-  }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    font-size: 12px;
   }
 `;
 
@@ -375,14 +348,6 @@ const StepDescription = styled.p`
     padding-left: 32px;
     line-height: 1.4;
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    font-size: 10px;
-    margin-bottom: 8px;
-    padding-left: 26px;
-    line-height: 1.2;
-  }
 `;
 
 const RadioGroup = styled.div`
@@ -402,12 +367,6 @@ const RadioGroup = styled.div`
     flex-direction: column;
     gap: 8px;
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    margin-top: 5px;
-    gap: 5px;
-  }
 `;
 
 const RadioLabel = styled.label`
@@ -416,35 +375,41 @@ const RadioLabel = styled.label`
   gap: 8px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: ${props => props.checked ? '600' : '500'};
-  color: ${props => props.checked ? '#004466' : '#495057'};
+  font-weight: ${(props) => (props.checked ? "600" : "500")};
+  color: ${(props) => (props.checked ? "white" : "#495057")};
   padding: 12px 16px;
   border-radius: 10px;
   transition: all 0.2s ease;
   background-color: white;
-  border: 2px solid ${props => props.checked ? '#004466' : '#e9ecef'};
-  box-shadow: ${props => props.checked ? '0 4px 12px rgba(0, 68, 102, 0.15)' : '0 2px 8px rgba(0, 0, 0, 0.03)'};
+  border: 2px solid ${(props) => (props.checked ? "#004466" : "#e9ecef")};
+  box-shadow: ${(props) =>
+    props.checked
+      ? "0 4px 12px rgba(0, 68, 102, 0.15)"
+      : "0 2px 8px rgba(0, 0, 0, 0.03)"};
   flex: 1;
   min-width: 180px;
   position: relative;
   z-index: 1;
 
   &:hover {
-    background-color: ${props => props.checked ? 'white' : '#f8f9fa'};
+    background-color: ${(props) => (props.checked ? "white" : "#f8f9fa")};
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   }
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     top: -2px;
     left: -2px;
     right: -2px;
     bottom: -2px;
     border-radius: 12px;
-    background: ${props => props.checked ? 'linear-gradient(135deg, #004466, #0077b6)' : 'transparent'};
+    background: ${(props) =>
+      props.checked
+        ? "linear-gradient(135deg, #004466, #0077b6)"
+        : "transparent"};
     z-index: -1;
-    opacity: ${props => props.checked ? '1' : '0'};
+    opacity: ${(props) => (props.checked ? "1" : "0")};
     transition: opacity 0.3s ease;
   }
 
@@ -470,28 +435,6 @@ const RadioLabel = styled.label`
     input[type="radio"] {
       width: 16px;
       height: 16px;
-    }
-  }
-  
-  @media (max-height: 700px) {
-    padding: 8px 10px;
-    font-size: 12px;
-    
-    input[type="radio"] {
-      width: 14px;
-      height: 14px;
-    }
-  }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    padding: 6px 8px;
-    font-size: 11px;
-    border-width: 1px;
-    
-    input[type="radio"] {
-      width: 12px;
-      height: 12px;
     }
   }
 `;
@@ -540,17 +483,6 @@ const StyledLink = styled.a`
     display: inline-block;
     width: auto;
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    padding: 2px 5px;
-    font-size: 9px;
-    margin-top: 2px;
-    
-    &:after {
-      font-size: 11px;
-    }
-  }
 `;
 
 const ButtonWrapper = styled.div`
@@ -564,11 +496,6 @@ const ButtonWrapper = styled.div`
 
   @media (max-width: 480px) {
     margin-top: 16px;
-  }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    margin-top: 10px;
   }
 `;
 
@@ -608,7 +535,7 @@ const SubmitButton = styled.button`
   &:hover:not(:disabled) {
     box-shadow: 0 8px 20px rgba(0, 68, 102, 0.3);
   }
-  
+
   &:hover:not(:disabled):before {
     left: 100%;
   }
@@ -634,13 +561,6 @@ const SubmitButton = styled.button`
     font-size: 14px;
     border-radius: 8px;
   }
-  
-  /* When keyboard is open */
-  .compact-view & {
-    padding: 8px;
-    font-size: 12px;
-    border-radius: 6px;
-  }
 `;
 
 // Success Animation
@@ -654,9 +574,9 @@ const SuccessAnimationContainer = styled.div`
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  pointer-events: ${props => props.show ? 'auto' : 'none'};
+  pointer-events: ${(props) => (props.show ? "auto" : "none")};
   transition: opacity 0.5s ease;
-  opacity: ${props => props.show ? 1 : 0};
+  opacity: ${(props) => (props.show ? 1 : 0)};
   padding: 0 16px;
 `;
 
@@ -671,21 +591,32 @@ const SuccessContent = styled.div`
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
   max-width: 400px;
   width: 100%;
-  animation: ${props => props.show ? 'popUpSuccess 0.5s ease-out forwards' : 'none'};
-  
+  animation: ${(props) =>
+    props.show ? "popUpSuccess 0.5s ease-out forwards" : "none"};
+
   @keyframes popUpSuccess {
-    0% { transform: scale(0.7); opacity: 0; }
-    70% { transform: scale(1.05); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+      transform: scale(0.7);
+      opacity: 0;
+    }
+    70% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
-  
+
   svg {
     color: #00b074;
     font-size: 70px;
     margin-bottom: 20px;
-    animation: ${props => props.show ? 'successIconAnim 0.7s ease-out' : 'none'};
+    animation: ${(props) =>
+      props.show ? "successIconAnim 0.7s ease-out" : "none"};
   }
-  
+
   h3 {
     font-size: 24px;
     color: #343a40;
@@ -693,35 +624,45 @@ const SuccessContent = styled.div`
     font-weight: 700;
     text-align: center;
   }
-  
+
   p {
     font-size: 16px;
     color: #6c757d;
     text-align: center;
     line-height: 1.5;
   }
-  
+
   @keyframes successIconAnim {
-    0% { transform: scale(0); opacity: 0; }
-    50% { transform: scale(1.2); opacity: 1; }
-    70% { transform: scale(0.9); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 
   @media (max-width: 768px) {
     padding: 28px;
     border-radius: 16px;
-    
+
     svg {
       font-size: 60px;
       margin-bottom: 18px;
     }
-    
+
     h3 {
       font-size: 22px;
       margin-bottom: 10px;
     }
-    
+
     p {
       font-size: 15px;
     }
@@ -730,17 +671,17 @@ const SuccessContent = styled.div`
   @media (max-width: 480px) {
     padding: 24px;
     border-radius: 14px;
-    
+
     svg {
       font-size: 50px;
       margin-bottom: 14px;
     }
-    
+
     h3 {
       font-size: 20px;
       margin-bottom: 8px;
     }
-    
+
     p {
       font-size: 14px;
     }
@@ -762,7 +703,7 @@ const VisaCheckModal = ({ userId, applicationId }) => {
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 480);
-      
+
       // On mobile, detect if keyboard might be open (significant height decrease)
       if (window.innerWidth <= 480) {
         // Original height we recorded on component mount
@@ -772,35 +713,35 @@ const VisaCheckModal = ({ userId, applicationId }) => {
         setIsKeyboardOpen(newHeight < originalHeight * 0.75);
       }
     };
-    
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('focusin', () => {
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("focusin", () => {
       // When an input is focused on mobile, adjust container
-      if (isMobile && document.activeElement.tagName === 'INPUT') {
+      if (isMobile && document.activeElement.tagName === "INPUT") {
         setIsKeyboardOpen(true);
       }
     });
-    window.addEventListener('focusout', () => {
+    window.addEventListener("focusout", () => {
       // When input loses focus
-      if (isMobile && document.activeElement.tagName !== 'INPUT') {
+      if (isMobile && document.activeElement.tagName !== "INPUT") {
         setIsKeyboardOpen(false);
       }
     });
-    
+
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('focusin', () => {});
-      window.removeEventListener('focusout', () => {});
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("focusin", () => {});
+      window.removeEventListener("focusout", () => {});
     };
   }, [isMobile]);
 
   // Get user selections
-  const { 
-    data: userSelections, 
-    isLoading: isLoadingSelections, 
-    isError: isSelectionsError
+  const {
+    data: userSelections,
+    isLoading: isLoadingSelections,
+    isError: isSelectionsError,
   } = useQuery({
-    queryKey: ['userSelections', userId, applicationId],
+    queryKey: ["userSelections", userId, applicationId],
     queryFn: async () => {
       try {
         const { data, error } = await supabase
@@ -810,7 +751,7 @@ const VisaCheckModal = ({ userId, applicationId }) => {
           .eq("user_id", userId);
 
         if (error) throw error;
-        
+
         return data || [];
       } catch (err) {
         console.error("VisaCheckModal data fetch error:", err);
@@ -822,26 +763,27 @@ const VisaCheckModal = ({ userId, applicationId }) => {
     retry: 1,
     onError: (err) => {
       console.error("VisaCheckModal query error:", err);
-    }
+    },
   });
 
   // Get consulate links
-  const { 
-    data: countryLinks, 
-    isLoading: isLoadingLinks
-  } = useQuery({
-    queryKey: ['countryLinks', userSelections?.[0]?.country_id],
+  const { data: countryLinks, isLoading: isLoadingLinks } = useQuery({
+    queryKey: ["countryLinks", userSelections?.[0]?.country_id],
     queryFn: async () => {
       if (!userSelections?.[0]?.country_id) return null;
-      
+
       const { data, error } = await supabase
-        .from('countries')
-        .select('appointment_link, form_link')
-        .eq('id', userSelections[0].country_id)
+        .from("countries")
+        .select("appointment_link, form_link")
+        .eq("id", userSelections[0].country_id)
         .single();
 
       if (error) {
-        if (error.message.includes("JSON object requested, multiple (or no) rows returned")) {
+        if (
+          error.message.includes(
+            "JSON object requested, multiple (or no) rows returned"
+          )
+        ) {
           return null;
         }
         throw error;
@@ -850,17 +792,17 @@ const VisaCheckModal = ({ userId, applicationId }) => {
     },
     enabled: !!userSelections?.[0]?.country_id,
     staleTime: 1000 * 60 * 60, // 1 hour cache
-    retry: 1
+    retry: 1,
   });
 
   // Set initial values from database
   useEffect(() => {
     if (isLoadingSelections || !userSelections?.length) return;
-    
+
     if (hasAppointment === null) {
       setHasAppointment(userSelections[0]?.has_appointment ?? null);
     }
-    
+
     if (hasFilledForm === null) {
       setHasFilledForm(userSelections[0]?.has_filled_form ?? null);
     }
@@ -869,17 +811,23 @@ const VisaCheckModal = ({ userId, applicationId }) => {
   // Control modal visibility
   useEffect(() => {
     if (isLoadingSelections) return;
-    
+
     if (isSelectionsError || !userSelections || userSelections.length === 0) {
-      console.error("Visa check modal error or missing data:", isSelectionsError);
+      console.error(
+        "Visa check modal error or missing data:",
+        isSelectionsError
+      );
       return;
     }
-    
+
     const dbAppointment = userSelections[0]?.has_appointment;
     const dbFilledForm = userSelections[0]?.has_filled_form;
-    
-    const needsModal = dbAppointment === null || dbAppointment === undefined || 
-                      dbFilledForm === null || dbFilledForm === undefined;
+
+    const needsModal =
+      dbAppointment === null ||
+      dbAppointment === undefined ||
+      dbFilledForm === null ||
+      dbFilledForm === undefined;
 
     setShowModal(needsModal);
   }, [isLoadingSelections, isSelectionsError, userSelections]);
@@ -934,13 +882,13 @@ const VisaCheckModal = ({ userId, applicationId }) => {
           updatedData
         );
       }
-      
+
       setHideModal(true);
       setShowSuccess(true);
-      
+
       setTimeout(() => {
         setShowSuccess(false);
-        
+
         setTimeout(() => {
           setShowModal(false);
           console.log("Process completed, modal closed");
@@ -966,7 +914,7 @@ const VisaCheckModal = ({ userId, applicationId }) => {
     if (hasFilledForm !== null) completed += 1;
     return completed;
   };
-  
+
   const progress = calculateProgress();
   const isStep1Answered = hasAppointment !== null;
   const isStep2Answered = hasFilledForm !== null;
@@ -981,129 +929,126 @@ const VisaCheckModal = ({ userId, applicationId }) => {
   return (
     <>
       {/* Main Modal */}
-      {!hideModal && createPortal(
-        <Overlay>
-          <ModalContainer className={isCompactView ? 'compact-view' : ''}>
-            <ModalTitle>Vize Başvuru Süreciniz</ModalTitle>
-            
-            <ProgressIndicator>
-              <StepLine progress={progress} />
-              <ProgressStep 
-                active={true}
-                completed={true}
-                label="Başlangıç"
-              >
-                1
-              </ProgressStep>
-              <ProgressStep 
-                active={progress >= 1} 
-                completed={isStep1Answered}
-                label="Randevu"
-              >
-                2
-              </ProgressStep>
-              <ProgressStep 
-                active={progress >= 2} 
-                completed={isStep1Answered && isStep2Answered}
-                label="Form"
-              >
-                3
-              </ProgressStep>
-            </ProgressIndicator>
-            
-            <StepContainer>
-              <StepTitleWrapper>
-                <StepNumber answered={hasAppointment !== null}>1</StepNumber>
-                <StepTitle>Randevunu Aldın mı?</StepTitle>
-              </StepTitleWrapper>
-              <StepDescription>
-                Senin için en uygun randevuyu konsolosluk tarafından yetkilendirilen
-                başvuru firmalarından alman gerekiyor.
-                {countryLinks?.appointment_link && (
-                  <StyledLink
-                    href={countryLinks.appointment_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Randevu Nasıl Alınır?
-                  </StyledLink>
-                )}
-              </StepDescription>
-              <RadioGroup>
-                <RadioLabel checked={hasAppointment === true}>
-                  <input
-                    type="radio"
-                    name="appointment"
-                    checked={hasAppointment === true}
-                    onChange={() => setHasAppointment(true)}
-                  />
-                  Evet, randevumu aldım
-                </RadioLabel>
-                <RadioLabel checked={hasAppointment === false}>
-                  <input
-                    type="radio"
-                    name="appointment"
-                    checked={hasAppointment === false}
-                    onChange={() => setHasAppointment(false)}
-                  />
-                  Hayır, henüz almadım
-                </RadioLabel>
-              </RadioGroup>
-            </StepContainer>
+      {!hideModal &&
+        createPortal(
+          <Overlay>
+            <ModalContainer className={isCompactView ? "compact-view" : ""}>
+              <ModalTitle>Vize Başvuru Süreciniz</ModalTitle>
 
-            <StepContainer>
-              <StepTitleWrapper>
-                <StepNumber answered={hasFilledForm !== null}>2</StepNumber>
-                <StepTitle>Vize Başvuru Formunu Doldurdun mu?</StepTitle>
-              </StepTitleWrapper>
-              <StepDescription>
-                Formu online olarak doldurman, başvurunun işleme alınması için
-                zorunludur.
-                {countryLinks?.form_link && (
-                  <StyledLink
-                    href={countryLinks.form_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Formu Nereden Doldururum?
-                  </StyledLink>
-                )}
-              </StepDescription>
-              <RadioGroup>
-                <RadioLabel checked={hasFilledForm === true}>
-                  <input
-                    type="radio"
-                    name="form"
-                    checked={hasFilledForm === true}
-                    onChange={() => setHasFilledForm(true)}
-                  />
-                  Evet, doldurdum
-                </RadioLabel>
-                <RadioLabel checked={hasFilledForm === false}>
-                  <input
-                    type="radio"
-                    name="form"
-                    checked={hasFilledForm === false}
-                    onChange={() => setHasFilledForm(false)}
-                  />
-                  Hayır, henüz doldurmadım
-                </RadioLabel>
-              </RadioGroup>
-            </StepContainer>
+              <ProgressIndicator>
+                <StepLine progress={progress} />
+                <ProgressStep active={true} completed={true} label="Başlangıç">
+                  1
+                </ProgressStep>
+                <ProgressStep
+                  active={progress >= 1}
+                  completed={isStep1Answered}
+                  label="Randevu"
+                >
+                  2
+                </ProgressStep>
+                <ProgressStep
+                  active={progress >= 2}
+                  completed={isStep1Answered && isStep2Answered}
+                  label="Form"
+                >
+                  3
+                </ProgressStep>
+              </ProgressIndicator>
 
-            <ButtonWrapper>
-              <SubmitButton
-                onClick={handleSubmit}
-                disabled={!isFormComplete || isLoading}
-              >
-                {isLoading ? "Kaydediliyor..." : "Devam Et"}
-              </SubmitButton>
-            </ButtonWrapper>
-          </ModalContainer>
-        </Overlay>,
-        document.body
-      )}
-      
+              <StepContainer>
+                <StepTitleWrapper>
+                  <StepNumber answered={hasAppointment !== null}>1</StepNumber>
+                  <StepTitle>Randevunu Aldın mı?</StepTitle>
+                </StepTitleWrapper>
+                <StepDescription>
+                  Senin için en uygun randevuyu konsolosluk tarafından
+                  yetkilendirilen başvuru firmalarından alman gerekiyor.
+                  {countryLinks?.appointment_link && (
+                    <StyledLink
+                      href={countryLinks.appointment_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Randevu Nasıl Alınır?
+                    </StyledLink>
+                  )}
+                </StepDescription>
+                <RadioGroup>
+                  <RadioLabel checked={hasAppointment === true}>
+                    <input
+                      type="radio"
+                      name="appointment"
+                      checked={hasAppointment === true}
+                      onChange={() => setHasAppointment(true)}
+                    />
+                    Evet, randevumu aldım
+                  </RadioLabel>
+                  <RadioLabel checked={hasAppointment === false}>
+                    <input
+                      type="radio"
+                      name="appointment"
+                      checked={hasAppointment === false}
+                      onChange={() => setHasAppointment(false)}
+                    />
+                    Hayır, henüz almadım
+                  </RadioLabel>
+                </RadioGroup>
+              </StepContainer>
+
+              <StepContainer>
+                <StepTitleWrapper>
+                  <StepNumber answered={hasFilledForm !== null}>2</StepNumber>
+                  <StepTitle>Vize Başvuru Formunu Doldurdun mu?</StepTitle>
+                </StepTitleWrapper>
+                <StepDescription>
+                  Formu online olarak doldurman, başvurunun işleme alınması için
+                  zorunludur.
+                  {countryLinks?.form_link && (
+                    <StyledLink
+                      href={countryLinks.form_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Formu Nereden Doldururum?
+                    </StyledLink>
+                  )}
+                </StepDescription>
+                <RadioGroup>
+                  <RadioLabel checked={hasFilledForm === true}>
+                    <input
+                      type="radio"
+                      name="form"
+                      checked={hasFilledForm === true}
+                      onChange={() => setHasFilledForm(true)}
+                    />
+                    Evet, doldurdum
+                  </RadioLabel>
+                  <RadioLabel checked={hasFilledForm === false}>
+                    <input
+                      type="radio"
+                      name="form"
+                      checked={hasFilledForm === false}
+                      onChange={() => setHasFilledForm(false)}
+                    />
+                    Hayır, henüz doldurmadım
+                  </RadioLabel>
+                </RadioGroup>
+              </StepContainer>
+
+              <ButtonWrapper>
+                <SubmitButton
+                  onClick={handleSubmit}
+                  disabled={!isFormComplete || isLoading}
+                >
+                  {isLoading ? "Kaydediliyor..." : "Devam Et"}
+                </SubmitButton>
+              </ButtonWrapper>
+            </ModalContainer>
+          </Overlay>,
+          document.body
+        )}
+
       {/* Success Animation */}
       {createPortal(
         <SuccessAnimationContainer show={showSuccess}>
