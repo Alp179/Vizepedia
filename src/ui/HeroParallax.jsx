@@ -8,7 +8,7 @@ import { getCurrentUser } from "../services/apiAuth"; // Bu import'u kendi proje
 
 // Styled Components tanımları
 const ParallaxContainer = styled.div`
-  height: 210vh; /* 230vh'den 210vh'ye düşürüldü */
+  height: 230vh; /* 230vh'den 210vh'ye düşürüldü */
   padding: 6rem 0 3rem 0; /* alt padding'i azalttık */
   overflow: hidden;
   position: relative;
@@ -17,6 +17,9 @@ const ParallaxContainer = styled.div`
   self-auto: auto;
   perspective: 1000px;
   transform-style: preserve-3d;
+  @media (max-width: 330px) {
+    padding-top: 1rem;
+  }
 `;
 
 const HeaderContainer = styled.div`
@@ -37,17 +40,16 @@ const HeaderContainer = styled.div`
 const HeaderTitle = styled.h1`
   font-size: 2.8rem; /* %20 büyütüldü: 1.5rem * 1.2 = 1.8rem */
   font-weight: 700;
-  color: ${props => props.theme.isDark ? "white" : "black"};
+  color: ${(props) => (props.theme.isDark ? "white" : "black")};
   text-align: center;
   max-width: 100%;
   transition: transform 0.2s ease, opacity 0.2s ease;
-  
-  
+
   /* Gradient efekti */
   background: linear-gradient(15deg, #004466, #00ffa2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  
+
   @media (max-width: 1410px) {
     font-size: 82px; /* %20 büyütüldü: 60px * 1.2 = 72px */
   }
@@ -64,9 +66,12 @@ const HeaderTitle = styled.h1`
     font-size: 58px; /* %20 büyütüldü: 40px * 1.2 = 48px */
   }
   @media (max-width: 730px) {
-    font-size: 52px; /* %20 büyütüldü: 35px * 1.2 = 42px */
+    font-size: 48px; /* %20 büyütüldü: 35px * 1.2 = 42px */
   }
-  
+  @media (max-width: 350px) {
+    font-size: 38px;
+  }
+
   @media (min-width: 768px) {
     font-size: 6.4rem; /* %20 büyütüldü: 4.5rem * 1.2 = 5.4rem */
   }
@@ -74,21 +79,27 @@ const HeaderTitle = styled.h1`
 
 const HeaderDescription = styled.p`
   max-width: 50.4rem;
-  font-size: 1.2rem;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  hyphens: none;
+  font-size: 1.5rem;
   margin-top: 2rem;
-  color: ${props => props.theme.isDark ? "rgba(229, 229, 229)" : "rgba(23, 23, 23)"};
+  color: var(--color-grey-700);
   text-align: center;
   margin: 2rem auto 0;
 
   @media (min-width: 768px) {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 `;
 
 const RowContainer = styled(motion.div)`
   display: flex;
   margin-bottom: 2.5rem; /* 3rem'den 2.5rem'e düşürüldü - satırlar arası mesafe */
-  ${props => props.reverse ? "flex-direction: row-reverse; space-x-reverse: 1;" : "flex-direction: row;"}
+  ${(props) =>
+    props.reverse
+      ? "flex-direction: row-reverse; space-x-reverse: 1;"
+      : "flex-direction: row;"}
   gap: 3rem; /* bayraklar arası mesafe korundu */
 `;
 
@@ -117,7 +128,7 @@ const FlagImage = styled.div`
   width: 100%;
   height: 100%;
   inset: 0;
-  
+
   svg {
     width: 100%;
     height: 100%;
@@ -150,7 +161,7 @@ const CountryName = styled.h2`
   text-align: center;
   transition: transform 0.3s ease;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-  
+
   ${CountryCardContainer}:hover & {
     transform: translateY(0);
   }
@@ -336,8 +347,8 @@ export const Header = () => {
         Düşlerinizdeki Seyahatin İlk Adımı <br />
       </HeaderTitle>
       <HeaderDescription>
-        Schengen Vizesi, Birleşik Krallık Vizesi ve Amerika Vizesi başvurularınızı
-        profesyonel ekibimizle kolayca tamamlayın.
+        Schengen Vizesi, Birleşik Krallık Vizesi ve Amerika Vizesi
+        başvurularınızı profesyonel ekibimizle kolayca tamamlayın.
       </HeaderDescription>
       <ButtonWrapper>
         <StyledCeper>
@@ -387,7 +398,7 @@ export const Header = () => {
 export const CountryCard = ({ country, translate }) => {
   const flagRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
-  
+
   const flagUrl = country.code
     ? `https://purecatamphetamine.github.io/country-flag-icons/3x2/${country.code.toUpperCase()}.svg`
     : null;
@@ -429,7 +440,7 @@ export const CountryCard = ({ country, translate }) => {
       }}
       whileHover={{
         y: -20,
-        transition: { duration: 0.3 }
+        transition: { duration: 0.3 },
       }}
       key={country.name}
     >
@@ -484,42 +495,43 @@ export const HeroParallax = ({ countries = [] }) => {
   // Default boş array ve güvenli slice işlemleri için kontrol
   const firstRow = usedCountries.length ? usedCountries.slice(0, 8) : [];
   const secondRow = usedCountries.length >= 9 ? usedCountries.slice(8, 16) : [];
-  const thirdRow = usedCountries.length >= 17 ? usedCountries.slice(16, 28) : [];
-  
+  const thirdRow =
+    usedCountries.length >= 17 ? usedCountries.slice(16, 28) : [];
+
   const ref = useRef(null);
-  
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
-  
+
   const springConfig = { stiffness: 300, damping: 30, bounce: 100 };
-  
+
   const translateX = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, 1000]), 
+    useTransform(scrollYProgress, [0, 1], [0, 1000]),
     springConfig
   );
-  
+
   const translateXReverse = useSpring(
-    useTransform(scrollYProgress, [0, 1], [0, -1000]), 
+    useTransform(scrollYProgress, [0, 1], [0, -1000]),
     springConfig
   );
-  
+
   const rotateX = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [15, 0]), 
+    useTransform(scrollYProgress, [0, 0.2], [15, 0]),
     springConfig
   );
-  
+
   const opacity = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [0.2, 1]), 
+    useTransform(scrollYProgress, [0, 0.2], [0.2, 1]),
     springConfig
   );
-  
+
   const rotateZ = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [20, 0]), 
+    useTransform(scrollYProgress, [0, 0.2], [20, 0]),
     springConfig
   );
-  
+
   const translateY = useSpring(
     useTransform(scrollYProgress, [0, 0.2], [-500, 300]), // -700, 500'den -500, 300'e değiştirildi
     springConfig
@@ -534,33 +546,34 @@ export const HeroParallax = ({ countries = [] }) => {
           rotateZ,
           translateY,
           opacity,
-          paddingTop: "2rem", /* Header ve bayraklar arasında daha fazla boşluk */
+          paddingTop:
+            "2rem" /* Header ve bayraklar arasında daha fazla boşluk */,
         }}
       >
         <RowContainer reverse>
           {firstRow.map((country) => (
-            <CountryCard 
-              country={country} 
-              translate={translateX} 
-              key={country.code} 
+            <CountryCard
+              country={country}
+              translate={translateX}
+              key={country.code}
             />
           ))}
         </RowContainer>
         <RowContainer>
           {secondRow.map((country) => (
-            <CountryCard 
-              country={country} 
-              translate={translateXReverse} 
-              key={country.code} 
+            <CountryCard
+              country={country}
+              translate={translateXReverse}
+              key={country.code}
             />
           ))}
         </RowContainer>
         <RowContainer reverse>
           {thirdRow.map((country) => (
-            <CountryCard 
-              country={country} 
-              translate={translateX} 
-              key={country.code} 
+            <CountryCard
+              country={country}
+              translate={translateX}
+              key={country.code}
             />
           ))}
         </RowContainer>

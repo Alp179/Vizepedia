@@ -99,11 +99,9 @@ const MainContainer = styled.div`
 const PremiumSectionContainer = styled.div`
   position: relative;
   width: 100%;
-  margin-top: 80px;
   margin-bottom: 100px;
   
   @media (max-width: 768px) {
-    margin-top: 60px;
     margin-bottom: 80px;
   }
 `;
