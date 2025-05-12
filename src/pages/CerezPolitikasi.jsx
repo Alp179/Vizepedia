@@ -56,8 +56,9 @@ const sectionsData = [
     id: 4,
     title: "4. Çerezlerin Yönetimi ve Devre Dışı Bırakılması",
     content: `Çerezlerin kullanılmasını tarayıcı ayarlarınızdan silebilir veya engelleyebilirsiniz. Ancak bazı çerezlerin devre dışı bırakılması, web sitemizin bazı bölümlerinin düzgün çalışmasını engelleyebilir.
-
     Tarayıcı ayarları için örnek bağlantılar:
+
+      
     - Google Chrome: https://support.google.com/accounts/answer/61416
     - Mozilla Firefox: https://support.mozilla.org/tr/kb/cerezleri-silme
     - Safari: https://support.apple.com/tr-tr/guide/safari/sfri11471/mac
@@ -84,6 +85,9 @@ export const formatContent = (content) => {
   const paragraphs = content.split(/\n\n+/).filter(p => p.trim());
   const elements = [];
   
+  // URL pattern to detect links
+  const urlPattern = /(https?:\/\/[^\s]+)/g;
+  
   paragraphs.forEach((paragraph, pIndex) => {
     const lines = paragraph.split(/\n+/).filter(line => line.trim());
     
@@ -95,7 +99,27 @@ export const formatContent = (content) => {
           ? line.trim().substring(2) 
           : line.trim();
           
-        return <li key={`item-${pIndex}-${lIndex}`}>{cleanLine}</li>;
+        // Convert URLs to clickable links
+        const parts = cleanLine.split(urlPattern);
+        const content = parts.map((part, partIndex) => {
+          // Check if this part is a URL
+          if (part.match(urlPattern)) {
+            return (
+              <a 
+                key={`link-${partIndex}`} 
+                href={part} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{ color: "#0077b6", textDecoration: "underline" }}
+              >
+                {part}
+              </a>
+            );
+          }
+          return part;
+        });
+          
+        return <li key={`item-${pIndex}-${lIndex}`}>{content}</li>;
       });
       
       elements.push(<ul key={`list-${pIndex}`}>{listItems}</ul>);
@@ -128,11 +152,51 @@ export const formatContent = (content) => {
         } 
         // Regular list item
         else if (inList) {
-          currentList.push(<li key={`subitem-${pIndex}-${lIndex}`}>{trimmedLine}</li>);
+          // Convert URLs to clickable links
+          const parts = trimmedLine.split(urlPattern);
+          const content = parts.map((part, partIndex) => {
+            // Check if this part is a URL
+            if (part.match(urlPattern)) {
+              return (
+                <a 
+                  key={`link-${partIndex}`} 
+                  href={part} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ color: "#0077b6", textDecoration: "underline" }}
+                >
+                  {part}
+                </a>
+              );
+            }
+            return part;
+          });
+          
+          currentList.push(<li key={`subitem-${pIndex}-${lIndex}`}>{content}</li>);
         }
         // Regular paragraph
         else {
-          elements.push(<p key={`text-${pIndex}-${lIndex}`}>{trimmedLine}</p>);
+          // Handle URLs in regular paragraphs
+          const parts = trimmedLine.split(urlPattern);
+          const content = parts.map((part, partIndex) => {
+            // Check if this part is a URL
+            if (part.match(urlPattern)) {
+              return (
+                <a 
+                  key={`link-${partIndex}`} 
+                  href={part} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ color: "#0077b6", textDecoration: "underline" }}
+                >
+                  {part}
+                </a>
+              );
+            }
+            return part;
+          });
+          
+          elements.push(<p key={`text-${pIndex}-${lIndex}`}>{content}</p>);
         }
       });
       
@@ -143,7 +207,27 @@ export const formatContent = (content) => {
     } 
     // Regular paragraph
     else {
-      elements.push(<p key={`para-${pIndex}`}>{paragraph.trim()}</p>);
+      // Handle URLs in regular paragraphs
+      const parts = paragraph.trim().split(urlPattern);
+      const content = parts.map((part, partIndex) => {
+        // Check if this part is a URL
+        if (part.match(urlPattern)) {
+          return (
+            <a 
+              key={`link-${partIndex}`} 
+              href={part} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ color: "#0077b6", textDecoration: "underline" }}
+            >
+              {part}
+            </a>
+          );
+        }
+        return part;
+      });
+      
+      elements.push(<p key={`para-${pIndex}`}>{content}</p>);
     }
   });
   
