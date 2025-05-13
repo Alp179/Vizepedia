@@ -1,5 +1,3 @@
-// MainPageHamburger.jsx - Tüm güncellenmiş kod
-
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -14,6 +12,7 @@ import supabase from "../services/supabase"; // Supabase import ediyoruz
 import ModalSignup from "../ui/ModalSignup"; // Modal bileşenini import ediyoruz
 import SignupForm from "../features/authentication/SignupForm"; // Signup formunu import ediyoruz
 
+// Modern ve daha minimalist hamburger ikonu
 // Modern ve daha minimalist hamburger ikonu
 const MenuIcon = styled.div`
   display: flex;
@@ -45,6 +44,12 @@ const MenuIcon = styled.div`
         : "var(--text-color, #333)"};
     stroke-width: 5;
     stroke-linecap: round;
+  }
+
+  /* Dark Mode Styles */
+  .dark-mode & .line {
+    stroke: ${(props) =>
+      props.isOpen ? "var(--primary-color, #004466)" : "#ffffff"};
   }
 
   .ham .top {

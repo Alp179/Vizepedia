@@ -20,11 +20,27 @@ const StyledMainPageHeader = styled.header`
   width: 100%;
   z-index: 3000;
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: none;
+  background: ${(props) => 
+    props.scrolled 
+      ? "rgba(255, 255, 255, 0.2)" 
+      : "transparent"};
+  backdrop-filter: ${(props) => 
+    props.scrolled ? "blur(10px)" : "none"};
+  -webkit-backdrop-filter: ${(props) => 
+    props.scrolled ? "blur(10px)" : "none"};
+  box-shadow: ${(props) => 
+    props.scrolled 
+      ? "0 4px 20px rgba(0, 0, 0, 0.05)" 
+      : "none"};
   padding: 20px 0;
+
+  /* Dark Mode Styles */
+  .dark-mode & {
+    background: ${(props) => 
+      props.scrolled 
+        ? "rgba(30, 35, 45, 0.2)" 
+        : "transparent"};
+  }
 `;
 
 const HeaderContents = styled.div`
