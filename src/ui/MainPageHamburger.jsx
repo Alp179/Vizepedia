@@ -652,7 +652,24 @@ const MainPageHamburger = ({ setMenuOpen }) => {
   const handleFaqClick = () => {
     const faqSection = document.getElementById("faq-section");
     if (faqSection) {
-      faqSection.scrollIntoView({ behavior: "smooth" });
+      // Header'ı bul ve yüksekliğini ölç
+      const headerElement = document.querySelector('header');
+      const headerHeight = headerElement ? headerElement.offsetHeight : 0;
+      
+      // FAQ section'ın pozisyonunu al
+      const faqPosition = faqSection.getBoundingClientRect().top;
+      // Geçerli scroll pozisyonunu al
+      const scrollPosition = window.pageYOffset;
+      // Header yüksekliği + 70px ek boşluk bırak
+      const offsetPosition = faqPosition + scrollPosition - headerHeight - 50;
+      
+      // Smooth scroll ile git
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+      
+      // Menüyü kapat
       setIsOpen(false);
       setMenuOpen(false);
     }
@@ -1047,7 +1064,7 @@ const MainPageHamburger = ({ setMenuOpen }) => {
             </NavButton>
 
             <NavButton onClick={handleFaqClick}>
-              <IconHelp /> Sık Sorulan Sorular
+              <IconHelp /> Sıkça Sorulan Sorular
             </NavButton>
 
             <Divider />

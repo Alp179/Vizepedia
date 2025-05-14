@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import Logo from "../ui/Logo";
 
@@ -145,25 +145,22 @@ const CheckboxRow = styled.div`
   @media (max-width: 1000px) {
     margin-bottom: -10px;
   }
-  
 `;
 
 const CheckboxLabel = styled.label`
   margin-top: 8px;
   display: flex;
-  gap: 4px;
+  gap: 8px;
   font-family: "Open Sans", Arial, sans-serif;
   font-size: 12px;
   color: #000;
-
-  
-  
+  align-items: center;
 `;
 
-const Izin = styled.p`
-  font-size: 12px;
-  color: var(--color-grey-600);
- 
+const CheckboxInput = styled.input`
+  width: 16px;
+  height: 16px;
+  outline: none;
 `;
 
 const SubmitButton = styled.button`
@@ -178,11 +175,20 @@ const SubmitButton = styled.button`
   font-size: 20px;
   text-align: center;
   color: #00ffa2;
+  transition: all 0.2s ease;
+  
+  ${props => props.disabled && `
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: translateY(3px);
+  `}
 
   &:hover {
-    background: #87f9cd;
-    color: #004466;
+    background: ${props => !props.disabled && '#87f9cd'};
+    color: ${props => !props.disabled && '#004466'};
   }
+  
   @media (max-width: 1000px) {
     margin-bottom: -15px;
   }
@@ -242,7 +248,14 @@ const FormContainer2 = styled.div`
   }
 `;
 
+const PrivacyLink = styled.a`
+  color: var(--color-grey-600);
+  text-decoration: underline;
+`;
+
 const MailerLiteForm = () => {
+  const [isChecked, setIsChecked] = useState(false);
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src =
@@ -253,6 +266,10 @@ const MailerLiteForm = () => {
       document.body.removeChild(script);
     };
   }, []);
+
+  const handleCheckboxChange = (e) => {
+    setIsChecked(e.target.checked);
+  };
 
   return (
     <FormContainer id="mlb2-18366039">
@@ -292,15 +309,26 @@ const MailerLiteForm = () => {
 
               <CheckboxRow>
                 <CheckboxLabel>
-                  <input style={{outline: "none"}} type="checkbox" required />
-                  <Izin>
-                    Kişisel verilerimin burada yer alan Gizlilik Bildirimi
-                    kapsamında işlenmesine izin veriyorum.
-                  </Izin>
+                  <CheckboxInput 
+                    type="checkbox" 
+                    required 
+                    onChange={handleCheckboxChange}
+                    checked={isChecked}
+                  />
+                  <span style={{ fontSize: "12px" }}>
+                    <PrivacyLink
+                      href="/kisisel-verilerin-korunmasi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      KVKK Aydınlatma Metni
+                    </PrivacyLink>
+                    &apos;ni okudum ve kabul ediyorum.
+                  </span>
                 </CheckboxLabel>
               </CheckboxRow>
 
-              <SubmitButton type="submit">Abone Ol</SubmitButton>
+              <SubmitButton type="submit" disabled={!isChecked}>Abone Ol</SubmitButton>
 
               <LoadingButton disabled="disabled" type="button">
                 <LoadingSpinner />

@@ -207,6 +207,8 @@ function MainPageHeader({ setMenuOpen }) {
   const [scrolled, setScrolled] = useState(false);
   // Yükleniyor durumu için state ekledik
   const [isLoading, setIsLoading] = useState(false);
+  // Headerın yüksekliğini tutacak state
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   // İkonlar için SVG bileşenleri
   const IconUser = () => (
@@ -309,6 +311,25 @@ function MainPageHeader({ setMenuOpen }) {
     </svg>
   );
 
+  // Header yüksekliğini ölçmek için ref ve useEffect
+  useEffect(() => {
+    const measureHeaderHeight = () => {
+      const headerElement = document.querySelector('header');
+      if (headerElement) {
+        const height = headerElement.offsetHeight;
+        setHeaderHeight(height);
+      }
+    };
+
+    // İlk render ve resize olayında ölçüm yap
+    measureHeaderHeight();
+    window.addEventListener('resize', measureHeaderHeight);
+
+    return () => {
+      window.removeEventListener('resize', measureHeaderHeight);
+    };
+  }, []);
+
   // Anonim giriş fonksiyonu
   const handleAnonymousSignIn = async () => {
     try {
@@ -391,11 +412,22 @@ function MainPageHeader({ setMenuOpen }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Sayfa içi navigasyon
+  // Sayfa içi navigasyon - header'ın yüksekliği hesaba katılarak yapılıyor
   const handleFaqClick = () => {
     const faqSection = document.getElementById("faq-section");
     if (faqSection) {
-      faqSection.scrollIntoView({ behavior: "smooth" });
+      // FAQ section'ın pozisyonunu al
+      const faqPosition = faqSection.getBoundingClientRect().top;
+      // Geçerli scroll pozisyonunu al
+      const scrollPosition = window.pageYOffset;
+      // Header yüksekliği + 70px ek boşluk bırak
+      const offsetPosition = faqPosition + scrollPosition - headerHeight - 70;
+      
+      // Smooth scroll ile git
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
     }
   };
 

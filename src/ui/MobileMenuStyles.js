@@ -635,7 +635,7 @@ export const DocsModalCloseButton = styled.button`
   justify-content: center;
   border: none;
   background: var(--close-btn-bg, rgba(0, 0, 0, 0.05));
-  color: var(--close-btn-color, #333);
+  color: var(--color-grey-500);
   cursor: pointer;
   z-index: 9001;
   transition: all 0.2s ease;
