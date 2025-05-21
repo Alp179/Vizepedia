@@ -8,11 +8,10 @@ import DarkModeToggle from "./DarkModeToggle";
 import { getCurrentUser } from "../services/apiAuth";
 import { useUser } from "../features/authentication/useUser";
 import { useLogout } from "../features/authentication/useLogout";
-import supabase from "../services/supabase"; // Supabase import ediyoruz
-import ModalSignup from "../ui/ModalSignup"; // Modal bileşenini import ediyoruz
-import SignupForm from "../features/authentication/SignupForm"; // Signup formunu import ediyoruz
+import supabase from "../services/supabase";
+import ModalSignup from "../ui/ModalSignup";
+import SignupForm from "../features/authentication/SignupForm";
 
-// Modern ve daha minimalist hamburger ikonu
 // Modern ve daha minimalist hamburger ikonu
 const MenuIcon = styled.div`
   display: flex;
@@ -107,6 +106,29 @@ const CloseButton = styled.button`
   svg {
     width: 20px;
     height: 20px;
+  }
+`;
+
+// Blur overlay for the entire page
+const BlurOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1500; /* Lower than the menu (2999) but higher than content */
+  opacity: ${({ isOpen }) => (isOpen ? "1" : "0")};
+  visibility: ${({ isOpen, hasTransitionEnded }) =>
+    isOpen || !hasTransitionEnded ? "visible" : "hidden"};
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: ${({ isOpen }) => (isOpen ? "auto" : "none")};
+  
+  /* Dark Mode Styles */
+  .dark-mode & {
+    background: rgba(0, 0, 0, 0.3);
   }
 `;
 
@@ -982,6 +1004,13 @@ const MainPageHamburger = ({ setMenuOpen }) => {
           />
         </svg>
       </MenuIcon>
+
+      {/* Add the blur overlay */}
+      <BlurOverlay 
+        isOpen={isOpen} 
+        hasTransitionEnded={hasTransitionEnded} 
+        onClick={toggleMenu}
+      />
 
       <MenuContainer
         isOpen={isOpen}

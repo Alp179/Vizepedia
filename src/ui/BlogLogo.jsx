@@ -85,7 +85,7 @@ const StyledBlogLogo = styled.div`
     css`
       width: 165px;
       height: auto;
-      flex-shrink: 0;
+      flex-shrink: 0
       @media (max-width: 1200px) {
         width: 120px;
       }

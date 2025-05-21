@@ -18,7 +18,7 @@ const StyledMainPageHeader = styled.header`
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 3000;
+  z-index: 2000;
   transition: all 0.3s ease;
   background: ${(props) => 
     props.scrolled 
