@@ -622,6 +622,20 @@ const MainPageHamburger = ({ setMenuOpen }) => {
   }, []);
 
   useEffect(() => {
+    // Disable body scroll when menu is open, re-enable when closed
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    // Cleanup function to ensure body scroll is enabled when component unmounts
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]); // Depend on isOpen state
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         menuRef.current &&
