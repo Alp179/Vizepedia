@@ -11,7 +11,7 @@ export async function fetchAllBlogs() {
   return data;
 }
 
-// Belirli bir blog yazısını slug ile çek
+// Belirli bir blog yazısını slug ile çek - sources kolonu eklendi
 export async function fetchBlogBySlug(slug) {
   const { data, error } = await supabase
     .from("blogs")
@@ -34,7 +34,8 @@ export async function fetchBlogBySlug(slug) {
       section2_image,
       section3_title,
       section3_content,
-      section3_image
+      section3_image,
+      sources
     `
     )
     .eq("slug", slug)

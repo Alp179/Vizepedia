@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -7,15 +8,18 @@ import Footer from "../ui/Footer";
 import styled, { keyframes } from "styled-components";
 import SidebarBlogList from "../ui/SidebarBlogList";
 import BlogContentSection from "../ui/BlogContentSection";
-// PaginationDots import'u kaldırıldı
+import BlogSources from "../ui/BlogSources";
+
 
 // Animasyonlar
 const fadeIn = keyframes`
   from {
     opacity: 0;
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 `;
 
@@ -28,14 +32,14 @@ const PageContainer = styled.div`
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   font-size: 16px;
   color: var(--color-grey-600);
-  overflow-x: hidden; // Yatay kaydırmayı önlemek için eklendi
+  overflow-x: hidden;
 
   @media (min-width: 768px) {
     font-size: 18px;
   }
 
   @media (min-width: 1200px) {
-    font-size: 19px; // Daha dengeli bir boyut
+    font-size: 19px;
   }
 `;
 
@@ -96,19 +100,19 @@ const HeroContent = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 4rem; // 3rem'den 4rem'e arttırıldı
+  padding: 0 4rem;
   position: relative;
   z-index: 2;
   padding-bottom: 4rem;
   animation: ${fadeIn} 1.2s ease-in-out;
 
   @media (max-width: 768px) {
-    padding: 0 3rem; // 2.5rem'den 3rem'e arttırıldı
+    padding: 0 3rem;
     padding-bottom: 3rem;
   }
 
   @media (max-width: 480px) {
-    padding: 0 2.5rem; // 2rem'den 2.5rem'e arttırıldı
+    padding: 0 2.5rem;
     padding-bottom: 2.5rem;
   }
 `;
@@ -136,7 +140,7 @@ const Category = styled.div`
   @media (max-width: 768px) {
     font-size: 1rem;
     padding: 0.6rem 1.2rem;
-    margin-bottom: 1.25rem; // Biraz daha küçük ekranlarda daha iyi marj
+    margin-bottom: 1.25rem;
   }
 
   @media (max-width: 480px) {
@@ -212,12 +216,12 @@ const Title = styled.h1`
   }
 
   @media (max-width: 768px) {
-    font-size: 2.7rem; // 2.5rem'den 2.7rem'e arttırıldı
+    font-size: 2.7rem;
     margin-bottom: 1.25rem;
   }
 
   @media (max-width: 480px) {
-    font-size: 2.5rem; // Daha küçük ekranlar için daha küçük boyut
+    font-size: 2.5rem;
     margin-bottom: 1rem;
   }
 `;
@@ -228,7 +232,7 @@ const ContentSection = styled.div`
   justify-content: space-between;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 4.5rem 4rem; // 3.5rem'den 4rem'e arttırıldı
+  padding: 4.5rem 4rem;
   gap: 5rem;
 
   @media (max-width: 1400px) {
@@ -237,18 +241,18 @@ const ContentSection = styled.div`
   }
 
   @media (max-width: 1024px) {
-    padding: 3.5rem 3.5rem; // 3rem'den 3.5rem'e arttırıldı
+    padding: 3.5rem 3.5rem;
     gap: 3.5rem;
   }
 
   @media (max-width: 768px) {
     flex-direction: column;
-    padding: 3rem 3rem; // 2.5rem'den 3rem'e arttırıldı
+    padding: 3rem 3rem;
     gap: 3.5rem;
   }
 
   @media (max-width: 480px) {
-    padding: 2.5rem 2.5rem; // 2rem'den 2.5rem'e arttırıldı
+    padding: 2.5rem 2.5rem;
     gap: 3rem;
   }
 `;
@@ -256,8 +260,8 @@ const ContentSection = styled.div`
 // Yukarı Kaydırma Butonu
 const ScrollToTop = styled.button`
   position: fixed;
-  bottom: 3.5rem; // 3rem'den 3.5rem'e arttırıldı
-  right: 3.5rem; // 3rem'den 3.5rem'e arttırıldı
+  bottom: 3.5rem;
+  right: 3.5rem;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -289,15 +293,15 @@ const ScrollToTop = styled.button`
   }
 
   @media (max-width: 768px) {
-    bottom: 3rem; // 2.5rem'den 3rem'e arttırıldı
-    right: 3rem; // 2.5rem'den 3rem'e arttırıldı
+    bottom: 3rem;
+    right: 3rem;
     width: 50px;
     height: 50px;
   }
 
   @media (max-width: 480px) {
-    bottom: 2.5rem; // 2rem'den 2.5rem'e arttırıldı
-    right: 2.5rem; // 2rem'den 2.5rem'e arttırıldı
+    bottom: 2.5rem;
+    right: 2.5rem;
     width: 46px;
     height: 46px;
   }
@@ -326,14 +330,12 @@ function BlogDetail() {
   const calculateReadingTime = (blog) => {
     if (!blog) return 0;
 
-    // Tüm bölümlerin içeriklerini birleştir
     let combinedText = [
       blog.section1_content || "",
       blog.section2_content || "",
       blog.section3_content || "",
     ].join(" ");
 
-    // HTML etiketlerini temizle
     combinedText = combinedText.replace(/<[^>]*>/g, "");
 
     const wordsPerMinute = 200;
@@ -377,21 +379,17 @@ function BlogDetail() {
   // Sayfa scroll olaylarını izleme
   useEffect(() => {
     const handleScroll = () => {
-      // Yukarı kaydırma butonu görünürlüğü
       setScrollVisible(window.scrollY > 400);
 
-      // Okuma ilerleme çubuğu
       const totalHeight = document.body.scrollHeight - window.innerHeight;
       const progress = (window.scrollY / totalHeight) * 100;
       setReadingProgress(progress);
 
-      // Aktif başlığı belirleme
       if (headings.length > 0) {
         const headingElements = headings.map((heading) =>
           document.getElementById(heading.id)
         );
 
-        // En son görünür başlığı bul
         let activeId = "";
         for (let i = headingElements.length - 1; i >= 0; i--) {
           const element = headingElements[i];
@@ -404,7 +402,6 @@ function BlogDetail() {
           }
         }
 
-        // Eğer aktif başlık değiştiyse state'i güncelle
         if (activeId && activeId !== activeHeading) {
           setActiveHeading(activeId);
         }
@@ -472,7 +469,7 @@ function BlogDetail() {
           background: "var(--color-grey-909)",
           color: "var(--color-grey-600)",
           fontSize: "1.5rem",
-          padding: "3rem", // 2rem'den 3rem'e arttırıldı
+          padding: "3rem",
           textAlign: "center",
         }}
       >
@@ -486,8 +483,6 @@ function BlogDetail() {
   return (
     <PageContainer>
       <ReadingProgress progress={readingProgress} />
-
-      {/* PaginationDots bileşeni tamamen kaldırıldı */}
 
       <HeroSection>
         <HeroImage src={blog.cover_image} />
@@ -541,7 +536,7 @@ function BlogDetail() {
           headings={headings}
           activeHeading={activeHeading}
           setActiveHeading={setActiveHeading}
-          hideTableOfContents={false} // İçindekiler tablosunu göster
+          hideTableOfContents={false}
         />
 
         <SidebarBlogList
@@ -550,6 +545,9 @@ function BlogDetail() {
           initialCount={3}
         />
       </ContentSection>
+
+      {/* Kaynak Bölümü - Artık ayrı component */}
+      <BlogSources sourcesString={blog?.sources} />
 
       <ScrollToTop
         visible={scrollVisible}
