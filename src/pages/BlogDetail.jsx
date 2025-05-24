@@ -1,15 +1,14 @@
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchBlogBySlug, fetchRelatedBlogs } from "../services/apiBlogs";
+import { fetchBlogBySlug, fetchRelatedBlogsByCategory, fetchRecentBlogs } from "../services/apiBlogs"; // Yeni import
 import Spinner from "../ui/Spinner";
 import Footer from "../ui/Footer";
 import styled, { keyframes } from "styled-components";
 import SidebarBlogList from "../ui/SidebarBlogList";
 import BlogContentSection from "../ui/BlogContentSection";
 import BlogSources from "../ui/BlogSources";
-
+import RecentBlogs from "../ui/RecentBlogs"; // Yeni import
 
 // Animasyonlar
 const fadeIn = keyframes`
@@ -233,16 +232,16 @@ const ContentSection = styled.div`
   max-width: 1400px;
   margin: 0 auto;
   padding: 4.5rem 4rem;
-  gap: 5rem;
+  gap: 3rem; /* 5rem'den 3rem'e azaltıldı - iki sidebar için yer açmak */
 
   @media (max-width: 1400px) {
     max-width: 1200px;
-    gap: 4rem;
+    gap: 2.5rem;
   }
 
   @media (max-width: 1024px) {
     padding: 3.5rem 3.5rem;
-    gap: 3.5rem;
+    gap: 2rem;
   }
 
   @media (max-width: 768px) {
@@ -254,6 +253,27 @@ const ContentSection = styled.div`
   @media (max-width: 480px) {
     padding: 2.5rem 2.5rem;
     gap: 3rem;
+  }
+`;
+
+// Sidebar Container - İki sidebar'ı yan yana yerleştirmek için
+const SidebarContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 300px; /* Minimum genişlik ayarı */
+
+  @media (max-width: 1400px) {
+    min-width: 270px;
+  }
+
+  @media (max-width: 1200px) {
+    min-width: 255px;
+  }
+
+  @media (max-width: 768px) {
+    min-width: auto;
+    width: 100%;
   }
 `;
 
@@ -436,11 +456,17 @@ function BlogDetail() {
     }
   }, [blog]);
 
-  const relatedTags = blog?.tags || "";
-  const { data: relatedBlogs } = useQuery({
-    queryKey: ["relatedBlogs", relatedTags, slug],
-    queryFn: () => fetchRelatedBlogs(relatedTags, slug),
-    enabled: !!relatedTags.length,
+  // Kategori bazında ilgili blogları getir
+  const { data: relatedBlogs, isLoading: relatedLoading } = useQuery({
+    queryKey: ["relatedBlogs", blog?.category, slug],
+    queryFn: () => fetchRelatedBlogsByCategory(blog?.category, slug, 6), // 6'ya düşürüldü
+    enabled: !!blog?.category, // Blog kategorisi varsa çalıştır
+  });
+
+  // En yeni blogları getir (mevcut blog hariç)
+  const { data: recentBlogs, isLoading: recentLoading } = useQuery({
+    queryKey: ["recentBlogs", slug],
+    queryFn: () => fetchRecentBlogs(6, slug), // Mevcut blog'u hariç tut, 6 blog getir
   });
 
   if (isLoading)
@@ -539,14 +565,31 @@ function BlogDetail() {
           hideTableOfContents={false}
         />
 
-        <SidebarBlogList
-          blogs={relatedBlogs}
-          title="İlgili İçerikler"
-          initialCount={3}
-        />
+        {/* İki Sidebar Yan Yana */}
+        <SidebarContainer>
+          {/* İlgili Bloglar Sidebar'ı */}
+          <SidebarBlogList
+            blogs={relatedBlogs}
+            title={`${blog.category} Kategorisi`}
+            subtitle="Aynı kategorideki diğer yazılar"
+            initialCount={3}
+            isLoading={relatedLoading}
+            showCategory={false} // Aynı kategoride olduğu için kategori gösterme
+          />
+
+          {/* En Yeni Bloglar Sidebar'ı */}
+          <RecentBlogs
+            blogs={recentBlogs}
+            title="En Yeni Yazılar"
+            subtitle="Son eklenen içerikler"
+            initialCount={3}
+            isLoading={recentLoading}
+            showCategory={true} // Farklı kategorilerden olduğu için kategori göster
+          />
+        </SidebarContainer>
       </ContentSection>
 
-      {/* Kaynak Bölümü - Artık ayrı component */}
+      {/* Kaynak Bölümü */}
       <BlogSources sourcesString={blog?.sources} />
 
       <ScrollToTop

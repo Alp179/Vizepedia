@@ -16,7 +16,7 @@ const slideUp = keyframes`
 `;
 
 // Ana Container
-const SidebarSection = styled.div`
+const RecentSection = styled.div`
   flex: 1;
   position: sticky;
   top: 2rem;
@@ -48,12 +48,12 @@ const SidebarSection = styled.div`
   }
 `;
 
-const SidebarHeader = styled.div`
+const RecentHeader = styled.div`
   text-align: center;
   margin-bottom: 1.5rem;
 `;
 
-const SidebarTitle = styled.h3`
+const RecentTitle = styled.h3`
   font-size: 1.7rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
@@ -65,14 +65,14 @@ const SidebarTitle = styled.h3`
   }
 `;
 
-const SidebarSubtitle = styled.p`
+const RecentSubtitle = styled.p`
   font-size: 0.9rem;
   color: var(--color-grey-600);
   opacity: 0.7;
   margin: 0;
 `;
 
-const BlogList = styled.div`
+const RecentList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
@@ -105,7 +105,7 @@ const BlogList = styled.div`
 `;
 
 // Eğer içerik yoksa gösterilecek mesaj
-const NoContent = styled.div`
+const NoRecentContent = styled.div`
   padding: 2rem;
   text-align: center;
   color: var(--color-grey-600);
@@ -153,14 +153,13 @@ const LoadingSkeletons = ({ count = 3 }) => {
   );
 };
 
-function SidebarBlogList({
+function RecentBlogs({
   blogs,
-  title = "İlgili İçerikler",
-  subtitle = "Aynı kategorideki diğer yazılar",
+  title = "En Yeni Yazılar",
+  subtitle = "Blog'umuzdaki en güncel içerikler",
   initialCount = 5,
   isLoading = false,
   showCategory = true,
-  emptyMessage = "Bu kategoride başka yazı bulunamadı.",
 }) {
   const [displayCount, setDisplayCount] = useState(initialCount);
 
@@ -172,13 +171,13 @@ function SidebarBlogList({
   };
 
   return (
-    <SidebarSection>
-      <SidebarHeader>
-        <SidebarTitle>{title}</SidebarTitle>
-        {subtitle && <SidebarSubtitle>{subtitle}</SidebarSubtitle>}
-      </SidebarHeader>
+    <RecentSection>
+      <RecentHeader>
+        <RecentTitle>{title}</RecentTitle>
+        {subtitle && <RecentSubtitle>{subtitle}</RecentSubtitle>}
+      </RecentHeader>
       
-      <BlogList>
+      <RecentList>
         {isLoading ? (
           <LoadingSkeletons count={3} />
         ) : displayedBlogs && displayedBlogs.length > 0 ? (
@@ -190,9 +189,9 @@ function SidebarBlogList({
             />
           ))
         ) : (
-          <NoContent>
-            {emptyMessage}
-          </NoContent>
+          <NoRecentContent>
+            Henüz yayınlanmış içerik bulunamadı.
+          </NoRecentContent>
         )}
 
         {hasMoreBlogs && !isLoading && (
@@ -200,9 +199,9 @@ function SidebarBlogList({
             Daha Fazla Göster
           </LoadMoreButton>
         )}
-      </BlogList>
-    </SidebarSection>
+      </RecentList>
+    </RecentSection>
   );
 }
 
-export default SidebarBlogList;
+export default RecentBlogs;

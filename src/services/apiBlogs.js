@@ -134,7 +134,7 @@ export async function fetchVisaBlogs() {
   return data;
 }
 
-// Kategori bazında blog yazılarını getir
+// Kategori bazında blog yazılarını getir (Genel kullanım için)
 export async function fetchBlogsByCategory(category) {
   const { data, error } = await supabase
     .from("blogs")
@@ -144,6 +144,128 @@ export async function fetchBlogsByCategory(category) {
 
   if (error) throw new Error(error.message);
   return data;
+}
+
+// Sidebar için kategori bazında blog yazılarını getir (optimize edilmiş)
+export async function fetchRelatedBlogsByCategory(category, currentSlug = null, limit = 10) {
+  if (!category) {
+    console.log('Kategori belirtilmedi, boş array döndürülüyor');
+    return [];
+  }
+
+  console.log('Sidebar için kategori bazında blog arıyor:', {
+    category,
+    currentSlug,
+    limit
+  });
+
+  try {
+    let query = supabase
+      .from("blogs")
+      .select(`
+        id,
+        title,
+        slug,
+        category,
+        tags,
+        cover_image,
+        created_at
+      `)
+      .eq("category", category) // Kategori bazında filtrele
+      .order("created_at", { ascending: false });
+
+    // ÖNEMLI: Mevcut blog slugı varsa, o blogu sonuçlardan hariç tut
+    if (currentSlug) {
+      console.log('Mevcut slug hariç tutuluyor:', currentSlug);
+      query = query.neq("slug", currentSlug);
+    }
+
+    // Limit'i en sonda uygula
+    query = query.limit(limit);
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Sidebar kategori bazında blog getirme hatası:', error);
+      throw new Error(error.message);
+    }
+
+    console.log(`Sidebar: ${category} kategorisinde ${data?.length || 0} blog bulundu (${currentSlug} hariç)`);
+    
+    // Debug için sonuçları kontrol et
+    if (data?.length > 0) {
+      console.log('Getirilen blog slug\'ları:', data.map(blog => blog.slug));
+      console.log('Mevcut slug:', currentSlug);
+      
+      // Eğer mevcut slug listede varsa, uyarı ver
+      const currentInList = data.find(blog => blog.slug === currentSlug);
+      if (currentInList) {
+        console.warn('🚨 UYARI: Mevcut blog listede gözüküyor!', currentInList);
+      }
+    }
+    
+    return data || [];
+    
+  } catch (err) {
+    console.error('Sidebar kategori bazında blog getirme işlemi başarısız:', err);
+    throw err;
+  }
+}
+
+// En yeni blog yazılarını getir
+export async function fetchRecentBlogs(limit = 10, excludeSlug = null) {
+  console.log('En yeni bloglar getiriliyor:', {
+    limit,
+    excludeSlug
+  });
+
+  try {
+    let query = supabase
+      .from("blogs")
+      .select(`
+        id,
+        title,
+        slug,
+        category,
+        tags,
+        cover_image,
+        created_at
+      `)
+      .order("created_at", { ascending: false });
+
+    // Eğer hariç tutulacak slug varsa
+    if (excludeSlug) {
+      console.log('Hariç tutulan slug:', excludeSlug);
+      query = query.neq("slug", excludeSlug);
+    }
+
+    // Limit'i en sonda uygula
+    query = query.limit(limit);
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('En yeni blogları getirme hatası:', error);
+      throw new Error(error.message);
+    }
+
+    console.log(`En yeni ${data?.length || 0} blog getirildi${excludeSlug ? ` (${excludeSlug} hariç)` : ''}`);
+    
+    // Debug için sonuçları kontrol et
+    if (data?.length > 0) {
+      console.log('En yeni bloglar:', data.map(blog => ({
+        title: blog.title,
+        category: blog.category,
+        date: blog.created_at
+      })));
+    }
+    
+    return data || [];
+    
+  } catch (err) {
+    console.error('En yeni blogları getirme işlemi başarısız:', err);
+    throw err;
+  }
 }
 
 // Yeni blog ekle
