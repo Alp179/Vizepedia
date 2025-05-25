@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBlogBySlug, fetchRelatedBlogsByCategory, fetchRecentBlogs } from "../services/apiBlogs"; // Yeni import
 import Spinner from "../ui/Spinner";
-import Footer from "../ui/Footer";
 import styled, { keyframes } from "styled-components";
 import SidebarBlogList from "../ui/SidebarBlogList";
 import BlogContentSection from "../ui/BlogContentSection";
@@ -642,7 +641,7 @@ function BlogDetail() {
         </svg>
       </ScrollToTop>
 
-      <Footer />
+      
     </PageContainer>
   );
 }

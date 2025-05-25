@@ -12,14 +12,14 @@ import { getCurrentUser, isUserAnonymous } from "../services/apiAuth";
 import supabase from "../services/supabase";
 import ProfileButton from "./ProfileButton";
 
-// Yeni modern, geçiş animasyonlu header
+// Scroll hide/show özellikli modern header
 const StyledMainPageHeader = styled.header`
   position: fixed;
-  top: 0;
+  top: ${props => props.isVisible ? '0' : '-120px'}; /* Scroll durumuna göre konum */
   left: 0;
   width: 100%;
-  z-index: 2000;
-  transition: all 0.3s ease;
+  z-index: 9999; /* BlogHeader ile aynı z-index seviyesi */
+  transition: all 0.3s ease-in-out; /* Smooth geçiş */
   background: ${(props) => 
     props.scrolled 
       ? "rgba(255, 255, 255, 0.2)" 
@@ -205,10 +205,12 @@ function MainPageHeader({ setMenuOpen }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  // Yükleniyor durumu için state ekledik
   const [isLoading, setIsLoading] = useState(false);
-  // Headerın yüksekliğini tutacak state
   const [headerHeight, setHeaderHeight] = useState(0);
+  
+  // Scroll hide/show için yeni state'ler
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   // İkonlar için SVG bileşenleri
   const IconUser = () => (
@@ -398,19 +400,52 @@ function MainPageHeader({ setMenuOpen }) {
     checkUserStatus();
   }, []);
 
-  // Scroll efekti için event listener
+  // Scroll efekti için event listener - GÜNCELLENMIŞ
   useEffect(() => {
+    let timeoutId;
+    
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      const currentScrollY = window.scrollY;
+      
+      // Scroll background effect için
+      if (currentScrollY > 50) {
         setScrolled(true);
       } else {
         setScrolled(false);
       }
+      
+      // Hide/show logic için
+      if (currentScrollY < 50) {
+        setIsVisible(true);
+      }
+      // Scroll down - header'ı gizle (50px threshold)
+      else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setIsVisible(false);
+      }
+      // Scroll up - header'ı göster
+      else if (currentScrollY < lastScrollY) {
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    // Throttle scroll events
+    const throttledScroll = () => {
+      if (timeoutId) return;
+      timeoutId = setTimeout(() => {
+        handleScroll();
+        timeoutId = null;
+      }, 16); // ~60fps
+    };
+
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', throttledScroll);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [lastScrollY]);
 
   // Sayfa içi navigasyon - header'ın yüksekliği hesaba katılarak yapılıyor
   const handleFaqClick = () => {
@@ -437,7 +472,7 @@ function MainPageHeader({ setMenuOpen }) {
   const handleAboutClick = () => navigate("/about");
 
   return (
-    <StyledMainPageHeader scrolled={scrolled}>
+    <StyledMainPageHeader scrolled={scrolled} isVisible={isVisible}>
       <HeaderContents>
         <LogoContainer>
           <Logo variant="mainpage" />
