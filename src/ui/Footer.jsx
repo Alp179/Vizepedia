@@ -36,15 +36,110 @@ const FooterButton = styled.div`
   gap: 10px;
 `;
 
-// Only new styling - for responsive footer wrapper at small screens
+// Footer wrapper'a overflow kontrolü ekliyoruz
 const FooterWrapper = styled.div`
   width: 100%;
+  max-width: 100vw; /* Viewport genişliğini aşmasını engelle */
+  overflow-x: hidden; /* Yatay overflow'u gizle */
+  box-sizing: border-box; /* Padding ve border'ları width'e dahil et */
   
   @media (max-width: 520px) {
     .footer-wrap {
       flex-direction: column;
       gap: 20px;
       padding-bottom: 15px;
+      /* Footer-wrap için de overflow kontrolü */
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+  }
+
+  /* Footer içindeki tüm elementlere box-sizing uygula */
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Footer ana container'ına da overflow kontrolü */
+  .footer {
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  /* Footer bottom kısmına responsive düzenleme */
+  .footer-wrap {
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    
+    @media (max-width: 768px) {
+      max-width: 95%; /* Mobilde biraz daha dar yap */
+      margin: 0 auto;
+    }
+    
+    @media (max-width: 520px) {
+      max-width: 100%;
+      padding: 0 15px; /* Yan padding ekle */
+    }
+  }
+
+  /* Logo ve sosyal medya ikonları için responsive düzenleme */
+  .footer-social-section {
+    display: flex;
+    gap: 25px;
+    
+    @media (max-width: 520px) {
+      gap: 15px; /* Mobilde gap'i azalt */
+      justify-content: center;
+    }
+    
+    a {
+      flex-shrink: 0; /* İkonların küçülmesini engelle */
+    }
+  }
+
+  /* Footer links için responsive düzenleme */
+  .footer-links-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    
+    @media (max-width: 520px) {
+      gap: 15px;
+    }
+  }
+
+  .footer-links-row {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+    
+    @media (max-width: 520px) {
+      gap: 20px; /* Mobilde gap'i azalt */
+    }
+    
+    @media (max-width: 380px) {
+      gap: 15px;
+      flex-direction: column; /* Çok küçük ekranlarda alt alta diz */
+      align-items: center;
+    }
+  }
+
+  .footer-legal-row {
+    display: flex;
+    gap: 30px;
+    font-size: 14px;
+    
+    @media (max-width: 520px) {
+      gap: 20px;
+    }
+    
+    @media (max-width: 380px) {
+      gap: 15px;
+      flex-direction: column;
+      align-items: center;
     }
   }
 `;
@@ -232,8 +327,8 @@ function Footer() {
           }}
         >
           <Logo variant="footer" />
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px" }}>
-            <div style={{ display: "flex", gap: "30px", flexWrap: "wrap", justifyContent: "center" }}>
+          <div className="footer-links-section">
+            <div className="footer-links-row">
               <div className="footer-links" onClick={handleMainPageClick}>
                 Ana Sayfa
               </div>
@@ -244,7 +339,7 @@ function Footer() {
             </div>
             
             {/* Alt bölüm - KVKK ve Çerez Politikası linkleri */}
-            <div style={{ display: "flex", gap: "30px", fontSize: "14px" }}>
+            <div className="footer-legal-row">
               <div className="footer-links" onClick={handleKvkkClick}>
                 KVKK
               </div>
@@ -253,7 +348,7 @@ function Footer() {
               </div>
             </div>
           </div>
-          <div style={{ display: "flex", gap: "25px" }}>
+          <div className="footer-social-section">
             <a href="https://facebook.com" target="_blank" rel="noreferrer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
