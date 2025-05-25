@@ -232,7 +232,7 @@ const ContentSection = styled.div`
   max-width: 1400px;
   margin: 0 auto;
   padding: 4.5rem 4rem;
-  gap: 3rem; /* 5rem'den 3rem'e azaltıldı - iki sidebar için yer açmak */
+  gap: 3rem;
 
   @media (max-width: 1400px) {
     max-width: 1200px;
@@ -261,7 +261,7 @@ const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  min-width: 300px; /* Minimum genişlik ayarı */
+  min-width: 300px;
 
   @media (max-width: 1400px) {
     min-width: 270px;
@@ -274,6 +274,26 @@ const SidebarContainer = styled.div`
   @media (max-width: 768px) {
     min-width: auto;
     width: 100%;
+  }
+`;
+
+// Mobile Sources Container - Blog içeriğinden hemen sonra
+const MobileSourcesContainer = styled.div`
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    margin-top: 2rem;
+    width: 100%;
+  }
+`;
+
+// Desktop Sources Container - Sadece desktop'ta görünür
+const DesktopSourcesContainer = styled.div`
+  display: block;
+  
+  @media (max-width: 768px) {
+    display: none;
   }
 `;
 
@@ -459,14 +479,14 @@ function BlogDetail() {
   // Kategori bazında ilgili blogları getir
   const { data: relatedBlogs, isLoading: relatedLoading } = useQuery({
     queryKey: ["relatedBlogs", blog?.category, slug],
-    queryFn: () => fetchRelatedBlogsByCategory(blog?.category, slug, 6), // 6'ya düşürüldü
-    enabled: !!blog?.category, // Blog kategorisi varsa çalıştır
+    queryFn: () => fetchRelatedBlogsByCategory(blog?.category, slug, 6),
+    enabled: !!blog?.category,
   });
 
   // En yeni blogları getir (mevcut blog hariç)
   const { data: recentBlogs, isLoading: recentLoading } = useQuery({
     queryKey: ["recentBlogs", slug],
-    queryFn: () => fetchRecentBlogs(6, slug), // Mevcut blog'u hariç tut, 6 blog getir
+    queryFn: () => fetchRecentBlogs(6, slug),
   });
 
   if (isLoading)
@@ -557,13 +577,21 @@ function BlogDetail() {
       </HeroSection>
 
       <ContentSection>
-        <BlogContentSection
-          blog={blog}
-          headings={headings}
-          activeHeading={activeHeading}
-          setActiveHeading={setActiveHeading}
-          hideTableOfContents={false}
-        />
+        {/* Ana İçerik Kolonu */}
+        <div style={{ flex: 1 }}>
+          <BlogContentSection
+            blog={blog}
+            headings={headings}
+            activeHeading={activeHeading}
+            setActiveHeading={setActiveHeading}
+            hideTableOfContents={false}
+          />
+          
+          {/* Mobile'da Kaynaklar - Blog içeriğinden hemen sonra */}
+          <MobileSourcesContainer>
+            <BlogSources sourcesString={blog?.sources} />
+          </MobileSourcesContainer>
+        </div>
 
         {/* İki Sidebar Yan Yana */}
         <SidebarContainer>
@@ -574,7 +602,7 @@ function BlogDetail() {
             subtitle="Aynı kategorideki diğer yazılar"
             initialCount={3}
             isLoading={relatedLoading}
-            showCategory={false} // Aynı kategoride olduğu için kategori gösterme
+            showCategory={false}
           />
 
           {/* En Yeni Bloglar Sidebar'ı */}
@@ -584,13 +612,15 @@ function BlogDetail() {
             subtitle="Son eklenen içerikler"
             initialCount={3}
             isLoading={recentLoading}
-            showCategory={true} // Farklı kategorilerden olduğu için kategori göster
+            showCategory={true}
           />
         </SidebarContainer>
       </ContentSection>
 
-      {/* Kaynak Bölümü */}
-      <BlogSources sourcesString={blog?.sources} />
+      {/* Desktop'ta Kaynaklar - Orijinal konumda */}
+      <DesktopSourcesContainer>
+        <BlogSources sourcesString={blog?.sources} />
+      </DesktopSourcesContainer>
 
       <ScrollToTop
         visible={scrollVisible}
