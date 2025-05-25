@@ -54,19 +54,16 @@ const SidebarHeader = styled.div`
 `;
 
 const SidebarTitle = styled.h3`
-  font-size: 1.7rem;
+  font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: var(--color-grey-600);
   letter-spacing: -0.01em;
 
-  @media (max-width: 768px) {
-    font-size: 1.3rem;
-  }
 `;
 
 const SidebarSubtitle = styled.p`
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   color: var(--color-grey-600);
   opacity: 0.7;
   margin: 0;

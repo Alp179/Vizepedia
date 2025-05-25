@@ -38,6 +38,8 @@ const CardContainer = styled(Link)`
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   border: 0.5px solid rgba(255, 255, 255, 0.08);
   width: 100%;
+  min-width: 0; /* Flex shrinking için */
+  flex-shrink: 0; /* Kartın küçülmesini engelle */
   position: relative;
   isolation: isolate;
   will-change: transform;
@@ -87,16 +89,17 @@ const CardContainer = styled(Link)`
   }
 `;
 
-// Hero image section with increased height
+// Hero image section with fixed height
 const CardImageSection = styled.div`
   width: 100%;
-  height: 115px; /* Increased by 15% from 100px */
+  height: 100px; /* Sabit yükseklik */
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  flex-shrink: 0; /* Görsel kısmının küçülmesini engelle */
 
   @media (max-width: 768px) {
-    height: 138px; /* Increased by 15% from 120px */
+    height: 110px; /* Mobile'da biraz daha büyük */
   }
 `;
 
@@ -133,40 +136,42 @@ const CardImage = styled.div`
   }
 `;
 
-// Content section with reduced top margin for title
+// Content section with fixed padding
 const CardContent = styled.div`
-  padding: 16px 26px 28px; /* Reduced top padding from 24px to 16px */
+  padding: 14px 18px 20px; /* Sabit padding */
   position: relative;
   z-index: 2;
+  flex: 1; /* Esnek alan */
+  min-height: 0; /* Flex shrinking için */
 
   @media (max-width: 768px) {
-    padding: 18px 28px 30px; /* Reduced from 26px to 18px */
+    padding: 16px 20px 22px;
   }
 `;
 
 // Meta row positioned at the top of image with separate backgrounds
 const CardMeta = styled.div`
   position: absolute;
-  top: 12px;
-  left: 16px;
-  right: 16px;
+  top: 10px;
+  left: 12px;
+  right: 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   z-index: 3;
-  gap: 8px;
+  gap: 6px;
   
   @media (max-width: 768px) {
-    top: 14px;
-    left: 18px;
-    right: 18px;
-    gap: 10px;
+    top: 12px;
+    left: 14px;
+    right: 14px;
+    gap: 8px;
   }
 `;
 
 // Date with its own glassmorphism background
 const CardDate = styled.div`
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   letter-spacing: -0.01em;
@@ -178,9 +183,10 @@ const CardDate = styled.div`
   /* Independent glassmorphism background */
   background: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(12px) saturate(180%);
-  border-radius: 10px;
-  padding: 6px 10px;
+  border-radius: 8px;
+  padding: 4px 8px;
   border: 0.5px solid rgba(255, 255, 255, 0.15);
+  white-space: nowrap; /* Metinlerin kırılmasını engelle */
 
   ${CardContainer}:hover & {
     color: rgba(255, 255, 255, 1);
@@ -190,9 +196,9 @@ const CardDate = styled.div`
   }
 
   @media (max-width: 768px) {
-    font-size: 12px;
-    padding: 8px 12px;
-    border-radius: 12px;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 10px;
   }
 `;
 
@@ -200,18 +206,19 @@ const CardDate = styled.div`
 const CategoryBadge = styled.div`
   display: inline-flex;
   align-items: center;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   color: #ffffff;
   background: rgba(0, 122, 255, 0.25);
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 4px 8px;
+  border-radius: 8px;
   letter-spacing: 0.02em;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 0.5px solid rgba(0, 122, 255, 0.4);
   backdrop-filter: blur(12px) saturate(180%);
   flex-shrink: 0;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  white-space: nowrap; /* Metinlerin kırılmasını engelle */
 
   ${CardContainer}:hover & {
     background: rgba(0, 122, 255, 0.4);
@@ -221,24 +228,27 @@ const CategoryBadge = styled.div`
   }
 
   @media (max-width: 768px) {
-    font-size: 11px;
-    padding: 8px 12px;
-    border-radius: 12px;
+    font-size: 10px;
+    padding: 6px 10px;
+    border-radius: 10px;
   }
 `;
 
-// Enhanced title with better spacing
+// Enhanced title with better spacing and line clamping
 const CardTitle = styled.h3`
-  font-size: 18px; /* Slightly larger for better readability */
+  font-size: 14px; /* Sidebar için daha küçük */
   font-weight: 600;
   color: var(--color-grey-600);
-  line-height: 1.35; /* Improved line spacing */
-  letter-spacing: -0.025em;
+  line-height: 1.4;
+  letter-spacing: -0.015em;
   margin: 0;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-  
-  /* NO line clamping - show full title with better spacing */
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Maksimum 3 satır */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word; /* Uzun kelimeleri böl */
 
   ${CardContainer}:hover & {
     color: #ffffff;
@@ -246,8 +256,8 @@ const CardTitle = styled.h3`
   }
 
   @media (max-width: 768px) {
-    font-size: 20px; /* Larger on mobile for better touch experience */
-    line-height: 1.4;
+    font-size: 16px; /* Mobile'da biraz daha büyük */
+    line-height: 1.35;
   }
 `;
 
@@ -258,13 +268,14 @@ const SkeletonCard = styled.div`
   border-radius: 16px;
   overflow: hidden;
   width: 100%;
+  flex-shrink: 0; /* Skeleton'ın da küçülmesini engelle */
   border: 0.5px solid rgba(255, 255, 255, 0.06);
   animation: ${slideInUp} 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 `;
 
 const SkeletonImageSection = styled.div`
   width: 100%;
-  height: 115px; /* Matching the increased image height */
+  height: 100px; /* CardImageSection ile aynı yükseklik */
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.02) 0%,
@@ -274,17 +285,18 @@ const SkeletonImageSection = styled.div`
   background-size: 300px 100%;
   animation: ${shimmer} 2.5s infinite ease-in-out;
   position: relative;
+  flex-shrink: 0;
 
   @media (max-width: 768px) {
-    height: 138px; /* Matching mobile height */
+    height: 110px; /* Mobile height */
   }
 `;
 
 const SkeletonContent = styled.div`
-  padding: 16px 26px 28px; /* Matching the reduced content padding */
+  padding: 14px 18px 20px; /* CardContent ile aynı padding */
 
   @media (max-width: 768px) {
-    padding: 18px 28px 30px;
+    padding: 16px 20px 22px;
   }
 `;
 
@@ -299,7 +311,7 @@ const SkeletonLine = styled.div`
   background-size: 300px 100%;
   animation: ${shimmer} 2.5s infinite ease-in-out;
   border-radius: 4px;
-  margin-bottom: ${props => props.marginBottom || '10px'};
+  margin-bottom: ${props => props.marginBottom || '8px'};
   width: ${props => props.width || '100%'};
 `;
 
@@ -352,42 +364,42 @@ export const BlogCardSkeleton = () => {
         {/* Separate overlay meta skeletons at top */}
         <div style={{ 
           position: 'absolute',
-          top: '12px',
-          left: '16px',
-          right: '16px',
+          top: '10px',
+          left: '12px',
+          right: '12px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          gap: '8px'
+          gap: '6px'
         }}>
           {/* Date skeleton with independent background */}
           <div style={{
             background: 'rgba(0, 0, 0, 0.25)',
             backdropFilter: 'blur(12px)',
-            borderRadius: '10px',
-            padding: '6px 10px',
+            borderRadius: '8px',
+            padding: '4px 8px',
             border: '0.5px solid rgba(255, 255, 255, 0.15)'
           }}>
-            <SkeletonLine height="6px" width="50px" marginBottom="0" />
+            <SkeletonLine height="6px" width="40px" marginBottom="0" />
           </div>
           
           {/* Category skeleton with independent background */}
           <div style={{
             background: 'rgba(0, 122, 255, 0.25)',
             backdropFilter: 'blur(12px)',
-            borderRadius: '10px',
-            padding: '6px 10px',
+            borderRadius: '8px',
+            padding: '4px 8px',
             border: '0.5px solid rgba(0, 122, 255, 0.4)'
           }}>
-            <SkeletonLine height="6px" width="40px" marginBottom="0" />
+            <SkeletonLine height="6px" width="35px" marginBottom="0" />
           </div>
         </div>
       </SkeletonImageSection>
       <SkeletonContent>
         {/* Title skeleton */}
-        <SkeletonLine height="10px" width="95%" marginBottom="8px" />
-        <SkeletonLine height="10px" width="85%" marginBottom="8px" />
-        <SkeletonLine height="10px" width="70%" marginBottom="0" />
+        <SkeletonLine height="8px" width="95%" marginBottom="6px" />
+        <SkeletonLine height="8px" width="85%" marginBottom="6px" />
+        <SkeletonLine height="8px" width="70%" marginBottom="0" />
       </SkeletonContent>
     </SkeletonCard>
   );

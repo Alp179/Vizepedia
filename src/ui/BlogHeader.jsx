@@ -2,6 +2,7 @@ import { styled, keyframes } from "styled-components";
 import DarkModeToggle from "./DarkModeToggle";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "../context/DarkModeContext";
+import { useState, useEffect } from "react";
 
 // Ana logo için parlama animasyonu
 const shineEffectMain = keyframes`
@@ -122,14 +123,16 @@ const Logo = styled.img`
 
 const StyledHeader = styled.header`
   position: fixed;
-  top: 0%;
-  left: 0%;
+  top: ${props => props.isVisible ? '0' : '-120px'};
+  left: 0;
   width: 100%;
   padding: 20px;
-  z-index: 2990;
+  z-index: 9999;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
+  transition: top 0.3s ease-in-out;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 `;
 
 const HeaderContents = styled.div`
@@ -159,6 +162,47 @@ const DarkModeContainer = styled.div`
 function BlogHeader() {
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    let timeoutId;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Eğer sayfa tepesindeyse header'ı her zaman göster
+      if (currentScrollY < 50) {
+        setIsVisible(true);
+      }
+      // Scroll down - header'ı gizle (50px threshold)
+      else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        setIsVisible(false);
+      }
+      // Scroll up - header'ı göster
+      else if (currentScrollY < lastScrollY) {
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    // Throttle scroll events
+    const throttledScroll = () => {
+      if (timeoutId) return;
+      timeoutId = setTimeout(() => {
+        handleScroll();
+        timeoutId = null;
+      }, 16); // ~60fps
+    };
+
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener('scroll', throttledScroll);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [lastScrollY]);
 
   const handleLogoClick = () => {
     navigate("/mainpage");
@@ -177,7 +221,7 @@ function BlogHeader() {
     : "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/Varl_k_20_8x.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL1Zhcmxfa18yMF84eC5wbmciLCJpYXQiOjE3MjA5ODIzNjUsImV4cCI6NzU2ODI3NTE2NX0.uo2NgeaGhKZjiNKp5qq4ikIZTlDCkRCZ21ENwcwldLE&t=2024-07-14T18%3A39%3A25.590Z";
 
   return (
-    <StyledHeader>
+    <StyledHeader isVisible={isVisible}>
       <HeaderContents>
         <Logo onClick={handleLogoClick} src={srcLogo} isDarkMode={isDarkMode} />
         <BlogLogo

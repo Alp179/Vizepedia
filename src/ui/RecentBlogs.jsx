@@ -15,13 +15,15 @@ const slideUp = keyframes`
   }
 `;
 
-// Ana Container
+// Ana Container - Sabit genişlik
 const RecentSection = styled.div`
-  flex: 1;
+  flex-shrink: 0; /* Konteynerin küçülmesini engelle */
   position: sticky;
   top: 2rem;
   height: fit-content;
-  width: 300px;
+  width: 300px; /* Sabit genişlik */
+  min-width: 300px; /* Minimum genişlik garantisi */
+  max-width: 300px; /* Maksimum genişlik sınırı */
   animation: ${slideUp} 1s ease-in-out;
   margin-left: 2rem;
   background: rgba(255, 255, 255, 0.03);
@@ -32,10 +34,14 @@ const RecentSection = styled.div`
 
   @media (max-width: 1400px) {
     width: 270px;
+    min-width: 270px;
+    max-width: 270px;
   }
 
   @media (max-width: 1200px) {
     width: 255px;
+    min-width: 255px;
+    max-width: 255px;
     padding: 1.7rem 1.3rem;
   }
 
@@ -45,41 +51,47 @@ const RecentSection = styled.div`
     margin-top: 3rem;
     padding: 1.7rem 1.3rem;
     width: 100%;
+    min-width: auto;
+    max-width: none;
   }
 `;
 
 const RecentHeader = styled.div`
   text-align: center;
   margin-bottom: 1.5rem;
+  flex-shrink: 0; /* Header'ın küçülmesini engelle */
 `;
 
 const RecentTitle = styled.h3`
-  font-size: 1.7rem;
+  font-size: 1.9rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: var(--color-grey-600);
   letter-spacing: -0.01em;
 
-  @media (max-width: 768px) {
-    font-size: 1.3rem;
-  }
+  
 `;
 
 const RecentSubtitle = styled.p`
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   color: var(--color-grey-600);
   opacity: 0.7;
   margin: 0;
 `;
 
+// Liste konteyneri - Kartların boyutunu koruyarak uzayan
 const RecentList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
-  max-height: 720px;
+  width: 100%; /* Container'ın tam genişliğini kullan */
+  
+  /* Scroll için maksimum yükseklik - daha fazla içerik için */
+  max-height: 800px; /* Artırıldı */
   overflow-y: auto;
   padding-right: 0.5rem;
 
+  /* Custom scrollbar */
   &::-webkit-scrollbar {
     width: 5px;
   }
@@ -99,9 +111,17 @@ const RecentList = styled.div`
   }
 
   @media (max-width: 768px) {
-    max-height: 595px;
+    max-height: 700px; /* Mobile'da da artırıldı */
     gap: 1.3rem;
+    padding-right: 0;
   }
+`;
+
+// Card wrapper - Her kartın sabit boyutta kalmasını sağla
+const CardWrapper = styled.div`
+  width: 100%;
+  flex-shrink: 0; /* Kartların küçülmesini engelle */
+  min-height: fit-content;
 `;
 
 // Eğer içerik yoksa gösterilecek mesaj
@@ -115,6 +135,7 @@ const NoRecentContent = styled.div`
   border: 1px dashed rgba(255, 255, 255, 0.1);
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.02);
+  flex-shrink: 0;
 `;
 
 // Daha Fazla Göster Butonu
@@ -130,6 +151,7 @@ const LoadMoreButton = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  flex-shrink: 0; /* Butonun küçülmesini engelle */
 
   &:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -147,7 +169,9 @@ const LoadingSkeletons = ({ count = 3 }) => {
   return (
     <>
       {Array.from({ length: count }).map((_, index) => (
-        <BlogCardSkeleton key={index} />
+        <CardWrapper key={index}>
+          <BlogCardSkeleton />
+        </CardWrapper>
       ))}
     </>
   );
@@ -182,11 +206,12 @@ function RecentBlogs({
           <LoadingSkeletons count={3} />
         ) : displayedBlogs && displayedBlogs.length > 0 ? (
           displayedBlogs.map((blog) => (
-            <BlogCard 
-              key={blog.id} 
-              blog={blog} 
-              showCategory={showCategory} 
-            />
+            <CardWrapper key={blog.id}>
+              <BlogCard 
+                blog={blog} 
+                showCategory={showCategory} 
+              />
+            </CardWrapper>
           ))
         ) : (
           <NoRecentContent>

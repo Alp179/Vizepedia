@@ -4,10 +4,11 @@ import BlogHeader from "./BlogHeader";
 
 const BackgroundColor = styled.div`
   background: var(--color-grey-1);
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh; /* height yerine min-height kullanıyoruz */
   overflow-x: hidden;
   position: relative;
+  max-width: 100vw; /* X ekseninde taşmayı önlemek için */
 `;
 
 const auroraAnimation = keyframes`
