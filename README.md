@@ -1,3 +1,3 @@
 # Vizepedia
 
-King of the visa taptaptaptaptaptaptaptaptaptaptaptapkonfiraknonstopprealtaprealtaptaptaptapcup fofaya
+King of the visa taptaptaptaptaptaptaptaptaptaptaptapkonfiraknonstopprealtaprealtaptaptaptapcup fofayaya
