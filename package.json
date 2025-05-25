@@ -21,7 +21,7 @@
     "clsx": "^2.1.1",
     "components": "^0.1.0",
     "flag-icons": "^7.2.1",
-    "framer-motion": "^11.2.12",
+    "framer-motion": "^11.18.2",
     "hamburger-react": "^2.5.1",
     "i": "^0.3.7",
     "motion": "^12.4.7",

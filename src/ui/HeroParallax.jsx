@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring } from "motion/react";
+// 3. satırdaki import'u şu şekilde değiştirin:
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import supabase from "../services/supabase"; // Bu import'u kendi projenizin yapısına göre ayarlamanız gerekebilir
