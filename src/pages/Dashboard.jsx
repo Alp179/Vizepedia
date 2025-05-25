@@ -38,6 +38,21 @@ const CreatedAtContainer = styled.div`
   backdrop-filter: blur(5px);
   padding: 6px 12px;
   border-radius: 6px;
+  
+  /* Mobil overflow kontrolü */
+  max-width: calc(100vw - 80px);
+  box-sizing: border-box;
+  
+  @media (max-width: 710px) {
+    font-size: 1.2rem;
+    max-width: calc(100vw - 60px);
+    padding: 4px 8px;
+  }
+  
+  @media (max-width: 450px) {
+    font-size: 1rem;
+    max-width: calc(100vw - 40px);
+  }
 `;
 
 const CustomRow = styled(Row)`
@@ -49,41 +64,64 @@ const CustomRow = styled(Row)`
   position: relative;
   z-index: 3000;
   margin: 25px auto 10px 0;
+  
+  /* Overflow kontrolü ekleyelim */
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  
   @media (max-width: 1550px) {
     margin-left: -100px;
   }
   padding: 0;
   @media (max-width: 710px) {
     margin: 55px auto 0 44px;
+    /* Mobilde margin kontrolü */
+    margin-left: 20px;
+    margin-right: 20px;
+    justify-content: center;
   }
   @media (max-width: 450px) {
     margin-top: 40px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 `;
 
 const DashboardContainer = styled.div`
   position: relative;
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw; /* Viewport genişliğini aşmasını engelle */
   height: auto;
   display: flex;
   flex-direction: column;
   gap: 24px;
   align-items: flex-start;
+  overflow-x: hidden; /* Yatay overflow'u gizle */
+  box-sizing: border-box; /* Padding ve border'ları width'e dahil et */
 
   @media (max-width: 710px) {
     height: 100%;
     width: 100%;
+    max-width: 100vw; /* Mobilde de viewport sınırı */
     margin-left: auto;
     flex-flow: column;
     justify-content: flex-start;
     margin-right: auto;
     padding-top: 15px;
+    padding-left: 10px; /* Yan padding ekle */
+    padding-right: 10px;
     background: linear-gradient(
       rgba(0, 0, 0, 0.4) 0%,
       rgba(0, 0, 0, 0.1) 40%,
       rgba(0, 0, 0, 0) 60%
     );
     align-items: stretch;
+  }
+  
+  @media (max-width: 450px) {
+    padding-left: 5px;
+    padding-right: 5px;
   }
 `;
 
@@ -95,6 +133,7 @@ const BannersContainer = styled.div`
   max-width: 800px;
   padding: 0;
   align-self: flex-start;
+  box-sizing: border-box; /* Box-sizing ekle */
 
   @media (max-width: 1550px) {
     margin-left: -100px;
@@ -102,23 +141,29 @@ const BannersContainer = styled.div`
 
   @media (max-width: 1200px) {
     width: calc(100vw - 400px);
+    max-width: calc(100vw - 400px); /* Max-width kontrolü */
   }
 
   @media (max-width: 900px) {
     width: 500px;
+    max-width: calc(100vw - 40px); /* Viewport sınırı */
   }
 
   @media (max-width: 768px) {
     padding: 0 10px;
-
     width: 60%;
+    max-width: calc(100vw - 40px);
   }
+  
   @media (max-width: 710px) {
     margin: 30px auto 0 auto;
     width: 450px;
+    max-width: calc(100vw - 40px); /* Mobilde viewport sınırı */
   }
+  
   @media (max-width: 500px) {
     width: 100%;
+    max-width: calc(100vw - 20px);
   }
 `;
 
@@ -137,6 +182,7 @@ const Ceper = styled.div`
   transition: all 0.3s ease;
   position: relative;
   z-index: 10;
+  box-sizing: border-box; /* Box-sizing ekle */
 
   @media (max-width: 1300px) {
     margin-left: 12vw;
@@ -150,13 +196,25 @@ const Ceper = styled.div`
     position: relative;
     margin: 0 auto;
     transform: scale(0.85);
+    /* Küçük ekranlarda boyut kontrolü */
+    max-width: calc(100vw - 40px);
   }
+  
+  @media (max-width: 450px) {
+    transform: scale(0.75);
+    max-width: calc(100vw - 20px);
+  }
+  
   &:hover {
     border-color: #004466;
     transform: scale(1.03);
 
     @media (max-width: 710px) {
       transform: scale(0.9);
+    }
+    
+    @media (max-width: 450px) {
+      transform: scale(0.8);
     }
   }
 `;
@@ -178,6 +236,7 @@ const UyeDevam = styled.button`
   transition: all 0.3s ease;
   border: none;
   outline: none;
+  box-sizing: border-box; /* Box-sizing ekle */
 
   &:hover {
     background-color: #00ffa2;
@@ -198,6 +257,7 @@ const StepIndicatorWrapper = styled.div`
   gap: 16px;
   width: 100%;
   justify-content: flex-start;
+  box-sizing: border-box; /* Box-sizing ekle */
 
   @media (max-width: 1450px) {
     margin-bottom: 40px;
@@ -205,6 +265,7 @@ const StepIndicatorWrapper = styled.div`
 
   @media (max-width: 710px) {
     width: 100%;
+    max-width: 100%; /* Genişlik kontrolü */
   }
 `;
 
@@ -213,19 +274,29 @@ const InfoContainerWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
+  box-sizing: border-box; /* Box-sizing ekle */
+  
+  @media (max-width: 710px) {
+    max-width: 100%; /* Genişlik kontrolü */
+  }
 `;
 
-// Carousel stilleri
+// Carousel stilleri - overflow kontrolü ekle
 const DashboardItems = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
   position: relative;
   z-index: 10;
+  width: 100%;
+  max-width: 100%; /* Genişlik sınırı */
+  overflow-x: hidden; /* Yatay overflow kontrolü */
+  box-sizing: border-box; /* Box-sizing ekle */
 
   @media (max-width: 710px) {
     position: relative;
     width: 100%;
+    max-width: 100vw; /* Viewport sınırı */
     flex-direction: column;
     align-items: center;
     gap: 8px;
@@ -537,6 +608,10 @@ const Dashboard = () => {
             display: "flex",
             justifyContent: "center",
             marginTop: isMobile ? "-30px" : "20px",
+            width: "100%",
+            maxWidth: "100%",
+            overflow: "hidden",
+            boxSizing: "border-box",
           }}
         >
           <ModalSignup>
