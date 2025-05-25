@@ -5,16 +5,14 @@ import Heading from "../ui/Heading";
 import StepIndicator from "../ui/StepIndicator";
 import FirmMap from "../ui/FirmMap";
 
-// Geliştirilmiş Carousel stilleri - overflow kontrolü ekle
+// Geliştirilmiş Carousel stilleri
 const CarouselContainer = styled.div`
-  width: 100%;
-  max-width: 100vw; /* Viewport genişliğini aşmasını engelle */
+  width: 100vw;
   position: relative;
   overflow: visible; // Değiştirildi: itemlerin dışarıda görünmesine izin verir
   margin: 0 auto;
   border-radius: 20px;
   padding: 4px 0;
-  box-sizing: border-box; /* Box-sizing ekle */
 `;
 
 const CarouselContent = styled.div`
@@ -35,20 +33,16 @@ const CarouselContent = styled.div`
   }};
   will-change: transform;
   position: relative;
-  max-width: 100%; /* İçerik genişlik kontrolü */
-  box-sizing: border-box; /* Box-sizing ekle */
 `;
 
 const CarouselItem = styled.div`
   flex: 0 0 auto;
   width: ${(props) => props.width}px;
-  max-width: calc(100vw - 20px); /* Viewport sınırı */
   padding: 0;
   opacity: ${(props) => (props.active ? 1 : 0.6)};
   transform: ${(props) => (props.active ? 'scale(1)' : 'scale(0.95)')};
   transition: opacity 0.3s ease, transform 0.3s ease;
   box-sizing: border-box;
-  overflow: hidden; /* İçerik taşmasını engelle */
 `;
 
 // Daha minimal ve şık bir kontrol paneli
@@ -57,11 +51,9 @@ const CarouselControls = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 100%; /* Genişlik kontrolü */
   margin: 20px auto 10px;
   padding: 0;
   gap: 8px;
-  box-sizing: border-box; /* Box-sizing ekle */
 `;
 
 const StepIndicatorWrapper = styled.div`
@@ -69,10 +61,7 @@ const StepIndicatorWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  max-width: 100%; /* Genişlik kontrolü */
   justify-content: flex-start;
-  box-sizing: border-box; /* Box-sizing ekle */
-  overflow: hidden; /* İçerik taşmasını engelle */
 
   @media (max-width: 1450px) {
     margin-bottom: 46px;
@@ -80,7 +69,6 @@ const StepIndicatorWrapper = styled.div`
 
   @media (max-width: 710px) {
     width: 100%;
-    max-width: 100%;
     margin-bottom: 0;
   }
 `;
@@ -90,13 +78,9 @@ const InfoContainerWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  max-width: 100%; /* Genişlik kontrolü */
-  box-sizing: border-box; /* Box-sizing ekle */
-  overflow: hidden; /* İçerik taşmasını engelle */
 
   @media (max-width: 710px) {
     width: 100%;
-    max-width: 100%;
   }
 `;
 
@@ -154,13 +138,11 @@ const SwipeIndicator = styled.div`
 const ScrollbarContainer = styled.div`
   position: relative;
   width: 80%;
-  max-width: calc(100vw - 40px); /* Viewport sınırı */
   height: 4px;
   background-color: rgba(0, 68, 102, 0.1);
   margin: 0 auto 20px;
   border-radius: 10px;
   overflow: hidden;
-  box-sizing: border-box; /* Box-sizing ekle */
 `;
 
 const ScrollIndicator = styled.div`
@@ -181,11 +163,9 @@ const ScrollIndicator = styled.div`
 const CarouselWrapper = styled.div`
   position: relative;
   width: 100%;
-  max-width: 100vw; /* Viewport sınırı */
   overflow: hidden; // Ana container içinde overflow hidden
   border-radius: 20px;
   margin: 0 auto;
-  box-sizing: border-box; /* Box-sizing ekle */
 `;
 
 const MobileCarousel = ({
@@ -208,14 +188,14 @@ const MobileCarousel = ({
   // Görünür kısmın genişliğini hesaplıyoruz
   const [containerWidth, setContainerWidth] = useState(0);
   
-  // Her bir itemin gerçek genişliği (merkezdeki item için) - Viewport sınırı ekle
+  // Her bir itemin gerçek genişliği (merkezdeki item için)
   const [itemWidth, setItemWidth] = useState(() => {
     if (window.innerWidth <= 389) {
-      return Math.min(300, window.innerWidth - 40); // Viewport sınırı
+      return 300;
     } else if (window.innerWidth <= 710) {
-      return Math.min(350, window.innerWidth - 40); // Viewport sınırı
+      return 350;
     }
-    return Math.min(window.innerWidth > 800 ? 800 : window.innerWidth, window.innerWidth - 40);
+    return window.innerWidth > 800 ? 800 : window.innerWidth;
   });
   
   // Toplam öğe sayısı: her zaman 2 olacak
@@ -247,22 +227,24 @@ const MobileCarousel = ({
   useEffect(() => {
     const calculateWidths = () => {
       // Konteyner genişliğini ölç
-      const currentContainerWidth = containerRef.current?.clientWidth || Math.min(window.innerWidth, window.innerWidth - 20);
+      const currentContainerWidth = containerRef.current?.clientWidth || window.innerWidth;
       setContainerWidth(currentContainerWidth);
       
       // Her ekran boyutu için doğru genişlik hesaplaması
       let calculatedWidth;
       
-      // Ekran boyutuna göre item genişliği ayarla - Viewport sınırları ekle
+      // Ekran boyutuna göre item genişliği ayarla
+      // Bu değerler, kenarlarda görünecek kısımları hesaba katarak belirlenmiştir
       if (window.innerWidth <= 389) {
-        // Çok küçük ekranlarda item genişliği konteyner genişliğinin %80'i ama viewport sınırı
-        calculatedWidth = Math.min(300, currentContainerWidth * 0.80, window.innerWidth - 40);
+        // Çok küçük ekranlarda item genişliği konteyner genişliğinin %80'i
+        calculatedWidth = Math.min(300, currentContainerWidth * 0.80);
       } else if (window.innerWidth <= 710) {
-        // Küçük ekranlarda item genişliği konteyner genişliğinin %75'i ama viewport sınırı
-        calculatedWidth = Math.min(350, currentContainerWidth * 0.80, window.innerWidth - 40);
+        // Küçük ekranlarda item genişliği konteyner genişliğinin %75'i
+        calculatedWidth = Math.min(350, currentContainerWidth * 0.80);
       } else {
-        // Daha büyük ekranlarda item genişliği konteyner genişliğinin %70'i ama viewport sınırı
-        calculatedWidth = Math.min(800, currentContainerWidth * 0.70, window.innerWidth - 40);
+        // Daha büyük ekranlarda item genişliği konteyner genişliğinin %70'i
+        // Bu değer daha fazla peek efekti sağlar
+        calculatedWidth = Math.min(800, currentContainerWidth * 0.70);
       }
       
       setItemWidth(calculatedWidth);
@@ -309,7 +291,7 @@ const MobileCarousel = ({
   };
 
   return (
-    <div style={{ position: "relative", width: "100%", maxWidth: "100vw", overflow: "hidden", boxSizing: "border-box" }} ref={containerRef}>
+    <div style={{ position: "relative" }} ref={containerRef}>
       <ScrollbarContainer>
         <ScrollIndicator
           totalItems={totalItems}
@@ -332,8 +314,6 @@ const MobileCarousel = ({
           padding: "0 15px",
           opacity: showSwipeHint ? 0.6 : 0,
           zIndex: 10,
-          maxWidth: "100%",
-          boxSizing: "border-box",
         }}
       >
         {activeCardIndex > 0 && (

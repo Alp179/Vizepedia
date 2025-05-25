@@ -12,9 +12,7 @@ const StyledAppLayout = styled.div`
   grid-template-columns: 26rem 1fr;
   grid-template-rows: auto 1fr;
   height: 100vh;
-  max-width: 100vw; /* Viewport genişliğini aşmasını engelle */
   background: var(--color-grey-1);
-  box-sizing: border-box; /* Box-sizing ekle */
   
   @media (max-width: 1300px) {
     grid-template-columns: 22rem 1fr;
@@ -28,10 +26,9 @@ const StyledAppLayout = styled.div`
   @media (max-width: 710px) {
     grid-template-columns: none;
     grid-template-rows: none;
-    /* Mobilde overflow kontrolü */
-    overflow-x: hidden;
-    width: 100%;
-    max-width: 100vw;
+    /* Mobilde height'i içeriğe göre ayarla */
+    height: auto;
+    min-height: 100vh;
   }
 `;
 
@@ -45,14 +42,12 @@ const Main = styled.main`
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  box-sizing: border-box; /* Box-sizing ekle */
   
   @media (max-width: 710px) {
-    padding-top: 4rem;
-    /* Mobil overflow kontrolü */
-    overflow-x: hidden;
-    width: 100%;
-    max-width: 100vw;
+    /* Mobilde padding'i azalt ve height'i serbest bırak */
+    padding-top: 3rem; /* 4rem -> 3rem */
+    min-height: auto; /* min-height kaldır */
+    height: auto; /* İçeriğe göre height */
   }
   
   &::-webkit-scrollbar {
@@ -92,7 +87,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
-  box-sizing: border-box; /* Box-sizing ekle */
   
   @media (max-width: 1550px) {
     margin-left: 150px;
@@ -100,16 +94,15 @@ const Container = styled.div`
   
   @media (max-width: 710px) {
     width: 100%;
-    max-width: 100vw; /* Viewport sınırı */
     margin-left: auto;
     margin-right: auto;
+    gap: 2rem; /* Gap azalt: 3.2rem -> 2rem */
     padding: 0 10px; /* Yan padding ekle */
-    /* Mobilde overflow kontrolü */
-    overflow-x: hidden;
   }
   
   @media (max-width: 450px) {
-    padding: 0 5px; /* Daha küçük padding */
+    gap: 1.5rem; /* Daha da azalt */
+    padding: 0 5px;
   }
 `;
 
@@ -117,13 +110,16 @@ const MobileMenuContainer = styled.div`
   @media (min-width: 710px) {
     display: none;
   }
-  
-  /* Mobil overflow kontrolü */
+`;
+
+// SlideShow wrapper'ı ekleyelim - mobilde daha kompakt olsun
+const SlideShowWrapper = styled.div`
   @media (max-width: 710px) {
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: hidden;
-    box-sizing: border-box;
+    margin-top: 2rem; /* SlideShow üst margin'ini azalt */
+  }
+  
+  @media (max-width: 450px) {
+    margin-top: 1rem;
   }
 `;
 
@@ -140,7 +136,9 @@ function AppLayout() {
         <Container>
           <Outlet />
         </Container>
-        <SlideShow />
+        <SlideShowWrapper>
+          <SlideShow />
+        </SlideShowWrapper>
       </Main>
     </StyledAppLayout>
   );

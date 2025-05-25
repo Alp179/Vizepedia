@@ -39,19 +39,13 @@ const CreatedAtContainer = styled.div`
   padding: 6px 12px;
   border-radius: 6px;
   
-  /* Mobil overflow kontrolü */
-  max-width: calc(100vw - 80px);
-  box-sizing: border-box;
-  
   @media (max-width: 710px) {
     font-size: 1.2rem;
-    max-width: calc(100vw - 60px);
     padding: 4px 8px;
   }
   
   @media (max-width: 450px) {
     font-size: 1rem;
-    max-width: calc(100vw - 40px);
   }
 `;
 
@@ -65,63 +59,47 @@ const CustomRow = styled(Row)`
   z-index: 3000;
   margin: 25px auto 10px 0;
   
-  /* Overflow kontrolü ekleyelim */
-  max-width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-  
   @media (max-width: 1550px) {
     margin-left: -100px;
   }
   padding: 0;
   @media (max-width: 710px) {
-    margin: 55px auto 0 44px;
-    /* Mobilde margin kontrolü */
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 20px auto 10px auto; /* Y margin'i azalt */
     justify-content: center;
   }
   @media (max-width: 450px) {
-    margin-top: 40px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-top: 15px; /* Daha da azalt */
   }
 `;
 
 const DashboardContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 100vw; /* Viewport genişliğini aşmasını engelle */
-  height: auto;
+  /* Y ekseni için height kontrolü - sabit yükseklik kullanma */
+  min-height: auto; /* min-height: 100vh yerine auto */
+  height: auto; /* Sadece içeriğe göre yükseklik */
   display: flex;
   flex-direction: column;
   gap: 24px;
   align-items: flex-start;
-  overflow-x: hidden; /* Yatay overflow'u gizle */
-  box-sizing: border-box; /* Padding ve border'ları width'e dahil et */
 
   @media (max-width: 710px) {
-    height: 100%;
+    /* Mobilde height'i tamamen içeriğe bırak */
+    height: auto;
+    min-height: auto; /* min-height kaldır */
     width: 100%;
-    max-width: 100vw; /* Mobilde de viewport sınırı */
     margin-left: auto;
     flex-flow: column;
     justify-content: flex-start;
     margin-right: auto;
-    padding-top: 15px;
-    padding-left: 10px; /* Yan padding ekle */
-    padding-right: 10px;
+    padding-top: 10px; /* padding-top azalt: 15px -> 10px */
     background: linear-gradient(
       rgba(0, 0, 0, 0.4) 0%,
       rgba(0, 0, 0, 0.1) 40%,
       rgba(0, 0, 0, 0) 60%
     );
     align-items: stretch;
-  }
-  
-  @media (max-width: 450px) {
-    padding-left: 5px;
-    padding-right: 5px;
+    gap: 16px; /* Gap'i azalt: 24px -> 16px */
   }
 `;
 
@@ -133,7 +111,6 @@ const BannersContainer = styled.div`
   max-width: 800px;
   padding: 0;
   align-self: flex-start;
-  box-sizing: border-box; /* Box-sizing ekle */
 
   @media (max-width: 1550px) {
     margin-left: -100px;
@@ -141,29 +118,22 @@ const BannersContainer = styled.div`
 
   @media (max-width: 1200px) {
     width: calc(100vw - 400px);
-    max-width: calc(100vw - 400px); /* Max-width kontrolü */
   }
 
   @media (max-width: 900px) {
     width: 500px;
-    max-width: calc(100vw - 40px); /* Viewport sınırı */
   }
 
   @media (max-width: 768px) {
     padding: 0 10px;
     width: 60%;
-    max-width: calc(100vw - 40px);
   }
-  
   @media (max-width: 710px) {
-    margin: 30px auto 0 auto;
+    margin: 15px auto 0 auto; /* margin azalt: 30px -> 15px */
     width: 450px;
-    max-width: calc(100vw - 40px); /* Mobilde viewport sınırı */
   }
-  
   @media (max-width: 500px) {
     width: 100%;
-    max-width: calc(100vw - 20px);
   }
 `;
 
@@ -182,7 +152,6 @@ const Ceper = styled.div`
   transition: all 0.3s ease;
   position: relative;
   z-index: 10;
-  box-sizing: border-box; /* Box-sizing ekle */
 
   @media (max-width: 1300px) {
     margin-left: 12vw;
@@ -195,14 +164,17 @@ const Ceper = styled.div`
   @media (max-width: 710px) {
     position: relative;
     margin: 0 auto;
+    margin-top: 10px; /* margin-top azalt */
     transform: scale(0.85);
-    /* Küçük ekranlarda boyut kontrolü */
-    max-width: calc(100vw - 40px);
+    /* Yüksekliği azalt */
+    height: 110px; /* 127px -> 110px */
+    width: 260px; /* 283px -> 260px */
   }
   
   @media (max-width: 450px) {
     transform: scale(0.75);
-    max-width: calc(100vw - 20px);
+    height: 100px; /* Daha da azalt */
+    width: 240px;
   }
   
   &:hover {
@@ -236,7 +208,19 @@ const UyeDevam = styled.button`
   transition: all 0.3s ease;
   border: none;
   outline: none;
-  box-sizing: border-box; /* Box-sizing ekle */
+
+  /* Mobilde buton boyutunu azalt */
+  @media (max-width: 710px) {
+    width: 220px; /* 248.6px -> 220px */
+    height: 75px; /* 89px -> 75px */
+    font-size: 16px; /* 18px -> 16px */
+  }
+  
+  @media (max-width: 450px) {
+    width: 200px;
+    height: 65px;
+    font-size: 15px;
+  }
 
   &:hover {
     background-color: #00ffa2;
@@ -257,7 +241,6 @@ const StepIndicatorWrapper = styled.div`
   gap: 16px;
   width: 100%;
   justify-content: flex-start;
-  box-sizing: border-box; /* Box-sizing ekle */
 
   @media (max-width: 1450px) {
     margin-bottom: 40px;
@@ -265,7 +248,7 @@ const StepIndicatorWrapper = styled.div`
 
   @media (max-width: 710px) {
     width: 100%;
-    max-width: 100%; /* Genişlik kontrolü */
+    margin-bottom: 20px; /* margin-bottom azalt: 40px -> 20px */
   }
 `;
 
@@ -274,32 +257,26 @@ const InfoContainerWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  box-sizing: border-box; /* Box-sizing ekle */
   
   @media (max-width: 710px) {
-    max-width: 100%; /* Genişlik kontrolü */
+    gap: 12px; /* Gap azalt: 16px -> 12px */
   }
 `;
 
-// Carousel stilleri - overflow kontrolü ekle
+// Carousel stilleri
 const DashboardItems = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
   position: relative;
   z-index: 10;
-  width: 100%;
-  max-width: 100%; /* Genişlik sınırı */
-  overflow-x: hidden; /* Yatay overflow kontrolü */
-  box-sizing: border-box; /* Box-sizing ekle */
 
   @media (max-width: 710px) {
     position: relative;
     width: 100%;
-    max-width: 100vw; /* Viewport sınırı */
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 6px; /* Gap azalt: 8px -> 6px */
     margin-top: -8px;
   }
 `;
@@ -607,11 +584,7 @@ const Dashboard = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            marginTop: isMobile ? "-30px" : "20px",
-            width: "100%",
-            maxWidth: "100%",
-            overflow: "hidden",
-            boxSizing: "border-box",
+            marginTop: isMobile ? "-20px" : "20px", /* Negatif margin azalt */
           }}
         >
           <ModalSignup>
