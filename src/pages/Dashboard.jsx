@@ -38,14 +38,9 @@ const CreatedAtContainer = styled.div`
   backdrop-filter: blur(5px);
   padding: 6px 12px;
   border-radius: 6px;
-  
+
   @media (max-width: 710px) {
-    font-size: 1.2rem;
     padding: 4px 8px;
-  }
-  
-  @media (max-width: 450px) {
-    font-size: 1rem;
   }
 `;
 
@@ -58,7 +53,7 @@ const CustomRow = styled(Row)`
   position: relative;
   z-index: 3000;
   margin: 25px auto 10px 0;
-  
+
   @media (max-width: 1550px) {
     margin-left: -100px;
   }
@@ -124,12 +119,8 @@ const BannersContainer = styled.div`
     width: 500px;
   }
 
-  @media (max-width: 768px) {
-    padding: 0 10px;
-    width: 60%;
-  }
   @media (max-width: 710px) {
-    margin: 15px auto 0 auto; /* margin azalt: 30px -> 15px */
+    margin: 60px auto 0 auto; /* margin azalt: 30px -> 15px */
     width: 450px;
   }
   @media (max-width: 500px) {
@@ -170,13 +161,13 @@ const Ceper = styled.div`
     height: 110px; /* 127px -> 110px */
     width: 260px; /* 283px -> 260px */
   }
-  
+
   @media (max-width: 450px) {
     transform: scale(0.75);
     height: 100px; /* Daha da azalt */
     width: 240px;
   }
-  
+
   &:hover {
     border-color: #004466;
     transform: scale(1.03);
@@ -184,7 +175,7 @@ const Ceper = styled.div`
     @media (max-width: 710px) {
       transform: scale(0.9);
     }
-    
+
     @media (max-width: 450px) {
       transform: scale(0.8);
     }
@@ -215,7 +206,7 @@ const UyeDevam = styled.button`
     height: 75px; /* 89px -> 75px */
     font-size: 16px; /* 18px -> 16px */
   }
-  
+
   @media (max-width: 450px) {
     width: 200px;
     height: 65px;
@@ -257,7 +248,7 @@ const InfoContainerWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  
+
   @media (max-width: 710px) {
     gap: 12px; /* Gap azalt: 16px -> 12px */
   }
@@ -349,7 +340,6 @@ const Dashboard = () => {
     queryKey: ["userSelections", userId, applicationId],
     queryFn: () => fetchUserSelectionsDash(userId, applicationId),
     enabled: !!userId && !!applicationId,
-  
   });
 
   const ansCountry = userSelections?.[0]?.ans_country;
@@ -584,7 +574,7 @@ const Dashboard = () => {
           style={{
             display: "flex",
             justifyContent: "center",
-            marginTop: isMobile ? "-20px" : "20px", /* Negatif margin azalt */
+            marginTop: isMobile ? "-20px" : "20px" /* Negatif margin azalt */,
           }}
         >
           <ModalSignup>
@@ -602,10 +592,7 @@ const Dashboard = () => {
 
       {/* Kendi kendini kontrol eden VisaCheckModal */}
       {userId && applicationId && (
-        <VisaCheckModal
-          userId={userId}
-          applicationId={applicationId}
-        />
+        <VisaCheckModal userId={userId} applicationId={applicationId} />
       )}
     </DashboardContainer>
   );

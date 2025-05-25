@@ -49,7 +49,7 @@ const BannerContainer = styled.div`
   }
 
   @media (max-width: 710px) {
-    margin-top: 12px;
+    
     flex-direction: column;
     gap: 10px;
     text-align: center;
