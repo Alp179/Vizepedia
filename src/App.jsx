@@ -43,6 +43,7 @@ import { getCurrentUser } from "./services/apiAuth";
 import WellcomeDa from "./features/wellcomes/WellcomeDa";
 import ResetPassword from "./features/authentication/ResetPassword";
 import CerezPolitikasi from "./pages/CerezPolitikasi";
+import Davetiye from "./pages/Davetiye";
 
 // Çerez sistemi import'ları
 import { CookieConsentProvider } from "./hooks/useCookieConsent.jsx";
@@ -147,7 +148,7 @@ function AppWithGA() {
 
       <Route path="kisisel-verilerin-korunmasi" element={<Kvkk />} />
       <Route path="cerez-politikasi" element={<CerezPolitikasi />} />
-
+      <Route path="davetiye-olustur" element={<Davetiye />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

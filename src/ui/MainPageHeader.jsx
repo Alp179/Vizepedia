@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { getCurrentUser, isUserAnonymous } from "../services/apiAuth";
 import supabase from "../services/supabase";
 import ProfileButton from "./ProfileButton";
+import DavetiyeOlusturucu from "./DavetiyeOlusturucu";
 
 // Scroll hide/show özellikli modern header
 const StyledMainPageHeader = styled.header`
@@ -495,6 +496,7 @@ function MainPageHeader({ setMenuOpen }) {
               <ProfileAndButtonContainer>
                 {/* ProfileButton'u responsive container içine aldık */}
                 <ProfileButtonContainer>
+                  <DavetiyeOlusturucu />
                   <ProfileButton isAnonymous={isAnonymous} />
                 </ProfileButtonContainer>
 

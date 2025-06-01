@@ -5,7 +5,6 @@ import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../features/authentication/useLogout";
 import { useVisaApplications } from "../context/VisaApplicationContext";
-
 import { getCurrentUser } from "../services/apiAuth";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";

@@ -320,6 +320,13 @@ ul {
  
 }
 
+.subheading-blog {
+  font-size: 24px;
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+}
+
 .mobile-scrolldiv {
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(5px);

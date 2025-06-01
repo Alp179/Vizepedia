@@ -3,7 +3,7 @@ const selectionDocumentRules = {
     "Biyometrik Fotoğraf",
     "Kimlik Fotokopisi",
     "Nüfus Kayıt Örneği",
-    "Sağlık Sigortası",
+    "Seyahat Sağlık Sigortası",
     "İkametgah Belgesi",
     "Pasaport",
     "Malvarlık Belgeleri",

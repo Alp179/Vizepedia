@@ -34,7 +34,7 @@ const StyledBlogLogo = styled.div`
   position: relative;
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   transform-origin: center;
-  
+
   &:hover {
     transform: scale(1.05);
   }
@@ -49,18 +49,18 @@ const StyledBlogLogo = styled.div`
       width: 165px;
       height: auto;
       flex-shrink: 0;
-      
+
       &:hover {
         transform: translate(-50%, -50%) scale(1.05);
       }
-      
+
       @media (max-width: 1300px) {
         width: 140px;
         position: relavite;
       }
       @media (max-width: 1050px) {
         transform: translate(-50%, -50%);
-        
+
         &:hover {
           transform: translate(-50%, -50%) scale(1.05);
         }
@@ -85,15 +85,15 @@ const StyledBlogLogo = styled.div`
     css`
       width: 165px;
       height: auto;
-      flex-shrink: 0
+      flex-shrink: 0;
       @media (max-width: 1200px) {
         width: 120px;
       }
       @media (max-width: 870px) {
-        width: 100px!important;
+        width: 100px;
       }
       @media (max-width: 380px) {
-        width: 75px!important;
+        width: 75px;
       }
     `}
 
@@ -177,30 +177,30 @@ const Img = styled.img`
   -webkit-user-select: none;
   -ms-user-select: none;
   transition: all 0.5s ease;
-  
+
   /* Blog logosu için özel efekt */
-  ${props => props.isDarkMode 
-    ? css`
-        /* Dark modda hover efekti */
-        ${StyledBlogLogo}:hover & {
-          animation: ${shineEffect} 2s infinite;
-          transform: translateY(-2px);
-        }
-      `
-    : css`
-        /* Light modda hover efekti */
-        ${StyledBlogLogo}:hover & {
-          animation: ${shineEffectLight} 2s infinite;
-          transform: translateY(-2px);
-        }
-      `
-  }
+  ${(props) =>
+    props.isDarkMode
+      ? css`
+          /* Dark modda hover efekti */
+          ${StyledBlogLogo}:hover & {
+            animation: ${shineEffect} 2s infinite;
+            transform: translateY(-2px);
+          }
+        `
+      : css`
+          /* Light modda hover efekti */
+          ${StyledBlogLogo}:hover & {
+            animation: ${shineEffectLight} 2s infinite;
+            transform: translateY(-2px);
+          }
+        `}
 `;
 
 function BlogLogo({ variant }) {
   const { isDarkMode } = useDarkMode();
   const navigate = useNavigate();
-  
+
   const handleLogoClick = () => {
     navigate("/blog"); // Logo'ya tıklandığında /blog'a yönlendiriyoruz
   };
@@ -210,16 +210,12 @@ function BlogLogo({ variant }) {
     : "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/vblog-lightmode.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL3ZibG9nLWxpZ2h0bW9kZS5wbmciLCJpYXQiOjE3MjgxNDExMzIsImV4cCI6MzU2NDk2OTYzNTUzMn0.o5K7iHOeB2PbLuq24iVqbukYV2MLEjOXbCfECMLj20w&t=2024-10-05T15%3A12%3A13.053Z";
 
   return (
-    <StyledBlogLogo 
-      onClick={handleLogoClick} 
-      variant={variant} 
+    <StyledBlogLogo
+      onClick={handleLogoClick}
+      variant={variant}
       isDarkMode={isDarkMode}
     >
-      <Img 
-        src={src} 
-        alt="Blog-Logo" 
-        isDarkMode={isDarkMode}
-      />
+      <Img src={src} alt="Blog-Logo" isDarkMode={isDarkMode} />
     </StyledBlogLogo>
   );
 }
