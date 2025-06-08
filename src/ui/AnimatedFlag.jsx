@@ -39,6 +39,7 @@ const moveFlagAnimation = keyframes`
   }
 `;
 
+// Ana bayrak konteyneri - temiz ve modern
 const FlagContainer = styled.div`
   position: fixed;
   top: 0;
@@ -50,6 +51,25 @@ const FlagContainer = styled.div`
   overflow: hidden;
   z-index: 0;
   pointer-events: none;
+  opacity: 1;
+
+  /* Fade efekti için mask */
+  mask: radial-gradient(
+    ellipse 120% 80% at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.9) 40%,
+    rgba(0, 0, 0, 0.6) 70%,
+    rgba(0, 0, 0, 0.3) 85%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask: radial-gradient(
+    ellipse 120% 80% at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.9) 40%,
+    rgba(0, 0, 0, 0.6) 70%,
+    rgba(0, 0, 0, 0.3) 85%,
+    rgba(0, 0, 0, 0) 100%
+  );
 
   @media (max-width: 1450px) {
     width: 700px;
@@ -125,7 +145,7 @@ const BlurredFlagBackground = styled.div`
 `;
 
 const AnimatedFlag = ({ countryCode }) => {
-  // 1) Hook’lar en üstte
+  // 1) Hook'lar en üstte
   const svgContainerRef = useRef(null);
   const flagUrl = countryCode
     ? `https://purecatamphetamine.github.io/country-flag-icons/3x2/${countryCode.toUpperCase()}.svg`
