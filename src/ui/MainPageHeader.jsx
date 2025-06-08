@@ -11,36 +11,29 @@ import { useEffect, useState } from "react";
 import { getCurrentUser, isUserAnonymous } from "../services/apiAuth";
 import supabase from "../services/supabase";
 import ProfileButton from "./ProfileButton";
-import DavetiyeOlusturucu from "./DavetiyeOlusturucu";
 
 // Scroll hide/show özellikli modern header
 const StyledMainPageHeader = styled.header`
   position: fixed;
-  top: ${props => props.isVisible ? '0' : '-120px'}; /* Scroll durumuna göre konum */
+  top: ${(props) =>
+    props.isVisible ? "0" : "-120px"}; /* Scroll durumuna göre konum */
   left: 0;
   width: 100%;
   z-index: 9999; /* BlogHeader ile aynı z-index seviyesi */
   transition: all 0.3s ease-in-out; /* Smooth geçiş */
-  background: ${(props) => 
-    props.scrolled 
-      ? "rgba(255, 255, 255, 0.2)" 
-      : "transparent"};
-  backdrop-filter: ${(props) => 
+  background: ${(props) =>
+    props.scrolled ? "rgba(255, 255, 255, 0.2)" : "transparent"};
+  backdrop-filter: ${(props) => (props.scrolled ? "blur(10px)" : "none")};
+  -webkit-backdrop-filter: ${(props) =>
     props.scrolled ? "blur(10px)" : "none"};
-  -webkit-backdrop-filter: ${(props) => 
-    props.scrolled ? "blur(10px)" : "none"};
-  box-shadow: ${(props) => 
-    props.scrolled 
-      ? "0 4px 20px rgba(0, 0, 0, 0.05)" 
-      : "none"};
+  box-shadow: ${(props) =>
+    props.scrolled ? "0 4px 20px rgba(0, 0, 0, 0.05)" : "none"};
   padding: 20px 0;
 
   /* Dark Mode Styles */
   .dark-mode & {
-    background: ${(props) => 
-      props.scrolled 
-        ? "rgba(30, 35, 45, 0.2)" 
-        : "transparent"};
+    background: ${(props) =>
+      props.scrolled ? "rgba(30, 35, 45, 0.2)" : "transparent"};
   }
 `;
 
@@ -208,7 +201,7 @@ function MainPageHeader({ setMenuOpen }) {
   const [scrolled, setScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(0);
-  
+
   // Scroll hide/show için yeni state'ler
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -317,7 +310,7 @@ function MainPageHeader({ setMenuOpen }) {
   // Header yüksekliğini ölçmek için ref ve useEffect
   useEffect(() => {
     const measureHeaderHeight = () => {
-      const headerElement = document.querySelector('header');
+      const headerElement = document.querySelector("header");
       if (headerElement) {
         const height = headerElement.offsetHeight;
         setHeaderHeight(height);
@@ -326,10 +319,10 @@ function MainPageHeader({ setMenuOpen }) {
 
     // İlk render ve resize olayında ölçüm yap
     measureHeaderHeight();
-    window.addEventListener('resize', measureHeaderHeight);
+    window.addEventListener("resize", measureHeaderHeight);
 
     return () => {
-      window.removeEventListener('resize', measureHeaderHeight);
+      window.removeEventListener("resize", measureHeaderHeight);
     };
   }, []);
 
@@ -404,17 +397,17 @@ function MainPageHeader({ setMenuOpen }) {
   // Scroll efekti için event listener - GÜNCELLENMIŞ
   useEffect(() => {
     let timeoutId;
-    
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       // Scroll background effect için
       if (currentScrollY > 50) {
         setScrolled(true);
       } else {
         setScrolled(false);
       }
-      
+
       // Hide/show logic için
       if (currentScrollY < 50) {
         setIsVisible(true);
@@ -427,7 +420,7 @@ function MainPageHeader({ setMenuOpen }) {
       else if (currentScrollY < lastScrollY) {
         setIsVisible(true);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
@@ -440,10 +433,10 @@ function MainPageHeader({ setMenuOpen }) {
       }, 16); // ~60fps
     };
 
-    window.addEventListener('scroll', throttledScroll, { passive: true });
-    
+    window.addEventListener("scroll", throttledScroll, { passive: true });
+
     return () => {
-      window.removeEventListener('scroll', throttledScroll);
+      window.removeEventListener("scroll", throttledScroll);
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, [lastScrollY]);
@@ -458,11 +451,11 @@ function MainPageHeader({ setMenuOpen }) {
       const scrollPosition = window.pageYOffset;
       // Header yüksekliği + 70px ek boşluk bırak
       const offsetPosition = faqPosition + scrollPosition - headerHeight - 70;
-      
+
       // Smooth scroll ile git
       window.scrollTo({
         top: offsetPosition,
-        behavior: "smooth"
+        behavior: "smooth",
       });
     }
   };
@@ -496,7 +489,6 @@ function MainPageHeader({ setMenuOpen }) {
               <ProfileAndButtonContainer>
                 {/* ProfileButton'u responsive container içine aldık */}
                 <ProfileButtonContainer>
-                  <DavetiyeOlusturucu />
                   <ProfileButton isAnonymous={isAnonymous} />
                 </ProfileButtonContainer>
 
