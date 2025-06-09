@@ -348,8 +348,7 @@ export const Header = () => {
         Düşlerinizdeki Seyahatin İlk Adımı <br />
       </HeaderTitle>
       <HeaderDescription>
-        Schengen Vizesi, Birleşik Krallık Vizesi ve Amerika Vizesi
-        başvurularınızı profesyonel ekibimizle kolayca tamamlayın.
+        Avrupa’dan Amerika’ya tüm vize başvurularınızın süreç yönetimi tek yerde
       </HeaderDescription>
       <ButtonWrapper>
         <StyledCeper>

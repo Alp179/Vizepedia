@@ -21,6 +21,54 @@ const MainContent = styled.div`
   position: relative; // ProgressIndicator için relative pozisyon
 `;
 
+// Blog İçerik Girişi - Yeni eklenen stil
+
+const BlogIntroduction = styled.div`
+  margin-bottom: 2.5rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, #0071e3, #00c6ff);
+    border-radius: 1.2rem 1.2rem 0 0;
+  }
+
+  p {
+    font-size: 16px; // 1.1rem'den 16px'e değiştirildi
+    line-height: 1.6; // 1.7'den 1.6'ya düşürüldü (SectionContent ile aynı)
+    color: var(--color-grey-600);
+    margin: 0;
+    margin-bottom: 1.4rem; // SectionContent p ile aynı margin-bottom eklendi
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+
+    p {
+      font-size: 16px; // Mobilde de 16px kalacak (SectionContent ile aynı)
+      line-height: 1.55; // SectionContent mobil line-height ile aynı
+      margin-bottom: 1.2rem; // SectionContent mobil p margin ile aynı
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.2rem;
+    margin-bottom: 1.8rem;
+  }
+`;
 // İçindekiler tablosunu sticky olmaktan çıkarıyoruz
 const TableOfContentsContainer = styled.div`
   margin-bottom: 2rem;
@@ -448,7 +496,6 @@ const TableToggleButton = styled.button`
     display: ${(props) => (props.hideTableOfContents ? "none" : "flex")};
   }
 `;
-
 // Progress Indicator - Ekranın sağında sabit pozisyon
 const ProgressIndicator = styled.div`
   position: fixed;
@@ -722,6 +769,13 @@ function BlogContentSection({ blog, headings, hideTableOfContents = false }) {
 
   return (
     <MainContent ref={contentRef}>
+      {/* Blog İçerik Girişi - content alanını burada gösteriyoruz */}
+      {blog?.content && (
+        <BlogIntroduction>
+          <p dangerouslySetInnerHTML={{ __html: blog.content }} />
+        </BlogIntroduction>
+      )}
+
       {headings.length > 0 && !hideTableOfContents && (
         <>
           {/* Mobil cihazlar için akordiyon buton */}
@@ -805,7 +859,7 @@ function BlogContentSection({ blog, headings, hideTableOfContents = false }) {
                       // Heading ID'sine karşılık gelen section ID'sini bul ve ona kaydır
                       const headingText = heading.text.toLowerCase();
 
-                      // Section// Section başlıkları ile karşılaştır
+                      // Section başlıkları ile karşılaştır
                       let targetId = null;
                       if (
                         blog?.section1_title &&
@@ -992,6 +1046,7 @@ BlogContentSection.propTypes = {
   blog: PropTypes.shape({
     title: PropTypes.string,
     tags: PropTypes.string,
+    content: PropTypes.string, // content alanı eklendi
     section1_title: PropTypes.string,
     section1_content: PropTypes.string,
     section1_image: PropTypes.string,

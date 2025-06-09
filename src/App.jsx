@@ -44,6 +44,7 @@ import WellcomeDa from "./features/wellcomes/WellcomeDa";
 import ResetPassword from "./features/authentication/ResetPassword";
 import CerezPolitikasi from "./pages/CerezPolitikasi";
 import Davetiye from "./pages/Davetiye";
+// YENİ: Hakkımızda sayfası import'u
 
 // Çerez sistemi import'ları
 import { CookieConsentProvider } from "./hooks/useCookieConsent.jsx";
@@ -53,6 +54,7 @@ import { FloatingCookieButton } from "./ui/FloatingCookieButton.jsx";
 import { GoogleAnalytics } from "./utils/googleAnalytics.js";
 import { useGoogleAnalytics } from "./hooks/useGoogleAnalytics.jsx";
 import { CookiePreferences } from "./ui/CookiePreferences.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -72,6 +74,8 @@ function AppWithGA() {
       <Route element={<MainPageLayout />}>
         <Route index element={<MainPage />} />
         <Route path="mainpage" element={<MainPage />} />
+        {/* YENİ: Hakkımızda sayfası route'u */}
+        <Route path="hakkimizda" element={<AboutPage />} />
       </Route>
 
       <Route
