@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import SlideShow from "../ui/SlideShow";
+import InvitationToolSection from "../ui/InvitationToolSection"; // Yeni komponent import
 
 import CustomPremiumSections from "../ui/CustomPremiumSections";
 import CountriesMarquee from "../ui/CountriesMarquee";
@@ -167,26 +168,34 @@ function MainPage() {
         <CountriesMarquee />
       </FadeInSection>
 
-      {/* SlideShow with Fade In */}
+      {/* Invitation Tool Section - YENİ EKLENEN BÖLÜM */}
       <FadeInSection
-        ref={setFadeInRef(3)}
-        className={fadeInSections.includes(3) ? "visible" : ""}
+        ref={setFadeInRef(1)}
+        className={fadeInSections.includes(1) ? "visible" : ""}
+      >
+        <InvitationToolSection />
+      </FadeInSection>
+
+      {/* SlideShow with Fade In - Index güncellendi */}
+      <FadeInSection
+        ref={setFadeInRef(2)}
+        className={fadeInSections.includes(2) ? "visible" : ""}
       >
         <SlideShow />
       </FadeInSection>
 
-      {/* FAQ Section with Fade In */}
+      {/* FAQ Section with Fade In - Index güncellendi */}
       <FadeInSection
-        ref={setFadeInRef(4)}
-        className={fadeInSections.includes(4) ? "visible" : ""}
+        ref={setFadeInRef(3)}
+        className={fadeInSections.includes(3) ? "visible" : ""}
       >
         <FaqSectionComponent />
       </FadeInSection>
 
-      {/* MailerLite Form with Fade In */}
+      {/* MailerLite Form with Fade In - Index güncellendi */}
       <FadeInSection
-        ref={setFadeInRef(5)}
-        className={fadeInSections.includes(5) ? "visible" : ""}
+        ref={setFadeInRef(4)}
+        className={fadeInSections.includes(4) ? "visible" : ""}
       >
         <MailerLiteForm />
       </FadeInSection>
