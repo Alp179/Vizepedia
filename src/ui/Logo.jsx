@@ -179,6 +179,11 @@ const StyledLogo = styled.div`
         width: 80px;
       }
     `}
+    ${(props) =>
+      props.variant === "davetiye" &&
+      css`
+        width: 160px;
+      `}
 `;
 
 const Img = styled.img`

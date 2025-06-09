@@ -1,43 +1,41 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import Logo from "../ui/Logo.jsx";
 
 // ===============================
 // STYLED COMPONENTS
 // ===============================
 const Container = styled.div`
   max-width: 800px;
+  border-radius: 16px;
   margin: 0 auto;
   padding: 20px;
   font-family: "Arial", sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-grey-927);
   min-height: 100vh;
 `;
 
 const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-grey-1);
   border-radius: 15px;
   backdrop-filter: blur(10px);
 `;
 
-const Title = styled.h1`
-  color: white;
-  font-size: 2.5rem;
-  margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-`;
-
 const Subtitle = styled.p`
-  color: rgba(255, 255, 255, 0.9);
   font-size: 1.1rem;
   margin: 10px 0 0 0;
 `;
 
 const FormContainer = styled.div`
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-grey-1);
   border-radius: 20px;
   padding: 30px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -71,7 +69,8 @@ const Input = styled.input`
   border-radius: 10px;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: ${(props) => (props.hasError ? "#fed7d7" : "white")};
+  background: ${(props) =>
+    props.hasError ? "#fed7d7" : "var(--color-grey-929)"};
 
   &:focus {
     outline: none;
@@ -6134,8 +6133,9 @@ export default function VisaInvitationGenerator({ onCountryChange }) {
   return (
     <Container>
       <Header>
-        <Title>🌍 Vizepedia</Title>
-        <Subtitle>Aile Ziyareti Vizesi - Davetiye Mektubu Oluşturucu</Subtitle>
+        <Logo variant="davetiye" />
+
+        <Subtitle>Ziyaret Vizesi - Davetiye Mektubu Oluşturucu</Subtitle>
       </Header>
 
       <FormContainer>

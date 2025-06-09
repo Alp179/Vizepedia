@@ -10,8 +10,7 @@ const Fullpage = styled.div`
   margin: 0;
   min-height: 100vh;
   height: 100%;
-  min-width: 100vw;
-  width: 100%;
+  width: 100vw;
   background: var(--color-grey-1);
   position: relative; /* AnimatedFlag için gerekli */
 `;
