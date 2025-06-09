@@ -463,7 +463,7 @@ function MainPageHeader({ setMenuOpen }) {
   // Yönlendirme fonksiyonları
   const handleLogInClick = () => navigate("/login");
   const handleContinueClick = () => navigate("/dashboard");
-  const handleAboutClick = () => navigate("/about");
+  const handleAboutClick = () => navigate("/hakkimizda");
 
   return (
     <StyledMainPageHeader scrolled={scrolled} isVisible={isVisible}>
