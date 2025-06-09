@@ -683,7 +683,7 @@ Slider h2 span {
   margin-top: 200px;
   border-radius: 100% / 40% 40% 0% 0%;
   width: 100%;
-  height: 565px;
+  height: 600px;
   background: var(--color-grey-907); 
   background-size: cover;
   opacity: 0.92;
@@ -789,6 +789,12 @@ Slider h2 span {
   }
 }
 
+@media (max-width: 400px) {
+  .footer-header {
+    font-size: 38px;
+  }
+}
+
 @media (max-width: 330px) {
   .footer-header {
     font-size: 32px;
@@ -797,8 +803,16 @@ Slider h2 span {
 
 @media (max-width: 1000px) {
   .footer {
-    height: 680px;
+    height: 780px;
 }
+
+@media (max-width: 545px) {
+  .footer {
+    height: 820px;
+  }
+}
+
+
 
 .footer-wrap {
     flex-flow: column-reverse;

@@ -26,6 +26,66 @@ const LoadingIndicator = styled.div`
   }
 `;
 
+const DavetiyeButton = styled.div`
+  background: #00ffa2;
+  color: #004466;
+  padding: 12px 24px;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 160px;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+  }
+  
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+    font-size: 14px;
+    min-width: 120px;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  @media (max-width: 520px) {
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: 100px;
+    margin-bottom: 10px; /* Alt margin ekle */
+    
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+`;
+
 // Yükleniyor göstergesi için özel stil
 const FooterButton = styled.div`
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
@@ -36,77 +96,105 @@ const FooterButton = styled.div`
   gap: 10px;
 `;
 
-// Footer wrapper'a overflow kontrolü ekliyoruz
+// Footer wrapper'a daha iyi overflow kontrolü
 const FooterWrapper = styled.div`
   width: 100%;
-  max-width: 100vw; /* Viewport genişliğini aşmasını engelle */
-  overflow-x: hidden; /* Yatay overflow'u gizle */
-  box-sizing: border-box; /* Padding ve border'ları width'e dahil et */
-  
-  @media (max-width: 520px) {
-    .footer-wrap {
-      flex-direction: column;
-      gap: 20px;
-      padding-bottom: 15px;
-      /* Footer-wrap için de overflow kontrolü */
-      max-width: 100%;
-      overflow-x: hidden;
-    }
-  }
+  max-width: 100vw;
+  overflow: hidden; /* Hem X hem Y overflow'u kontrol et */
+  box-sizing: border-box;
 
-  /* Footer içindeki tüm elementlere box-sizing uygula */
-  * {
-    box-sizing: border-box;
-  }
-
-  /* Footer ana container'ına da overflow kontrolü */
   .footer {
     max-width: 100%;
-    overflow-x: hidden;
+    overflow: hidden;
     box-sizing: border-box;
+    padding: 20px 15px; /* Üst-alt padding ekle */
+    
+    /* Footer header section */
+    .footer-header-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 34px;
+      margin-bottom: 40px;
+      
+      @media (max-width: 768px) {
+        gap: 24px;
+        margin-bottom: 30px;
+      }
+      
+      @media (max-width: 520px) {
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+    }
+    
+    .footer-header {
+      text-align: center;
+      line-height: 1.4;
+      
+    }
   }
 
-  /* Footer bottom kısmına responsive düzenleme */
   .footer-wrap {
-    max-width: 100%;
-    overflow-x: hidden;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start; /* Center yerine flex-start kullan */
+    max-width: 80%;
+    margin: 0 auto;
+    gap: 20px;
+    flex-wrap: wrap;
     box-sizing: border-box;
+    
+    @media (max-width: 1024px) {
+      max-width: 90%;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+      text-align: center;
+    }
     
     @media (max-width: 768px) {
-      max-width: 95%; /* Mobilde biraz daha dar yap */
-      margin: 0 auto;
+      max-width: 95%;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+      text-align: center;
     }
-    
+
     @media (max-width: 520px) {
       max-width: 100%;
-      padding: 0 15px; /* Yan padding ekle */
+      padding: 0 10px;
+      gap: 20px;
     }
   }
 
-  /* Logo ve sosyal medya ikonları için responsive düzenleme */
-  .footer-social-section {
-    display: flex;
-    gap: 25px;
+  /* Logo section */
+  .footer-logo-section {
+    flex-shrink: 0;
     
-    @media (max-width: 520px) {
-      gap: 15px; /* Mobilde gap'i azalt */
-      justify-content: center;
-    }
-    
-    a {
-      flex-shrink: 0; /* İkonların küçülmesini engelle */
+    @media (max-width: 768px) {
+      order: 1;
     }
   }
 
-  /* Footer links için responsive düzenleme */
+  /* Links section */
   .footer-links-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    
-    @media (max-width: 520px) {
+    flex: 1;
+    min-width: 200px;
+
+    @media (max-width: 768px) {
+      order: 3;
+      min-width: auto;
       gap: 15px;
+    }
+
+    @media (max-width: 520px) {
+      gap: 12px;
     }
   }
 
@@ -115,32 +203,113 @@ const FooterWrapper = styled.div`
     gap: 30px;
     flex-wrap: wrap;
     justify-content: center;
-    
+
+    @media (max-width: 768px) {
+      gap: 25px;
+    }
+
     @media (max-width: 520px) {
-      gap: 20px; /* Mobilde gap'i azalt */
+      gap: 20px;
     }
+
     
-    @media (max-width: 380px) {
-      gap: 15px;
-      flex-direction: column; /* Çok küçük ekranlarda alt alta diz */
-      align-items: center;
-    }
   }
 
   .footer-legal-row {
     display: flex;
     gap: 30px;
     font-size: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    @media (max-width: 768px) {
+      gap: 25px;
+    }
+
+    @media (max-width: 520px) {
+      gap: 20px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 380px) {
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+
+  /* Davetiye button section */
+  .footer-button-section {
+    flex-shrink: 0;
     
+    @media (max-width: 768px) {
+      order: 2;
+    }
+  }
+
+  /* Social section */
+  .footer-social-section {
+    display: flex;
+    gap: 25px;
+    flex-shrink: 0;
+
+    @media (max-width: 768px) {
+      order: 4;
+      justify-content: center;
+    }
+
     @media (max-width: 520px) {
       gap: 20px;
     }
-    
-    @media (max-width: 380px) {
-      gap: 15px;
-      flex-direction: column;
-      align-items: center;
+
+    a {
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.1);
+      }
+      
+      svg {
+        @media (max-width: 520px) {
+          width: 20px;
+          height: 20px;
+        }
+      }
     }
+  }
+
+  /* Footer divider */
+  .footer-divider {
+    margin: 30px 0;
+    
+    @media (max-width: 768px) {
+      margin: 25px 0;
+    }
+    
+    @media (max-width: 520px) {
+      margin: 20px 0;
+    }
+  }
+
+  /* Footer links hover effect */
+  .footer-links {
+    cursor: pointer;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+    
+    &:hover {
+      opacity: 0.7;
+    }
+    
+    @media (max-width: 520px) {
+      font-size: 14px;
+    }
+  }
+
+  /* Tüm elementlere box-sizing uygula */
+  * {
+    box-sizing: border-box;
   }
 `;
 
@@ -239,6 +408,11 @@ function Footer() {
     navigate("/cerez-politikasi");
   };
 
+  const handleDavetiyeClick = () => {
+    window.scrollTo(0, 0);
+    navigate("/davetiye-olustur");
+  };
+
   // Yükleniyor ikonu
   const LoadingIcon = () => (
     <svg
@@ -279,18 +453,25 @@ function Footer() {
     </svg>
   );
 
+  const IconInvitation = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="4" width="18" height="16" rx="2"/>
+      <path d="m3 4 9 7 9-7"/>
+    </svg>
+  );
+
   return (
     <FooterWrapper>
       <div className="footer">
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: "34px",
-          }}
-        >
+        <div className="footer-header-section">
           <div className="footer-header">
             Vize başvurusu yapmak hiç bu kadar kolay olmamıştı.
           </div>
@@ -307,26 +488,23 @@ function Footer() {
                 </LoadingIndicator>
               ) : (
                 <>
-                  {isLoggedIn && <IconContinue style={{ marginRight: "8px" }} />}
+                  {isLoggedIn && (
+                    <IconContinue style={{ marginRight: "8px" }} />
+                  )}
                   {isLoggedIn ? "Devam et" : "Hemen başlayın"}
                 </>
               )}
             </FooterButton>
           </div>
         </div>
+        
         <div className="footer-divider"></div>
-        <div
-          className="footer-wrap"
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            alignItems: "center",
-            maxWidth: "80%",
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}
-        >
-          <Logo variant="footer" />
+        
+        <div className="footer-wrap">
+          <div className="footer-logo-section">
+            <Logo variant="footer" />
+          </div>
+
           <div className="footer-links-section">
             <div className="footer-links-row">
               <div className="footer-links" onClick={handleMainPageClick}>
@@ -337,17 +515,27 @@ function Footer() {
                 Blog
               </div>
             </div>
-            
-            {/* Alt bölüm - KVKK ve Çerez Politikası linkleri */}
+
             <div className="footer-legal-row">
               <div className="footer-links" onClick={handleKvkkClick}>
                 KVKK
               </div>
-              <div className="footer-links" onClick={handleCerezPolitikasiClick}>
+              <div
+                className="footer-links"
+                onClick={handleCerezPolitikasiClick}
+              >
                 Çerez Politikası
               </div>
             </div>
           </div>
+
+          <div className="footer-button-section">
+            <DavetiyeButton onClick={handleDavetiyeClick}>
+              <IconInvitation />
+              Davetiye Oluşturucu
+            </DavetiyeButton>
+          </div>
+
           <div className="footer-social-section">
             <a href="https://facebook.com" target="_blank" rel="noreferrer">
               <svg
@@ -362,7 +550,6 @@ function Footer() {
               </svg>
             </a>
 
-            {/* Instagram SVG */}
             <a href="https://instagram.com" target="_blank" rel="noreferrer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -376,7 +563,6 @@ function Footer() {
               </svg>
             </a>
 
-            {/* YouTube SVG */}
             <a href="https://youtube.com" target="_blank" rel="noreferrer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

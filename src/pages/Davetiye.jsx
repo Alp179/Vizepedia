@@ -6,11 +6,16 @@ import SlideShow from "../ui/SlideShow";
 import VisaInvitationGenerator from "../ui/VisaInvitationGenerator";
 import AnimatedFlag from "../ui/AnimatedFlag";
 
+const FlagContainer = styled.div`
+z-index: -1!important;
+
+`;
+
 const Fullpage = styled.div`
-  margin: 0;
+  margin: 0 0;
   min-height: 100vh;
   height: 100%;
-  width: 100vw;
+  max-width: 100vw;
   background: var(--color-grey-1);
   position: relative; /* AnimatedFlag için gerekli */
 `;
@@ -63,8 +68,9 @@ function Davetiye() {
   return (
     <Fullpage>
       {/* AnimatedFlag'i en üstte yerleştir */}
-      <AnimatedFlag countryCode={selectedCountryCode} />
-
+      <FlagContainer>
+        <AnimatedFlag countryCode={selectedCountryCode} />
+      </FlagContainer>
       <MainPageHeader />
       <DavetiyeContainer>
         <VisaInvitationGenerator onCountryChange={handleCountryChange} />
