@@ -1,3 +1,3 @@
 # Vizepedia
 
-King of the visa taptaptaptaptaptaptaptaptaptaptaptapkonfiraknonstopprealtaprealtaptaptaptapcup fofayaya çikardi domaldiiiiiiiii
+King of the visa taptaptaptaptaptaptaptaptaptaptaptapkonfiraknonstopprealtaprealtaptaptaptapcup fofayaya çikardi domaldiiiiiiiii koydi bosalttiii
