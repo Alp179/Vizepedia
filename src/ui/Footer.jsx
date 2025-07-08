@@ -45,40 +45,40 @@ const DavetiyeButton = styled.div`
   justify-content: center;
   gap: 8px;
   min-width: 160px;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
   }
-  
+
   &:active {
     transform: translateY(0);
     box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
   }
-  
+
   svg {
     width: 18px;
     height: 18px;
   }
-  
+
   @media (max-width: 768px) {
     padding: 12px 16px;
     font-size: 14px;
     min-width: 120px;
-    
+
     svg {
       width: 16px;
       height: 16px;
     }
   }
-  
+
   @media (max-width: 520px) {
     padding: 10px 12px;
     font-size: 13px;
     min-width: 100px;
     margin-bottom: 10px; /* Alt margin ekle */
-    
+
     svg {
       width: 14px;
       height: 14px;
@@ -108,7 +108,7 @@ const FooterWrapper = styled.div`
     overflow: hidden;
     box-sizing: border-box;
     padding: 20px 15px; /* Üst-alt padding ekle */
-    
+
     /* Footer header section */
     .footer-header-section {
       display: flex;
@@ -117,22 +117,21 @@ const FooterWrapper = styled.div`
       align-items: center;
       gap: 34px;
       margin-bottom: 40px;
-      
+
       @media (max-width: 768px) {
         gap: 24px;
         margin-bottom: 30px;
       }
-      
+
       @media (max-width: 520px) {
         gap: 20px;
         margin-bottom: 25px;
       }
     }
-    
+
     .footer-header {
       text-align: center;
       line-height: 1.4;
-      
     }
   }
 
@@ -145,7 +144,7 @@ const FooterWrapper = styled.div`
     gap: 20px;
     flex-wrap: wrap;
     box-sizing: border-box;
-    
+
     @media (max-width: 1024px) {
       max-width: 90%;
       flex-direction: column;
@@ -153,7 +152,7 @@ const FooterWrapper = styled.div`
       gap: 25px;
       text-align: center;
     }
-    
+
     @media (max-width: 768px) {
       max-width: 95%;
       flex-direction: column;
@@ -172,7 +171,7 @@ const FooterWrapper = styled.div`
   /* Logo section */
   .footer-logo-section {
     flex-shrink: 0;
-    
+
     @media (max-width: 768px) {
       order: 1;
     }
@@ -211,8 +210,6 @@ const FooterWrapper = styled.div`
     @media (max-width: 520px) {
       gap: 20px;
     }
-
-    
   }
 
   .footer-legal-row {
@@ -241,7 +238,7 @@ const FooterWrapper = styled.div`
   /* Davetiye button section */
   .footer-button-section {
     flex-shrink: 0;
-    
+
     @media (max-width: 768px) {
       order: 2;
     }
@@ -265,11 +262,11 @@ const FooterWrapper = styled.div`
     a {
       flex-shrink: 0;
       transition: transform 0.2s ease;
-      
+
       &:hover {
         transform: scale(1.1);
       }
-      
+
       svg {
         @media (max-width: 520px) {
           width: 20px;
@@ -282,11 +279,11 @@ const FooterWrapper = styled.div`
   /* Footer divider */
   .footer-divider {
     margin: 30px 0;
-    
+
     @media (max-width: 768px) {
       margin: 25px 0;
     }
-    
+
     @media (max-width: 520px) {
       margin: 20px 0;
     }
@@ -297,11 +294,11 @@ const FooterWrapper = styled.div`
     cursor: pointer;
     transition: color 0.2s ease;
     white-space: nowrap;
-    
+
     &:hover {
       opacity: 0.7;
     }
-    
+
     @media (max-width: 520px) {
       font-size: 14px;
     }
@@ -463,8 +460,8 @@ function Footer() {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <rect x="3" y="4" width="18" height="16" rx="2"/>
-      <path d="m3 4 9 7 9-7"/>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="m3 4 9 7 9-7" />
     </svg>
   );
 
@@ -497,9 +494,9 @@ function Footer() {
             </FooterButton>
           </div>
         </div>
-        
+
         <div className="footer-divider"></div>
-        
+
         <div className="footer-wrap">
           <div className="footer-logo-section">
             <Logo variant="footer" />
@@ -510,7 +507,9 @@ function Footer() {
               <div className="footer-links" onClick={handleMainPageClick}>
                 Ana Sayfa
               </div>
-              <div className="footer-links">Hakkında</div>
+              <div className="footer-links">
+                Hakkımızda
+              </div>
               <div className="footer-links" onClick={handleBlogClick}>
                 Blog
               </div>

@@ -327,7 +327,16 @@ ul {
 }
 
 .subheading-blog {
-  font-size: 24px;
+  margin-top: 40px;
+  font-size: 28px;
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
+}
+
+.miniheading-blog {
+  font-size: 22px;
+  margin-top: 32px;
   @media (max-width: 768px) {
     font-size: 20px;
   }
