@@ -56,7 +56,7 @@ const FormGroup = styled.div`
 
 const Label = styled.label`
   font-weight: 600;
-  color: #4a5568;
+  color: var(--color-grey-930);
   margin-bottom: 8px;
   font-size: 0.9rem;
   text-transform: uppercase;
@@ -69,6 +69,7 @@ const Input = styled.input`
   border-radius: 10px;
   font-size: 1rem;
   transition: all 0.3s ease;
+  color: black;
   background: ${(props) =>
     props.hasError ? "#fed7d7" : "var(--color-grey-929)"};
 
@@ -135,6 +136,7 @@ const Select = styled.select`
   background: ${(props) => (props.hasError ? "#fed7d7" : "white")};
   cursor: pointer;
   transition: all 0.3s ease;
+  color: black;
 
   &:focus {
     outline: none;
@@ -146,7 +148,7 @@ const Select = styled.select`
 `;
 
 const SectionTitle = styled.h3`
-  color: #4a5568;
+  color: var(--color-grey-930);
   font-size: 1.2rem;
   margin: 30px 0 15px 0;
   padding: 10px 15px;
@@ -166,7 +168,7 @@ const SectionDivider = styled.div`
 `;
 
 const GenerateButton = styled.button`
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #004466, #00ffa2);
   color: white;
   border: none;
   padding: 15px 30px;

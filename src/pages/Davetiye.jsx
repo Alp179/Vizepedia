@@ -7,13 +7,15 @@ import VisaInvitationGenerator from "../ui/VisaInvitationGenerator";
 import AnimatedFlag from "../ui/AnimatedFlag";
 
 const FlagContainer = styled.div`
-z-index: -1!important;
-
+  position: absolute!important;
+  transform: translateX(0);
+  right: 0;
 `;
 
 const Fullpage = styled.div`
   margin: 0 0;
   min-height: 100vh;
+  overflow: hidden;
   height: 100%;
   max-width: 100vw;
   background: var(--color-grey-1);
@@ -22,6 +24,11 @@ const Fullpage = styled.div`
 
 const DavetiyeContainer = styled.div`
   padding-top: 120px;
+  margin-bottom: 150px;
+  z-index: 3;
+  @media (max-width: 500px) {
+    padding-top: 85px;
+  }
 `;
 
 function Davetiye() {
