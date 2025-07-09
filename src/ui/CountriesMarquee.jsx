@@ -5,7 +5,8 @@ import Heading from "../ui/Heading";
 
 const MarqueeContainer = styled.section`
   width: 100%;
-  margin-top: 100px;
+  margin-top: 80px;
+  margin-bottom: 80px;
   display: flex;
   flex-direction: column;
   justify-content: center;

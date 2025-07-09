@@ -251,7 +251,7 @@ const CardTitle = styled.h3`
   word-break: break-word; /* Uzun kelimeleri böl */
 
   ${CardContainer}:hover & {
-    color: #ffffff;
+    color: var(--color-grey-600);
     transform: translate3d(0, -1px, 0);
   }
 

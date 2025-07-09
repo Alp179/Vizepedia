@@ -76,6 +76,7 @@ const BlogList = styled.div`
   max-height: 720px;
   overflow-y: auto;
   padding-right: 0.5rem;
+  padding-top: 24px;
 
   &::-webkit-scrollbar {
     width: 5px;

@@ -28,8 +28,7 @@ import { useNavigate } from "react-router-dom";
 // Styled Components
 const SectionContainer = styled.div`
   position: relative;
-  min-height: 100vh;
-  padding: 8rem 2rem;
+  padding: 12rem 2rem;
   background: ${(props) =>
     props.theme?.isDark
       ? "linear-gradient(135deg, var(--color-grey-900) 0%, var(--color-grey-800) 50%, var(--color-grey-900) 100%)"

@@ -260,7 +260,8 @@ const ContentSection = styled.div`
 const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  height: 100%;
+  gap: 4rem;
   min-width: 300px;
 
   @media (max-width: 1400px) {

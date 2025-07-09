@@ -90,6 +90,7 @@ const RecentList = styled.div`
   max-height: 800px; /* Artırıldı */
   overflow-y: auto;
   padding-right: 0.5rem;
+  padding-top: 24px;
 
   /* Custom scrollbar */
   &::-webkit-scrollbar {
