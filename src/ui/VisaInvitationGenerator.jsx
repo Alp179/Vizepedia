@@ -215,8 +215,7 @@ const ModalContent = styled.div`
 
   @media (max-width: 768px) {
     width: 90vw;
-    height: calc(90vw * 1.5);
-    max-height: 90vh;
+    height: 100%;
   }
 `;
 
@@ -226,7 +225,7 @@ const ModalHeader = styled.div`
   align-items: center;
   padding: 20px 30px;
   border-bottom: 1px solid #e2e8f0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #00ffa2 0%, #004466 100%);
   border-radius: 20px 20px 0 0;
 `;
 
@@ -241,8 +240,8 @@ const CloseButton = styled.button`
   background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
