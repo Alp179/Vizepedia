@@ -9,6 +9,7 @@ import AnimatedFlag from "../ui/AnimatedFlag";
 const FlagContainer = styled.div`
   position: absolute!important;
   transform: translateX(0);
+  z-index:1;
   right: 0;
 `;
 
