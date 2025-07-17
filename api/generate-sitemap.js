@@ -1,6 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import fs from 'fs';
-import path from 'path';
 import dayjs from 'dayjs';
 
 export default async function handler(req, res) {
@@ -48,7 +46,6 @@ export default async function handler(req, res) {
 
   sitemap += `</urlset>\n`;
 
-  fs.writeFileSync(path.join(process.cwd(), 'public', 'sitemap.xml'), sitemap);
-
-  return res.status(200).json({ message: 'Sitemap updated successfully' });
+  res.setHeader('Content-Type', 'application/xml');
+  res.status(200).send(sitemap);
 }
