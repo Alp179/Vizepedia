@@ -1,6 +1,20 @@
+// utils/userSelectionsFetch.js - Updated to handle anonymous users
 import supabase from "../services/supabase";
+import { AnonymousDataService } from "./anonymousDataService";
+
+// Helper to detect if user is anonymous
+function isAnonymousUser(userId) {
+  return userId === 'anonymous' || AnonymousDataService.isAnonymousUser();
+}
 
 export async function fetchUserSelectionsNav(userId) {
+  // Handle anonymous users
+  if (isAnonymousUser(userId)) {
+    const answers = AnonymousDataService.getUserAnswers();
+    return answers || [];
+  }
+
+  // Handle authenticated users
   const { data, error } = await supabase
     .from("userAnswers")
     .select(
@@ -22,6 +36,13 @@ export async function fetchUserSelectionsNav(userId) {
 }
 
 export async function fetchUserSelectionsDash(userId, applicationId) {
+  // Handle anonymous users
+  if (isAnonymousUser(userId) || applicationId?.startsWith('anonymous-')) {
+    const answers = AnonymousDataService.getUserAnswers(applicationId);
+    return answers || [];
+  }
+
+  // Handle authenticated users
   const { data, error } = await supabase
     .from("userAnswers")
     .select(
@@ -44,6 +65,14 @@ export async function fetchUserSelectionsDash(userId, applicationId) {
 }
 
 export async function fetchLatestApplication(userId) {
+  // Handle anonymous users
+  if (isAnonymousUser(userId)) {
+    const applicationId = AnonymousDataService.getApplicationId();
+    const answers = AnonymousDataService.getUserAnswers(applicationId);
+    return answers && answers.length > 0 ? answers[0] : null;
+  }
+
+  // Handle authenticated users
   const { data, error } = await supabase
     .from("userAnswers")
     .select(

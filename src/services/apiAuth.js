@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import supabase from "./supabase";
+import { AnonymousDataService } from "../utils/anonymousDataService";
 
 // Şifre sıfırlama e-postası gönderme fonksiyonu
 export async function resetPassword(email) {
   try {
-    // Şifre sıfırlama isteği gönder
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
@@ -17,7 +17,7 @@ export async function resetPassword(email) {
   }
 }
 
-// Yeni fonksiyon: Google ile oturum açma
+// Google ile oturum açma
 export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
@@ -31,7 +31,6 @@ export async function signInWithGoogle() {
   return { data };
 }
 
-// Halihazırdaki fonksiyonlar
 export async function signup({ email, password }) {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -54,55 +53,111 @@ export async function login({ email, password }) {
 }
 
 export async function getCurrentUser() {
-  const { data: session } = await supabase.auth.getSession();
-  if (!session.session) return null;
-  const { data, error } = await supabase.auth.getUser();
+  try {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session.session) return null;
+    
+    const { data, error } = await supabase.auth.getUser();
 
-  if (error) throw new Error(error.message);
+    if (error) throw new Error(error.message);
 
-  return data?.user;
+    return data?.user;
+  } catch (error) {
+    // Safely handle errors without breaking the app
+    console.error("Auth error:", error);
+    return null;
+  }
 }
 
-// Kullanıcının anonim olup olmadığını kontrol et
+// Keep the original function but make it safe
 export async function isUserAnonymous() {
-  const currentUser = await getCurrentUser();
-
-  // Kullanıcı giriş yapmamışsa veya oturum yoksa
-  if (!currentUser) return false;
-
-  // Supabase'de anonim kullanıcıların oturum açma yöntemini kontrol et
-  // Anonim kullanıcılar genellikle email yoktur veya özel bir provider değeri vardır
-  const isAnonymous =
-    localStorage.getItem("isAnonymous") === "true" ||
-    !currentUser.email ||
-    currentUser.app_metadata?.provider === "anonymous";
-
-  // Eğer oturum açılmış bir kullanıcı varsa ve anonim değilse, localStorage'daki isAnonymous değerini temizle
-  if (currentUser && !isAnonymous) {
-    localStorage.removeItem("isAnonymous");
+  // First check localStorage (no Supabase call)
+  if (AnonymousDataService.isAnonymousUser()) {
+    return true;
   }
 
-  return isAnonymous;
+  // Check if it's a bot (no Supabase call)
+  if (AnonymousDataService.isBotUser()) {
+    return false; // Bots are not anonymous users, they're bots
+  }
+
+  try {
+    const currentUser = await getCurrentUser();
+
+    // If no user, not anonymous (just not logged in)
+    if (!currentUser) return false;
+
+    // If user exists and has email, definitely not anonymous
+    if (currentUser.email) {
+      // Clear any stale anonymous flags
+      localStorage.removeItem("isAnonymous");
+      return false;
+    }
+
+    // If user exists but no email, might be anonymous session
+    const isAnonymous = currentUser.app_metadata?.provider === "anonymous";
+    
+    return isAnonymous;
+  } catch (error) {
+    console.error("Error checking anonymous status:", error);
+    return false;
+  }
 }
 
-// Kullanıcı oturum kontrolü için kapsamlı fonksiyon
+// Keep original checkAuthStatus but enhance it
 export async function checkAuthStatus() {
-  const currentUser = await getCurrentUser();
-  const userIsAnonymous = await isUserAnonymous();
+  try {
+    // Check bot first (no Supabase interaction)
+    if (AnonymousDataService.isBotUser()) {
+      return {
+        isLoggedIn: false,
+        isAnonymous: false,
+        user: null,
+        userType: 'bot'
+      };
+    }
 
-  return {
-    isLoggedIn: !!currentUser,
-    isAnonymous: userIsAnonymous,
-    user: currentUser,
-  };
+    // Check localStorage anonymous flag
+    if (AnonymousDataService.isAnonymousUser()) {
+      return {
+        isLoggedIn: false,
+        isAnonymous: true,
+        user: null,
+        userType: 'anonymous'
+      };
+    }
+
+    // Check actual Supabase auth
+    const currentUser = await getCurrentUser();
+    const userIsAnonymous = await isUserAnonymous();
+
+    return {
+      isLoggedIn: !!currentUser,
+      isAnonymous: userIsAnonymous,
+      user: currentUser,
+      userType: currentUser ? 'authenticated' : 'new_visitor'
+    };
+  } catch (error) {
+    console.error("Error checking auth status:", error);
+    return {
+      isLoggedIn: false,
+      isAnonymous: false,
+      user: null,
+      userType: 'new_visitor'
+    };
+  }
 }
 
 export async function logout() {
   try {
-    // Tüm localStorage ve çerezleri temizle
-    clearAllStorageAndCookies();
+    // Clear anonymous data if user was anonymous
+    if (AnonymousDataService.isAnonymousUser()) {
+      AnonymousDataService.clearData();
+      return;
+    }
 
-    // Supabase ile oturumu kapat
+    // Clear all storage and Supabase session
+    clearAllStorageAndCookies();
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
   } catch (error) {
@@ -111,12 +166,9 @@ export async function logout() {
   }
 }
 
-// Tüm localStorage ve çerezleri temizleyen yardımcı fonksiyon
 function clearAllStorageAndCookies() {
-  // Tüm localStorage temizle
   localStorage.clear();
 
-  // Supabase oturum anahtarını özel olarak temizle
   const supabaseKey = Object.keys(localStorage).find((key) =>
     key.includes("-auth-token")
   );
@@ -124,7 +176,6 @@ function clearAllStorageAndCookies() {
     localStorage.removeItem(supabaseKey);
   }
 
-  // Tüm çerezleri temizle
   const cookies = document.cookie.split("; ");
   for (let cookie of cookies) {
     const eqPos = cookie.indexOf("=");
@@ -132,20 +183,16 @@ function clearAllStorageAndCookies() {
     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
   }
 
-  // Tarayıcı özel oturum depolamasını temizle
   sessionStorage.clear();
-
   console.log("Tüm veriler ve çerezler temizlendi");
 }
 
-// Kullanıcı güncelleme fonksiyonu
 export async function updateCurrentUser({ email, password, fullName, avatar }) {
   let updates = {};
 
   if (email) updates.email = email;
   if (password) updates.password = password;
 
-  // Metadata güncelleme
   if (fullName || avatar) {
     updates.data = {};
     if (fullName) updates.data.fullName = fullName;
@@ -158,7 +205,6 @@ export async function updateCurrentUser({ email, password, fullName, avatar }) {
     throw new Error(error.message);
   }
 
-  // Avatar yükleme işlemi
   if (avatar) {
     const fileName = `avatar-${data.user.id}-${Math.random()}`;
 
@@ -171,7 +217,6 @@ export async function updateCurrentUser({ email, password, fullName, avatar }) {
       throw new Error(storageError.message);
     }
 
-    // Avatar URL'ini kullanıcı metadata'sına ekle
     const { data: avatarData } = supabase.storage
       .from("avatars")
       .getPublicUrl(fileName);
@@ -192,61 +237,36 @@ export async function updateCurrentUser({ email, password, fullName, avatar }) {
   return data;
 }
 
-// Anonim giriş fonksiyonu
+// DISABLE the problematic anonymous functions instead of removing them
 export async function signInAsGuest() {
-  try {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "anonymous",
-    });
-
-    if (error) {
-      console.error("Anonim oturum açma hatası:", error.message);
-      return;
-    }
-
-    if (data) {
-      // Anonim oturum açıldığında isAnonymous değerini localStorage'a kaydet
-      localStorage.setItem("isAnonymous", "true");
-      console.log("Anonim kullanıcı oturum açtı.");
-    }
-  } catch (error) {
-    console.error("Anonim oturum açma sırasında hata oluştu:", error.message);
-  }
+  // DISABLED: Don't create Supabase anonymous sessions
+  console.log("Anonymous Supabase sessions disabled for AdSense compliance");
+  
+  // Instead, just mark as anonymous in localStorage
+  AnonymousDataService.saveUserSelections({});
+  
+  return {
+    data: { user: null },
+    error: null
+  };
 }
 
-// Anonim kullanıcıyı kayıtlı kullanıcıya çevirme fonksiyonu
 export async function convertAnonymousToUser({ email, password }) {
   try {
-    const { data: session, error: sessionError } =
-      await supabase.auth.getSession();
-
-    if (sessionError || !session?.session?.user) {
-      throw new Error("Anonim kullanıcı bulunamadı.");
-    }
-
-    const anonymousUserId = session.session.user.id;
-
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
-      { email, password }
-    );
+    // Don't try to convert Supabase anonymous users, just sign up normally
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password
+    });
 
     if (signUpError) {
       throw new Error(signUpError.message);
     }
 
-    const localAnswers = JSON.parse(localStorage.getItem("userSelections"));
-
-    if (localAnswers) {
-      await syncAnonymousDataToUser(
-        anonymousUserId,
-        signUpData.user.id,
-        localAnswers
-      );
+    // Migrate localStorage data to new user
+    if (signUpData.user) {
+      await migrateAnonymousToAuthenticated(signUpData.user.id);
     }
-
-    // Anonim durumu kaldır
-    localStorage.removeItem("isAnonymous");
-    localStorage.removeItem("userSelections");
 
     return signUpData;
   } catch (error) {
@@ -255,6 +275,73 @@ export async function convertAnonymousToUser({ email, password }) {
   }
 }
 
+// New migration function for localStorage to Supabase
+export async function migrateAnonymousToAuthenticated(userId) {
+  try {
+    const anonymousData = AnonymousDataService.prepareDataForMigration();
+    
+    if (!anonymousData.userAnswers) {
+      console.log("No anonymous data to migrate");
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from("userAnswers")
+      .insert({
+        userId: userId,
+        ans_country: anonymousData.userAnswers.ans_country,
+        ans_purpose: anonymousData.userAnswers.ans_purpose,
+        ans_profession: anonymousData.userAnswers.ans_profession,
+        ans_vehicle: anonymousData.userAnswers.ans_vehicle,
+        ans_kid: anonymousData.userAnswers.ans_kid,
+        ans_accommodation: anonymousData.userAnswers.ans_accommodation,
+        ans_hassponsor: anonymousData.userAnswers.ans_hassponsor,
+        ans_sponsor_profession: anonymousData.userAnswers.ans_sponsor_profession,
+        has_appointment: false,
+        has_filled_form: false,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error migrating anonymous data:", error);
+      return null;
+    }
+
+    // Migrate completed documents
+    if (anonymousData.completedDocuments && Object.keys(anonymousData.completedDocuments).length > 0) {
+      const completedDocsToInsert = [];
+      
+      Object.values(anonymousData.completedDocuments).forEach(appDocs => {
+        Object.values(appDocs).forEach(doc => {
+          completedDocsToInsert.push({
+            userId: userId,
+            document_name: doc.document_name,
+            completion_date: doc.completion_date,
+            status: doc.status,
+            application_id: data.id
+          });
+        });
+      });
+
+      if (completedDocsToInsert.length > 0) {
+        await supabase.from("completed_documents").insert(completedDocsToInsert);
+      }
+    }
+
+    // Clear anonymous data after successful migration
+    AnonymousDataService.clearData();
+
+    console.log("Anonymous data successfully migrated to authenticated user");
+    return data;
+
+  } catch (error) {
+    console.error("Error during anonymous data migration:", error);
+    return null;
+  }
+}
+
+// Keep existing sync function for compatibility
 async function syncAnonymousDataToUser(anonymousId, newUserId, answers) {
   const { error } = await supabase
     .from("userAnswers")

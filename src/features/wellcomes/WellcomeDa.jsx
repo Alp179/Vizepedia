@@ -1,49 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserSelections } from "./useUserSelections";
-
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import styled from "styled-components";
 import SponsorProfessionSelection from "./SponsorProfessionSelection";
-
-// Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
-function saveAnonymousUserSelections(selections) {
-  const userSelections = {
-    country: selections.country || "",
-    purpose: selections.purpose || "",
-    profession: selections.profession || "",
-    vehicle: selections.vehicle || "",
-    kid: selections.kid || "",
-    accommodation: selections.accommodation || "",
-    hasSponsor: selections.hasSponsor || false,
-    sponsorProfession: selections.sponsorProfession || "",
-  };
-
-  // Seçimleri localStorage'a kaydet
-  localStorage.setItem("userSelections", JSON.stringify(userSelections));
-}
+import { AnonymousDataService } from "../../utils/anonymousDataService";
 
 function WellcomeDa() {
   const navigate = useNavigate();
-  const { state, dispatch } = useUserSelections(); // Global state'e erişim ve güncelleme
+  const { state, dispatch } = useUserSelections();
   const [selectedSponsorProfession, setSelectedSponsorProfession] = useState(
-    state.sponsorProfession
+    state.sponsorProfession || ""
   );
+
+  // Load from localStorage if available
+  useEffect(() => {
+    const savedSelections = AnonymousDataService.getUserSelections();
+    if (savedSelections && savedSelections.sponsorProfession && !selectedSponsorProfession) {
+      setSelectedSponsorProfession(savedSelections.sponsorProfession);
+      dispatch({ type: "SET_SPONSOR_PROFESSION", payload: savedSelections.sponsorProfession });
+    }
+  }, [dispatch, selectedSponsorProfession]);
 
   const handleSponsorProfessionChange = (profession) => {
     setSelectedSponsorProfession(profession);
     dispatch({ type: "SET_SPONSOR_PROFESSION", payload: profession });
 
-    // Anonim kullanıcı seçimlerini kaydet
-    saveAnonymousUserSelections({
-      ...state,
+    // Save to anonymous user service
+    const existingSelections = AnonymousDataService.getUserSelections();
+    AnonymousDataService.saveUserSelections({
+      ...existingSelections,
       sponsorProfession: profession,
     });
   };
 
   const handleNext = () => {
-    navigate("/wellcome-5"); // Kullanıcıyı bir sonraki adıma yönlendir
+    navigate("/wellcome-5");
   };
 
   const QuestionContainer = styled.div`
@@ -80,5 +73,6 @@ function WellcomeDa() {
     </>
   );
 }
+
 
 export default WellcomeDa;

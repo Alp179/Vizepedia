@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import OtherQSelections from "./OtherQSelections";
@@ -8,21 +7,7 @@ import ControlScreen from "./ControlScreen";
 import { useUserSelections } from "./useUserSelections";
 import Modal from "../../ui/Modal";
 import styled from "styled-components";
-
-// Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
-function saveAnonymousUserSelections(selections) {
-  const userSelections = {
-    country: selections.country || "", // Önceki adımlarda seçilen ülke
-    purpose: selections.purpose || "", // Önceki adımlarda seçilen gidiş amacı
-    profession: selections.profession || "", // Önceki adımlarda seçilen meslek
-    vehicle: selections.vehicle, // Bu adımda seçilen seyahat aracı
-    kid: selections.kid, // Bu adımda seçilen çocuk durumu
-    accommodation: selections.accommodation, // Bu adımda seçilen konaklama türü
-  };
-
-  // Seçimleri localStorage'a kaydet
-  localStorage.setItem("userSelections", JSON.stringify(userSelections));
-}
+import { AnonymousDataService } from "../../utils/anonymousDataService";
 
 const StyledNavLink = styled(NavLink)`
   &:link,
@@ -69,12 +54,31 @@ const QuestionContainer = styled.div`
 
 function WellcomeE() {
   const navigate = useNavigate();
-  const { state, dispatch } = useUserSelections(); // dispatch fonksiyonunu kullanmak için hook'u çağırın
+  const { state, dispatch } = useUserSelections();
   const [selectedVehicle, setSelectedVehicle] = useState(state.vehicle);
   const [selectedKid, setSelectedKid] = useState(state.kid);
   const [selectedAccommodation, setSelectedAccommodation] = useState(
     state.accommodation
   );
+
+  // Load from localStorage if available
+  useEffect(() => {
+    const savedSelections = AnonymousDataService.getUserSelections();
+    if (savedSelections) {
+      if (savedSelections.vehicle && !selectedVehicle) {
+        setSelectedVehicle(savedSelections.vehicle);
+        dispatch({ type: "SET_VEHICLE", payload: savedSelections.vehicle });
+      }
+      if (savedSelections.kid !== undefined && selectedKid === undefined) {
+        setSelectedKid(savedSelections.kid);
+        dispatch({ type: "SET_KID", payload: savedSelections.kid });
+      }
+      if (savedSelections.accommodation && !selectedAccommodation) {
+        setSelectedAccommodation(savedSelections.accommodation);
+        dispatch({ type: "SET_ACCOMMODATION", payload: savedSelections.accommodation });
+      }
+    }
+  }, [dispatch, selectedVehicle, selectedKid, selectedAccommodation]);
 
   useEffect(() => {
     setSelectedVehicle(state.vehicle);
@@ -82,14 +86,14 @@ function WellcomeE() {
     setSelectedAccommodation(state.accommodation);
   }, [state.vehicle, state.kid, state.accommodation]);
 
-  // Dispatch fonksiyonunu kullanarak global state güncellemeleri
   const handleVehicleChange = (vehicle) => {
     setSelectedVehicle(vehicle);
     dispatch({ type: "SET_VEHICLE", payload: vehicle });
 
-    // Anonim kullanıcı seçimlerini kaydet
-    saveAnonymousUserSelections({
-      ...state,
+    // Save to anonymous user service
+    const existingSelections = AnonymousDataService.getUserSelections();
+    AnonymousDataService.saveUserSelections({
+      ...existingSelections,
       vehicle,
     });
   };
@@ -98,9 +102,10 @@ function WellcomeE() {
     setSelectedKid(kid);
     dispatch({ type: "SET_KID", payload: kid });
 
-    // Anonim kullanıcı seçimlerini kaydet
-    saveAnonymousUserSelections({
-      ...state,
+    // Save to anonymous user service
+    const existingSelections = AnonymousDataService.getUserSelections();
+    AnonymousDataService.saveUserSelections({
+      ...existingSelections,
       kid,
     });
   };
@@ -109,19 +114,25 @@ function WellcomeE() {
     setSelectedAccommodation(accommodation);
     dispatch({ type: "SET_ACCOMMODATION", payload: accommodation });
 
-    // Anonim kullanıcı seçimlerini kaydet
-    saveAnonymousUserSelections({
-      ...state,
+    // Save to anonymous user service
+    const existingSelections = AnonymousDataService.getUserSelections();
+    AnonymousDataService.saveUserSelections({
+      ...existingSelections,
       accommodation,
     });
+  };
+
+  const handleContinue = () => {
+    // Ensure application ID is generated when completing onboarding
+    AnonymousDataService.getApplicationId();
+    navigate("/test");
   };
 
   return (
     <>
       <QuestionContainer>
         <Heading as="h5">
-          Konaklama türü, seyahat aracı ve çocuklu yolculuk
-          durumu
+          Konaklama türü, seyahat aracı ve çocuklu yolculuk durumu
         </Heading>
         <OtherQSelections
           selectedAccommodation={selectedAccommodation}
@@ -137,9 +148,9 @@ function WellcomeE() {
             <StyledNavLink to="">
               <Button
                 variation="question"
-                onClick={() => navigate("/test")}
+                onClick={handleContinue}
                 disabled={
-                  !selectedVehicle || !selectedKid || !selectedAccommodation
+                  !selectedVehicle || selectedKid === undefined || !selectedAccommodation
                 }
               >
                 Devam et

@@ -22,6 +22,10 @@ import AnimatedFlag from "../ui/AnimatedFlag";
 import MobileCarousel from "../ui/MobileCarousel";
 import VisaCheckModal from "../ui/VisaCheckModal";
 import VisaStatusBanner from "../ui/VisaStatusBanner";
+import { useUser } from "../features/authentication/useUser";
+import OnboardingWarningBanner from "../ui/OnboardingWarningBanner";
+import StaticDashboardContent from "../ui/StaticDashboardContent";
+import { AnonymousDataService } from "../utils/anonymousDataService";
 
 const CreatedAtContainer = styled.div`
   font-size: 1.5rem;
@@ -59,42 +63,40 @@ const CustomRow = styled(Row)`
   }
   padding: 0;
   @media (max-width: 710px) {
-    margin: 20px auto 10px auto; /* Y margin'i azalt */
+    margin: 20px auto 10px auto;
     justify-content: center;
   }
   @media (max-width: 450px) {
-    margin-top: 15px; /* Daha da azalt */
+    margin-top: 15px;
   }
 `;
 
 const DashboardContainer = styled.div`
   position: relative;
   width: 100%;
-  /* Y ekseni için height kontrolü - sabit yükseklik kullanma */
-  min-height: auto; /* min-height: 100vh yerine auto */
-  height: auto; /* Sadece içeriğe göre yükseklik */
+  min-height: auto;
+  height: auto;
   display: flex;
   flex-direction: column;
   gap: 24px;
   align-items: flex-start;
 
   @media (max-width: 710px) {
-    /* Mobilde height'i tamamen içeriğe bırak */
     height: auto;
-    min-height: auto; /* min-height kaldır */
+    min-height: auto;
     width: 100%;
     margin-left: auto;
     flex-flow: column;
     justify-content: flex-start;
     margin-right: auto;
-    padding-top: 10px; /* padding-top azalt: 15px -> 10px */
+    padding-top: 10px;
     background: linear-gradient(
       rgba(0, 0, 0, 0.4) 0%,
       rgba(0, 0, 0, 0.1) 40%,
       rgba(0, 0, 0, 0) 60%
     );
     align-items: stretch;
-    gap: 16px; /* Gap'i azalt: 24px -> 16px */
+    gap: 16px;
   }
 `;
 
@@ -120,7 +122,7 @@ const BannersContainer = styled.div`
   }
 
   @media (max-width: 710px) {
-    margin: 60px auto 0 auto; /* margin azalt: 30px -> 15px */
+    margin: 60px auto 0 auto;
     width: 450px;
   }
   @media (max-width: 500px) {
@@ -155,16 +157,15 @@ const Ceper = styled.div`
   @media (max-width: 710px) {
     position: relative;
     margin: 0 auto;
-    margin-top: 10px; /* margin-top azalt */
+    margin-top: 10px;
     transform: scale(0.85);
-    /* Yüksekliği azalt */
-    height: 110px; /* 127px -> 110px */
-    width: 260px; /* 283px -> 260px */
+    height: 110px;
+    width: 260px;
   }
 
   @media (max-width: 450px) {
     transform: scale(0.75);
-    height: 100px; /* Daha da azalt */
+    height: 100px;
     width: 240px;
   }
 
@@ -200,11 +201,10 @@ const UyeDevam = styled.button`
   border: none;
   outline: none;
 
-  /* Mobilde buton boyutunu azalt */
   @media (max-width: 710px) {
-    width: 220px; /* 248.6px -> 220px */
-    height: 75px; /* 89px -> 75px */
-    font-size: 16px; /* 18px -> 16px */
+    width: 220px;
+    height: 75px;
+    font-size: 16px;
   }
 
   @media (max-width: 450px) {
@@ -239,7 +239,7 @@ const StepIndicatorWrapper = styled.div`
 
   @media (max-width: 710px) {
     width: 100%;
-    margin-bottom: 20px; /* margin-bottom azalt: 40px -> 20px */
+    margin-bottom: 20px;
   }
 `;
 
@@ -250,11 +250,10 @@ const InfoContainerWrapper = styled.div`
   width: 100%;
 
   @media (max-width: 710px) {
-    gap: 12px; /* Gap azalt: 16px -> 12px */
+    gap: 12px;
   }
 `;
 
-// Carousel stilleri
 const DashboardItems = styled.div`
   display: flex;
   flex-direction: column;
@@ -267,7 +266,7 @@ const DashboardItems = styled.div`
     width: 100%;
     flex-direction: column;
     align-items: center;
-    gap: 6px; /* Gap azalt: 8px -> 6px */
+    gap: 6px;
     margin-top: -8px;
   }
 `;
@@ -280,14 +279,19 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 710);
 
+  // User authentication state
+  const { user, isLoading: isUserLoading } = useUser();
+  
+  // Determine user type safely
+  const [userType, setUserType] = useState('loading');
+  const isAnonymous = applicationId?.startsWith('anonymous-') || AnonymousDataService.isAnonymousUser();
+  const isBot = AnonymousDataService.isBotUser();
+
   const {
     state: { completedDocuments },
     dispatch,
   } = useDocuments();
   const [countryCode, setCountryCode] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(
-    localStorage.getItem("isAnonymous") === "true"
-  );
 
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -299,37 +303,50 @@ const Dashboard = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Determine user type on mount
   useEffect(() => {
-    getCurrentUser().then((user) => {
-      if (user) {
-        setUserId(user.id);
-        if (!isAnonymous) {
-          localStorage.removeItem("isAnonymous");
-          localStorage.removeItem("userAnswers");
-          localStorage.removeItem("userSelections");
-        }
-        fetchCompletedDocuments(user.id, applicationId).then((data) => {
-          const completedDocsMap = data.reduce((acc, doc) => {
-            if (!acc[applicationId]) {
-              acc[applicationId] = {};
-            }
-            acc[applicationId][doc.document_name] = true;
-            return acc;
-          }, {});
-          dispatch({
-            type: "SET_COMPLETED_DOCUMENTS",
-            payload: completedDocsMap,
-          });
-        });
+    async function determineUserType() {
+      if (isBot) {
+        setUserType('bot');
+        return;
       }
-    });
-  }, [applicationId, dispatch, isAnonymous]);
+
+      if (isAnonymous) {
+        setUserType('anonymous');
+        return;
+      }
+
+      if (user) {
+        setUserType('authenticated');
+        setUserId(user.id);
+        return;
+      }
+
+      // Check if there's a valid session
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          setUserType('authenticated');
+          setUserId(currentUser.id);
+        } else {
+          setUserType('new_visitor');
+        }
+      } catch (error) {
+        setUserType('new_visitor');
+      }
+    }
+
+    if (!isUserLoading) {
+      determineUserType();
+    }
+  }, [user, isUserLoading, isAnonymous, isBot]);
 
   const handleUserConversion = () => {
-    setIsAnonymous(false);
+    setUserType('authenticated');
     navigate("/dashboard");
   };
 
+  // Handle both authenticated and anonymous user selections
   const {
     data: userSelections,
     isSuccess: isUserSelectionsSuccess,
@@ -337,13 +354,21 @@ const Dashboard = () => {
     isError: isUserSelectionsError,
     refetch: refetchUserSelections,
   } = useQuery({
-    queryKey: ["userSelections", userId, applicationId],
-    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
-    enabled: !!userId && !!applicationId,
+    queryKey: ["userSelections", userId, applicationId, userType],
+    queryFn: () => {
+      if (userType === 'anonymous') {
+        return AnonymousDataService.getUserAnswers(applicationId);
+      } else if (userType === 'authenticated' && userId) {
+        return fetchUserSelectionsDash(userId, applicationId);
+      }
+      return null;
+    },
+    enabled: userType !== 'loading' && userType !== 'bot' && userType !== 'new_visitor',
   });
 
   const ansCountry = userSelections?.[0]?.ans_country;
 
+  // Supabase queries - only for authenticated users
   async function fetchFirmLocation(country) {
     const { data, error } = await supabase
       .from("visa_firm_locations")
@@ -358,7 +383,6 @@ const Dashboard = () => {
     return data;
   }
 
-  // Ülkeye özel vize linklerini fetch etme
   async function fetchVisaCountryLinks(country) {
     const { data, error } = await supabase
       .from("visa_country_links")
@@ -383,8 +407,41 @@ const Dashboard = () => {
   const { data: countryLinks } = useQuery({
     queryKey: ["visaCountryLinks", ansCountry],
     queryFn: () => fetchVisaCountryLinks(ansCountry),
-    enabled: !!ansCountry,
+    enabled: !!ansCountry && userType === 'authenticated',
   });
+
+  // Load completed documents for authenticated users only
+  useEffect(() => {
+    if (userType === 'authenticated' && userId && applicationId) {
+      fetchCompletedDocuments(userId, applicationId).then((data) => {
+        const completedDocsMap = data.reduce((acc, doc) => {
+          if (!acc[applicationId]) {
+            acc[applicationId] = {};
+          }
+          acc[applicationId][doc.document_name] = true;
+          return acc;
+        }, {});
+        dispatch({
+          type: "SET_COMPLETED_DOCUMENTS",
+          payload: completedDocsMap,
+        });
+      });
+    } else if (userType === 'anonymous' && applicationId) {
+      // Load anonymous completed documents
+      const anonymousCompletedDocs = AnonymousDataService.fetchCompletedDocuments(applicationId);
+      const completedDocsMap = anonymousCompletedDocs.reduce((acc, doc) => {
+        if (!acc[applicationId]) {
+          acc[applicationId] = {};
+        }
+        acc[applicationId][doc.document_name] = true;
+        return acc;
+      }, {});
+      dispatch({
+        type: "SET_COMPLETED_DOCUMENTS",
+        payload: completedDocsMap,
+      });
+    }
+  }, [userType, userId, applicationId, dispatch]);
 
   useEffect(() => {
     if (isUserSelectionsSuccess && userSelections?.length > 0) {
@@ -428,27 +485,22 @@ const Dashboard = () => {
 
       const rawDate = userSelections[0]?.created_at;
 
-      if (!rawDate) {
-        console.error("Tarih verisi bulunamadı.");
-        setCreatedAt("Tarih mevcut değil");
-        return;
-      }
-
-      const createdAtDate = new Date(rawDate);
-
-      if (isNaN(createdAtDate.getTime())) {
-        console.error("Geçersiz tarih formatı:", rawDate);
-        setCreatedAt("Geçersiz tarih");
-      } else {
-        const formattedDate = createdAtDate.toLocaleDateString("tr-TR", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-        setCreatedAt(formattedDate);
+      if (rawDate) {
+        const createdAtDate = new Date(rawDate);
+        if (!isNaN(createdAtDate.getTime())) {
+          const formattedDate = createdAtDate.toLocaleDateString("tr-TR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          setCreatedAt(formattedDate);
+        }
       }
     }
   }, [userSelections, isUserSelectionsSuccess, ansCountry]);
+
+  // Check user state
+  const hasCompletedOnboarding = userSelections && userSelections.length > 0;
 
   const documentNames = userSelections
     ? getDocumentsForSelections(userSelections)
@@ -464,12 +516,53 @@ const Dashboard = () => {
     enabled: !!documentNames.length,
   });
 
-  if (isUserSelectionsLoading || isDocumentsLoading) {
+  // Early returns based on user type
+  if (userType === 'loading' || isUserLoading) {
     return <Spinner />;
   }
 
-  if (isUserSelectionsError || isDocumentsError) {
-    return <div>Error loadiing data.</div>;
+  // Bots and new visitors see only static content
+  if (userType === 'bot' || userType === 'new_visitor') {
+    return (
+      <DashboardContainer>
+        <StaticDashboardContent />
+      </DashboardContainer>
+    );
+  }
+
+  // Users without completed onboarding
+  if ((userType === 'anonymous' || userType === 'authenticated') && (!hasCompletedOnboarding || isUserSelectionsLoading)) {
+    if (isUserSelectionsLoading) {
+      return <Spinner />;
+    }
+
+    return (
+      <DashboardContainer>
+        <OnboardingWarningBanner />
+        <StaticDashboardContent />
+      </DashboardContainer>
+    );
+  }
+
+  // Error loading user selections
+  if (isUserSelectionsError) {
+    return (
+      <DashboardContainer>
+        <OnboardingWarningBanner />
+        <div style={{ padding: '20px', textAlign: 'center', color: 'var(--color-red-700)' }}>
+          Veriler yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.
+        </div>
+        <StaticDashboardContent />
+      </DashboardContainer>
+    );
+  }
+
+  if (isDocumentsLoading) {
+    return <Spinner />;
+  }
+
+  if (isDocumentsError) {
+    return <div>Error loading data.</div>;
   }
 
   const handleStepClick = (step) => {
@@ -484,10 +577,9 @@ const Dashboard = () => {
 
   return (
     <DashboardContainer>
-      {/* Randevu ve form durumuna göre banner'ları göster */}
-      {isUserSelectionsSuccess && userSelections?.length > 0 && (
+      {/* Show banners only for authenticated users */}
+      {isUserSelectionsSuccess && userSelections?.length > 0 && userType === 'authenticated' && (
         <BannersContainer>
-          {/* has_appointment false ise banner göster */}
           {userSelections[0].has_appointment === false && (
             <VisaStatusBanner
               type="appointment"
@@ -497,7 +589,6 @@ const Dashboard = () => {
               onSuccess={() => refetchUserSelections()}
             />
           )}
-          {/* has_filled_form false ise banner göster */}
           {userSelections[0].has_filled_form === false && (
             <VisaStatusBanner
               type="form"
@@ -531,7 +622,7 @@ const Dashboard = () => {
       </CustomRow>
 
       <DashboardItems>
-        {/* Masaüstü görünümü */}
+        {/* Desktop view */}
         {!isMobile && (
           <>
             <StepIndicatorWrapper>
@@ -554,7 +645,7 @@ const Dashboard = () => {
           </>
         )}
 
-        {/* Mobil carousel görünümü */}
+        {/* Mobile carousel view */}
         {isMobile && (
           <MobileCarousel
             stepLabels={stepLabels}
@@ -569,12 +660,13 @@ const Dashboard = () => {
         )}
       </DashboardItems>
 
-      {isAnonymous && (
+      {/* Show signup button for anonymous users */}
+      {userType === 'anonymous' && (
         <div
           style={{
             display: "flex",
             justifyContent: "center",
-            marginTop: isMobile ? "-20px" : "20px" /* Negatif margin azalt */,
+            marginTop: isMobile ? "-20px" : "20px",
           }}
         >
           <ModalSignup>
@@ -590,8 +682,8 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Kendi kendini kontrol eden VisaCheckModal */}
-      {userId && applicationId && (
+      {/* Show VisaCheckModal only for authenticated users */}
+      {userType === 'authenticated' && userId && applicationId && (
         <VisaCheckModal userId={userId} applicationId={applicationId} />
       )}
     </DashboardContainer>

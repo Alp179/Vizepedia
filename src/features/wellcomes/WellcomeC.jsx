@@ -1,40 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserSelections } from "./useUserSelections";
 import PurposeSelection from "./PurposeSelection";
 import Heading from "../../ui/Heading";
 import Button from "../../ui/Button";
 import styled from "styled-components";
-
-// Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
-function saveAnonymousUserSelections(selections) {
-  const userSelections = {
-    country: selections.country || "", // Daha önceki adımda seçilen ülke
-    purpose: selections.purpose, // Bu adımda seçilen gidiş amacı
-    profession: selections.profession || "",
-    vehicle: selections.vehicle || "",
-    kid: selections.kid || "",
-    accommodation: selections.accommodation || "",
-  };
-
-  // Seçimleri localStorage'a kaydet
-  localStorage.setItem("userSelections", JSON.stringify(userSelections));
-}
+import { AnonymousDataService } from "../../utils/anonymousDataService";
 
 function WellcomeC() {
   const navigate = useNavigate();
-  const { state, dispatch } = useUserSelections(); // dispatch fonksiyonunu kullanmak için hook'u çağırın
+  const { state, dispatch } = useUserSelections();
   const [selectedPurpose, setSelectedPurpose] = useState(state.purpose);
+
+  // Load from localStorage if available
+  useEffect(() => {
+    const savedSelections = AnonymousDataService.getUserSelections();
+    if (savedSelections && savedSelections.purpose && !selectedPurpose) {
+      setSelectedPurpose(savedSelections.purpose);
+      dispatch({ type: "SET_PURPOSE", payload: savedSelections.purpose });
+    }
+  }, [dispatch, selectedPurpose]);
 
   const handlePurposeChange = (purpose) => {
     setSelectedPurpose(purpose);
-    dispatch({ type: "SET_PURPOSE", payload: purpose }); // Global state'i güncelleyin
+    dispatch({ type: "SET_PURPOSE", payload: purpose });
     
-    // Anonim kullanıcı seçimlerini kaydet
-    saveAnonymousUserSelections({
-      ...state,
+    // Save to anonymous user service
+    const existingSelections = AnonymousDataService.getUserSelections();
+    AnonymousDataService.saveUserSelections({
+      ...existingSelections,
       purpose,
     });
+  };
+
+  const handleContinue = () => {
+    // Generate application ID when user completes basic selections
+    if (!localStorage.getItem(AnonymousDataService.STORAGE_KEYS.APPLICATION_ID)) {
+      AnonymousDataService.getApplicationId();
+    }
+    navigate("/wellcome-4");
   };
 
   const QuestionContainer = styled.div`
@@ -54,7 +58,7 @@ function WellcomeC() {
         />
         <Button
           variation="question"
-          onClick={() => navigate("/wellcome-4")}
+          onClick={handleContinue}
           disabled={!selectedPurpose}
         >
           Devam et

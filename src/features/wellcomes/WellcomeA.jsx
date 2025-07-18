@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Heading from "../../ui/Heading";
 import Button from "../../ui/Button";
 import styled from "styled-components";
+import { AnonymousDataService } from "../../utils/anonymousDataService";
 
 function WellcomeA() {
   const navigate = useNavigate();
@@ -27,17 +28,25 @@ function WellcomeA() {
     }
   `;
 
+  const handleContinue = () => {
+    // Initialize anonymous user if not already done
+    if (!AnonymousDataService.isAnonymousUser()) {
+      AnonymousDataService.saveUserSelections({});
+    }
+    navigate("/wellcome-2");
+  };
+
   return (
     <>
       <QuestionContainer>
-        <Heading as="h5">Vizepedia’ya hoş geldiniz</Heading>
+        <Heading as="h5">Vizepedia&apos;ya hoş geldiniz</Heading>
         <HeadingWidth>
           Lütfen seyahat amacınızı, mesleğinizi, konaklama türünüzü ve seyahat
           aracınızı aşağıdaki alanlarda belirtin. Bu bilgiler doğru belgeleri
           sunmamız için önemlidir ve size en iyi şekilde rehberlik edebilmemize
           yardımcı olacaktır.
         </HeadingWidth>
-        <Button variation="question" onClick={() => navigate("/wellcome-2")}>
+        <Button variation="question" onClick={handleContinue}>
           Devam et
         </Button>
       </QuestionContainer>

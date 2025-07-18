@@ -3,36 +3,30 @@ import { useUserSelections } from "./useUserSelections";
 import Heading from "../../ui/Heading";
 import CountrySelection from "./CountrySelection";
 import Button from "../../ui/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
-
-// Anonim kullanıcı seçimlerini kaydetmek için fonksiyon
-function saveAnonymousUserSelections(selections) {
-  const userSelections = {
-    country: selections.country,
-    purpose: selections.purpose || "", // İlerideki adımlarda eklenecek seçimler
-    profession: selections.profession || "",
-    vehicle: selections.vehicle || "",
-    kid: selections.kid || "",
-    accommodation: selections.accommodation || "",
-  };
-
-  // Seçimleri localStorage'a kaydet
-  localStorage.setItem("userSelections", JSON.stringify(userSelections));
-}
+import { AnonymousDataService } from "../../utils/anonymousDataService";
 
 function WellcomeB() {
   const navigate = useNavigate();
   const { state, dispatch } = useUserSelections();
   const [selectedCountry, setSelectedCountry] = useState(state.country);
 
+  // Load from localStorage if available
+  useEffect(() => {
+    const savedSelections = AnonymousDataService.getUserSelections();
+    if (savedSelections && savedSelections.country && !selectedCountry) {
+      setSelectedCountry(savedSelections.country);
+      dispatch({ type: "SET_COUNTRY", payload: savedSelections.country });
+    }
+  }, [dispatch, selectedCountry]);
+
   const handleCountryChange = (country) => {
     setSelectedCountry(country);
     dispatch({ type: "SET_COUNTRY", payload: country });
     
-    // Anonim kullanıcı seçimlerini kaydet
-    saveAnonymousUserSelections({
-      ...state,
+    // Save to anonymous user service
+    AnonymousDataService.saveUserSelections({
       country,
     });
   };

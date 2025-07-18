@@ -44,12 +44,10 @@ import WellcomeDa from "./features/wellcomes/WellcomeDa";
 import ResetPassword from "./features/authentication/ResetPassword";
 import CerezPolitikasi from "./pages/CerezPolitikasi";
 import Davetiye from "./pages/Davetiye";
-// YENİ: Hakkımızda sayfası import'u
 
 // Çerez sistemi import'ları
 import { CookieConsentProvider } from "./hooks/useCookieConsent.jsx";
 import { CookieBanner } from "./ui/CookieBanner.jsx";
-
 import { FloatingCookieButton } from "./ui/FloatingCookieButton.jsx";
 import { GoogleAnalytics } from "./utils/googleAnalytics.js";
 import { useGoogleAnalytics } from "./hooks/useGoogleAnalytics.jsx";
@@ -74,29 +72,17 @@ function AppWithGA() {
       <Route element={<MainPageLayout />}>
         <Route index element={<MainPage />} />
         <Route path="mainpage" element={<MainPage />} />
-        {/* YENİ: Hakkımızda sayfası route'u */}
         <Route path="hakkimizda" element={<AboutPage />} />
       </Route>
 
-      <Route
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
+      {/* PUBLIC Dashboard Routes - No ProtectedRoute wrapper */}
+      <Route element={<AppLayout />}>
         <Route path="dashboard" element={<RedirectDashboard />} />
         <Route path="dashboard/:id" element={<Dashboard />} />
-        <Route path="account" element={<Account />} />
       </Route>
 
-      <Route
-        element={
-          <ProtectedRoute>
-            <QuestionsLayout />
-          </ProtectedRoute>
-        }
-      >
+      {/* PUBLIC Onboarding Routes - No ProtectedRoute wrapper */}
+      <Route element={<QuestionsLayout />}>
         <Route path="wellcome" element={<Wellcome />} />
         <Route path="wellcome-1" element={<WellcomeA />} />
         <Route path="wellcome-2" element={<WellcomeB />} />
@@ -107,6 +93,18 @@ function AppWithGA() {
         <Route path="test" element={<ControlScreen />} />
       </Route>
 
+      {/* Protected Routes for authenticated users only */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="account" element={<Account />} />
+      </Route>
+
+      {/* Protected Document Routes */}
       <Route
         element={
           <ProtectedRoute>
@@ -181,7 +179,11 @@ function RedirectDashboard() {
   useEffect(() => {
     async function handleRedirect() {
       const currentUser = await getCurrentUser();
+      const storedSelections = localStorage.getItem("userSelections");
+      const storedApplicationId = localStorage.getItem("latestApplicationId");
+      
       if (currentUser) {
+        // Authenticated user flow
         const latestApplication = await fetchLatestApplication(currentUser.id);
         if (latestApplication) {
           localStorage.setItem("latestApplicationId", latestApplication.id);
@@ -189,6 +191,18 @@ function RedirectDashboard() {
         } else {
           navigate("/wellcome-2");
         }
+      } else if (storedSelections && storedApplicationId) {
+        // Anonymous user with completed onboarding
+        navigate(`/dashboard/${storedApplicationId}`);
+      } else if (storedSelections) {
+        // Anonymous user with selections but no application ID - create demo ID
+        const demoApplicationId = `demo-${Date.now()}`;
+        localStorage.setItem("latestApplicationId", demoApplicationId);
+        localStorage.setItem("isAnonymous", "true");
+        navigate(`/dashboard/${demoApplicationId}`);
+      } else {
+        // New user - redirect to onboarding
+        navigate("/wellcome-2");
       }
     }
     handleRedirect();
@@ -211,8 +225,6 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <CookieConsentProvider>
-        {" "}
-        {/* Çerez Provider'ını ekledik */}
         <VisaApplicationProvider>
           <DocumentsProvider>
             <SelectedDocumentProvider>
@@ -221,13 +233,11 @@ function App() {
                   <ReactQueryDevtools initialIsOpen={false} />
                   <GlobalStyles />
                   <BrowserRouter>
-                    <AppWithGA />{" "}
-                    {/* Router içeriğini ayrı component'e taşıdık */}
+                    <AppWithGA />
                   </BrowserRouter>
-                  {/* Çerez bileşenlerini ekledik */}
                   <CookieBanner />
                   <CookiePreferences />
-                  <FloatingCookieButton /> {/* Footer yerine floating button */}
+                  <FloatingCookieButton />
                   <Toaster
                     position="top-center"
                     containerStyle={{
@@ -254,8 +264,7 @@ function App() {
             </SelectedDocumentProvider>
           </DocumentsProvider>
         </VisaApplicationProvider>
-      </CookieConsentProvider>{" "}
-      {/* Provider'ı kapattık */}
+      </CookieConsentProvider>
     </QueryClientProvider>
   );
 }

@@ -5,6 +5,7 @@ import ProfessionSelection from "./ProfessionSelection";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import styled from "styled-components";
+import { AnonymousDataService } from "../../utils/anonymousDataService";
 
 // Styled components
 const QuestionContainer = styled.div`
@@ -72,6 +73,15 @@ function WelcomeD() {
   );
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  // Load from localStorage if available
+  useEffect(() => {
+    const savedSelections = AnonymousDataService.getUserSelections();
+    if (savedSelections && savedSelections.profession && !selectedProfession) {
+      setSelectedProfession(savedSelections.profession);
+      dispatch({ type: "SET_PROFESSION", payload: savedSelections.profession });
+    }
+  }, [dispatch, selectedProfession]);
+
   // Component unmount olduğunda modal'ı temizle
   useEffect(() => {
     return () => {
@@ -83,12 +93,25 @@ function WelcomeD() {
     setSelectedProfession(profession);
     dispatch({ type: "SET_PROFESSION", payload: profession });
 
+    // Save to anonymous user service
+    const existingSelections = AnonymousDataService.getUserSelections();
+    AnonymousDataService.saveUserSelections({
+      ...existingSelections,
+      profession,
+    });
+
     // Eğer "İş veren" değilse sponsor sorusunu sor
     if (profession && profession !== "İş veren") {
       setIsModalVisible(true);
     } else if (profession === "İş veren") {
       // İş veren ise direkt devam et butonu aktif olsun, modal açılmasın
       dispatch({ type: "SET_HAS_SPONSOR", payload: null });
+      // Save hasSponsor as null for business owners
+      AnonymousDataService.saveUserSelections({
+        ...existingSelections,
+        profession,
+        hasSponsor: null,
+      });
     }
   };
 
@@ -102,6 +125,13 @@ function WelcomeD() {
   const handleModalResponse = (hasSponsor) => {
     dispatch({ type: "SET_HAS_SPONSOR", payload: hasSponsor });
     setIsModalVisible(false);
+
+    // Save sponsor decision
+    const existingSelections = AnonymousDataService.getUserSelections();
+    AnonymousDataService.saveUserSelections({
+      ...existingSelections,
+      hasSponsor,
+    });
 
     // Sponsor durumuna göre farklı sayfalara yönlendir
     if (hasSponsor) {
@@ -119,6 +149,13 @@ function WelcomeD() {
       // Modal kapatıldığında meslek seçimini sıfırla
       setSelectedProfession("");
       dispatch({ type: "SET_PROFESSION", payload: "" });
+      
+      // Clear from localStorage as well
+      const existingSelections = AnonymousDataService.getUserSelections();
+      AnonymousDataService.saveUserSelections({
+        ...existingSelections,
+        profession: "",
+      });
     }
   };
 

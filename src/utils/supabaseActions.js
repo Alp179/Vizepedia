@@ -1,6 +1,19 @@
+// utils/supabaseActions.js - Updated to handle anonymous users
 import supabase from "../services/supabase";
+import { AnonymousDataService } from "./anonymousDataService";
+
+// Helper to detect if user is anonymous
+function isAnonymousUser(userId) {
+  return userId === 'anonymous' || AnonymousDataService.isAnonymousUser();
+}
 
 export async function completeDocument(userId, documentName, applicationId) {
+  // Handle anonymous users
+  if (isAnonymousUser(userId)) {
+    return AnonymousDataService.completeDocument(documentName, applicationId);
+  }
+
+  // Handle authenticated users
   const { data, error } = await supabase.from("completed_documents").insert([
     {
       userId,
@@ -20,11 +33,17 @@ export async function completeDocument(userId, documentName, applicationId) {
 }
 
 export async function fetchCompletedDocuments(userId, applicationId) {
+  // Handle anonymous users
+  if (isAnonymousUser(userId)) {
+    return AnonymousDataService.fetchCompletedDocuments(applicationId);
+  }
+
+  // Handle authenticated users
   const { data, error } = await supabase
     .from("completed_documents")
     .select("*")
     .eq("userId", userId)
-    .eq("application_id", applicationId); // Application ID'ye göre filtreleme
+    .eq("application_id", applicationId);
 
   if (error) {
     console.error("Error fetching completed documents:", error);
@@ -35,6 +54,12 @@ export async function fetchCompletedDocuments(userId, applicationId) {
 }
 
 export async function uncompleteDocument(userId, documentName, applicationId) {
+  // Handle anonymous users
+  if (isAnonymousUser(userId)) {
+    return AnonymousDataService.uncompleteDocument(documentName, applicationId);
+  }
+
+  // Handle authenticated users
   const { data, error } = await supabase
     .from("completed_documents")
     .delete()
@@ -42,7 +67,7 @@ export async function uncompleteDocument(userId, documentName, applicationId) {
       userId,
       document_name: documentName,
       application_id: applicationId,
-    }); // Application ID ile eşleştirme
+    });
 
   if (error) {
     console.error("Error uncompleting document:", error);
