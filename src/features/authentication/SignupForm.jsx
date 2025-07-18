@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import supabase from "../../services/supabase";
-
 import { useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
@@ -15,6 +14,7 @@ import {
 } from "../../services/apiAuth";
 import { useSignup } from "./useSignup";
 import { useUser } from "./useUser";
+import { AnonymousDataService } from "../../utils/anonymousDataService";
 
 const BracketContainer = styled.div`
   display: flex;
@@ -50,64 +50,56 @@ const Girisyap = styled.div`
 function SignupForm({ onCloseModal }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null); // Hata mesajı durumu
-  const { isLoading } = useSignup(); // useSignup hook'u çağrılıyor
-  const navigate = useNavigate(); // Yönlendirme fonksiyonu
-  const { refetchUser } = useUser(); // refetchUser fonksiyonu eklendi
+  const [errorMessage, setErrorMessage] = useState(null);
+  const { isLoading } = useSignup();
+  const navigate = useNavigate();
+  const { refetchUser } = useUser();
 
+  // FIXED: No more Supabase anonymous sessions
   async function handleGuestSignIn() {
     try {
-      // Supabase anonim oturum açma fonksiyonu
-      const { data, error } = await supabase.auth.signInAnonymously();
-      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+      // Instead of Supabase, use our AnonymousDataService
+      AnonymousDataService.saveUserSelections({});
+      
+      console.log("Anonymous mode activated (localStorage only)");
 
-      if (error) {
-        console.error("Anonim oturum açma hatası:", error.message);
-        return;
-      }
+      // Check if user has already answered wellcome questions
+      const hasOnboardingData = AnonymousDataService.hasCompletedOnboarding();
 
-      if (data) {
-        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
-        const wellcomesAnswered =
-          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
-
-        if (wellcomesAnswered === "true") {
-          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
-          navigate("/dashboard");
-        } else {
-          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
-          navigate("/wellcome-2");
-        }
+      if (hasOnboardingData) {
+        const applicationId = AnonymousDataService.getApplicationId();
+        navigate(`/dashboard/${applicationId}`);
+      } else {
+        navigate("/wellcome-2");
       }
     } catch (error) {
-      console.error("Oturum açma sırasında hata oluştu:", error.message);
+      console.error("Anonymous mode activation error:", error);
     }
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setErrorMessage(null); // Hata mesajını sıfırla
+    setErrorMessage(null);
 
     if (!email || !password) {
       setErrorMessage("Lütfen tüm alanları doldurun.");
       return;
     }
 
-    const isAnonymous = localStorage.getItem("isAnonymous") === "true"; // Kullanıcı anonim mi?
+    const isAnonymous = AnonymousDataService.isAnonymousUser();
 
     try {
       if (isAnonymous) {
-        // Kullanıcı anonimse anonim hesabı tam hesaba çevir
+        // Convert anonymous localStorage data to authenticated user
         await convertAnonymousToUser({ email, password });
       } else {
-        // Kullanıcı anonim değilse yeni bir hesap oluştur
+        // Regular signup with Supabase
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
         });
 
         if (error) {
-          // E-posta zaten kullanılıyorsa özel hata mesajı göster ve login bağlantısı ekle
           if (error.message.includes("already registered")) {
             setErrorMessage(
               <>
@@ -129,35 +121,32 @@ function SignupForm({ onCloseModal }) {
           throw new Error(error.message);
         }
 
-        // Kullanıcı başarılı şekilde oluşturulduysa localStorage temizle
         if (data.user) {
-          localStorage.removeItem("isAnonymous");
-          localStorage.removeItem("userSelections");
+          // Clear any anonymous data since user is now authenticated
+          AnonymousDataService.clearData();
         }
       }
 
-      // Eğer onCloseModal fonksiyonu varsa çağır
       if (onCloseModal) {
-        onCloseModal(); // Modalı kapat
+        onCloseModal();
       }
 
-      refetchUser(); // Kullanıcı verisini güncelle
-      navigate("/dashboard"); // Kullanıcıyı yönlendir
+      refetchUser();
+      navigate("/dashboard");
     } catch (error) {
-      console.log("Hata Detayı:", error); // Konsola hata yazdır
+      console.log("Hata Detayı:", error);
       setErrorMessage(error.message || "Üye olurken bir hata oluştu.");
     }
   }
 
-  // Google oturum açma butonu için event handler
   async function handleGoogleSignIn() {
     const { data, error } = await signInWithGoogle();
     if (!error && data) {
-      localStorage.removeItem("isAnonymous");
-      localStorage.removeItem("userSelections");
-      onCloseModal(); // Google ile giriş yapıldıktan sonra modalı kapatma
-      refetchUser(); // Kullanıcı sorgusunu tekrar çalıştır
-      navigate("/dashboard"); // Google ile giriş yapıldığında yönlendirme
+      // Clear anonymous data when signing in with Google
+      AnonymousDataService.clearData();
+      onCloseModal();
+      refetchUser();
+      navigate("/dashboard");
     } else {
       setErrorMessage("Google ile giriş sırasında bir hata oluştu.");
     }
@@ -171,8 +160,7 @@ function SignupForm({ onCloseModal }) {
           Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
         </p>
       </div>
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}{" "}
-      {/* Hata mesajı göstergesi */}
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       <FormRow orientation="vertical" label="E-posta Adresi">
         <Input
           type="email"
@@ -217,7 +205,7 @@ function SignupForm({ onCloseModal }) {
             >
               KVKK Aydınlatma Metni
             </a>
-            ’ni okudum ve kabul ediyorum.
+            &apos;ni okudum ve kabul ediyorum.
           </span>
         </label>
       </FormRow>

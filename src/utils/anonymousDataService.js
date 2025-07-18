@@ -1,4 +1,4 @@
-// utils/anonymousDataService.js - Complete localStorage management for anonymous users
+// utils/anonymousDataService.js - Fixed conversion for documents
 
 export class AnonymousDataService {
   static STORAGE_KEYS = {
@@ -60,16 +60,43 @@ export class AnonymousDataService {
   // Get user answers (equivalent to fetchUserSelectionsDash)
   static getUserAnswers(applicationId) {
     const answers = localStorage.getItem(this.STORAGE_KEYS.USER_ANSWERS);
-    if (!answers) return null;
+    if (!answers) {
+      // If no saved answers, try to convert from selections
+      return this.convertSelectionsToAnswers(applicationId);
+    }
 
     const parsedAnswers = JSON.parse(answers);
     
     // If applicationId is provided, check if it matches
     if (applicationId && parsedAnswers.id !== applicationId) {
-      return null;
+      return this.convertSelectionsToAnswers(applicationId);
     }
 
     return [parsedAnswers]; // Return as array to match Supabase format
+  }
+
+  // CRITICAL: Convert localStorage selections to Supabase format for document filtering
+  static convertSelectionsToAnswers(applicationId) {
+    const selections = this.getUserSelections();
+    if (!selections) return null;
+
+    const convertedAnswer = {
+      id: applicationId || this.getApplicationId(),
+      userId: 'anonymous',
+      ans_country: selections.country || '',
+      ans_purpose: selections.purpose || '',
+      ans_profession: selections.profession || '',
+      ans_vehicle: selections.vehicle || '',
+      ans_kid: selections.kid !== undefined ? selections.kid : false,
+      ans_accommodation: selections.accommodation || '',
+      ans_hassponsor: selections.hasSponsor || false,
+      ans_sponsor_profession: selections.sponsorProfession || null,
+      has_appointment: false,
+      has_filled_form: false,
+      created_at: localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString()
+    };
+
+    return [convertedAnswer]; // Return as array to match Supabase format
   }
 
   // Document completion for anonymous users
@@ -125,7 +152,14 @@ export class AnonymousDataService {
     
     // Check if all required fields are filled
     const requiredFields = ['country', 'purpose', 'profession', 'vehicle', 'accommodation'];
-    return requiredFields.every(field => selections[field] && selections[field] !== '');
+    const hasRequiredFields = requiredFields.every(field => 
+      selections[field] !== undefined && selections[field] !== null && selections[field] !== ''
+    );
+
+    // Check kid field specifically (can be boolean false)
+    const hasKidField = selections.kid !== undefined && selections.kid !== null;
+
+    return hasRequiredFields && hasKidField;
   }
 
   // Generate application ID for anonymous users
@@ -152,7 +186,7 @@ export class AnonymousDataService {
     return localStorage.getItem(this.STORAGE_KEYS.IS_ANONYMOUS) === 'true';
   }
 
-  // Convert localStorage data to Supabase format for compatibility
+  // UPDATED: Better Supabase format conversion for dashboard compatibility
   static convertToSupabaseFormat() {
     const selections = this.getUserSelections();
     const applicationId = this.getApplicationId();
@@ -160,14 +194,14 @@ export class AnonymousDataService {
     
     if (!selections) return null;
 
-    // Mock Supabase user selections format
+    // Return in exact Supabase format that getDocumentsForSelections expects
     return [{
       id: applicationId,
       ans_country: selections.country || '',
       ans_purpose: selections.purpose || '',
       ans_profession: selections.profession || '',
       ans_vehicle: selections.vehicle || '',
-      ans_kid: selections.kid || false,
+      ans_kid: selections.kid !== undefined ? selections.kid : false,
       ans_accommodation: selections.accommodation || '',
       ans_hassponsor: selections.hasSponsor || false,
       ans_sponsor_profession: selections.sponsorProfession || null,
@@ -278,19 +312,13 @@ export class AnonymousDataService {
     return selections ? selections[field] : null;
   }
 
-  // Check if all required selections are complete
-  static isOnboardingComplete() {
-    const selections = this.getUserSelections();
-    if (!selections) return false;
-
-    const requiredFields = ['country', 'purpose', 'profession', 'vehicle', 'accommodation'];
-    const hasRequiredFields = requiredFields.every(field => 
-      selections[field] !== undefined && selections[field] !== null && selections[field] !== ''
-    );
-
-    // Check kid field specifically (can be boolean false)
-    const hasKidField = selections.kid !== undefined && selections.kid !== null;
-
-    return hasRequiredFields && hasKidField;
+  // DEBUGGING: Log current anonymous data (for troubleshooting)
+  static debugLogData() {
+    console.log('=== ANONYMOUS USER DEBUG ===');
+    console.log('Raw selections:', this.getUserSelections());
+    console.log('Converted to Supabase format:', this.convertToSupabaseFormat());
+    console.log('Application ID:', this.getApplicationId());
+    console.log('Has completed onboarding:', this.hasCompletedOnboarding());
+    console.log('=============================');
   }
 }

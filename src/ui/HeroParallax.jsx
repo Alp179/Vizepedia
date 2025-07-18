@@ -1,16 +1,15 @@
 /* eslint-disable react/prop-types */
 import { useRef, useState, useEffect } from "react";
-// 3. satırdaki import'u şu şekilde değiştirin:
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import supabase from "../services/supabase"; // Bu import'u kendi projenizin yapısına göre ayarlamanız gerekebilir
-import { getCurrentUser } from "../services/apiAuth"; // Bu import'u kendi projenizin yapısına göre ayarlamanız gerekebilir
+import { getCurrentUser } from "../services/apiAuth";
+import { AnonymousDataService } from "../utils/anonymousDataService";
 
-// Styled Components tanımları
+// All your existing styled components remain exactly the same...
 const ParallaxContainer = styled.div`
-  height: 230vh; /* 230vh'den 210vh'ye düşürüldü */
-  padding: 6rem 0 3rem 0; /* alt padding'i azalttık */
+  height: 230vh;
+  padding: 6rem 0 3rem 0;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -27,54 +26,53 @@ const HeaderContainer = styled.div`
   max-width: 80rem;
   position: relative;
   margin: 0 auto;
-  padding: 3rem 1rem; /* 5rem'den 3rem'e düşürüldü */
+  padding: 3rem 1rem;
   width: 100%;
   left: 0;
   top: 150px;
   z-index: 10;
 
   @media (min-width: 768px) {
-    padding: 5rem 1rem; /* 10rem'den 5rem'e düşürüldü */
+    padding: 5rem 1rem;
   }
 `;
 
 const HeaderTitle = styled.h1`
-  font-size: 2.8rem; /* %20 büyütüldü: 1.5rem * 1.2 = 1.8rem */
+  font-size: 2.8rem;
   font-weight: 700;
   color: ${(props) => (props.theme.isDark ? "white" : "black")};
   text-align: center;
   max-width: 100%;
   transition: transform 0.2s ease, opacity 0.2s ease;
 
-  /* Gradient efekti */
   background: linear-gradient(15deg, #004466, #00ffa2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 
   @media (max-width: 1410px) {
-    font-size: 82px; /* %20 büyütüldü: 60px * 1.2 = 72px */
+    font-size: 82px;
   }
   @media (max-width: 1200px) {
-    font-size: 76px; /* %20 büyütüldü: 55px * 1.2 = 66px */
+    font-size: 76px;
   }
   @media (max-width: 1050px) {
-    font-size: 70px; /* %20 büyütüldü: 50px * 1.2 = 60px */
+    font-size: 70px;
   }
   @media (max-width: 930px) {
-    font-size: 64px; /* %20 büyütüldü: 45px * 1.2 = 54px */
+    font-size: 64px;
   }
   @media (max-width: 830px) {
-    font-size: 58px; /* %20 büyütüldü: 40px * 1.2 = 48px */
+    font-size: 58px;
   }
   @media (max-width: 730px) {
-    font-size: 48px; /* %20 büyütüldü: 35px * 1.2 = 42px */
+    font-size: 48px;
   }
   @media (max-width: 350px) {
     font-size: 38px;
   }
 
   @media (min-width: 768px) {
-    font-size: 6.4rem; /* %20 büyütüldü: 4.5rem * 1.2 = 5.4rem */
+    font-size: 6.4rem;
   }
 `;
 
@@ -96,17 +94,17 @@ const HeaderDescription = styled.p`
 
 const RowContainer = styled(motion.div)`
   display: flex;
-  margin-bottom: 2.5rem; /* 3rem'den 2.5rem'e düşürüldü - satırlar arası mesafe */
+  margin-bottom: 2.5rem;
   ${(props) =>
     props.reverse
       ? "flex-direction: row-reverse; space-x-reverse: 1;"
       : "flex-direction: row;"}
-  gap: 3rem; /* bayraklar arası mesafe korundu */
+  gap: 3rem;
 `;
 
 const CountryCardContainer = styled(motion.div)`
-  height: 20rem; /* 24rem'den 20rem'e düşürüldü */
-  width: 25rem; /* 30rem'den 25rem'e düşürüldü */
+  height: 20rem;
+  width: 25rem;
   position: relative;
   flex-shrink: 0;
   border-radius: 1rem;
@@ -168,7 +166,6 @@ const CountryName = styled.h2`
   }
 `;
 
-// CTA Buton stilleri
 const ButtonWrapper = styled.div`
   position: relative;
   z-index: 11;
@@ -200,7 +197,7 @@ const StyledHeroButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px; /* İkon ve metin arasında boşluk */
+  gap: 12px;
   width: 248.6px;
   height: 89px;
   background: #004466;
@@ -212,7 +209,6 @@ const StyledHeroButton = styled.div`
   color: #00ffa2;
   transition: all 0.3s ease;
 
-  /* İkon için stil */
   svg {
     width: 28px;
     height: 28px;
@@ -240,13 +236,12 @@ const LoadingIndicator = styled.div`
   gap: 8px;
 `;
 
-// Component tanımları
+// Header component with FIXED anonymous logic
 export const Header = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Kullanıcının oturum durumunu kontrol et
   useEffect(() => {
     async function checkLoginStatus() {
       try {
@@ -260,56 +255,44 @@ export const Header = () => {
     checkLoginStatus();
   }, []);
 
-  // Başlayalım butonuna tıklandığında çalışacak fonksiyon
   const handleButtonClick = async () => {
-    // Kullanıcı zaten giriş yapmışsa direkt dashboard'a yönlendir
     if (isLoggedIn) {
       navigate("/dashboard");
       return;
     }
 
-    // Giriş yapmamışsa anonim giriş işlemini başlat
+    // Use localStorage-only anonymous logic instead of Supabase
     await handleAnonymousSignIn();
   };
 
-  // Anonim giriş fonksiyonu
+  // FIXED: No more Supabase anonymous sessions
   const handleAnonymousSignIn = async () => {
     try {
-      setIsLoading(true); // Yükleniyor durumunu başlat
+      setIsLoading(true);
 
-      // Supabase anonim oturum açma fonksiyonu
-      const { data, error } = await supabase.auth.signInAnonymously();
-      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+      // Instead of Supabase, use our AnonymousDataService
+      AnonymousDataService.saveUserSelections({});
+      
+      console.log("Anonymous mode activated (localStorage only)");
 
-      if (error) {
-        console.error("Anonim oturum açma hatası:", error.message);
-        setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
-        return;
+      // Check if user has already answered wellcome questions
+      const hasOnboardingData = AnonymousDataService.hasCompletedOnboarding();
+
+      if (hasOnboardingData) {
+        const applicationId = AnonymousDataService.getApplicationId();
+        navigate(`/dashboard/${applicationId}`);
+      } else {
+        navigate("/wellcome-2");
       }
 
-      if (data) {
-        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
-        const wellcomesAnswered =
-          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
-
-        if (wellcomesAnswered === "true") {
-          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
-          navigate("/dashboard");
-        } else {
-          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
-          navigate("/wellcome-2");
-        }
-
-        // Yükleniyor durumunu kapat (navigate işlemi gerçekleştiğinde otomatik kapanacak)
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     } catch (error) {
-      console.error("Oturum açma sırasında hata oluştu:", error.message);
-      setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
+      console.error("Anonymous mode activation error:", error);
+      setIsLoading(false);
     }
   };
 
-  // Roket ikonu bileşeni
+  // Icon components remain the same...
   const IconRocket = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -327,7 +310,6 @@ export const Header = () => {
     </svg>
   );
 
-  // Devam et ikonu bileşeni
   const IconContinue = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -348,7 +330,7 @@ export const Header = () => {
         Düşlerinizdeki Seyahatin İlk Adımı <br />
       </HeaderTitle>
       <HeaderDescription>
-        Avrupa’dan Amerika’ya tüm vize başvurularınızın süreç yönetimi tek yerde
+        Avrupa&apos;dan Amerika&apos;ya tüm vize başvurularınızın süreç yönetimi tek yerde
       </HeaderDescription>
       <ButtonWrapper>
         <StyledCeper>
@@ -394,7 +376,7 @@ export const Header = () => {
   );
 };
 
-// Ülke kartı bileşeni
+// CountryCard component remains exactly the same...
 export const CountryCard = ({ country, translate }) => {
   const flagRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
@@ -404,7 +386,7 @@ export const CountryCard = ({ country, translate }) => {
     : null;
 
   useEffect(() => {
-    if (!flagUrl) return; // country.code yoksa hiçbir şey yapma
+    if (!flagUrl) return;
 
     const fetchAndStretchSVG = async () => {
       try {
@@ -436,7 +418,7 @@ export const CountryCard = ({ country, translate }) => {
     <CountryCardContainer
       style={{
         x: translate,
-        opacity: loaded ? 1 : 0.3, // Bayrak yüklendikçe opaklığı artır
+        opacity: loaded ? 1 : 0.3,
       }}
       whileHover={{
         y: -20,
@@ -454,13 +436,11 @@ export const CountryCard = ({ country, translate }) => {
   );
 };
 
+// HeroParallax component remains exactly the same...
 export const HeroParallax = ({ countries = [] }) => {
-  // Eğer countries prop'u gönderilmediyse, Schengen ülkeleri, ABD ve İngiltere'yi içeren default dizi
   const defaultCountries = [
-    // Başlangıçta görünecek önemli ülkeler
     { name: "Amerika Birleşik Devletleri", code: "US" },
     { name: "Birleşik Krallık", code: "GB" },
-    // Schengen Ülkeleri
     { name: "Almanya", code: "DE" },
     { name: "Fransa", code: "FR" },
     { name: "İtalya", code: "IT" },
@@ -483,20 +463,16 @@ export const HeroParallax = ({ countries = [] }) => {
     { name: "Slovakya", code: "SK" },
     { name: "Slovenya", code: "SI" },
     { name: "Yunanistan", code: "GR" },
-    { name: "İsviçre", code: "CH" }, // Schengen ama AB üyesi değil
-    { name: "Norveç", code: "NO" }, // Schengen ama AB üyesi değil
-    { name: "İzlanda", code: "IS" }, // Schengen ama AB üyesi değil
-    { name: "Lihtenştayn", code: "LI" }, // Schengen ama AB üyesi değil
+    { name: "İsviçre", code: "CH" },
+    { name: "Norveç", code: "NO" },
+    { name: "İzlanda", code: "IS" },
+    { name: "Lihtenştayn", code: "LI" },
   ];
 
-  // Kullanılacak ülkeler dizisi (prop geldiyse onu, yoksa default olanı kullan)
   const usedCountries = countries.length > 0 ? countries : defaultCountries;
-
-  // Default boş array ve güvenli slice işlemleri için kontrol
   const firstRow = usedCountries.length ? usedCountries.slice(0, 8) : [];
   const secondRow = usedCountries.length >= 9 ? usedCountries.slice(8, 16) : [];
-  const thirdRow =
-    usedCountries.length >= 17 ? usedCountries.slice(16, 28) : [];
+  const thirdRow = usedCountries.length >= 17 ? usedCountries.slice(16, 28) : [];
 
   const ref = useRef(null);
 
@@ -533,7 +509,7 @@ export const HeroParallax = ({ countries = [] }) => {
   );
 
   const translateY = useSpring(
-    useTransform(scrollYProgress, [0, 0.2], [-500, 300]), // -700, 500'den -500, 300'e değiştirildi
+    useTransform(scrollYProgress, [0, 0.2], [-500, 300]),
     springConfig
   );
 
@@ -546,8 +522,7 @@ export const HeroParallax = ({ countries = [] }) => {
           rotateZ,
           translateY,
           opacity,
-          paddingTop:
-            "2rem" /* Header ve bayraklar arasında daha fazla boşluk */,
+          paddingTop: "2rem",
         }}
       >
         <RowContainer reverse>

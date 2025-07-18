@@ -313,6 +313,13 @@ const Dashboard = () => {
 
       if (isAnonymous) {
         setUserType('anonymous');
+        // DEBUG: Log anonymous data to help troubleshooting
+        console.log('=== ANONYMOUS USER DEBUG ===');
+        console.log('Application ID:', applicationId);
+        console.log('Anonymous data:', AnonymousDataService.getUserSelections());
+        console.log('Converted format:', AnonymousDataService.convertToSupabaseFormat());
+        console.log('Has completed onboarding:', AnonymousDataService.hasCompletedOnboarding());
+        console.log('=============================');
         return;
       }
 
@@ -339,14 +346,14 @@ const Dashboard = () => {
     if (!isUserLoading) {
       determineUserType();
     }
-  }, [user, isUserLoading, isAnonymous, isBot]);
+  }, [user, isUserLoading, isAnonymous, isBot, applicationId]);
 
   const handleUserConversion = () => {
     setUserType('authenticated');
     navigate("/dashboard");
   };
 
-  // Handle both authenticated and anonymous user selections
+  // FIXED: Handle both authenticated and anonymous user selections
   const {
     data: userSelections,
     isSuccess: isUserSelectionsSuccess,
@@ -357,7 +364,10 @@ const Dashboard = () => {
     queryKey: ["userSelections", userId, applicationId, userType],
     queryFn: () => {
       if (userType === 'anonymous') {
-        return AnonymousDataService.getUserAnswers(applicationId);
+        // CRITICAL: Use the improved conversion method
+        const anonymousData = AnonymousDataService.convertToSupabaseFormat();
+        console.log('Anonymous user selections for documents:', anonymousData);
+        return anonymousData;
       } else if (userType === 'authenticated' && userId) {
         return fetchUserSelectionsDash(userId, applicationId);
       }
@@ -502,9 +512,20 @@ const Dashboard = () => {
   // Check user state
   const hasCompletedOnboarding = userSelections && userSelections.length > 0;
 
+  // CRITICAL: This should now work for anonymous users too
   const documentNames = userSelections
     ? getDocumentsForSelections(userSelections)
     : [];
+
+  // DEBUG: Log document names for troubleshooting
+  useEffect(() => {
+    if (userType === 'anonymous' && userSelections) {
+      console.log('=== DOCUMENT DEBUG FOR ANONYMOUS USER ===');
+      console.log('User selections:', userSelections);
+      console.log('Document names from getDocumentsForSelections:', documentNames);
+      console.log('==========================================');
+    }
+  }, [userType, userSelections, documentNames]);
 
   const {
     data: documents,
