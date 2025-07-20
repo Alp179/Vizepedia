@@ -686,38 +686,46 @@ const MainPageHamburger = ({ setMenuOpen }) => {
   }, [isOpen]);
 
   const handleFaqClick = () => {
-    const faqSection = document.getElementById("faq-section");
-    if (faqSection) {
-      // Header'ı bul ve yüksekliğini ölç
-      const headerElement = document.querySelector('header');
-      const headerHeight = headerElement ? headerElement.offsetHeight : 0;
+    // Check if we're already on the main page
+    const isOnMainPage = window.location.pathname === "/" || window.location.pathname === "/mainpage";
+    
+    if (isOnMainPage) {
+      // If we're on the main page, scroll directly to FAQ
+      const faqSection = document.getElementById("faq-section");
       
-      // FAQ section'ın pozisyonunu al
-      const faqPosition = faqSection.getBoundingClientRect().top;
-      // Geçerli scroll pozisyonunu al
-      const scrollPosition = window.pageYOffset;
-      // Header yüksekliği + 70px ek boşluk bırak
-      const offsetPosition = faqPosition + scrollPosition - headerHeight - 50;
-      
-      // Smooth scroll ile git
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth"
-      });
-      
-      // Menüyü kapat
-      setIsOpen(false);
-      setMenuOpen(false);
+      if (faqSection) {
+        // Header'ı bul ve yüksekliğini ölç
+        const headerElement = document.querySelector('header');
+        const headerHeight = headerElement ? headerElement.offsetHeight : 0;
+        
+        // FAQ section'ın pozisyonunu al
+        const faqPosition = faqSection.getBoundingClientRect().top;
+        // Geçerli scroll pozisyonunu al
+        const scrollPosition = window.pageYOffset;
+        // Header yüksekliği + 50px ek boşluk bırak
+        const offsetPosition = faqPosition + scrollPosition - headerHeight - 50;
+        
+        // Smooth scroll ile git
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+      }
+    } else {
+      // If we're on a different page, navigate to main page with FAQ hash
+      navigate("/#faq-section");
     }
+    
+    // Menüyü kapat
+    setIsOpen(false);
+    setMenuOpen(false);
   };
 
   const handleAboutClick = () => {
-    const aboutSection = document.getElementById("about-section");
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: "smooth" });
-      setIsOpen(false);
+    window.scrollTo(0, 0);
+    navigate("/hakkimizda"); // /mainpage yoluna yönlendir
+    setIsOpen(false);
       setMenuOpen(false);
-    }
   };
 
   // Anonim giriş fonksiyonu

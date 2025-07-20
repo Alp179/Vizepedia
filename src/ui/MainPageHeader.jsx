@@ -443,27 +443,39 @@ function MainPageHeader({ setMenuOpen }) {
 
   // Sayfa içi navigasyon - header'ın yüksekliği hesaba katılarak yapılıyor
   const handleFaqClick = () => {
-    const faqSection = document.getElementById("faq-section");
-    if (faqSection) {
-      // FAQ section'ın pozisyonunu al
-      const faqPosition = faqSection.getBoundingClientRect().top;
-      // Geçerli scroll pozisyonunu al
-      const scrollPosition = window.pageYOffset;
-      // Header yüksekliği + 70px ek boşluk bırak
-      const offsetPosition = faqPosition + scrollPosition - headerHeight - 70;
-
-      // Smooth scroll ile git
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
+    // Check if we're already on the main page
+    const isOnMainPage = window.location.pathname === "/" || window.location.pathname === "/mainpage";
+    
+    if (isOnMainPage) {
+      // If we're on the main page, scroll directly to FAQ
+      const faqSection = document.getElementById("faq-section");
+      if (faqSection) {
+        // FAQ section'ın pozisyonunu al
+        const faqPosition = faqSection.getBoundingClientRect().top;
+        // Geçerli scroll pozisyonunu al
+        const scrollPosition = window.pageYOffset;
+        // Header yüksekliği + 70px ek boşluk bırak
+        const offsetPosition = faqPosition + scrollPosition - headerHeight - 70;
+  
+        // Smooth scroll ile git
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+      }
+    } else {
+      // If we're on a different page, navigate to main page with FAQ hash
+      navigate("/#faq-section");
     }
   };
 
   // Yönlendirme fonksiyonları
   const handleLogInClick = () => navigate("/login");
   const handleContinueClick = () => navigate("/dashboard");
-  const handleAboutClick = () => navigate("/hakkimizda");
+  const handleAboutClick = () => {
+    window.scrollTo(0, 0);
+    navigate("/hakkimizda"); // /mainpage yoluna yönlendir
+  };
 
   return (
     <StyledMainPageHeader scrolled={scrolled} isVisible={isVisible}>

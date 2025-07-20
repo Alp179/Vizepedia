@@ -12,10 +12,10 @@ const BannerContainer = styled.div`
   border-top: 1px solid var(--color-grey-200);
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   z-index: 9999;
-  padding: 1.5rem;
+  padding: 2.5rem;
 
   @media (max-width: 768px) {
-    padding: 1rem;
+    padding: 2rem;
   }
 `;
 
@@ -39,7 +39,7 @@ const BannerText = styled.div`
 
   h3 {
     margin: 0 0 0.5rem 0;
-    font-size: 1.1rem;
+    font-size: 1.7rem;
     color: var(--color-grey-900);
     font-weight: 600;
   }
@@ -47,7 +47,7 @@ const BannerText = styled.div`
   p {
     margin: 0;
     color: var(--color-grey-600);
-    font-size: 0.9rem;
+    font-size: 1.4rem;
     line-height: 1.4;
 
     a {
@@ -69,13 +69,16 @@ const BannerActions = styled.div`
   @media (max-width: 768px) {
     justify-content: center;
   }
+  @media (max-width: 315px) {
+    flex-wrap: wrap;
+  }
 `;
 
 const Button = styled.button`
   padding: 0.6rem 1.2rem;
   border: none;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;

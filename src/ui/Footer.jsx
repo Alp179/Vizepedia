@@ -385,6 +385,11 @@ function Footer() {
     navigate("/mainpage"); // /mainpage yoluna yönlendir
   };
 
+  const handleAboutUsClick = () => {
+    window.scrollTo(0, 0);
+    navigate("/hakkimizda"); // /mainpage yoluna yönlendir
+  };
+
   const handleBlogClick = () => {
     window.scrollTo(0, 0);
     navigate("/blog"); // /blog yoluna yönlendir
@@ -506,7 +511,7 @@ function Footer() {
               <div className="footer-links" onClick={handleMainPageClick}>
                 Ana Sayfa
               </div>
-              <div className="footer-links">
+              <div className="footer-links" onClick={handleAboutUsClick}>
                 Hakkımızda
               </div>
               <div className="footer-links" onClick={handleBlogClick}>

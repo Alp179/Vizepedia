@@ -202,6 +202,7 @@ function BlogLogo({ variant }) {
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
+    window.scrollTo(0, 0);
     navigate("/blog"); // Logo'ya tıklandığında /blog'a yönlendiriyoruz
   };
 

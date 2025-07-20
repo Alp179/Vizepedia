@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
+import { useLocation } from 'react-router-dom';
+
 import SlideShow from "../ui/SlideShow";
 import InvitationToolSection from "../ui/InvitationToolSection"; // Yeni komponent import
 
@@ -81,6 +83,42 @@ function MainPage() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+
+
+  // Inside your main page component:
+const location = useLocation();
+
+useEffect(() => {
+  // Check if there's a hash in the URL when component mounts
+  if (location.hash === '#faq-section') {
+    // Small delay to ensure the page has fully rendered
+    const timer = setTimeout(() => {
+      const faqSection = document.getElementById("faq-section");
+      
+      if (faqSection) {
+        // Header'ı bul ve yüksekliğini ölç
+        const headerElement = document.querySelector('header');
+        const headerHeight = headerElement ? headerElement.offsetHeight : 0;
+        
+        // FAQ section'ın pozisyonunu al
+        const faqPosition = faqSection.getBoundingClientRect().top;
+        // Geçerli scroll pozisyonunu al
+        const scrollPosition = window.pageYOffset;
+        // Header yüksekliği + 50px ek boşluk bırak
+        const offsetPosition = faqPosition + scrollPosition - headerHeight - 50;
+        
+        // Smooth scroll ile git
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+      }
+    }, 100); // 100ms delay
+
+    return () => clearTimeout(timer);
+  }
+}, [location.hash]);
 
   // Premium bölümü tamamlandığında çağrılacak fonksiyon
   const handlePremiumComplete = () => {

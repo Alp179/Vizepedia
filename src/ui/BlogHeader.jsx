@@ -205,10 +205,12 @@ function BlogHeader() {
   }, [lastScrollY]);
 
   const handleLogoClick = () => {
+    window.scrollTo(0, 0);
     navigate("/mainpage");
   };
 
   const handleBlogLogoClick = () => {
+    window.scrollTo(0, 0);
     navigate("/blog");
   };
 

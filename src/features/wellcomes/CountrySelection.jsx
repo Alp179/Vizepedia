@@ -487,7 +487,6 @@ const countryToCode = {
   Lihtenştayn: "li",
   Rusya: "ru",
   ABD: "us",
-  Çin: "cn",
   BAE: "ae",
   Avustralya: "au",
   "Birleşik Krallık": "gb",
