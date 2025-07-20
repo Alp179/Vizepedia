@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import CountriesMarquee from "./CountriesMarquee"
 import styled from "styled-components";
 import DashboardMobileHeader from "./DashboardMobileHeader";
 import MobileMenu from "./MobileMenu";
@@ -136,6 +137,7 @@ function AppLayout() {
         <Container>
           <Outlet />
         </Container>
+        <CountriesMarquee />
         <SlideShowWrapper>
           <SlideShow />
         </SlideShowWrapper>

@@ -271,31 +271,6 @@ const DashboardItems = styled.div`
   }
 `;
 
-// YENI: Static content için CTA butonu
-const GetStartedButton = styled.button`
-  background: linear-gradient(135deg, #004466, #0066aa);
-  color: white;
-  border: none;
-  padding: 16px 32px;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin: 20px auto;
-  display: block;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 68, 102, 0.3);
-  }
-
-  @media (max-width: 710px) {
-    padding: 14px 28px;
-    font-size: 1rem;
-  }
-`;
-
 const Dashboard = () => {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
@@ -371,12 +346,6 @@ const Dashboard = () => {
   const handleUserConversion = () => {
     setUserType("authenticated");
     navigate("/dashboard");
-  };
-
-  // Handle CTA button click for static content
-  const handleGetStarted = () => {
-    // CTA butonu sadece görsel - yönlendirme yok
-    console.log("CTA button clicked");
   };
 
   // SAFER: More restrictive enabled condition
@@ -591,9 +560,7 @@ const Dashboard = () => {
     return (
       <DashboardContainer>
         <StaticDashboardContent />
-        <GetStartedButton onClick={handleGetStarted}>
-          Dashboarda Giriş
-        </GetStartedButton>
+       
       </DashboardContainer>
     );
   }
@@ -611,9 +578,6 @@ const Dashboard = () => {
       <DashboardContainer>
         <OnboardingWarningBanner />
         <StaticDashboardContent />
-        <GetStartedButton onClick={handleGetStarted}>
-          Dashboarda Giriş
-        </GetStartedButton>
       </DashboardContainer>
     );
   }
@@ -633,9 +597,6 @@ const Dashboard = () => {
           Veriler yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.
         </div>
         <StaticDashboardContent />
-        <GetStartedButton onClick={handleGetStarted}>
-          Dashboarda Giriş
-        </GetStartedButton>
       </DashboardContainer>
     );
   }

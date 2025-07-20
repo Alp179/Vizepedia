@@ -24,9 +24,18 @@ const WarningBanner = styled.div`
     opacity: 0.3;
   }
 
+  @media (max-width: 1550px) {
+    margin-right: 50px;
+    margin-left: -100px;
+  }
+
   @media (max-width: 710px) {
+    margin: 65px 0 16px 0;
     padding: 16px;
-    margin-bottom: 16px;
+  }
+
+  @media (max-width: 420px) {
+    margin-top: 50px;
   }
 `;
 
@@ -37,25 +46,25 @@ const WarningContent = styled.div`
 
 const WarningTitle = styled.h3`
   margin: 0 0 12px 0;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   gap: 8px;
 
   @media (max-width: 710px) {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
   }
 `;
 
 const WarningText = styled.p`
   margin: 0 0 16px 0;
-  font-size: 1rem;
+  font-size: 1.3rem;
   line-height: 1.5;
   opacity: 0.95;
 
   @media (max-width: 710px) {
-    font-size: 0.9rem;
+    font-size: 1.3rem;
   }
 `;
 
@@ -66,7 +75,7 @@ const StartButton = styled.button`
   padding: 12px 24px;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.3rem;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -83,7 +92,6 @@ const StartButton = styled.button`
 
   @media (max-width: 710px) {
     padding: 10px 20px;
-    font-size: 0.9rem;
   }
 `;
 
@@ -98,7 +106,7 @@ const OnboardingWarningBanner = () => {
     <WarningBanner>
       <WarningContent>
         <WarningTitle>
-          <span role="img" aria-label="warning">⚠️</span>
+          <span style={{fontSize:"24px"}} role="img" aria-label="warning">⚠️</span>
           Kişiselleştirilmiş İçerik İçin Onboarding Tamamlayın
         </WarningTitle>
         <WarningText>
