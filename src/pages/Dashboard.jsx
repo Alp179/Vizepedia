@@ -271,6 +271,31 @@ const DashboardItems = styled.div`
   }
 `;
 
+// YENI: Static content için CTA butonu
+const GetStartedButton = styled.button`
+  background: linear-gradient(135deg, #004466, #0066aa);
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 20px auto;
+  display: block;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 68, 102, 0.3);
+  }
+
+  @media (max-width: 710px) {
+    padding: 14px 28px;
+    font-size: 1rem;
+  }
+`;
+
 const Dashboard = () => {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
@@ -281,10 +306,12 @@ const Dashboard = () => {
 
   // User authentication state
   const { user, isLoading: isUserLoading } = useUser();
-  
+
   // Determine user type safely
-  const [userType, setUserType] = useState('loading');
-  const isAnonymous = applicationId?.startsWith('anonymous-') || AnonymousDataService.isAnonymousUser();
+  const [userType, setUserType] = useState("loading");
+  const isAnonymous =
+    applicationId?.startsWith("anonymous-") ||
+    AnonymousDataService.isAnonymousUser();
   const isBot = AnonymousDataService.isBotUser();
 
   const {
@@ -307,24 +334,17 @@ const Dashboard = () => {
   useEffect(() => {
     async function determineUserType() {
       if (isBot) {
-        setUserType('bot');
+        setUserType("bot");
         return;
       }
 
       if (isAnonymous) {
-        setUserType('anonymous');
-        // DEBUG: Log anonymous data to help troubleshooting
-        console.log('=== ANONYMOUS USER DEBUG ===');
-        console.log('Application ID:', applicationId);
-        console.log('Anonymous data:', AnonymousDataService.getUserSelections());
-        console.log('Converted format:', AnonymousDataService.convertToSupabaseFormat());
-        console.log('Has completed onboarding:', AnonymousDataService.hasCompletedOnboarding());
-        console.log('=============================');
+        setUserType("anonymous");
         return;
       }
 
       if (user) {
-        setUserType('authenticated');
+        setUserType("authenticated");
         setUserId(user.id);
         return;
       }
@@ -333,13 +353,13 @@ const Dashboard = () => {
       try {
         const currentUser = await getCurrentUser();
         if (currentUser) {
-          setUserType('authenticated');
+          setUserType("authenticated");
           setUserId(currentUser.id);
         } else {
-          setUserType('new_visitor');
+          setUserType("new_visitor");
         }
       } catch (error) {
-        setUserType('new_visitor');
+        setUserType("new_visitor");
       }
     }
 
@@ -349,11 +369,17 @@ const Dashboard = () => {
   }, [user, isUserLoading, isAnonymous, isBot, applicationId]);
 
   const handleUserConversion = () => {
-    setUserType('authenticated');
+    setUserType("authenticated");
     navigate("/dashboard");
   };
 
-  // FIXED: Handle both authenticated and anonymous user selections
+  // Handle CTA button click for static content
+  const handleGetStarted = () => {
+    // CTA butonu sadece görsel - yönlendirme yok
+    console.log("CTA button clicked");
+  };
+
+  // SAFER: More restrictive enabled condition
   const {
     data: userSelections,
     isSuccess: isUserSelectionsSuccess,
@@ -363,17 +389,22 @@ const Dashboard = () => {
   } = useQuery({
     queryKey: ["userSelections", userId, applicationId, userType],
     queryFn: () => {
-      if (userType === 'anonymous') {
-        // CRITICAL: Use the improved conversion method
+      console.log("🔄 Query function called for user selections");
+      if (userType === "anonymous") {
         const anonymousData = AnonymousDataService.convertToSupabaseFormat();
-        console.log('Anonymous user selections for documents:', anonymousData);
+        console.log("Anonymous user selections for documents:", anonymousData);
         return anonymousData;
-      } else if (userType === 'authenticated' && userId) {
+      } else if (userType === "authenticated" && userId) {
         return fetchUserSelectionsDash(userId, applicationId);
       }
+      console.log("❌ No query needed, returning null");
       return null;
     },
-    enabled: userType !== 'loading' && userType !== 'bot' && userType !== 'new_visitor',
+    // MUCH SAFER: Only enable for specific conditions
+    enabled:
+      (userType === "authenticated" && !!userId && !!applicationId) ||
+      (userType === "anonymous" &&
+        AnonymousDataService.hasCompletedOnboarding()),
   });
 
   const ansCountry = userSelections?.[0]?.ans_country;
@@ -408,21 +439,27 @@ const Dashboard = () => {
     return data;
   }
 
+  // SAFER: Only enable firmLocation query when we have valid data
   const { data: firmLocation, isSuccess: isFirmLocationSuccess } = useQuery({
     queryKey: ["firmLocation", ansCountry],
     queryFn: () => fetchFirmLocation(ansCountry),
-    enabled: !!ansCountry,
+    enabled:
+      !!ansCountry &&
+      (userType === "authenticated" ||
+        (userType === "anonymous" &&
+          AnonymousDataService.hasCompletedOnboarding())),
   });
 
+  // SAFER: Only enable countryLinks for authenticated users with valid data
   const { data: countryLinks } = useQuery({
     queryKey: ["visaCountryLinks", ansCountry],
     queryFn: () => fetchVisaCountryLinks(ansCountry),
-    enabled: !!ansCountry && userType === 'authenticated',
+    enabled: !!ansCountry && userType === "authenticated" && !!userId,
   });
 
   // Load completed documents for authenticated users only
   useEffect(() => {
-    if (userType === 'authenticated' && userId && applicationId) {
+    if (userType === "authenticated" && userId && applicationId) {
       fetchCompletedDocuments(userId, applicationId).then((data) => {
         const completedDocsMap = data.reduce((acc, doc) => {
           if (!acc[applicationId]) {
@@ -436,9 +473,9 @@ const Dashboard = () => {
           payload: completedDocsMap,
         });
       });
-    } else if (userType === 'anonymous' && applicationId) {
-      // Load anonymous completed documents
-      const anonymousCompletedDocs = AnonymousDataService.fetchCompletedDocuments(applicationId);
+    } else if (userType === "anonymous" && applicationId) {
+      const anonymousCompletedDocs =
+        AnonymousDataService.fetchCompletedDocuments(applicationId);
       const completedDocsMap = anonymousCompletedDocs.reduce((acc, doc) => {
         if (!acc[applicationId]) {
           acc[applicationId] = {};
@@ -512,21 +549,24 @@ const Dashboard = () => {
   // Check user state
   const hasCompletedOnboarding = userSelections && userSelections.length > 0;
 
-  // CRITICAL: This should now work for anonymous users too
   const documentNames = userSelections
     ? getDocumentsForSelections(userSelections)
     : [];
 
   // DEBUG: Log document names for troubleshooting
   useEffect(() => {
-    if (userType === 'anonymous' && userSelections) {
-      console.log('=== DOCUMENT DEBUG FOR ANONYMOUS USER ===');
-      console.log('User selections:', userSelections);
-      console.log('Document names from getDocumentsForSelections:', documentNames);
-      console.log('==========================================');
+    if (userType === "anonymous" && userSelections) {
+      console.log("=== DOCUMENT DEBUG FOR ANONYMOUS USER ===");
+      console.log("User selections:", userSelections);
+      console.log(
+        "Document names from getDocumentsForSelections:",
+        documentNames
+      );
+      console.log("==========================================");
     }
   }, [userType, userSelections, documentNames]);
 
+  // SAFER: Only query documents when we have valid userSelections and not showing static content
   const {
     data: documents,
     isLoading: isDocumentsLoading,
@@ -534,25 +574,35 @@ const Dashboard = () => {
   } = useQuery({
     queryKey: ["documentDetails", documentNames],
     queryFn: () => fetchDocumentDetails(documentNames),
-    enabled: !!documentNames.length,
+    enabled:
+      !!documentNames.length &&
+      (userType === "authenticated" ||
+        (userType === "anonymous" &&
+          AnonymousDataService.hasCompletedOnboarding())),
   });
 
   // Early returns based on user type
-  if (userType === 'loading' || isUserLoading) {
+  if (userType === "loading" || isUserLoading) {
     return <Spinner />;
   }
 
-  // Bots and new visitors see only static content
-  if (userType === 'bot' || userType === 'new_visitor') {
+  // GÜNCELLEME: Bots ve new visitors için static content + CTA
+  if (userType === "bot" || userType === "new_visitor") {
     return (
       <DashboardContainer>
         <StaticDashboardContent />
+        <GetStartedButton onClick={handleGetStarted}>
+          Dashboarda Giriş
+        </GetStartedButton>
       </DashboardContainer>
     );
   }
 
-  // Users without completed onboarding
-  if ((userType === 'anonymous' || userType === 'authenticated') && (!hasCompletedOnboarding || isUserSelectionsLoading)) {
+  // GÜNCELLEME: Onboarding tamamlamamış kullanıcılar için warning + static content + CTA
+  if (
+    (userType === "anonymous" || userType === "authenticated") &&
+    (!hasCompletedOnboarding || isUserSelectionsLoading)
+  ) {
     if (isUserSelectionsLoading) {
       return <Spinner />;
     }
@@ -561,6 +611,9 @@ const Dashboard = () => {
       <DashboardContainer>
         <OnboardingWarningBanner />
         <StaticDashboardContent />
+        <GetStartedButton onClick={handleGetStarted}>
+          Dashboarda Giriş
+        </GetStartedButton>
       </DashboardContainer>
     );
   }
@@ -570,10 +623,19 @@ const Dashboard = () => {
     return (
       <DashboardContainer>
         <OnboardingWarningBanner />
-        <div style={{ padding: '20px', textAlign: 'center', color: 'var(--color-red-700)' }}>
+        <div
+          style={{
+            padding: "20px",
+            textAlign: "center",
+            color: "var(--color-red-700)",
+          }}
+        >
           Veriler yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.
         </div>
         <StaticDashboardContent />
+        <GetStartedButton onClick={handleGetStarted}>
+          Dashboarda Giriş
+        </GetStartedButton>
       </DashboardContainer>
     );
   }
@@ -596,31 +658,34 @@ const Dashboard = () => {
     (selection) => selection.ans_hassponsor === true
   );
 
+  // NORMAL DASHBOARD İÇERİĞİ - Onboarding tamamlamış kullanıcılar için
   return (
     <DashboardContainer>
       {/* Show banners only for authenticated users */}
-      {isUserSelectionsSuccess && userSelections?.length > 0 && userType === 'authenticated' && (
-        <BannersContainer>
-          {userSelections[0].has_appointment === false && (
-            <VisaStatusBanner
-              type="appointment"
-              applicationId={applicationId}
-              userId={userId}
-              countryLinks={countryLinks}
-              onSuccess={() => refetchUserSelections()}
-            />
-          )}
-          {userSelections[0].has_filled_form === false && (
-            <VisaStatusBanner
-              type="form"
-              applicationId={applicationId}
-              userId={userId}
-              countryLinks={countryLinks}
-              onSuccess={() => refetchUserSelections()}
-            />
-          )}
-        </BannersContainer>
-      )}
+      {isUserSelectionsSuccess &&
+        userSelections?.length > 0 &&
+        userType === "authenticated" && (
+          <BannersContainer>
+            {userSelections[0].has_appointment === false && (
+              <VisaStatusBanner
+                type="appointment"
+                applicationId={applicationId}
+                userId={userId}
+                countryLinks={countryLinks}
+                onSuccess={() => refetchUserSelections()}
+              />
+            )}
+            {userSelections[0].has_filled_form === false && (
+              <VisaStatusBanner
+                type="form"
+                applicationId={applicationId}
+                userId={userId}
+                countryLinks={countryLinks}
+                onSuccess={() => refetchUserSelections()}
+              />
+            )}
+          </BannersContainer>
+        )}
 
       <AnimatedFlag countryCode={countryCode} />
 
@@ -682,7 +747,7 @@ const Dashboard = () => {
       </DashboardItems>
 
       {/* Show signup button for anonymous users */}
-      {userType === 'anonymous' && (
+      {userType === "anonymous" && (
         <div
           style={{
             display: "flex",
@@ -704,7 +769,7 @@ const Dashboard = () => {
       )}
 
       {/* Show VisaCheckModal only for authenticated users */}
-      {userType === 'authenticated' && userId && applicationId && (
+      {userType === "authenticated" && userId && applicationId && (
         <VisaCheckModal userId={userId} applicationId={applicationId} />
       )}
     </DashboardContainer>

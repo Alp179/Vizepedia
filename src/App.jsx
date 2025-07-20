@@ -75,9 +75,9 @@ function AppWithGA() {
         <Route path="hakkimizda" element={<AboutPage />} />
       </Route>
 
-      {/* PUBLIC Dashboard Routes - No ProtectedRoute wrapper */}
+      {/* FIXED: Dashboard Routes - Direct Dashboard for base route */}
       <Route element={<AppLayout />}>
-        <Route path="dashboard" element={<RedirectDashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route path="dashboard/:id" element={<Dashboard />} />
       </Route>
 
@@ -162,53 +162,29 @@ function RedirectIfLoggedIn({ children }) {
 
   useEffect(() => {
     async function checkUser() {
-      const currentUser = await getCurrentUser();
-      if (currentUser) {
-        navigate("/dashboard");
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          // Authenticated user varsa, onboarding check'i yapalım
+          const latestApplication = await fetchLatestApplication(
+            currentUser.id
+          );
+          if (latestApplication) {
+            localStorage.setItem("latestApplicationId", latestApplication.id);
+            navigate(`/dashboard/${latestApplication.id}`);
+          } else {
+            navigate("/dashboard");
+          }
+        }
+      } catch (error) {
+        console.error("Error checking user in RedirectIfLoggedIn:", error);
+        // Hata durumunda children'ı render et
       }
     }
     checkUser();
   }, [navigate]);
 
   return children;
-}
-
-function RedirectDashboard() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    async function handleRedirect() {
-      const currentUser = await getCurrentUser();
-      const storedSelections = localStorage.getItem("userSelections");
-      const storedApplicationId = localStorage.getItem("latestApplicationId");
-      
-      if (currentUser) {
-        // Authenticated user flow
-        const latestApplication = await fetchLatestApplication(currentUser.id);
-        if (latestApplication) {
-          localStorage.setItem("latestApplicationId", latestApplication.id);
-          navigate(`/dashboard/${latestApplication.id}`);
-        } else {
-          navigate("/wellcome-2");
-        }
-      } else if (storedSelections && storedApplicationId) {
-        // Anonymous user with completed onboarding
-        navigate(`/dashboard/${storedApplicationId}`);
-      } else if (storedSelections) {
-        // Anonymous user with selections but no application ID - create demo ID
-        const demoApplicationId = `demo-${Date.now()}`;
-        localStorage.setItem("latestApplicationId", demoApplicationId);
-        localStorage.setItem("isAnonymous", "true");
-        navigate(`/dashboard/${demoApplicationId}`);
-      } else {
-        // New user - redirect to onboarding
-        navigate("/wellcome-2");
-      }
-    }
-    handleRedirect();
-  }, [navigate]);
-
-  return null;
 }
 
 function App() {
