@@ -848,17 +848,28 @@ const StepIndicator = ({
 
   const handleDocumentClick = (index) => {
     const selectedDocument = documents[index];
+
+     // DEBUG - Bu satırları ekleyin
+  console.log("📄 StepIndicator handleDocumentClick Debug:");
+  console.log("applicationId:", applicationId);
+  console.log("index:", index);
+  console.log("selectedDocument:", selectedDocument);
+  console.log("selectedDocument.docStage:", selectedDocument?.docStage);
+
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
 
-      // Kategori bazında yönlendirme yapıyoruz
-      if (selectedDocument.docStage === "hazir") {
-        navigate(`/ready-documents/${applicationId}`);
-      } else if (selectedDocument.docStage === "planla") {
-        navigate(`/planned-documents/${applicationId}`);
-      } else if (selectedDocument.docStage === "bizimle"){
-        navigate(`/withus-documents/${applicationId}`);
-      }
+       // DEBUG - Navigate URL'lerini göster
+    if (selectedDocument.docStage === "hazir") {
+      console.log("🔗 Navigate URL:", `/ready-documents/${applicationId}`);
+      navigate(`/ready-documents/${applicationId}`);
+    } else if (selectedDocument.docStage === "planla") {
+      console.log("🔗 Navigate URL:", `/planned-documents/${applicationId}`);
+      navigate(`/planned-documents/${applicationId}`);
+    } else if (selectedDocument.docStage === "bizimle"){
+      console.log("🔗 Navigate URL:", `/withus-documents/${applicationId}`);
+      navigate(`/withus-documents/${applicationId}`);
+    }
     }
   };
 
