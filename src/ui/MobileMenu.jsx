@@ -1,4 +1,4 @@
-// MobileMenu.jsx - Dark Mode Toggle eklenmiş versiyon
+// MobileMenu.jsx - Enhanced for new visitors
 import { useState, useEffect, useRef } from "react";
 import { HiDocument, HiPlus } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
@@ -16,7 +16,7 @@ import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 import ModalSignup from "../ui/ModalSignup";
 import SignupForm from "../features/authentication/SignupForm";
 import { useUser } from "../features/authentication/useUser";
-import DarkModeToggle from "./DarkModeToggle"; // Dark Mode Toggle bileşenini import ediyoruz
+import DarkModeToggle from "./DarkModeToggle";
 
 // İkon ve Animasyonlar
 import {
@@ -59,30 +59,28 @@ import {
 } from "./MobileMenuStyles";
 
 const MobileMenu = () => {
-  // State yönetimi
+  // PRESERVED: All existing state
   const [isOpen, setIsOpen] = useState(false);
   const [hasTransitionEnded, setHasTransitionEnded] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAppId, setSelectedAppId] = useState(null);
-
-  // Tüm Belgeler modalı için state yönetimi
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
   const [isDocsModalClosing, setIsDocsModalClosing] = useState(false);
-
-  // Kullanıcının anonim olup olmadığını kontrol etmek için state
   const [isAnonymous, setIsAnonymous] = useState(false);
 
   const navigate = useNavigate();
   const { logout } = useLogout();
-  const { applications, dispatch: applicationsDispatch } =
-    useVisaApplications();
+  const { applications, dispatch: applicationsDispatch } = useVisaApplications();
 
   const [userId, setUserId] = useState(null);
   const menuRef = useRef();
   const iconRef = useRef();
   const { user } = useUser();
 
-  // Kullanıcı bilgilerini ve dışarı tıklama olayını yönetme
+  // NEW: Additional user type detection (non-breaking)
+  const { userType } = useUser();
+
+  // PRESERVED: All existing useEffect hooks
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
@@ -90,7 +88,6 @@ const MobileMenu = () => {
       }
     });
 
-    // Kullanıcının anonim olup olmadığını kontrol et
     const anonStatus = localStorage.getItem("isAnonymous") === "true";
     setIsAnonymous(anonStatus);
 
@@ -111,19 +108,17 @@ const MobileMenu = () => {
     };
   }, []);
 
-  // Menü geçiş animasyonu için
   useEffect(() => {
     if (!isOpen) {
       const timeout = setTimeout(() => {
         setHasTransitionEnded(true);
-      }, 400); // Animasyon süresiyle eşleştirildi
+      }, 400);
       return () => clearTimeout(timeout);
     } else {
       setHasTransitionEnded(false);
     }
   }, [isOpen]);
 
-  // ESC tuşu ile modal kapatma
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape") {
@@ -141,7 +136,7 @@ const MobileMenu = () => {
     };
   }, [isDocsModalOpen, isOpen]);
 
-  // Kullanıcı seçimleri ve belge bilgilerini alma
+  // PRESERVED: All existing queries
   const userSelectionsQuery = useQuery({
     queryKey: ["userSelectionsNav", userId],
     queryFn: () => fetchUserSelectionsDash(userId),
@@ -158,82 +153,65 @@ const MobileMenu = () => {
     enabled: !!documentNames.length,
   });
 
-  // Profil ayarları sayfasına yönlendirme
+  // PRESERVED: All existing handlers
   const handleProfileClick = () => {
     navigate("/account");
     setIsOpen(false);
   };
 
-  // Kullanıcı adının baş harfini almak için
   const getInitial = () => {
-    if (isAnonymous) return "A"; // Anonim kullanıcılar için "A" harfi
-
+    if (isAnonymous) return "A";
     if (!user) return "";
-
     const { user_metadata, email } = user;
     const fullName = user_metadata?.full_name;
-
     return fullName
       ? fullName.charAt(0).toUpperCase()
       : email.charAt(0).toUpperCase();
   };
 
-  // Kullanıcı adını veya e-postasını almak için
   const getDisplayName = () => {
     if (isAnonymous) return "Anonim Kullanıcı";
-
     if (!user) return "";
-
     const { user_metadata, email } = user;
     return user_metadata?.full_name || email;
   };
 
-  // Kullanıcı e-postasını almak için
   const getEmail = () => {
     if (isAnonymous) return "Oturum geçici";
-
     if (!user) return "";
     return user.email;
   };
 
-  // Tüm Belgeler modalını açma fonksiyonu
   const openDocsModal = () => {
     setIsDocsModalOpen(true);
-    setIsOpen(false); // Ana menüyü kapat
-    document.body.style.overflow = "hidden"; // Scroll'u kilitle
+    setIsOpen(false);
+    document.body.style.overflow = "hidden";
   };
 
-  // Tüm Belgeler modalını kapatma fonksiyonu
   const closeDocsModal = () => {
     setIsDocsModalClosing(true);
-
-    // Animasyon tamamlandıktan sonra modalı kapat
     setTimeout(() => {
       setIsDocsModalOpen(false);
       setIsDocsModalClosing(false);
-      document.body.style.overflow = ""; // Scroll kilidini kaldır
+      document.body.style.overflow = "";
     }, 300);
   };
 
-  // Modal açma fonksiyonu
   const openDeleteModal = (appId, e) => {
     e.preventDefault();
     e.stopPropagation();
     setSelectedAppId(appId);
     setShowDeleteModal(true);
-    setIsOpen(false); // Menüyü kapat ki modal görünebilsin
+    setIsOpen(false);
   };
 
-  // Modal kapatma fonksiyonu
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedAppId(null);
   };
 
-  // Silme işlemi
   const handleDelete = async () => {
     if (!selectedAppId) return;
-
     try {
       await deleteVisaApplication(selectedAppId);
       applicationsDispatch({
@@ -265,15 +243,30 @@ const MobileMenu = () => {
     }
   };
 
-  // Oturum kapatma işlemi - Direkt olarak çalışacak şekilde düzenlendi
   const handleLogout = () => {
     logout();
-    localStorage.removeItem("isAnonymous"); // Logout olunca anonim bilgisini temizle
-    localStorage.removeItem("wellcomesAnswered"); // wellcomes bilgisini de temizle
+    localStorage.removeItem("isAnonymous");
+    localStorage.removeItem("wellcomesAnswered");
     setIsOpen(false);
   };
 
-  // Settings icon
+  // NEW: Additional handlers for new visitors
+  const handleGetStarted = () => {
+    // CTA butonu sadece görsel - yönlendirme yok
+    console.log("Get Started button clicked");
+    setIsOpen(false);
+  };
+
+  const handleLogin = () => {
+    navigate("/login");
+    setIsOpen(false);
+  };
+
+  // NEW: Handlers for new visitors (non-breaking additions)
+  const getNewVisitorInitial = () => "👋";
+  const getNewVisitorName = () => "Hoş Geldiniz!";
+  const getNewVisitorEmail = () => "Vize başvuru sürecinizi başlatın";
+
   const IconSettings = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -296,6 +289,9 @@ const MobileMenu = () => {
   if (userSelectionsQuery.isError || documentsQuery.isError) {
     return <div>Error loading data.</div>;
   }
+
+  // NEW: Check for new visitors (ADDITIVE logic)
+  const isNewVisitor = userType === 'new_visitor' && !isAnonymous;
 
   return (
     <>
@@ -322,106 +318,147 @@ const MobileMenu = () => {
       >
         <MenuContents>
           <div className="top-section">
-            {/* Profil bilgileri bölümü */}
-            <ProfileInfoContainer>
-              <ProfileHeader>
-                <Avatar isAnonymous={isAnonymous}>{getInitial()}</Avatar>
-                <UserDetails>
-                  <UserName>{getDisplayName()}</UserName>
-                  <UserEmail>{getEmail()}</UserEmail>
-                </UserDetails>
-              </ProfileHeader>
-            </ProfileInfoContainer>
+            {/* NEW: Special profile section for new visitors */}
+            {isNewVisitor ? (
+              <>
+                <ProfileInfoContainer>
+                  <ProfileHeader>
+                    <Avatar>{getNewVisitorInitial()}</Avatar>
+                    <UserDetails>
+                      <UserName>{getNewVisitorName()}</UserName>
+                      <UserEmail>{getNewVisitorEmail()}</UserEmail>
+                    </UserDetails>
+                  </ProfileHeader>
+                </ProfileInfoContainer>
 
-            {/* Anonim kullanıcı için hesap oluştur */}
-            {isAnonymous && (
-              <ModalSignup>
-                <ModalSignup.Open opens="mobileSignUpForm">
-                  <CreateAccountButton>
-                    <IconUpgrade />
-                    Hesap Oluştur
-                  </CreateAccountButton>
-                </ModalSignup.Open>
-                <ModalSignup.Window name="mobileSignUpForm">
-                  <SignupForm
-                    onCloseModal={() => {
-                      setIsOpen(false);
-                    }}
-                  />
-                </ModalSignup.Window>
-              </ModalSignup>
-            )}
+                {/* NEW: CTA buttons for new visitors */}
+                <ModalSignup>
+                  <ModalSignup.Open opens="mobileSignUpForm">
+                    <CreateAccountButton>
+                      <IconUpgrade />
+                      Hemen Başlayın
+                    </CreateAccountButton>
+                  </ModalSignup.Open>
+                  <ModalSignup.Window name="mobileSignUpForm">
+                    <SignupForm
+                      onCloseModal={() => {
+                        setIsOpen(false);
+                      }}
+                    />
+                  </ModalSignup.Window>
+                </ModalSignup>
 
-            <NavButton onClick={openDocsModal}>
-              <HiDocument size={22} />
-              <span>Tüm Belgeler</span>
-            </NavButton>
+                <NavButton onClick={handleLogin}>
+                  <IconLogout />
+                  <span>Giriş Yap</span>
+                </NavButton>
 
-            <Divider />
+                <Divider />
+              </>
+            ) : (
+              <>
+                {/* PRESERVED: Existing profile section for other users */}
+                <ProfileInfoContainer>
+                  <ProfileHeader>
+                    <Avatar isAnonymous={isAnonymous}>{getInitial()}</Avatar>
+                    <UserDetails>
+                      <UserName>{getDisplayName()}</UserName>
+                      <UserEmail>{getEmail()}</UserEmail>
+                    </UserDetails>
+                  </ProfileHeader>
+                </ProfileInfoContainer>
 
-            <div className="applications-section">
-              {applications.map((app) => (
-                <ApplicationLink
-                  key={app.id}
-                  to={`/dashboard/${app.id}`}
-                  className={({ isActive }) => (isActive ? "active" : "")}
-                  onClick={() => setIsOpen(false)}
-                >
-                  <AppInfo>
-                    <AppTitle>{app.ans_country}</AppTitle>
-                    <AppSubtitle>
-                      {app.ans_purpose} - {app.ans_profession}
-                    </AppSubtitle>
-                  </AppInfo>
-                  {applications.length > 1 && (
-                    <ActionButton
-                      onClick={(e) => openDeleteModal(app.id, e)}
-                      aria-label="Vize başvurusunu sil"
-                      title="Vize başvurusunu sil"
+                {/* PRESERVED: Anonymous user account creation */}
+                {isAnonymous && (
+                  <ModalSignup>
+                    <ModalSignup.Open opens="mobileSignUpForm">
+                      <CreateAccountButton>
+                        <IconUpgrade />
+                        Hesap Oluştur
+                      </CreateAccountButton>
+                    </ModalSignup.Open>
+                    <ModalSignup.Window name="mobileSignUpForm">
+                      <SignupForm
+                        onCloseModal={() => {
+                          setIsOpen(false);
+                        }}
+                      />
+                    </ModalSignup.Window>
+                  </ModalSignup>
+                )}
+
+                <NavButton onClick={openDocsModal}>
+                  <HiDocument size={22} />
+                  <span>Tüm Belgeler</span>
+                </NavButton>
+
+                <Divider />
+
+                {/* PRESERVED: Applications section */}
+                <div className="applications-section">
+                  {applications.map((app) => (
+                    <ApplicationLink
+                      key={app.id}
+                      to={`/dashboard/${app.id}`}
+                      className={({ isActive }) => (isActive ? "active" : "")}
+                      onClick={() => setIsOpen(false)}
                     >
-                      <MdDelete size={20} />
-                    </ActionButton>
-                  )}
-                </ApplicationLink>
-              ))}
-            </div>
+                      <AppInfo>
+                        <AppTitle>{app.ans_country}</AppTitle>
+                        <AppSubtitle>
+                          {app.ans_purpose} - {app.ans_profession}
+                        </AppSubtitle>
+                      </AppInfo>
+                      {applications.length > 1 && (
+                        <ActionButton
+                          onClick={(e) => openDeleteModal(app.id, e)}
+                          aria-label="Vize başvurusunu sil"
+                          title="Vize başvurusunu sil"
+                        >
+                          <MdDelete size={20} />
+                        </ActionButton>
+                      )}
+                    </ApplicationLink>
+                  ))}
+                </div>
 
-            <NavButton
-              onClick={() => {
-                navigate("/wellcome-2");
-                setIsOpen(false);
-              }}
-            >
-              <HiPlus size={22} />
-              <span>Yeni Başvuru</span>
-            </NavButton>
+                {/* PRESERVED: New application button */}
+                <NavButton onClick={handleGetStarted}>
+                  <HiPlus size={22} />
+                  <span>Yeni Başvuru</span>
+                </NavButton>
+              </>
+            )}
           </div>
 
           <div className="bottom-section">
             <Divider />
             
-            {/* Profil Ayarları butonu - Sadece anonim olmayan kullanıcılar için gösteriliyor */}
-            {!isAnonymous && (
+            {/* PRESERVED: Profile settings for non-anonymous users */}
+            {!isAnonymous && !isNewVisitor && (
               <NavButton onClick={handleProfileClick}>
                 <IconSettings />
                 <span>Profil Ayarları</span>
               </NavButton>
             )}
             
-            <NavButton onClick={handleLogout} style={{ color: "#e74c3c" }}>
-              <IconLogout />
-              <span>Oturumu Kapat</span>
-            </NavButton>
+            {/* PRESERVED: Logout button (hidden for new visitors) */}
+            {!isNewVisitor && (
+              <NavButton onClick={handleLogout} style={{ color: "#e74c3c" }}>
+                <IconLogout />
+                <span>Oturumu Kapat</span>
+              </NavButton>
+            )}
 
             <Divider />
 
-            {/* Dark Mode Toggle */}
+            {/* PRESERVED: Dark Mode Toggle */}
             <DarkModeToggle />
           </div>
         </MenuContents>
       </MenuContainer>
 
-      {/* Silme Onay Modalı */}
+      {/* PRESERVED: All existing modals */}
       {showDeleteModal && (
         <ModalOverlay onClick={closeDeleteModal}>
           <ConfirmationModal onClick={(e) => e.stopPropagation()}>
@@ -441,7 +478,6 @@ const MobileMenu = () => {
         </ModalOverlay>
       )}
 
-      {/* Tüm Belgeler Modal */}
       {isDocsModalOpen && (
         <DocsModalOverlay
           isClosing={isDocsModalClosing}

@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
+// WellcomeD.jsx - Modal only version
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useUserSelections } from "./useUserSelections";
 import ProfessionSelection from "./ProfessionSelection";
 import Button from "../../ui/Button";
@@ -65,8 +66,7 @@ const ButtonContainer = styled.div`
   gap: 12px;
 `;
 
-function WelcomeD() {
-  const navigate = useNavigate();
+function WellcomeD({ onModalNext }) {
   const { state, dispatch } = useUserSelections();
   const [selectedProfession, setSelectedProfession] = useState(
     state.profession || ""
@@ -116,13 +116,21 @@ function WelcomeD() {
   };
 
   const handleContinue = () => {
+    console.log("WellcomeD handleContinue called");
+    console.log("selectedProfession:", selectedProfession);
+    console.log("onModalNext type:", typeof onModalNext);
+    
     // Meslek seçilmişse bir sonraki sayfaya yönlendir
-    if (selectedProfession) {
-      navigate("/wellcome-5");
+    if (selectedProfession && onModalNext) {
+      console.log("Calling onModalNext from WellcomeD with profession:", selectedProfession);
+      onModalNext();
+    } else {
+      console.log("Cannot proceed - selectedProfession:", selectedProfession, "onModalNext:", !!onModalNext);
     }
   };
 
   const handleModalResponse = (hasSponsor) => {
+    console.log("WellcomeD handleModalResponse called with:", hasSponsor);
     dispatch({ type: "SET_HAS_SPONSOR", payload: hasSponsor });
     setIsModalVisible(false);
 
@@ -133,11 +141,10 @@ function WelcomeD() {
       hasSponsor,
     });
 
-    // Sponsor durumuna göre farklı sayfalara yönlendir
-    if (hasSponsor) {
-      navigate("/wellcome-4a");
-    } else {
-      navigate("/wellcome-5");
+    // Sponsor durumuna göre modal callback'ini çağır
+    if (onModalNext) {
+      console.log("Calling onModalNext from handleModalResponse with sponsor:", hasSponsor);
+      onModalNext(hasSponsor);
     }
   };
 
@@ -149,7 +156,7 @@ function WelcomeD() {
       // Modal kapatıldığında meslek seçimini sıfırla
       setSelectedProfession("");
       dispatch({ type: "SET_PROFESSION", payload: "" });
-      
+
       // Clear from localStorage as well
       const existingSelections = AnonymousDataService.getUserSelections();
       AnonymousDataService.saveUserSelections({
@@ -208,4 +215,4 @@ function WelcomeD() {
   );
 }
 
-export default WelcomeD;
+export default WellcomeD;

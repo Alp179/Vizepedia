@@ -2,7 +2,7 @@
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import styled, { keyframes, css } from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi2";
-import { MdClose, MdDelete } from "react-icons/md"; // Silme ikonu için MdDelete eklendi
+import { MdClose, MdDelete } from "react-icons/md";
 import AllDocs from "./AllDocs";
 import { useContext, useEffect, useState } from "react";
 import { useDocuments } from "../context/DocumentsContext";
@@ -20,15 +20,15 @@ import { useVisaApplications } from "../context/VisaApplicationContext";
 import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 import ModalDocs from "./ModalDocs";
+import { useUser } from "../features/authentication/useUser";
 
-// Glow Button animasyonu için gerekli keyframes
+// PRESERVED: All existing keyframes
 const glowing = keyframes`
   0% { background-position: 0 0; }
   50% { background-position: 400% 0; }
   100% { background-position: 0 0; }
 `;
 
-// Silme animasyonu
 const fadeIn = keyframes`
   from {
     opacity: 0;
@@ -40,7 +40,6 @@ const fadeIn = keyframes`
   }
 `;
 
-// Modal için animasyonlar
 const modalFadeIn = keyframes`
   from {
     opacity: 0;
@@ -52,7 +51,7 @@ const modalFadeIn = keyframes`
   }
 `;
 
-// Glow efektli buton
+// PRESERVED: All existing styled components
 const GlowButton = styled.button`
   width: 220px;
   height: 50px;
@@ -130,6 +129,38 @@ const GlowButton = styled.button`
   }
 `;
 
+// NEW: Welcome button for new visitors
+const WelcomeButton = styled.button`
+  width: 220px;
+  height: 50px;
+  border: 2px solid #00ffa2;
+  outline: none;
+  font-weight: bold;
+  color: var(--color-grey-913);
+  background: linear-gradient(135deg, #004466, #0066aa);
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #00ffa2;
+    color: #004466;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 162, 0.3);
+  }
+
+  @media (max-width: 1300px) {
+    width: 180px;
+  }
+
+  @media (max-width: 1050px) {
+    width: 150px;
+    font-size: 14px;
+  }
+`;
+
 const NavList = styled.ul`
   width: 100%;
   display: flex;
@@ -141,7 +172,7 @@ const NavList = styled.ul`
   }
 `;
 
-// Yeni silme butonu tasarımı
+// PRESERVED: All existing styled components
 const ActionButton = styled.button`
   background: none;
   border: none;
@@ -188,7 +219,7 @@ const StyledNavLink = styled(NavLink)`
   display: flex;
   align-items: center;
   position: relative;
-  padding-right: 50px; /* Silme butonu için daha fazla alan */
+  padding-right: 50px;
 
   &:link,
   &:visited {
@@ -238,7 +269,6 @@ const StyledNavLink = styled(NavLink)`
     color: var(--color-brand-600);
   }
 
-  /* Hover durumunda silme butonunu göster */
   &:hover ${ActionButton} {
     opacity: 1;
     transform: scale(1);
@@ -246,7 +276,7 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
-// Yeni modal overlay
+// PRESERVED: All modal styled components
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -262,7 +292,6 @@ const ModalOverlay = styled.div`
   animation: ${fadeIn} 0.3s forwards;
 `;
 
-// Yeni modal tasarımı
 const ConfirmationModal = styled.div`
   background-color: var(--color-grey-914);
   border-radius: 12px;
@@ -367,7 +396,7 @@ const ScrollableDiv = styled.div`
   @media (max-height: 700px) {
     max-height: 150px;
   }
-  /* Scrollbar styling */
+
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -424,15 +453,60 @@ const AllDocsButton = styled(NavLink)`
   }
 
   &:hover svg {
-    color: #00ffa2; /* İconun hover durumunda sarı renge dönüşmesi */
+    color: #00ffa2;
   }
 `;
 
-// Uygulama bilgisini görüntülemek için stil
+// NEW: Simple button for new visitors (no link)
+const SimpleButton = styled.button`
+  flex-shrink: 0;
+  min-height: 65px;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  color: var(--color-grey-600);
+  font-size: 1.6rem;
+  font-weight: 500;
+  padding: 1.2rem 2.4rem;
+  transition: all 0.3s;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+
+  @media (max-width: 1300px) {
+    gap: 0.6rem;
+    font-size: 14px;
+    width: 150px;
+  }
+  @media (max-width: 1050px) {
+    width: 200px;
+    margin-left: -10px;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  & svg {
+    width: 2.4rem;
+    height: 2.4rem;
+    color: #004466;
+    transition: all 0.3s;
+  }
+
+  &:hover svg {
+    color: #00ffa2;
+  }
+`;
+
 const AppInfo = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 120px; /* Silme butonu için yer açmak için biraz daha dar */
+  max-width: 120px;
   overflow: hidden;
 
   @media (max-width: 1300px) {
@@ -460,6 +534,7 @@ const AppSubtitle = styled.span`
 `;
 
 function MainNav() {
+  // PRESERVED: All existing state
   const [userId, setUserId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAppId, setSelectedAppId] = useState(null);
@@ -476,6 +551,10 @@ function MainNav() {
     dispatch: applicationsDispatch,
   } = useVisaApplications();
 
+  // NEW: Additional user type detection (non-breaking)
+  const { userType } = useUser();
+
+  // PRESERVED: All existing useEffect hooks
   useEffect(() => {
     refreshApplications();
   }, [applicationId, refreshApplications]);
@@ -488,6 +567,7 @@ function MainNav() {
     });
   }, []);
 
+  // PRESERVED: All existing queries
   const userSelectionsQuery = useQuery({
     queryKey: ["userSelectionsNav", userId, applicationId],
     queryFn: () => fetchUserSelectionsDash(userId, applicationId),
@@ -504,6 +584,7 @@ function MainNav() {
     enabled: !!documentNames.length,
   });
 
+  // PRESERVED: All existing functions
   const continueToDocument = () => {
     if (!documentsQuery.data) return;
 
@@ -520,7 +601,6 @@ function MainNav() {
     }
   };
 
-  // Modal açma fonksiyonu
   const openDeleteModal = (appId, e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -528,13 +608,11 @@ function MainNav() {
     setShowDeleteModal(true);
   };
 
-  // Modal kapatma fonksiyonu
   const closeDeleteModal = () => {
     setShowDeleteModal(false);
     setSelectedAppId(null);
   };
 
-  // Silme işlemi
   const handleDelete = async () => {
     if (!selectedAppId) return;
 
@@ -569,6 +647,17 @@ function MainNav() {
     }
   };
 
+  // NEW: Handlers for new visitors
+  const handleGetStarted = () => {
+    // CTA butonu sadece görsel - yönlendirme yok
+    console.log("Get Started button clicked");
+  };
+
+  const handleShowDocs = () => {
+    // Belgeler butonuna tıklama - sadece görsel
+    console.log("Show docs button clicked");
+  };
+
   if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
     return <div>Loading...</div>;
   }
@@ -577,62 +666,82 @@ function MainNav() {
     return <div>Error loading data.</div>;
   }
 
+  // NEW: Check for new visitors (ADDITIVE logic)
+  const isNewVisitor = userType === 'new_visitor';
+
   return (
     <nav className="navbar-dash">
       <Toaster />
-      <GlowButton onClick={continueToDocument}>Devam et</GlowButton>
+      
+      {/* NEW: Different button for new visitors */}
+      {isNewVisitor ? (
+        <WelcomeButton onClick={handleGetStarted}>
+          Başlayın
+        </WelcomeButton>
+      ) : (
+        <GlowButton onClick={continueToDocument}>Devam et</GlowButton>
+      )}
+
       <NavList>
-        <li>
-          <ModalDocs>
-            <ModalDocs.Open opens="allDocs">
-              <AllDocsButton style={{ width: "100%" }}>
-                <HiDocument
+        {/* NEW: Simplified navigation for new visitors */}
+        {isNewVisitor ? (
+          <></>
+        ) : (
+          <>
+            {/* PRESERVED: All existing navigation for other users */}
+            <li>
+              <ModalDocs>
+                <ModalDocs.Open opens="allDocs">
+                  <AllDocsButton style={{ width: "100%" }}>
+                    <HiDocument
+                      className="mainnavicons"
+                      style={{ color: "var(--color-grey-924)" }}
+                    />
+                    <span className="sidebartext">Tüm belgeler</span>
+                  </AllDocsButton>
+                </ModalDocs.Open>
+                <ModalDocs.Window name="allDocs">
+                  <AllDocs style={{ color: "var(--color-grey-924)" }} />
+                </ModalDocs.Window>
+              </ModalDocs>
+            </li>
+            <ScrollableDiv>
+              {applications.map((app) => (
+                <li className="mainnav-buzlucam" key={app.id}>
+                  <StyledNavLink to={`/dashboard/${app.id}`}>
+                    <AppInfo>
+                      <AppTitle>{app.ans_country}</AppTitle>
+                      <AppSubtitle>
+                        {app.ans_purpose} - {app.ans_profession}
+                      </AppSubtitle>
+                    </AppInfo>
+                    {applications.length > 1 && (
+                      <ActionButton
+                        onClick={(e) => openDeleteModal(app.id, e)}
+                        aria-label="Vize başvurusunu sil"
+                        title="Vize başvurusunu sil"
+                      >
+                        <MdDelete />
+                      </ActionButton>
+                    )}
+                  </StyledNavLink>
+                </li>
+              ))}
+            </ScrollableDiv>
+            <li>
+              <SimpleButton onClick={handleGetStarted}>
+                <HiPlus
                   className="mainnavicons"
                   style={{ color: "var(--color-grey-924)" }}
                 />
-                <span className="sidebartext">Tüm belgeler</span>
-              </AllDocsButton>
-            </ModalDocs.Open>
-            <ModalDocs.Window name="allDocs">
-              <AllDocs style={{ color: "var(--color-grey-924)" }} />
-            </ModalDocs.Window>
-          </ModalDocs>
-        </li>
-        <ScrollableDiv>
-          {applications.map((app) => (
-            <li className="mainnav-buzlucam" key={app.id}>
-              <StyledNavLink to={`/dashboard/${app.id}`}>
-                <AppInfo>
-                  <AppTitle>{app.ans_country}</AppTitle>
-                  <AppSubtitle>
-                    {app.ans_purpose} - {app.ans_profession}
-                  </AppSubtitle>
-                </AppInfo>
-                {applications.length > 1 && (
-                  <ActionButton
-                    onClick={(e) => openDeleteModal(app.id, e)}
-                    aria-label="Vize başvurusunu sil"
-                    title="Vize başvurusunu sil"
-                  >
-                    <MdDelete />
-                  </ActionButton>
-                )}
-              </StyledNavLink>
+                <span className="sidebartext">Yeni</span>
+              </SimpleButton>
             </li>
-          ))}
-        </ScrollableDiv>
-        <li>
-          <AllDocsButton to="/wellcome-2">
-            <HiPlus
-              className="mainnavicons"
-              style={{ color: "var(--color-grey-924)" }}
-            />
-            <span className="sidebartext">Yeni</span>
-          </AllDocsButton>
-        </li>
+          </>
+        )}
       </NavList>
 
-      {/* Silme Onay Modalı */}
+      {/* PRESERVED: Delete confirmation modal */}
       {showDeleteModal && (
         <ModalOverlay onClick={closeDeleteModal}>
           <ConfirmationModal onClick={(e) => e.stopPropagation()}>

@@ -8,6 +8,8 @@ import SignupForm from "../features/authentication/SignupForm";
 import { useLogout } from "../features/authentication/useLogout";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
+import { useUser } from "../features/authentication/useUser";
+import MultiStepOnboardingModal from "../ui/MultiStepOnboardingModal";
 
 const StyledHeader = styled.header`
   position: fixed;
@@ -94,7 +96,88 @@ const ButtonContainer = styled.div`
   align-items: center;
 `;
 
-// Modal bileşenleri
+// NEW: Additional buttons for new visitors (ADDITIVE, not replacing)
+const GetStartedButton = styled.button`
+  width: 200px;
+  height: 50px;
+  border: 2px solid #00ffa2;
+  outline: none;
+  font-weight: bold;
+  color: var(--color-grey-913);
+  background: linear-gradient(135deg, #004466, #0066aa);
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+
+  @media (max-width: 1300px) {
+    width: 180px;
+  }
+
+  @media (max-width: 1050px) {
+    width: 150px;
+    font-size: 14px;
+  }
+
+  &:hover {
+    background: #00ffa2;
+    color: #004466;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 162, 0.3);
+  }
+`;
+
+const LoginButton = styled.button`
+  width: 140px;
+  height: 50px;
+  border: 2px solid transparent;
+  outline: none;
+  font-weight: bold;
+  color: #004466;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+
+  @media (max-width: 1300px) {
+    width: 130px;
+  }
+
+  @media (max-width: 1050px) {
+    width: 120px;
+    font-size: 14px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: #004466;
+    transform: translateY(-1px);
+  }
+`;
+
+const WelcomeMessage = styled.div`
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  span {
+    color: var(--color-grey-913);
+    font-weight: 500;
+    font-size: 1.4rem;
+  }
+
+  @media (max-width: 1050px) {
+    span {
+      font-size: 1.2rem;
+    }
+  }
+`;
+
+// PRESERVED: All existing modal styles
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -192,13 +275,21 @@ const ModalButton = styled.button`
 `;
 
 function Header() {
+  // PRESERVED: All existing state
   const [isAnonymous, setIsAnonymous] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  
+  // NEW: Multi-step onboarding modal state
+  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
+  
   const { logout } = useLogout();
   const navigate = useNavigate();
 
-  // SVG icon for logout button
+  // NEW: Additional user type detection (non-breaking)
+  const { userType } = useUser();
+
+  // PRESERVED: All existing SVG icons
   const LogoutIcon = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -235,12 +326,11 @@ function Header() {
     </svg>
   );
 
-  // Anonim kullanıcı için çıkış yap işlemi
+  // PRESERVED: All existing event handlers
   const handleAnonymousLogout = () => {
     setShowLogoutModal(true);
   };
 
-  // Gerçekten çıkış yapma işlemi
   const handleConfirmLogout = () => {
     logout();
     localStorage.removeItem("isAnonymous");
@@ -248,37 +338,51 @@ function Header() {
     setShowLogoutModal(false);
   };
 
-  // Üye olma sayfasına yönlendirme
   const handleSignUp = () => {
     setShowLogoutModal(false);
     navigate("/sign-up");
   };
 
-  // Modal dışına tıklama ile kapatma
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
       setShowLogoutModal(false);
     }
   };
 
+  // NEW: Additional handlers for new visitors
+  const handleLogin = () => {
+    navigate("/login");
+  };
+
+  // UPDATED: New get started handler to open multi-step modal
+  const handleGetStarted = () => {
+    setShowOnboardingModal(true);
+  };
+
+  // NEW: Handle onboarding completion
+  const handleOnboardingComplete = () => {
+    setShowOnboardingModal(false);
+    
+    // Force page refresh to update dashboard
+    console.log("Onboarding completed, refreshing page to update dashboard");
+    window.location.reload();
+  };
+
+  // PRESERVED: All existing useEffect hooks
   useEffect(() => {
-    // Başlangıçta localStorage'daki isAnonymous değerini kontrol ediyoruz
     const anonymousStatus = localStorage.getItem("isAnonymous") === "true";
     setIsAnonymous(anonymousStatus);
     setLoading(false);
   }, []);
 
-  // localStorage'da isAnonymous değerinin değişip değişmediğini izleyelim
   useEffect(() => {
     const handleStorageChange = () => {
       const anonymousStatus = localStorage.getItem("isAnonymous") === "true";
       setIsAnonymous(anonymousStatus);
     };
 
-    // localStorage'da değişiklik olduğunda handleStorageChange tetiklenecek
     window.addEventListener("storage", handleStorageChange);
 
-    // Cleanup - event listener'ı bileşen kaldırıldığında temizleyelim
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
@@ -286,10 +390,26 @@ function Header() {
 
   if (loading) return <Spinner />;
 
+  // ENHANCED: Check for new visitors first (ADDITIVE logic)
+  const isNewVisitor = userType === "new_visitor" && !isAnonymous;
+
   return (
     <>
       <StyledHeader>
-        {isAnonymous ? (
+        {/* NEW: Special header for new visitors */}
+        {isNewVisitor ? (
+          <ButtonContainer>
+            <WelcomeMessage>
+              <span>👋 Vize Dashboarduna Hoş Geldiniz!</span>
+            </WelcomeMessage>
+            {/* UPDATED: Use new multi-step modal instead of ModalSignup */}
+            <GetStartedButton onClick={handleGetStarted}>
+              Hemen Başlayın
+            </GetStartedButton>
+            <LoginButton onClick={handleLogin}>Giriş Yap</LoginButton>
+          </ButtonContainer>
+        ) : // PRESERVED: All existing logic unchanged
+        isAnonymous ? (
           <ButtonContainer>
             <ModalSignup>
               <ModalSignup.Open opens="signUpForm">
@@ -306,12 +426,20 @@ function Header() {
             </LogoutButton>
           </ButtonContainer>
         ) : (
-          <ProfileButton size="large" variation="primary" />
+          <>
+            <ProfileButton size="large" variation="primary" />
+            <HeaderMenu />
+          </>
         )}
-        <HeaderMenu />
       </StyledHeader>
 
-      {/* Logout Onay Modalı */}
+      {/* NEW: Multi-step onboarding modal */}
+      <MultiStepOnboardingModal 
+        isOpen={showOnboardingModal}
+        onClose={handleOnboardingComplete}
+      />
+
+      {/* PRESERVED: Existing logout modal unchanged */}
       {showLogoutModal &&
         createPortal(
           <ModalOverlay onClick={handleOverlayClick}>

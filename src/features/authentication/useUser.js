@@ -36,28 +36,28 @@ export function useUser() {
 
   // CONDITIONAL LOGIC AFTER hooks - this is safe
   if (isBot) {
-    console.log("🤖 Bot detected - returning bot data");
+    console.log('🤖 Bot detected - returning bot data');
     return {
       isLoading: false,
       user: null,
       answers: null,
       isAuthenticated: false,
-      userType: "bot",
+      userType: 'bot',
       refetchUser: () => Promise.resolve(),
       refetchAnswers: () => Promise.resolve(),
     };
   }
 
   if (isAnonymous) {
-    console.log("👤 Anonymous user detected - using localStorage data");
+    //console.log('👤 Anonymous user detected - using localStorage data');
     const anonymousAnswers = AnonymousDataService.getUserAnswers();
-
+    
     return {
       isLoading: false,
       user: null,
       answers: anonymousAnswers,
       isAuthenticated: false,
-      userType: "anonymous",
+      userType: 'anonymous',
       refetchUser: () => Promise.resolve(),
       refetchAnswers: () => {
         return Promise.resolve(AnonymousDataService.getUserAnswers());
@@ -67,13 +67,13 @@ export function useUser() {
 
   // Return loading state for potential authenticated users
   if (isUserLoading) {
-    console.log("⏳ Loading user data...");
+    console.log('⏳ Loading user data...');
     return {
       isLoading: true,
       user: null,
       answers: null,
       isAuthenticated: false,
-      userType: "loading",
+      userType: 'loading',
       refetchUser,
       refetchAnswers: () => Promise.resolve(),
     };
@@ -81,26 +81,26 @@ export function useUser() {
 
   // Return authenticated user data if found
   if (user) {
-    console.log("✅ Authenticated user found:", user.email);
+    console.log('✅ Authenticated user found:', user.email);
     return {
       isLoading: isAnswersLoading,
       user,
       answers,
       isAuthenticated: user?.role === "authenticated",
-      userType: "authenticated",
+      userType: 'authenticated',
       refetchUser,
       refetchAnswers,
     };
   }
 
   // Return new visitor if no user found and not loading
-  console.log("👋 New visitor - no authentication");
+  console.log('👋 New visitor - no authentication');
   return {
     isLoading: false,
     user: null,
     answers: null,
     isAuthenticated: false,
-    userType: "new_visitor",
+    userType: 'new_visitor',
     refetchUser,
     refetchAnswers: () => Promise.resolve(),
   };

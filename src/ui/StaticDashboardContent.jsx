@@ -25,6 +25,7 @@ const StaticContainer = styled.div`
   @media (max-width: 710px) {
     padding: 20px 16px;
     margin-left: 0;
+    margin-top: 55px;
   }
 `;
 

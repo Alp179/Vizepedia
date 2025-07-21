@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
+// WellcomeC.jsx - Modal only version
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useUserSelections } from "./useUserSelections";
 import PurposeSelection from "./PurposeSelection";
 import Heading from "../../ui/Heading";
@@ -7,8 +8,14 @@ import Button from "../../ui/Button";
 import styled from "styled-components";
 import { AnonymousDataService } from "../../utils/anonymousDataService";
 
-function WellcomeC() {
-  const navigate = useNavigate();
+const QuestionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+`;
+
+function WellcomeC({ onModalNext }) {
   const { state, dispatch } = useUserSelections();
   const [selectedPurpose, setSelectedPurpose] = useState(state.purpose);
 
@@ -24,7 +31,7 @@ function WellcomeC() {
   const handlePurposeChange = (purpose) => {
     setSelectedPurpose(purpose);
     dispatch({ type: "SET_PURPOSE", payload: purpose });
-    
+
     // Save to anonymous user service
     const existingSelections = AnonymousDataService.getUserSelections();
     AnonymousDataService.saveUserSelections({
@@ -34,19 +41,19 @@ function WellcomeC() {
   };
 
   const handleContinue = () => {
-    // Generate application ID when user completes basic selections
-    if (!localStorage.getItem(AnonymousDataService.STORAGE_KEYS.APPLICATION_ID)) {
-      AnonymousDataService.getApplicationId();
-    }
-    navigate("/wellcome-4");
-  };
+    if (selectedPurpose) {
+      // Generate application ID when user completes basic selections
+      if (
+        !localStorage.getItem(AnonymousDataService.STORAGE_KEYS.APPLICATION_ID)
+      ) {
+        AnonymousDataService.getApplicationId();
+      }
 
-  const QuestionContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  `;
+      if (onModalNext) {
+        onModalNext();
+      }
+    }
+  };
 
   return (
     <>

@@ -1,16 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useContext, useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import styled, { keyframes, css } from "styled-components";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
-import { getDocumentsForSelections } from "../utils/documentsFilter";
-import { fetchDocumentDetails } from "../utils/documentFetch";
-import Spinner from "./Spinner";
-import { getCurrentUser } from "../services/apiAuth";
-import { DocumentsContext } from "../context/DocumentsContext";
-import { fetchCompletedDocuments } from "../utils/supabaseActions";
 
 // Icon Components
 const IconRocket = () => (
@@ -376,7 +368,7 @@ const DocumentListContainer = styled.div`
   
   @media (max-width: 480px) {
     padding-left: 6px;
-    padding-right: 4px; /* Sağ tarafta da biraz padding ekleyelim */
+    padding-right: 4px;
     width: 100%;
   }
   
@@ -411,16 +403,15 @@ const DocsGrid = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 8px 2px 8px 0; /* Sağ ve sol padding azaltıldı */
+    padding: 8px 2px 8px 0;
     width: 100%;
   }
 
-  /* Mobil görünümlerde grid düzenini tek sütuna değiştiriyoruz */
   @media (max-width: 480px) {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 8px 2px 8px 0; /* Sağ ve sol padding azaltıldı */
+    padding: 8px 2px 8px 0;
     width: 100%;
   }
   
@@ -451,7 +442,7 @@ const DocumentItem = styled.div`
         ? "#8533ff"
         : "transparent"};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  min-height: 90px; /* Minimum yükseklik belirleyerek içeriğin sığmasını sağlama */
+  min-height: 90px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -495,15 +486,15 @@ const DocumentItem = styled.div`
   @media (max-width: 768px) {
     padding: 12px;
     gap: 6px;
-    width: 100%; /* Tam genişlik */
-    margin-right: 0; /* Sağ kenar boşluğunu kaldırma */
+    width: 100%;
+    margin-right: 0;
   }
 
   @media (max-width: 480px) {
     padding: 12px;
     gap: 6px;
-    width: 100%; /* Tam genişlik */
-    margin-right: 0; /* Sağ kenar boşluğunu kaldırma */
+    width: 100%;
+    margin-right: 0;
   }
   
   @media (max-width: 345px) {
@@ -798,15 +789,16 @@ const StepPageCont = styled.div`
   }
 `;
 
-const StepIndicator = () => {
-  const [userId, setUserId] = useState(null);
-  const { id: applicationId } = useParams();
+// UPDATED: Prop-based StepIndicator
+const StepIndicator = ({ 
+  documents = [], 
+  completedDocuments = {}, 
+  applicationId,
+  isLoading = false,
+  isError = false 
+}) => {
   const navigate = useNavigate();
   const { setSelectedDocument } = useSelectedDocument();
-  const {
-    state: { completedDocuments },
-    dispatch,
-  } = useContext(DocumentsContext);
   const [currentStep, setCurrentStep] = useState(null);
 
   // Kategori açılıp kapanma durumu - başlangıçta tüm kategoriler kapalı
@@ -825,49 +817,6 @@ const StepIndicator = () => {
   };
 
   useEffect(() => {
-    getCurrentUser().then((user) => {
-      if (user) {
-        setUserId(user.id);
-        fetchCompletedDocuments(user.id, applicationId).then((data) => {
-          const completedDocsMap = data.reduce((acc, doc) => {
-            if (!acc[applicationId]) acc[applicationId] = {};
-            acc[applicationId][doc.document_name] = true;
-            return acc;
-          }, {});
-          dispatch({
-            type: "SET_COMPLETED_DOCUMENTS",
-            payload: completedDocsMap,
-          });
-        });
-      }
-    });
-  }, [applicationId, dispatch]);
-
-  const {
-    data: userSelections,
-    isLoading: isLoadingUserSelections,
-    isError: isErrorUserSelections,
-  } = useQuery({
-    queryKey: ["userSelectionsStep", userId, applicationId],
-    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
-    enabled: !!userId && !!applicationId,
-  });
-
-  const documentNames = userSelections
-    ? getDocumentsForSelections(userSelections)
-    : [];
-
-  const {
-    data: documents,
-    isLoading: isLoadingDocuments,
-    isError: isErrorDocuments,
-  } = useQuery({
-    queryKey: ["documentDetailsStep", documentNames],
-    queryFn: () => fetchDocumentDetails(documentNames),
-    enabled: !!documentNames.length,
-  });
-
-  useEffect(() => {
     if (documents && documents.length > 0) {
       const firstIncompleteIndex = documents.findIndex(
         (doc) => !completedDocuments[applicationId]?.[doc.docName]
@@ -876,9 +825,9 @@ const StepIndicator = () => {
     }
   }, [documents, completedDocuments, applicationId]);
 
-  if (isLoadingUserSelections || isLoadingDocuments) return <Spinner />;
-  if (isErrorUserSelections || isErrorDocuments || !documents)
-    return <div>Error loading data.</div>;
+  if (isLoading) return <div>Loading documents...</div>;
+  if (isError || !documents) return <div>Error loading documents.</div>;
+  if (!documents.length) return <div>No documents found.</div>;
 
   const handleContinue = () => {
     if (!documents || documents.length === 0 || currentStep === -1) return;
@@ -888,11 +837,11 @@ const StepIndicator = () => {
 
       // Kategori bazında yönlendirme yapıyoruz
       if (selectedDocument.docStage === "hazir") {
-        navigate(`/ready-documents/${applicationId}`); // Hemen Hazır belgeleri için yeni sayfa
+        navigate(`/ready-documents/${applicationId}`);
       } else if (selectedDocument.docStage === "planla") {
         navigate(`/planned-documents/${applicationId}`);
       } else if (selectedDocument.docStage === "bizimle") {
-        navigate(`/withus-documents/${applicationId}`); // Diğer belgeler için eski sayfa
+        navigate(`/withus-documents/${applicationId}`);
       }
     }
   };
@@ -904,11 +853,11 @@ const StepIndicator = () => {
 
       // Kategori bazında yönlendirme yapıyoruz
       if (selectedDocument.docStage === "hazir") {
-        navigate(`/ready-documents/${applicationId}`); // Hemen Hazır belgeleri için yeni sayfa
+        navigate(`/ready-documents/${applicationId}`);
       } else if (selectedDocument.docStage === "planla") {
-        navigate(`/planned-documents/${applicationId}`); // Hemen Hazır belgeleri için yeni sayfa
+        navigate(`/planned-documents/${applicationId}`);
       } else if (selectedDocument.docStage === "bizimle"){
-        navigate(`/withus-documents/${applicationId}`); // Diğer belgeler için eski sayfa
+        navigate(`/withus-documents/${applicationId}`);
       }
     }
   };

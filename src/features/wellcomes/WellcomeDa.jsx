@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
+// WellcomeDa.jsx - Modal only version
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useUserSelections } from "./useUserSelections";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
@@ -7,8 +8,14 @@ import styled from "styled-components";
 import SponsorProfessionSelection from "./SponsorProfessionSelection";
 import { AnonymousDataService } from "../../utils/anonymousDataService";
 
-function WellcomeDa() {
-  const navigate = useNavigate();
+const QuestionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+`;
+
+function WellcomeDa({ onModalNext }) {
   const { state, dispatch } = useUserSelections();
   const [selectedSponsorProfession, setSelectedSponsorProfession] = useState(
     state.sponsorProfession || ""
@@ -36,15 +43,17 @@ function WellcomeDa() {
   };
 
   const handleNext = () => {
-    navigate("/wellcome-5");
+    console.log("WellcomeDa handleNext called");
+    console.log("selectedSponsorProfession:", selectedSponsorProfession);
+    console.log("onModalNext type:", typeof onModalNext);
+    
+    if (selectedSponsorProfession && onModalNext) {
+      console.log("Calling onModalNext from WellcomeDa");
+      onModalNext();
+    } else {
+      console.log("Cannot proceed - selectedSponsorProfession:", selectedSponsorProfession, "onModalNext:", !!onModalNext);
+    }
   };
-
-  const QuestionContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-  `;
 
   // Kaldırılacak meslekler listesi
   const excludedProfessions = ["Çocuk (0-6 yaş)", "Öğrenci"];
@@ -73,6 +82,5 @@ function WellcomeDa() {
     </>
   );
 }
-
 
 export default WellcomeDa;

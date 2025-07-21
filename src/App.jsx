@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
-
 // Mevcut import'lar
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
@@ -166,9 +165,7 @@ function RedirectIfLoggedIn({ children }) {
         const currentUser = await getCurrentUser();
         if (currentUser) {
           // Authenticated user varsa, onboarding check'i yapalım
-          const latestApplication = await fetchLatestApplication(
-            currentUser.id
-          );
+          const latestApplication = await fetchLatestApplication(currentUser.id);
           if (latestApplication) {
             localStorage.setItem("latestApplicationId", latestApplication.id);
             navigate(`/dashboard/${latestApplication.id}`);
@@ -245,4 +242,6 @@ function App() {
   );
 }
 
+
 export default App;
+

@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useCallback,
 } from "react";
 import { useUser } from "../features/authentication/useUser";
 import { useQuery } from "@tanstack/react-query";
@@ -68,29 +69,28 @@ export const VisaApplicationProvider = ({ children }) => {
     queryKey: ["userSelectionsAtMainNav", userId],
     queryFn: () => fetchUserSelectionsNav(userId),
     // CRITICAL: Only enable for authenticated users with real userId
-    enabled:
-      !!userId &&
-      userType === "authenticated" &&
-      userId !== "anonymous" &&
-      !AnonymousDataService.isBotUser(),
+    enabled: !!userId && 
+             userType === 'authenticated' && 
+             userId !== 'anonymous' && 
+             !AnonymousDataService.isBotUser(),
     retry: 1, // Reduce retries to minimize 400 errors
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   // Handle different user types safely
   useEffect(() => {
-    if (userType === "bot" || userType === "new_visitor") {
+    if (userType === 'bot' || userType === 'new_visitor') {
       // For bots and new visitors, set empty applications
-      console.log("📋 VisaApplicationContext: No applications for", userType);
+      console.log('📋 VisaApplicationContext: No applications for', userType);
       dispatch({ type: "SET_APPLICATIONS", payload: [] });
       return;
     }
 
-    if (userType === "anonymous") {
+    if (userType === 'anonymous') {
       // For anonymous users, try to get data from localStorage
       const anonymousData = AnonymousDataService.getUserAnswers();
       if (anonymousData && anonymousData.length > 0) {
-        console.log("📋 VisaApplicationContext: Using anonymous data");
+        console.log('📋 VisaApplicationContext: Using anonymous data');
         dispatch({ type: "SET_APPLICATIONS", payload: anonymousData });
       } else {
         dispatch({ type: "SET_APPLICATIONS", payload: [] });
@@ -98,23 +98,37 @@ export const VisaApplicationProvider = ({ children }) => {
       return;
     }
 
-    if (userType === "authenticated" && isSuccess && userAnswers) {
-      console.log("📋 VisaApplicationContext: Using authenticated data");
+    if (userType === 'authenticated' && isSuccess && userAnswers) {
+      console.log('📋 VisaApplicationContext: Using authenticated data');
       dispatch({ type: "SET_APPLICATIONS", payload: userAnswers });
     }
   }, [userAnswers, isSuccess, userType]);
 
+  // FIXED: Wrap with useCallback to prevent infinite loops
+  const refreshApplications = useCallback(async () => {
+    if (userType === 'authenticated' && userId) {
+      console.log('🔄 VisaApplicationContext: Refreshing applications');
+      await refetch();
+    } else if (userType === 'anonymous') {
+      // For anonymous users, reload from localStorage
+      const anonymousData = AnonymousDataService.getUserAnswers();
+      if (anonymousData) {
+        dispatch({ type: "SET_APPLICATIONS", payload: anonymousData });
+      }
+    } else {
+      console.log('📋 VisaApplicationContext: No refresh needed for', userType);
+    }
+  }, [userType, userId, refetch]); // STABLE dependencies
+
   // SAFE: Only refetch for authenticated users
   useEffect(() => {
-    if (applicationId && userType === "authenticated" && userId) {
-      console.log(
-        "🔄 VisaApplicationContext: Refetching for application ID change"
-      );
-      refetch();
+    if (applicationId && userType === 'authenticated' && userId) {
+      console.log('🔄 VisaApplicationContext: Refetching for application ID change');
+      refreshApplications();
     }
-  }, [applicationId, userType, userId, refetch]);
+  }, [applicationId, userType, userId, refreshApplications]);
 
-  const fetchFirmLocationData = async (country) => {
+  const fetchFirmLocationData = useCallback(async (country) => {
     try {
       const location = await fetchFirmLocation(country);
       setFirmLocation(location);
@@ -122,23 +136,7 @@ export const VisaApplicationProvider = ({ children }) => {
       console.error("Error fetching firm location:", error);
       setFirmLocation(null);
     }
-  };
-
-  // SAFE: Only refresh for authenticated users
-  const refreshApplications = async () => {
-    if (userType === "authenticated" && userId) {
-      console.log("🔄 VisaApplicationContext: Refreshing applications");
-      await refetch();
-    } else if (userType === "anonymous") {
-      // For anonymous users, reload from localStorage
-      const anonymousData = AnonymousDataService.getUserAnswers();
-      if (anonymousData) {
-        dispatch({ type: "SET_APPLICATIONS", payload: anonymousData });
-      }
-    } else {
-      console.log("📋 VisaApplicationContext: No refresh needed for", userType);
-    }
-  };
+  }, []);
 
   // SAFE: Provide appropriate data based on user type
   const contextValue = {
@@ -149,8 +147,8 @@ export const VisaApplicationProvider = ({ children }) => {
     refreshApplications,
     // Add user type info for components that need it
     userType,
-    isAuthenticated: userType === "authenticated",
-    canMakeAPIRequests: userType === "authenticated" && !!userId,
+    isAuthenticated: userType === 'authenticated',
+    canMakeAPIRequests: userType === 'authenticated' && !!userId,
   };
 
   return (

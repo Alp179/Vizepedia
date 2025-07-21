@@ -9,14 +9,17 @@ import { useUser } from "../authentication/useUser";
 import Spinner from "../../ui/Spinner";
 import Heading from "../../ui/Heading";
 import { AnonymousDataService } from "../../utils/anonymousDataService";
+import PropTypes from "prop-types";
 
-function ControlScreen() {
+function ControlScreen({ onModalComplete }) {
   const { state, dispatch } = useUserSelections();
   const navigate = useNavigate();
   const { user, isUserLoading } = useUser();
 
-  // Check if user is anonymous
+  // Check if user is anonymous OR in modal flow without authentication
   const isAnonymous = AnonymousDataService.isAnonymousUser();
+  const isInModalFlow = !!onModalComplete;
+  const shouldTreatAsAnonymous = isAnonymous || (isInModalFlow && !user);
 
   useEffect(() => {
     const allSelectionsMade =
@@ -28,14 +31,21 @@ function ControlScreen() {
       state.accommodation &&
       (state.hasSponsor === false || state.sponsorProfession); // Sponsor kontrolü
       
-    if (!allSelectionsMade) {
+    if (!allSelectionsMade && !onModalComplete) {
+      // Only redirect if not in modal
       navigate("/wellcome");
     }
-  }, [state, navigate]);
+  }, [state, navigate, onModalComplete]);
 
   const handleSubmit = async () => {
-    // Handle anonymous users
-    if (isAnonymous || !user) {
+    // Handle anonymous users OR modal flow users without authentication
+    if (shouldTreatAsAnonymous) {
+      // NOW set the anonymous flag when user actually completes onboarding
+      if (!isAnonymous && isInModalFlow) {
+        console.log("Setting anonymous flag after completing modal onboarding");
+        localStorage.setItem("isAnonymous", "true");
+      }
+      
       // Save to localStorage instead of Supabase
       const userAnswers = AnonymousDataService.saveUserAnswers({
         country: state.country,
@@ -53,8 +63,13 @@ function ControlScreen() {
       // Clear visa check modal for anonymous users
       localStorage.removeItem(`visa_check_modal_shown_${userAnswers.id}`);
       
-      // Navigate to dashboard with anonymous application ID
-      navigate(`/dashboard/${userAnswers.id}`);
+      if (onModalComplete) {
+        // In modal flow - close modal and stay on dashboard
+        onModalComplete();
+      } else {
+        // Navigate to dashboard with anonymous application ID
+        navigate(`/dashboard/${userAnswers.id}`);
+      }
       return;
     }
 
@@ -91,11 +106,21 @@ function ControlScreen() {
           hasSponsor: state.hasSponsor,
           sponsorProfession: state.sponsorProfession
         });
-        navigate(`/dashboard/${userAnswers.id}`);
+        
+        if (onModalComplete) {
+          onModalComplete();
+        } else {
+          navigate(`/dashboard/${userAnswers.id}`);
+        }
       } else {
         console.log("Kullanıcı seçimleri başarıyla kaydedildi:", data);
         localStorage.removeItem(`visa_check_modal_shown_${data.id}`);
-        navigate(`/dashboard/${data.id}`);
+        
+        if (onModalComplete) {
+          onModalComplete();
+        } else {
+          navigate(`/dashboard/${data.id}`);
+        }
       }
     } catch (error) {
       console.error("Unexpected error:", error);
@@ -110,7 +135,12 @@ function ControlScreen() {
         hasSponsor: state.hasSponsor,
         sponsorProfession: state.sponsorProfession
       });
-      navigate(`/dashboard/${userAnswers.id}`);
+      
+      if (onModalComplete) {
+        onModalComplete();
+      } else {
+        navigate(`/dashboard/${userAnswers.id}`);
+      }
     }
   };
 
@@ -123,29 +153,48 @@ function ControlScreen() {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    margin-top: 1px;
-    padding: 8px;
-    border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(6.3px);
-    -webkit-backdrop-filter: blur(6.3px);
-    border: 1px solid rgba(255, 255, 255, 0.52);
-    width: calc(100vw - 180px);
-    max-width: 370px;
-    height: calc(100vh - 190px);
+    padding: 16px;
+    border-radius: 12px;
+    gap: 16px;
+    
+    /* Default styling for standalone page */
+    ${!onModalComplete && `
+      margin-top: 1px;
+      padding: 8px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(6.3px);
+      -webkit-backdrop-filter: blur(6.3px);
+      border: 1px solid rgba(255, 255, 255, 0.52);
+      width: calc(100vw - 180px);
+      max-width: 370px;
+      height: calc(100vh - 190px);
 
-    @media (max-width: 710px) {
-      width: calc(100vw - 80px);
-    }
+      @media (max-width: 710px) {
+        width: calc(100vw - 80px);
+      }
 
-    @media (max-width: 300px) {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: calc(100vw - 50px);
-      margin: 0 auto;
-    }
+      @media (max-width: 300px) {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: calc(100vw - 50px);
+        margin: 0 auto;
+      }
+    `}
+
+    /* Modal styling - cleaner and more compact */
+    ${onModalComplete && `
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      max-height: 500px;
+      overflow-y: auto;
+      background: transparent;
+      box-shadow: none;
+      border: none;
+      backdrop-filter: none;
+    `}
   `;
 
   return (
@@ -216,10 +265,14 @@ function ControlScreen() {
       />
 
       <Button variation="question" size="baslayalim" onClick={handleSubmit}>
-        {isAnonymous ? "Anonim Olarak Başlayalım" : "Başlayalım"}
+        {shouldTreatAsAnonymous ? "Anonim Olarak Başlayalım" : "Başlayalım"}
       </Button>
     </ModalScreenContainer>
   );
 }
 
 export default ControlScreen;
+
+ControlScreen.propTypes = {
+  onModalComplete: PropTypes.func.isRequired, // or just PropTypes.func if it's optional
+};

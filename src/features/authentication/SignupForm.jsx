@@ -47,7 +47,7 @@ const Girisyap = styled.div`
   }
 `;
 
-function SignupForm({ onCloseModal }) {
+function SignupForm({ onCloseModal, onAuthComplete, isInModal = false }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
@@ -55,7 +55,7 @@ function SignupForm({ onCloseModal }) {
   const navigate = useNavigate();
   const { refetchUser } = useUser();
 
-  // FIXED: No more Supabase anonymous sessions
+  // ENHANCED: Handle guest sign in for modal flow
   async function handleGuestSignIn() {
     try {
       // Instead of Supabase, use our AnonymousDataService
@@ -63,14 +63,23 @@ function SignupForm({ onCloseModal }) {
       
       console.log("Anonymous mode activated (localStorage only)");
 
-      // Check if user has already answered wellcome questions
-      const hasOnboardingData = AnonymousDataService.hasCompletedOnboarding();
-
-      if (hasOnboardingData) {
-        const applicationId = AnonymousDataService.getApplicationId();
-        navigate(`/dashboard/${applicationId}`);
+      if (isInModal) {
+        // In modal flow - proceed to next step
+        if (onAuthComplete) {
+          onAuthComplete();
+        }
       } else {
-        navigate("/wellcome-2");
+        // Traditional flow - check if onboarding completed
+        const hasOnboardingData = AnonymousDataService.hasCompletedOnboarding();
+
+        if (hasOnboardingData) {
+          const applicationId = AnonymousDataService.getApplicationId();
+          navigate(`/dashboard/${applicationId}`);
+        } else {
+          // Redirect to dashboard instead of wellcome pages
+          // User will see StaticDashboardContent for new visitors
+          navigate("/dashboard");
+        }
       }
     } catch (error) {
       console.error("Anonymous mode activation error:", error);
@@ -105,7 +114,7 @@ function SignupForm({ onCloseModal }) {
               <>
                 Bu e-posta adresi zaten kullanılıyor.{" "}
                 <a
-                  onClick={() => navigate("/login")}
+                  onClick={() => !isInModal && navigate("/login")}
                   style={{
                     cursor: "pointer",
                     color: "#00ffa2",
@@ -132,7 +141,16 @@ function SignupForm({ onCloseModal }) {
       }
 
       refetchUser();
-      navigate("/dashboard");
+
+      if (isInModal) {
+        // In modal flow - proceed to next step
+        if (onAuthComplete) {
+          onAuthComplete();
+        }
+      } else {
+        // Traditional flow - navigate to dashboard
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.log("Hata Detayı:", error);
       setErrorMessage(error.message || "Üye olurken bir hata oluştu.");
@@ -144,13 +162,36 @@ function SignupForm({ onCloseModal }) {
     if (!error && data) {
       // Clear anonymous data when signing in with Google
       AnonymousDataService.clearData();
-      onCloseModal();
+      
+      if (onCloseModal) {
+        onCloseModal();
+      }
+      
       refetchUser();
-      navigate("/dashboard");
+      
+      if (isInModal) {
+        // In modal flow - proceed to next step
+        if (onAuthComplete) {
+          onAuthComplete();
+        }
+      } else {
+        // Traditional flow - navigate to dashboard
+        navigate("/dashboard");
+      }
     } else {
       setErrorMessage("Google ile giriş sırasında bir hata oluştu.");
     }
   }
+
+  const handleLoginClick = () => {
+    if (isInModal) {
+      // In modal, we might want to show login form instead
+      // For now, just show a message or handle differently
+      setErrorMessage("Giriş yapmak için modal'ı kapatın ve 'Giriş Yap' butonunu kullanın.");
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -252,7 +293,7 @@ function SignupForm({ onCloseModal }) {
           <Girisyap>
             Zaten bir hesabın var mı?{" "}
             <a
-              onClick={() => navigate("/login")}
+              onClick={handleLoginClick}
               style={{
                 cursor: "pointer",
                 color: "#00ffa2",

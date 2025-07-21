@@ -1,49 +1,12 @@
+/* eslint-disable react/prop-types */
+// WellcomeE.jsx - Modal only version
 import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import OtherQSelections from "./OtherQSelections";
-import ControlScreen from "./ControlScreen";
 import { useUserSelections } from "./useUserSelections";
-import Modal from "../../ui/Modal";
 import styled from "styled-components";
 import { AnonymousDataService } from "../../utils/anonymousDataService";
-
-const StyledNavLink = styled(NavLink)`
-  &:link,
-  &:visited {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    color: var(--color-grey-600);
-    font-size: 1.6rem;
-    font-weight: 500;
-    padding: 1.2rem 2.4rem;
-    transition: all 0.3s;
-  }
-
-  &:hover,
-  &:active,
-  &.active:link,
-  &.active:visited {
-    color: var(--color-grey-800);
-    border-radius: var(--border-radius-sm);
-  }
-
-  & svg {
-    width: 2.4rem;
-    height: 2.4rem;
-    color: var(--color-grey-400);
-    transition: all 0.3s;
-  }
-
-  &:hover svg,
-  &:active svg,
-  &.active:link svg,
-  &.active:visited svg {
-    color: var(--color-brand-600);
-  }
-`;
 
 const QuestionContainer = styled.div`
   display: flex;
@@ -52,8 +15,7 @@ const QuestionContainer = styled.div`
   align-items: center;
 `;
 
-function WellcomeE() {
-  const navigate = useNavigate();
+function WellcomeE({ onModalNext }) {
   const { state, dispatch } = useUserSelections();
   const [selectedVehicle, setSelectedVehicle] = useState(state.vehicle);
   const [selectedKid, setSelectedKid] = useState(state.kid);
@@ -75,7 +37,10 @@ function WellcomeE() {
       }
       if (savedSelections.accommodation && !selectedAccommodation) {
         setSelectedAccommodation(savedSelections.accommodation);
-        dispatch({ type: "SET_ACCOMMODATION", payload: savedSelections.accommodation });
+        dispatch({
+          type: "SET_ACCOMMODATION",
+          payload: savedSelections.accommodation,
+        });
       }
     }
   }, [dispatch, selectedVehicle, selectedKid, selectedAccommodation]);
@@ -123,46 +88,46 @@ function WellcomeE() {
   };
 
   const handleContinue = () => {
+    console.log("WellcomeE handleContinue called");
+    console.log("onModalNext type:", typeof onModalNext);
+    
     // Ensure application ID is generated when completing onboarding
     AnonymousDataService.getApplicationId();
-    navigate("/test");
+
+    if (onModalNext) {
+      console.log("Calling onModalNext from WellcomeE");
+      onModalNext();
+    } else {
+      console.log("No onModalNext provided, WellcomeE cannot proceed in modal");
+    }
   };
 
   return (
-    <>
-      <QuestionContainer>
-        <Heading as="h5">
-          Konaklama türü, seyahat aracı ve çocuklu yolculuk durumu
-        </Heading>
-        <OtherQSelections
-          selectedAccommodation={selectedAccommodation}
-          selectedKid={selectedKid}
-          selectedVehicle={selectedVehicle}
-          onVehicleChange={handleVehicleChange}
-          onKidChange={handleKidChange}
-          onAccommodationChange={handleAccommodationChange}
-        />
+    <QuestionContainer>
+      <Heading as="h5">
+        Konaklama türü, seyahat aracı ve çocuklu yolculuk durumu
+      </Heading>
+      <OtherQSelections
+        selectedAccommodation={selectedAccommodation}
+        selectedKid={selectedKid}
+        selectedVehicle={selectedVehicle}
+        onVehicleChange={handleVehicleChange}
+        onKidChange={handleKidChange}
+        onAccommodationChange={handleAccommodationChange}
+      />
 
-        <Modal>
-          <Modal.Open opens="controlScreen">
-            <StyledNavLink to="">
-              <Button
-                variation="question"
-                onClick={handleContinue}
-                disabled={
-                  !selectedVehicle || selectedKid === undefined || !selectedAccommodation
-                }
-              >
-                Devam et
-              </Button>
-            </StyledNavLink>
-          </Modal.Open>
-          <Modal.Window name="controlScreen">
-            <ControlScreen />
-          </Modal.Window>
-        </Modal>
-      </QuestionContainer>
-    </>
+      <Button
+        variation="question"
+        onClick={handleContinue}
+        disabled={
+          !selectedVehicle ||
+          selectedKid === undefined ||
+          !selectedAccommodation
+        }
+      >
+        Devam et
+      </Button>
+    </QuestionContainer>
   );
 }
 

@@ -374,6 +374,10 @@ const Dashboard = () => {
       (userType === "authenticated" && !!userId && !!applicationId) ||
       (userType === "anonymous" &&
         AnonymousDataService.hasCompletedOnboarding()),
+    staleTime: 5 * 60 * 1000, // 5 dakika cache - ÇOK ÖNEMLİ!
+    gcTime: 10 * 60 * 1000, // 10 dakika garbage collection
+    refetchOnMount: false, // Mount'ta tekrar fetch etme
+    refetchOnWindowFocus: false, // Window focus'ta tekrar fetch etme
   });
 
   const ansCountry = userSelections?.[0]?.ans_country;
@@ -548,6 +552,11 @@ const Dashboard = () => {
       (userType === "authenticated" ||
         (userType === "anonymous" &&
           AnonymousDataService.hasCompletedOnboarding())),
+    // Bu satırları ekleyin
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   // Early returns based on user type
@@ -560,7 +569,6 @@ const Dashboard = () => {
     return (
       <DashboardContainer>
         <StaticDashboardContent />
-       
       </DashboardContainer>
     );
   }
@@ -675,11 +683,11 @@ const Dashboard = () => {
             <StepIndicatorWrapper>
               <Heading as="h14">Ülke adı</Heading>
               <StepIndicator
-                steps={stepLabels}
-                currentStep={currentStep}
-                onStepClick={handleStepClick}
-                completedDocuments={completedDocuments}
                 documents={documents}
+                completedDocuments={completedDocuments}
+                applicationId={applicationId}
+                isLoading={isDocumentsLoading}
+                isError={isDocumentsError}
               />
             </StepIndicatorWrapper>
 
