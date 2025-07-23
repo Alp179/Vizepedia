@@ -680,16 +680,24 @@ const Dashboard = () => {
         {/* Desktop view */}
         {!isMobile && (
           <>
-          
             <StepIndicatorWrapper>
               <Heading as="h14">Ülke adı</Heading>
-               {/* DEBUG - Bu satırları ekleyin */}
-  <div style={{ background: 'yellow', padding: '10px', margin: '10px 0' }}>
-    <strong>🔍 Dashboard StepIndicator Debug:</strong><br/>
-    applicationId: {applicationId || 'UNDEFINED'}<br/>
-    documents length: {documents?.length || 0}<br/>
-    first document: {documents?.[0]?.docName || 'No documents'}
-  </div>
+              {/* DEBUG - Bu satırları ekleyin */}
+              <div
+                style={{
+                  background: "yellow",
+                  padding: "10px",
+                  margin: "10px 0",
+                }}
+              >
+                <strong>🔍 Dashboard StepIndicator Debug:</strong>
+                <br />
+                applicationId: {applicationId || "UNDEFINED"}
+                <br />
+                documents length: {documents?.length || 0}
+                <br />
+                first document: {documents?.[0]?.docName || "No documents"}
+              </div>
               <StepIndicator
                 documents={documents}
                 completedDocuments={completedDocuments}
