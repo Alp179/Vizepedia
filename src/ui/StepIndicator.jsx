@@ -801,6 +801,9 @@ const StepIndicator = ({
   const { setSelectedDocument } = useSelectedDocument();
   const [currentStep, setCurrentStep] = useState(null);
 
+  // SAFE FIX: applicationId undefined ise güvenli varsayılan değer
+  const safeApplicationId = applicationId || `anonymous-${Date.now()}`;
+
   // Kategori açılıp kapanma durumu - başlangıçta tüm kategoriler kapalı
   const [openCategories, setOpenCategories] = useState({
     hazir: false,
@@ -819,11 +822,11 @@ const StepIndicator = ({
   useEffect(() => {
     if (documents && documents.length > 0) {
       const firstIncompleteIndex = documents.findIndex(
-        (doc) => !completedDocuments[applicationId]?.[doc.docName]
+        (doc) => !completedDocuments[safeApplicationId]?.[doc.docName]
       );
       setCurrentStep(firstIncompleteIndex === -1 ? 0 : firstIncompleteIndex);
     }
-  }, [documents, completedDocuments, applicationId]);
+  }, [documents, completedDocuments, safeApplicationId]);
 
   if (isLoading) return <div>Loading documents...</div>;
   if (isError || !documents) return <div>Error loading documents.</div>;
@@ -835,41 +838,45 @@ const StepIndicator = ({
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
 
+      // DEBUG LOG
+      console.log("🔗 Continue button clicked:", selectedDocument.docStage, safeApplicationId);
+
       // Kategori bazında yönlendirme yapıyoruz
       if (selectedDocument.docStage === "hazir") {
-        navigate(`/ready-documents/${applicationId}`);
+        navigate(`/ready-documents/${safeApplicationId}`);
       } else if (selectedDocument.docStage === "planla") {
-        navigate(`/planned-documents/${applicationId}`);
+        navigate(`/planned-documents/${safeApplicationId}`);
       } else if (selectedDocument.docStage === "bizimle") {
-        navigate(`/withus-documents/${applicationId}`);
+        navigate(`/withus-documents/${safeApplicationId}`);
       }
     }
   };
 
   const handleDocumentClick = (index) => {
     const selectedDocument = documents[index];
-
-     // DEBUG - Bu satırları ekleyin
-  console.log("📄 StepIndicator handleDocumentClick Debug:");
-  console.log("applicationId:", applicationId);
-  console.log("index:", index);
-  console.log("selectedDocument:", selectedDocument);
-  console.log("selectedDocument.docStage:", selectedDocument?.docStage);
-
+    
+    // DEBUG - Bu satırları ekleyin
+    console.log("📄 StepIndicator handleDocumentClick Debug:");
+    console.log("Original applicationId:", applicationId);
+    console.log("Safe applicationId:", safeApplicationId);
+    console.log("index:", index);
+    console.log("selectedDocument:", selectedDocument);
+    console.log("selectedDocument.docStage:", selectedDocument?.docStage);
+    
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
 
-       // DEBUG - Navigate URL'lerini göster
-    if (selectedDocument.docStage === "hazir") {
-      console.log("🔗 Navigate URL:", `/ready-documents/${applicationId}`);
-      navigate(`/ready-documents/${applicationId}`);
-    } else if (selectedDocument.docStage === "planla") {
-      console.log("🔗 Navigate URL:", `/planned-documents/${applicationId}`);
-      navigate(`/planned-documents/${applicationId}`);
-    } else if (selectedDocument.docStage === "bizimle"){
-      console.log("🔗 Navigate URL:", `/withus-documents/${applicationId}`);
-      navigate(`/withus-documents/${applicationId}`);
-    }
+      // DEBUG - Navigate URL'lerini göster
+      if (selectedDocument.docStage === "hazir") {
+        console.log("🔗 Navigate URL:", `/ready-documents/${safeApplicationId}`);
+        navigate(`/ready-documents/${safeApplicationId}`);
+      } else if (selectedDocument.docStage === "planla") {
+        console.log("🔗 Navigate URL:", `/planned-documents/${safeApplicationId}`);
+        navigate(`/planned-documents/${safeApplicationId}`);
+      } else if (selectedDocument.docStage === "bizimle"){
+        console.log("🔗 Navigate URL:", `/withus-documents/${safeApplicationId}`);
+        navigate(`/withus-documents/${safeApplicationId}`);
+      }
     }
   };
 
@@ -888,7 +895,7 @@ const StepIndicator = ({
   const calculateCategoryProgress = (docs) => {
     if (!docs || !docs.length) return 0;
     const completedCount = docs.filter(
-      (doc) => completedDocuments[applicationId]?.[doc.docName]
+      (doc) => completedDocuments[safeApplicationId]?.[doc.docName]
     ).length;
     return Math.round((completedCount / docs.length) * 100);
   };
@@ -939,7 +946,7 @@ const StepIndicator = ({
                   {docs.map((doc) => {
                     const isActive = doc.index === currentStep;
                     const isCompleted =
-                      completedDocuments[applicationId]?.[doc.docName];
+                      completedDocuments[safeApplicationId]?.[doc.docName];
                     const isSponsor = doc.docName?.startsWith("Sponsor");
 
                     return (

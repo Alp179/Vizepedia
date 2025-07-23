@@ -14,6 +14,8 @@ import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
+import { AnonymousDataService } from "../utils/anonymousDataService";
+import { useUser } from "../features/authentication/useUser";
 
 // Animasyon tanımlamaları
 const fadeIn = keyframes`
@@ -308,7 +310,7 @@ const ImageContainer = styled.div`
 `;
 
 const ReadyDocumentDetail = () => {
-  const { id: applicationId } = useParams();
+  const { id: paramApplicationId } = useParams();
   const [userId, setUserId] = useState(null);
   const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0);
   const navigate = useNavigate();
@@ -318,10 +320,30 @@ const ReadyDocumentDetail = () => {
     dispatch,
   } = useContext(DocumentsContext);
 
+  // FIXED: User type detection
+  const { userType } = useUser();
+  const isAnonymous = userType === 'anonymous' || paramApplicationId?.startsWith('anonymous-');
+
+  // FIXED: Safe applicationId
+  const applicationId = paramApplicationId || `anonymous-${Date.now()}`;
+
+  console.log("🔍 ReadyDocumentDetail Debug:");
+  console.log("paramApplicationId:", paramApplicationId);
+  console.log("applicationId:", applicationId);
+  console.log("userType:", userType);
+  console.log("isAnonymous:", isAnonymous);
+
+  // FIXED: Anonymous-aware query
   const { data: userSelections } = useQuery({
-    queryKey: ["userSelections", userId, applicationId],
-    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
-    enabled: !!userId && !!applicationId,
+    queryKey: ["userSelections", userId, applicationId, userType],
+    queryFn: () => {
+      if (isAnonymous) {
+        return AnonymousDataService.convertToSupabaseFormat();
+      }
+      return fetchUserSelectionsDash(userId, applicationId);
+    },
+    enabled: isAnonymous || (!!userId && !!applicationId),
+    staleTime: 5 * 60 * 1000,
   });
 
   const documentNames = userSelections
@@ -332,15 +354,21 @@ const ReadyDocumentDetail = () => {
     queryKey: ["documentDetails", documentNames],
     queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !!documentNames.length,
+    staleTime: 5 * 60 * 1000,
   });
 
+  // FIXED: User detection
   useEffect(() => {
-    getCurrentUser().then((user) => {
-      if (user) {
-        setUserId(user.id);
-      }
-    });
-  }, []);
+    if (isAnonymous) {
+      setUserId('anonymous-user');
+    } else {
+      getCurrentUser().then((user) => {
+        if (user) {
+          setUserId(user.id);
+        }
+      });
+    }
+  }, [isAnonymous]);
 
   useEffect(() => {
     if (isDocumentsSuccess && documents && !selectedDocument) {
@@ -377,26 +405,43 @@ const ReadyDocumentDetail = () => {
   const isCompleted =
     completedDocuments[applicationId]?.[selectedDocument?.docName];
 
+  // FIXED: Anonymous-aware action handler
   const handleAction = async () => {
-    if (!userId || !selectedDocument || !applicationId) return;
+    if (!selectedDocument || !applicationId) return;
 
     try {
-      if (isCompleted) {
-        await uncompleteDocument(
-          userId,
-          selectedDocument.docName,
-          applicationId
-        );
-        dispatch({
-          type: "UNCOMPLETE_DOCUMENT",
-          payload: { documentName: selectedDocument.docName, applicationId },
-        });
+      if (isAnonymous) {
+        // Anonymous user - localStorage'da işlem yap
+        if (isCompleted) {
+          AnonymousDataService.uncompleteDocument(applicationId, selectedDocument.docName);
+          dispatch({
+            type: "UNCOMPLETE_DOCUMENT",
+            payload: { documentName: selectedDocument.docName, applicationId },
+          });
+        } else {
+          AnonymousDataService.completeDocument(applicationId, selectedDocument.docName);
+          dispatch({
+            type: "COMPLETE_DOCUMENT",
+            payload: { documentName: selectedDocument.docName, applicationId },
+          });
+        }
       } else {
-        await completeDocument(userId, selectedDocument.docName, applicationId);
-        dispatch({
-          type: "COMPLETE_DOCUMENT",
-          payload: { documentName: selectedDocument.docName, applicationId },
-        });
+        // Authenticated user - normal işlem
+        if (!userId) return;
+        
+        if (isCompleted) {
+          await uncompleteDocument(userId, selectedDocument.docName, applicationId);
+          dispatch({
+            type: "UNCOMPLETE_DOCUMENT",
+            payload: { documentName: selectedDocument.docName, applicationId },
+          });
+        } else {
+          await completeDocument(userId, selectedDocument.docName, applicationId);
+          dispatch({
+            type: "COMPLETE_DOCUMENT",
+            payload: { documentName: selectedDocument.docName, applicationId },
+          });
+        }
       }
       navigate(`/dashboard/${applicationId}`);
     } catch (error) {
@@ -410,13 +455,22 @@ const ReadyDocumentDetail = () => {
     // Sadece "hazir" kategorisindeki belgeleri filtrele
     const readyDocuments = documents.filter((doc) => doc.docStage === "hazir");
 
+    console.log("🔄 Navigation Debug:");
+    console.log("direction:", direction);
+    console.log("currentIndex:", currentDocumentIndex);
+    console.log("readyDocuments length:", readyDocuments.length);
+
     if (direction === "prev" && currentDocumentIndex > 0) {
-      setSelectedDocument(readyDocuments[currentDocumentIndex - 1]);
+      const nextDoc = readyDocuments[currentDocumentIndex - 1];
+      console.log("Going to previous:", nextDoc.docName);
+      setSelectedDocument(nextDoc);
     } else if (
       direction === "next" &&
       currentDocumentIndex < readyDocuments.length - 1
     ) {
-      setSelectedDocument(readyDocuments[currentDocumentIndex + 1]);
+      const nextDoc = readyDocuments[currentDocumentIndex + 1];
+      console.log("Going to next:", nextDoc.docName);
+      setSelectedDocument(nextDoc);
     }
   };
 
