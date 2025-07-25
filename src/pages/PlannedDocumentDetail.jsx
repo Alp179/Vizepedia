@@ -406,8 +406,10 @@ const PlannedDocumentDetail = () => {
   } = useContext(DocumentsContext);
 
   // FIXED: User type detection
-  const { userType } = useUser();
-  const isAnonymous = userType === 'anonymous' || paramApplicationId?.startsWith('anonymous-');
+  const { user, userType } = useUser();
+  const isAnonymous =
+    userType === "anonymous" ||
+    (!user && paramApplicationId?.startsWith("anonymous-"));
 
   // FIXED: Safe applicationId
   const applicationId = paramApplicationId || `anonymous-${Date.now()}`;
@@ -416,6 +418,7 @@ const PlannedDocumentDetail = () => {
   console.log("paramApplicationId:", paramApplicationId);
   console.log("applicationId:", applicationId);
   console.log("userType:", userType);
+  console.log("user:", user ? "authenticated" : "none");
   console.log("isAnonymous:", isAnonymous);
 
   // FIXED: Anonymous-aware query
@@ -487,12 +490,16 @@ const PlannedDocumentDetail = () => {
     return <Spinner />;
   }
 
-  const isCompleted =
-    completedDocuments[applicationId]?.[selectedDocument?.docName];
+  // FIXED: Use real application ID for completion check
+  const isCompleted = isAnonymous
+    ? completedDocuments[applicationId]?.[selectedDocument?.docName]
+    : userSelections?.length > 0
+      ? completedDocuments[userSelections[0].id]?.[selectedDocument?.docName]
+      : false;
 
-  // FIXED: Anonymous-aware action handler
+  // FIXED: Real application ID aware action handler
   const handleAction = async () => {
-    if (!selectedDocument || !applicationId) return;
+    if (!selectedDocument) return;
 
     try {
       if (isAnonymous) {
@@ -511,26 +518,58 @@ const PlannedDocumentDetail = () => {
           });
         }
       } else {
-        // Authenticated user - normal işlem
-        if (!userId) return;
+        // FIXED: Authenticated user - use real application ID consistently
+        if (!userId || !userSelections || userSelections.length === 0) return;
+        
+        // Get the real application ID from userSelections
+        const realApplicationId = userSelections[0].id;
+        
+        console.log("🔄 Using real application ID for authenticated user:");
+        console.log("URL applicationId:", applicationId);
+        console.log("Real applicationId:", realApplicationId);
         
         if (isCompleted) {
-          await uncompleteDocument(userId, selectedDocument.docName, applicationId);
+          await uncompleteDocument(userId, selectedDocument.docName, realApplicationId);
+          // CRITICAL FIX: Use real application ID in dispatch too
           dispatch({
             type: "UNCOMPLETE_DOCUMENT",
-            payload: { documentName: selectedDocument.docName, applicationId },
+            payload: { 
+              documentName: selectedDocument.docName, 
+              applicationId: realApplicationId  // ← Bu çok önemli!
+            },
           });
+          console.log("✅ Document uncompleted and context updated with real ID");
         } else {
-          await completeDocument(userId, selectedDocument.docName, applicationId);
+          await completeDocument(userId, selectedDocument.docName, realApplicationId);
+          // CRITICAL FIX: Use real application ID in dispatch too
           dispatch({
             type: "COMPLETE_DOCUMENT",
-            payload: { documentName: selectedDocument.docName, applicationId },
+            payload: { 
+              documentName: selectedDocument.docName, 
+              applicationId: realApplicationId  // ← Bu çok önemli!
+            },
           });
+          console.log("✅ Document completed and context updated with real ID");
         }
       }
-      navigate(`/dashboard/${applicationId}`);
+
+      console.log("🔄 Navigation after document action:");
+      console.log("applicationId:", applicationId);
+      console.log("user:", user);
+      console.log("userType:", userType);
+
+      if (user && userType === "authenticated") {
+        // For authenticated users, redirect to dashboard without applicationId 
+        // Dashboard will automatically use the real application ID
+        navigate("/dashboard");
+      } else if (applicationId && !applicationId.startsWith("anonymous-")) {
+        navigate(`/dashboard/${applicationId}`);
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.error("Error updating document status:", error);
+      navigate("/dashboard");
     }
   };
 

@@ -789,11 +789,13 @@ const StepPageCont = styled.div`
   }
 `;
 
-// UPDATED: Prop-based StepIndicator
+// UPDATED: Enhanced StepIndicator with Real Application ID Support
 const StepIndicator = ({ 
   documents = [], 
   completedDocuments = {}, 
   applicationId,
+  userSelections = [], // ← Yeni prop eklendi
+  userType = "anonymous", // ← Yeni prop eklendi
   isLoading = false,
   isError = false 
 }) => {
@@ -801,8 +803,22 @@ const StepIndicator = ({
   const { setSelectedDocument } = useSelectedDocument();
   const [currentStep, setCurrentStep] = useState(null);
 
-  // SAFE FIX: applicationId undefined ise güvenli varsayılan değer
-  const safeApplicationId = applicationId || `anonymous-${Date.now()}`;
+  // FIXED: Real application ID detection
+  const getRealApplicationId = () => {
+    if (userType === "authenticated" && userSelections?.length > 0) {
+      return userSelections[0].id; // Real Supabase ID
+    }
+    return applicationId || `anonymous-${Date.now()}`; // Anonymous fallback
+  };
+
+  const realApplicationId = getRealApplicationId();
+
+  console.log("🔍 StepIndicator Debug:");
+  console.log("Original applicationId:", applicationId);
+  console.log("userType:", userType);
+  console.log("userSelections:", userSelections);
+  console.log("Real applicationId:", realApplicationId);
+  console.log("completedDocuments keys:", Object.keys(completedDocuments));
 
   // Kategori açılıp kapanma durumu - başlangıçta tüm kategoriler kapalı
   const [openCategories, setOpenCategories] = useState({
@@ -822,11 +838,11 @@ const StepIndicator = ({
   useEffect(() => {
     if (documents && documents.length > 0) {
       const firstIncompleteIndex = documents.findIndex(
-        (doc) => !completedDocuments[safeApplicationId]?.[doc.docName]
+        (doc) => !completedDocuments[realApplicationId]?.[doc.docName]
       );
       setCurrentStep(firstIncompleteIndex === -1 ? 0 : firstIncompleteIndex);
     }
-  }, [documents, completedDocuments, safeApplicationId]);
+  }, [documents, completedDocuments, realApplicationId]);
 
   if (isLoading) return <div>Loading documents...</div>;
   if (isError || !documents) return <div>Error loading documents.</div>;
@@ -838,16 +854,17 @@ const StepIndicator = ({
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
 
-      // DEBUG LOG
-      console.log("🔗 Continue button clicked:", selectedDocument.docStage, safeApplicationId);
+      console.log("🔗 Continue button clicked:", selectedDocument.docStage, realApplicationId);
 
-      // Kategori bazında yönlendirme yapıyoruz
+      // FIXED: Use original applicationId for URL (to maintain URL consistency)
+      const urlApplicationId = applicationId || realApplicationId;
+
       if (selectedDocument.docStage === "hazir") {
-        navigate(`/ready-documents/${safeApplicationId}`);
+        navigate(`/ready-documents/${urlApplicationId}`);
       } else if (selectedDocument.docStage === "planla") {
-        navigate(`/planned-documents/${safeApplicationId}`);
+        navigate(`/planned-documents/${urlApplicationId}`);
       } else if (selectedDocument.docStage === "bizimle") {
-        navigate(`/withus-documents/${safeApplicationId}`);
+        navigate(`/withus-documents/${urlApplicationId}`);
       }
     }
   };
@@ -855,10 +872,9 @@ const StepIndicator = ({
   const handleDocumentClick = (index) => {
     const selectedDocument = documents[index];
     
-    // DEBUG - Bu satırları ekleyin
     console.log("📄 StepIndicator handleDocumentClick Debug:");
     console.log("Original applicationId:", applicationId);
-    console.log("Safe applicationId:", safeApplicationId);
+    console.log("Real applicationId:", realApplicationId);
     console.log("index:", index);
     console.log("selectedDocument:", selectedDocument);
     console.log("selectedDocument.docStage:", selectedDocument?.docStage);
@@ -866,38 +882,49 @@ const StepIndicator = ({
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
 
-      // DEBUG - Navigate URL'lerini göster
+      // FIXED: Use original applicationId for URL (to maintain URL consistency)
+      const urlApplicationId = applicationId || realApplicationId;
+
       if (selectedDocument.docStage === "hazir") {
-        console.log("🔗 Navigate URL:", `/ready-documents/${safeApplicationId}`);
-        navigate(`/ready-documents/${safeApplicationId}`);
+        console.log("🔗 Navigate URL:", `/ready-documents/${urlApplicationId}`);
+        navigate(`/ready-documents/${urlApplicationId}`);
       } else if (selectedDocument.docStage === "planla") {
-        console.log("🔗 Navigate URL:", `/planned-documents/${safeApplicationId}`);
-        navigate(`/planned-documents/${safeApplicationId}`);
+        console.log("🔗 Navigate URL:", `/planned-documents/${urlApplicationId}`);
+        navigate(`/planned-documents/${urlApplicationId}`);
       } else if (selectedDocument.docStage === "bizimle"){
-        console.log("🔗 Navigate URL:", `/withus-documents/${safeApplicationId}`);
-        navigate(`/withus-documents/${safeApplicationId}`);
+        console.log("🔗 Navigate URL:", `/withus-documents/${urlApplicationId}`);
+        navigate(`/withus-documents/${urlApplicationId}`);
       }
     }
   };
 
-  // docStage değerine göre dökümanları gruplandırma (sponsor belgeleri de kendi docStage değerlerine göre gruplandırılır)
+  // docStage değerine göre dökümanları gruplandırma
   const groupedDocuments = documents.reduce((acc, doc, index) => {
-    const stage = doc.docStage || "planla"; // Eğer docStage tanımlanmamışsa "planla" kategorisine ekle
+    const stage = doc.docStage || "planla";
     if (!acc[stage]) acc[stage] = [];
     acc[stage].push({ ...doc, index });
     return acc;
   }, {});
 
-  // Kategori sıralama fonksiyonu (hazir > planla > bizimle)
   const categoryOrder = ["hazir", "planla", "bizimle"];
 
-  // Her kategori için tamamlanma yüzdesini hesaplama
+  // FIXED: Her kategori için tamamlanma yüzdesini real application ID ile hesaplama
   const calculateCategoryProgress = (docs) => {
     if (!docs || !docs.length) return 0;
     const completedCount = docs.filter(
-      (doc) => completedDocuments[safeApplicationId]?.[doc.docName]
+      (doc) => completedDocuments[realApplicationId]?.[doc.docName] // ← Real ID kullanıyoruz
     ).length;
-    return Math.round((completedCount / docs.length) * 100);
+    const progress = Math.round((completedCount / docs.length) * 100);
+    
+    console.log(`📊 Category progress for ${docs[0]?.docStage}:`, {
+      completedCount,
+      totalCount: docs.length,
+      progress,
+      realApplicationId,
+      completedDocs: completedDocuments[realApplicationId]
+    });
+    
+    return progress;
   };
 
   return (
@@ -946,7 +973,7 @@ const StepIndicator = ({
                   {docs.map((doc) => {
                     const isActive = doc.index === currentStep;
                     const isCompleted =
-                      completedDocuments[safeApplicationId]?.[doc.docName];
+                      completedDocuments[realApplicationId]?.[doc.docName]; // ← Real ID kullanıyoruz
                     const isSponsor = doc.docName?.startsWith("Sponsor");
 
                     return (

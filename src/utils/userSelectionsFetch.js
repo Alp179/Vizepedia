@@ -37,47 +37,74 @@ export async function fetchUserSelectionsNav(userId) {
 }
 
 // PRESERVED: Original functionality with enhanced logging
-export async function fetchUserSelectionsDash(userId, applicationId) {
-  console.log('📋 fetchUserSelectionsDash called:', { userId, applicationId });
-  
-  // Handle anonymous users
-  if (isAnonymousUser(userId) || applicationId?.startsWith('anonymous-') || applicationId?.startsWith('demo-')) {
-    console.log('👤 Fetching anonymous user data');
-    const answers = AnonymousDataService.convertToSupabaseFormat();
-    console.log('Anonymous answers:', answers);
-    return answers || [];
+// userSelectionsFetch.js - fetchUserSelectionsDash fonksiyonunu değiştirin:
+
+export const fetchUserSelectionsDash = async (userId, applicationId) => {
+  console.log("📋 fetchUserSelectionsDash called:", { userId, applicationId });
+
+  if (!userId) {
+    console.log("❌ No userId provided");
+    return [];
   }
 
-  // PRESERVED: Original authenticated user logic with enhanced error handling
   try {
-    console.log('🔍 Fetching authenticated user data from Supabase');
-    const { data, error } = await supabase
+    console.log("🔍 Fetching authenticated user data from Supabase");
+
+    let query = supabase
       .from("userAnswers")
-      .select(
-        "id, created_at, ans_country, ans_purpose, ans_profession, ans_vehicle, ans_kid, ans_accommodation, ans_hassponsor, ans_sponsor_profession, has_appointment, has_filled_form"
-      )
-      .eq("userId", userId)
-      .eq("id", applicationId);
+      .select(`
+        id,
+        created_at,
+        ans_country,
+        ans_purpose,
+        ans_profession,
+        ans_vehicle,
+        ans_kid,
+        ans_accommodation,
+        ans_hassponsor,
+        ans_sponsor_profession,
+        has_appointment,
+        has_filled_form
+      `)
+      .eq("userId", userId);
+
+    // CRITICAL FIX: Never use anonymous applicationId for authenticated users
+    if (applicationId && 
+        applicationId !== "undefined" && 
+        !applicationId.startsWith("anonymous-")) {
+      console.log("🔍 Adding applicationId filter:", applicationId);
+      query = query.eq("id", applicationId);
+    } else if (applicationId && applicationId.startsWith("anonymous-")) {
+      console.log("⚠️ Anonymous applicationId detected for authenticated user - fetching all applications");
+      // Don't add applicationId filter, fetch all user applications
+      query = query.order("created_at", { ascending: false });
+    } else {
+      console.log("⚠️ No valid applicationId provided, fetching all user applications");
+      // Order by created_at to get the most recent application
+      query = query.order("created_at", { ascending: false });
+    }
+
+    const { data, error } = await query;
 
     if (error) {
-      console.error("Error fetching user selections:", error);
+      console.error("❌ Supabase query error:", error);
+      throw new Error(error.message);
+    }
+
+    if (!data || data.length === 0) {
+      console.log("⚠️ No user selections found");
       return [];
     }
 
-    const result = data.map((item) => ({
-      ...item,
-      created_at: item.created_at
-        ? new Date(item.created_at).toISOString()
-        : null,
-    }));
-    
-    console.log('✅ Supabase data fetched:', result);
-    return result;
+    console.log("✅ User selections found:", data.length, "applications");
+    console.log("First application ID:", data[0]?.id);
+    return data;
+
   } catch (error) {
-    console.error("Unexpected error in fetchUserSelectionsDash:", error);
-    return [];
+    console.error("❌ Error in fetchUserSelectionsDash:", error);
+    throw error;
   }
-}
+};
 
 // PRESERVED: Original functionality with enhanced logging
 export async function fetchLatestApplication(userId) {

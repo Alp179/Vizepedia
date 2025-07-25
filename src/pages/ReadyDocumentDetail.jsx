@@ -141,7 +141,7 @@ const ButtonsContainer = styled.div`
   display: flex;
   gap: 15px;
   margin-top: 20px;
-  
+
   @media (max-width: 680px) {
     flex-direction: column;
     align-items: center;
@@ -301,7 +301,7 @@ const ImageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   @media (max-width: 800px) {
     width: 100%;
     order: 2;
@@ -321,16 +321,18 @@ const ReadyDocumentDetail = () => {
   } = useContext(DocumentsContext);
 
   // FIXED: User type detection
-  const { userType } = useUser();
-  const isAnonymous = userType === 'anonymous' || paramApplicationId?.startsWith('anonymous-');
+  const { user, userType } = useUser();
+  const isAnonymous =
+    userType === "anonymous" ||
+    (!user && paramApplicationId?.startsWith("anonymous-"));
 
-  // FIXED: Safe applicationId
   const applicationId = paramApplicationId || `anonymous-${Date.now()}`;
 
   console.log("🔍 ReadyDocumentDetail Debug:");
   console.log("paramApplicationId:", paramApplicationId);
   console.log("applicationId:", applicationId);
   console.log("userType:", userType);
+  console.log("user:", user ? "authenticated" : "none");
   console.log("isAnonymous:", isAnonymous);
 
   // FIXED: Anonymous-aware query
@@ -360,7 +362,7 @@ const ReadyDocumentDetail = () => {
   // FIXED: User detection
   useEffect(() => {
     if (isAnonymous) {
-      setUserId('anonymous-user');
+      setUserId("anonymous-user");
     } else {
       getCurrentUser().then((user) => {
         if (user) {
@@ -402,52 +404,90 @@ const ReadyDocumentDetail = () => {
     return <Spinner />;
   }
 
-  const isCompleted =
-    completedDocuments[applicationId]?.[selectedDocument?.docName];
-
+  const isCompleted = isAnonymous
+  ? completedDocuments[applicationId]?.[selectedDocument?.docName]
+  : userSelections?.length > 0
+    ? completedDocuments[userSelections[0].id]?.[selectedDocument?.docName]
+    : false;
   // FIXED: Anonymous-aware action handler
-  const handleAction = async () => {
-    if (!selectedDocument || !applicationId) return;
+  // Her üç document detail dosyasında da handleAction fonksiyonunu bulun ve bu şekilde güncelleyin:
 
-    try {
-      if (isAnonymous) {
-        // Anonymous user - localStorage'da işlem yap
-        if (isCompleted) {
-          AnonymousDataService.uncompleteDocument(applicationId, selectedDocument.docName);
-          dispatch({
-            type: "UNCOMPLETE_DOCUMENT",
-            payload: { documentName: selectedDocument.docName, applicationId },
-          });
-        } else {
-          AnonymousDataService.completeDocument(applicationId, selectedDocument.docName);
-          dispatch({
-            type: "COMPLETE_DOCUMENT",
-            payload: { documentName: selectedDocument.docName, applicationId },
-          });
-        }
+  // ReadyDocumentDetail.jsx, PlannedDocumentDetail.jsx, WithUsDocumentDetail.jsx'te handleAction fonksiyonunu değiştirin:
+
+const handleAction = async () => {
+  if (!selectedDocument) return;
+
+  try {
+    if (isAnonymous) {
+      // Anonymous user - localStorage'da işlem yap
+      if (isCompleted) {
+        AnonymousDataService.uncompleteDocument(applicationId, selectedDocument.docName);
+        dispatch({
+          type: "UNCOMPLETE_DOCUMENT",
+          payload: { documentName: selectedDocument.docName, applicationId },
+        });
       } else {
-        // Authenticated user - normal işlem
-        if (!userId) return;
-        
-        if (isCompleted) {
-          await uncompleteDocument(userId, selectedDocument.docName, applicationId);
-          dispatch({
-            type: "UNCOMPLETE_DOCUMENT",
-            payload: { documentName: selectedDocument.docName, applicationId },
-          });
-        } else {
-          await completeDocument(userId, selectedDocument.docName, applicationId);
-          dispatch({
-            type: "COMPLETE_DOCUMENT",
-            payload: { documentName: selectedDocument.docName, applicationId },
-          });
-        }
+        AnonymousDataService.completeDocument(applicationId, selectedDocument.docName);
+        dispatch({
+          type: "COMPLETE_DOCUMENT",
+          payload: { documentName: selectedDocument.docName, applicationId },
+        });
       }
-      navigate(`/dashboard/${applicationId}`);
-    } catch (error) {
-      console.error("Error updating document status:", error);
+    } else {
+      // FIXED: Authenticated user - use real application ID consistently
+      if (!userId || !userSelections || userSelections.length === 0) return;
+      
+      // Get the real application ID from userSelections
+      const realApplicationId = userSelections[0].id;
+      
+      console.log("🔄 Using real application ID for authenticated user:");
+      console.log("URL applicationId:", applicationId);
+      console.log("Real applicationId:", realApplicationId);
+      
+      if (isCompleted) {
+        await uncompleteDocument(userId, selectedDocument.docName, realApplicationId);
+        // CRITICAL FIX: Use real application ID in dispatch too
+        dispatch({
+          type: "UNCOMPLETE_DOCUMENT",
+          payload: { 
+            documentName: selectedDocument.docName, 
+            applicationId: realApplicationId  // ← Bu çok önemli!
+          },
+        });
+        console.log("✅ Document uncompleted and context updated with real ID");
+      } else {
+        await completeDocument(userId, selectedDocument.docName, realApplicationId);
+        // CRITICAL FIX: Use real application ID in dispatch too
+        dispatch({
+          type: "COMPLETE_DOCUMENT",
+          payload: { 
+            documentName: selectedDocument.docName, 
+            applicationId: realApplicationId  // ← Bu çok önemli!
+          },
+        });
+        console.log("✅ Document completed and context updated with real ID");
+      }
     }
-  };
+
+    console.log("🔄 Navigation after document action:");
+    console.log("applicationId:", applicationId);
+    console.log("user:", user);
+    console.log("userType:", userType);
+
+    if (user && userType === "authenticated") {
+      // For authenticated users, redirect to dashboard without applicationId 
+      // Dashboard will automatically use the real application ID
+      navigate("/dashboard");
+    } else if (applicationId && !applicationId.startsWith("anonymous-")) {
+      navigate(`/dashboard/${applicationId}`);
+    } else {
+      navigate("/dashboard");
+    }
+  } catch (error) {
+    console.error("Error updating document status:", error);
+    navigate("/dashboard");
+  }
+};
 
   const handleNavigation = (direction) => {
     if (!documents) return;
@@ -489,13 +529,13 @@ const ReadyDocumentDetail = () => {
           !readyDocuments || currentDocumentIndex === readyDocuments.length - 1
         }
       />
-      
+
       <DocProgress>
         {readyDocuments.map((_, index) => (
           <ProgressDot key={index} active={index === currentDocumentIndex} />
         ))}
       </DocProgress>
-      
+
       <DocTitleCont>
         <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
         <MetaInfo>
@@ -504,12 +544,12 @@ const ReadyDocumentDetail = () => {
           )}
         </MetaInfo>
       </DocTitleCont>
-      
+
       <InfoContainer>
         <DocumentDescription>
           <DescriptionLayout>
             <MainText>{selectedDocument.docDescription}</MainText>
-            
+
             <ButtonsContainer>
               {selectedDocument.docSourceLink && (
                 <SourceButton
@@ -525,7 +565,7 @@ const ReadyDocumentDetail = () => {
                   <span>Bağlantı</span>
                 </SourceButton>
               )}
-            
+
               <ActionButton
                 onClick={handleAction}
                 isCompleted={isCompleted}
@@ -536,7 +576,7 @@ const ReadyDocumentDetail = () => {
             </ButtonsContainer>
           </DescriptionLayout>
         </DocumentDescription>
-        
+
         <ImageContainer>
           <ImageViewer
             imageSrc={selectedDocument.docImage}

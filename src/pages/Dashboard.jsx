@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-
 import { useEffect, useState, useLayoutEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUser } from "../services/apiAuth";
@@ -286,7 +285,7 @@ const Dashboard = () => {
   const [userType, setUserType] = useState("loading");
   const isAnonymous =
     applicationId?.startsWith("anonymous-") ||
-    AnonymousDataService.isAnonymousUser();
+    (AnonymousDataService.isAnonymousUser() && !user); // Only anonymous if no authenticated user
   const isBot = AnonymousDataService.isBotUser();
 
   const {
@@ -305,37 +304,52 @@ const Dashboard = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Determine user type on mount
+  // FIXED: Enhanced user type detection with priority for authenticated users
   useEffect(() => {
     async function determineUserType() {
+      console.log("🔍 Determining user type...");
+      console.log("isBot:", isBot);
+      console.log("isAnonymous:", isAnonymous);
+      console.log("user:", user);
+      console.log("applicationId:", applicationId);
+
       if (isBot) {
+        console.log("👤 User type: bot");
         setUserType("bot");
         return;
       }
 
-      if (isAnonymous) {
-        setUserType("anonymous");
-        return;
-      }
-
-      if (user) {
+      // CRITICAL FIX: Check authenticated user FIRST before anonymous
+      if (user && user.id) {
+        console.log("👤 User type: authenticated (user found)");
         setUserType("authenticated");
         setUserId(user.id);
         return;
       }
 
-      // Check if there's a valid session
+      // Check if there's a valid session even if user hook hasn't loaded yet
       try {
         const currentUser = await getCurrentUser();
-        if (currentUser) {
+        if (currentUser && currentUser.id) {
+          console.log("👤 User type: authenticated (session found)");
           setUserType("authenticated");
           setUserId(currentUser.id);
-        } else {
-          setUserType("new_visitor");
+          return;
         }
       } catch (error) {
-        setUserType("new_visitor");
+        console.log("❌ Error checking current user:", error);
       }
+
+      // FIXED: Only set anonymous if no authenticated user found
+      if (isAnonymous && AnonymousDataService.isAnonymousUser()) {
+        console.log("👤 User type: anonymous");
+        setUserType("anonymous");
+        return;
+      }
+
+      // Default to new visitor
+      console.log("👤 User type: new_visitor");
+      setUserType("new_visitor");
     }
 
     if (!isUserLoading) {
@@ -343,12 +357,68 @@ const Dashboard = () => {
     }
   }, [user, isUserLoading, isAnonymous, isBot, applicationId]);
 
-  const handleUserConversion = () => {
+  // ENHANCED: Better user conversion handler
+  const handleUserConversion = async () => {
+    console.log("🔄 User conversion started - forcing authenticated state");
+
+    // Force authenticated state immediately
     setUserType("authenticated");
-    navigate("/dashboard");
+
+    // Get the current user
+    try {
+      const currentUser = await getCurrentUser();
+      if (currentUser && currentUser.id) {
+        setUserId(currentUser.id);
+        console.log("✅ User conversion complete:", currentUser.email);
+
+        // CRITICAL: Get the migrated application ID from Supabase
+        console.log("🔍 Fetching migrated application ID...");
+
+        // Wait a bit for migration to complete, then fetch user's applications
+        setTimeout(async () => {
+          try {
+            // Fetch user's applications from Supabase to get the new application ID
+            const { data: userApplications, error } = await supabase
+              .from("userAnswers")
+              .select("id")
+              .eq("userId", currentUser.id)
+              .order("created_at", { ascending: false })
+              .limit(1);
+
+            if (error) {
+              console.error("❌ Error fetching applications:", error);
+              // Fallback to plain dashboard
+              navigate("/dashboard");
+              return;
+            }
+
+            if (userApplications && userApplications.length > 0) {
+              const applicationId = userApplications[0].id;
+              console.log("✅ Found migrated application ID:", applicationId);
+              navigate(`/dashboard/${applicationId}`);
+            } else {
+              console.log(
+                "⚠️ No applications found, redirecting to plain dashboard"
+              );
+              navigate("/dashboard");
+            }
+          } catch (fetchError) {
+            console.error("❌ Error during application fetch:", fetchError);
+            navigate("/dashboard");
+          }
+        }, 1000);
+      } else {
+        console.log("❌ User conversion failed - no user found");
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("❌ User conversion error:", error);
+      navigate("/dashboard");
+    }
   };
 
-  // SAFER: More restrictive enabled condition
+  // FIXED: Better query enabled conditions
+  // Dashboard.jsx'te userSelections query'sini bulun ve güncelleyin:
   const {
     data: userSelections,
     isSuccess: isUserSelectionsSuccess,
@@ -359,25 +429,36 @@ const Dashboard = () => {
     queryKey: ["userSelections", userId, applicationId, userType],
     queryFn: () => {
       console.log("🔄 Query function called for user selections");
+      console.log(
+        "userType:",
+        userType,
+        "userId:",
+        userId,
+        "applicationId:",
+        applicationId
+      );
+
       if (userType === "anonymous") {
         const anonymousData = AnonymousDataService.convertToSupabaseFormat();
         console.log("Anonymous user selections for documents:", anonymousData);
         return anonymousData;
       } else if (userType === "authenticated" && userId) {
+        console.log("Fetching authenticated user selections");
+        // FIXED: Pass applicationId even if undefined - fetchUserSelectionsDash will handle it
         return fetchUserSelectionsDash(userId, applicationId);
       }
       console.log("❌ No query needed, returning null");
       return null;
     },
-    // MUCH SAFER: Only enable for specific conditions
+    // FIXED: Enable query for authenticated users even without applicationId
     enabled:
-      (userType === "authenticated" && !!userId && !!applicationId) ||
+      (userType === "authenticated" && !!userId) ||
       (userType === "anonymous" &&
         AnonymousDataService.hasCompletedOnboarding()),
-    staleTime: 5 * 60 * 1000, // 5 dakika cache - ÇOK ÖNEMLİ!
-    gcTime: 10 * 60 * 1000, // 10 dakika garbage collection
-    refetchOnMount: false, // Mount'ta tekrar fetch etme
-    refetchOnWindowFocus: false, // Window focus'ta tekrar fetch etme
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 
   const ansCountry = userSelections?.[0]?.ans_country;
@@ -430,23 +511,42 @@ const Dashboard = () => {
     enabled: !!ansCountry && userType === "authenticated" && !!userId,
   });
 
-  // Load completed documents for authenticated users only
+  // Dashboard.jsx'te bu kısmı bulun ve güncelleyin:
+
   useEffect(() => {
-    if (userType === "authenticated" && userId && applicationId) {
-      fetchCompletedDocuments(userId, applicationId).then((data) => {
-        const completedDocsMap = data.reduce((acc, doc) => {
-          if (!acc[applicationId]) {
-            acc[applicationId] = {};
-          }
-          acc[applicationId][doc.document_name] = true;
-          return acc;
-        }, {});
-        dispatch({
-          type: "SET_COMPLETED_DOCUMENTS",
-          payload: completedDocsMap,
-        });
-      });
+    if (userType === "authenticated" && userId) {
+      // FIXED: Use real application ID from userSelections
+      const realApplicationId = userSelections?.[0]?.id;
+
+      if (realApplicationId) {
+        console.log(
+          "🔄 Fetching completed documents with real ID:",
+          realApplicationId
+        );
+        fetchCompletedDocuments(userId, realApplicationId)
+          .then((data) => {
+            const completedDocsMap = data.reduce((acc, doc) => {
+              if (!acc[realApplicationId]) {
+                acc[realApplicationId] = {};
+              }
+              acc[realApplicationId][doc.document_name] = true;
+              return acc;
+            }, {});
+            dispatch({
+              type: "SET_COMPLETED_DOCUMENTS",
+              payload: completedDocsMap,
+            });
+            console.log(
+              "✅ Completed documents loaded for real ID:",
+              realApplicationId
+            );
+          })
+          .catch((error) => {
+            console.error("❌ Error fetching completed documents:", error);
+          });
+      }
     } else if (userType === "anonymous" && applicationId) {
+      // Anonymous user logic (unchanged)
       const anonymousCompletedDocs =
         AnonymousDataService.fetchCompletedDocuments(applicationId);
       const completedDocsMap = anonymousCompletedDocs.reduce((acc, doc) => {
@@ -461,7 +561,7 @@ const Dashboard = () => {
         payload: completedDocsMap,
       });
     }
-  }, [userType, userId, applicationId, dispatch]);
+  }, [userType, userId, userSelections, applicationId, dispatch]); // userSelections dependency eklendi
 
   useEffect(() => {
     if (isUserSelectionsSuccess && userSelections?.length > 0) {
@@ -526,18 +626,20 @@ const Dashboard = () => {
     ? getDocumentsForSelections(userSelections)
     : [];
 
-  // DEBUG: Log document names for troubleshooting
+  // ENHANCED DEBUG: Show user type in debug logs
   useEffect(() => {
-    if (userType === "anonymous" && userSelections) {
-      console.log("=== DOCUMENT DEBUG FOR ANONYMOUS USER ===");
+    if (userSelections) {
+      console.log(`=== DOCUMENT DEBUG FOR ${userType.toUpperCase()} USER ===`);
       console.log("User selections:", userSelections);
       console.log(
         "Document names from getDocumentsForSelections:",
         documentNames
       );
+      console.log("User type:", userType);
+      console.log("User ID:", userId);
       console.log("==========================================");
     }
-  }, [userType, userSelections, documentNames]);
+  }, [userType, userSelections, documentNames, userId]);
 
   // SAFER: Only query documents when we have valid userSelections and not showing static content
   const {
@@ -552,7 +654,6 @@ const Dashboard = () => {
       (userType === "authenticated" ||
         (userType === "anonymous" &&
           AnonymousDataService.hasCompletedOnboarding())),
-    // Bu satırları ekleyin
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnMount: false,
@@ -682,15 +783,20 @@ const Dashboard = () => {
           <>
             <StepIndicatorWrapper>
               <Heading as="h14">Ülke adı</Heading>
-              {/* DEBUG - Bu satırları ekleyin */}
+              {/* ENHANCED DEBUG - Shows user type */}
               <div
                 style={{
-                  background: "yellow",
+                  background:
+                    userType === "authenticated" ? "lightgreen" : "yellow",
                   padding: "10px",
                   margin: "10px 0",
                 }}
               >
                 <strong>🔍 Dashboard StepIndicator Debug:</strong>
+                <br />
+                userType: {userType}
+                <br />
+                userId: {userId || "UNDEFINED"}
                 <br />
                 applicationId: {applicationId || "UNDEFINED"}
                 <br />
@@ -702,6 +808,8 @@ const Dashboard = () => {
                 documents={documents}
                 completedDocuments={completedDocuments}
                 applicationId={applicationId}
+                userSelections={userSelections} // ← Yeni prop
+                userType={userType} // ← Yeni prop
                 isLoading={isDocumentsLoading}
                 isError={isDocumentsError}
               />
