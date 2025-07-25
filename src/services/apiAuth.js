@@ -276,6 +276,10 @@ export async function convertAnonymousToUser({ email, password }) {
 }
 
 // New migration function for localStorage to Supabase
+// apiAuth.js - migrateAnonymousToAuthenticated fonksiyonunu bu şekilde güncelleyin:
+
+// apiAuth.js - migrateAnonymousToAuthenticated fonksiyonunu bu şekilde değiştirin:
+
 export async function migrateAnonymousToAuthenticated(userId) {
   try {
     const anonymousData = AnonymousDataService.prepareDataForMigration();
@@ -285,6 +289,10 @@ export async function migrateAnonymousToAuthenticated(userId) {
       return null;
     }
 
+    console.log("🔄 Starting migration for user:", userId);
+    console.log("Anonymous data to migrate:", anonymousData);
+
+    // Insert user answers
     const { data, error } = await supabase
       .from("userAnswers")
       .insert({
@@ -308,47 +316,132 @@ export async function migrateAnonymousToAuthenticated(userId) {
       return null;
     }
 
-    // Migrate completed documents
+    console.log("✅ User answers migrated, new application ID:", data.id);
+
+    // CRITICAL: Initialize completedDocsToInsert properly
+    const completedDocsToInsert = [];
+    let migratedDocumentsCount = 0;
+
+    // FIXED: Check Supabase schema first
+    console.log("🔍 Checking completed_documents table schema...");
+    
+    // ENHANCED: Migrate completed documents with proper Supabase schema
     if (anonymousData.completedDocuments && Object.keys(anonymousData.completedDocuments).length > 0) {
-      const completedDocsToInsert = [];
       
-      Object.values(anonymousData.completedDocuments).forEach(appDocs => {
-        Object.values(appDocs).forEach(doc => {
-          completedDocsToInsert.push({
-            userId: userId,
-            document_name: doc.document_name,
-            completion_date: doc.completion_date,
-            status: doc.status,
-            application_id: data.id
+      // Get the anonymous application ID and documents
+      Object.keys(anonymousData.completedDocuments).forEach(anonymousAppId => {
+        const appDocs = anonymousData.completedDocuments[anonymousAppId];
+        
+        if (appDocs && typeof appDocs === 'object') {
+          Object.keys(appDocs).forEach(docName => {
+            const docData = appDocs[docName];
+            
+            // FIXED: Handle both boolean and object formats with proper schema
+            if (docData === true) {
+              // Simple boolean format - INSERT with proper schema
+              completedDocsToInsert.push({
+                userId: userId,
+                document_name: docName,
+                completion_date: new Date().toISOString(),
+                // CRITICAL FIX: Remove 'status' if it's causing schema issues
+                // status: 'completed', // ← Bu satırı kaldırın veya boolean yapın
+                application_id: data.id // Use the new authenticated application ID
+              });
+            } else if (typeof docData === 'object' && docData.document_name) {
+              // Object format - INSERT with proper schema  
+              completedDocsToInsert.push({
+                userId: userId,
+                document_name: docData.document_name,
+                completion_date: docData.completion_date || new Date().toISOString(),
+                // CRITICAL FIX: Remove 'status' if it's causing schema issues
+                // status: 'completed', // ← Bu satırı kaldırın veya boolean yapın
+                application_id: data.id // Use the new authenticated application ID
+              });
+            }
           });
-        });
+        }
       });
 
+      console.log("📋 Completed documents to insert:", completedDocsToInsert);
+
+      // CRITICAL: Insert completed documents if any exist
       if (completedDocsToInsert.length > 0) {
-        await supabase.from("completed_documents").insert(completedDocsToInsert);
+        // OPTION 1: Try without 'status' field first
+        const { data: insertedDocs, error: docsError } = await supabase
+          .from("completed_documents")
+          .insert(completedDocsToInsert)
+          .select();
+
+        if (docsError) {
+          console.error("❌ Error inserting completed documents (Option 1):", docsError);
+          
+          // OPTION 2: Try with boolean status if first attempt fails
+          const completedDocsWithBooleanStatus = completedDocsToInsert.map(doc => ({
+            ...doc,
+            status: true // Boolean instead of string
+          }));
+          
+          console.log("🔄 Retrying with boolean status...", completedDocsWithBooleanStatus);
+          
+          const { data: insertedDocs2, error: docsError2 } = await supabase
+            .from("completed_documents")
+            .insert(completedDocsWithBooleanStatus)
+            .select();
+            
+          if (docsError2) {
+            console.error("❌ Error inserting completed documents (Option 2):", docsError2);
+            
+            // OPTION 3: Try minimal schema - just essential fields
+            const minimalDocs = completedDocsToInsert.map(doc => ({
+              userId: doc.userId,
+              document_name: doc.document_name,
+              application_id: doc.application_id
+            }));
+            
+            console.log("🔄 Retrying with minimal schema...", minimalDocs);
+            
+            const { data: insertedDocs3, error: docsError3 } = await supabase
+              .from("completed_documents")
+              .insert(minimalDocs)
+              .select();
+              
+            if (docsError3) {
+              console.error("❌ Final attempt failed:", docsError3);
+            } else {
+              console.log("✅ Completed documents inserted (minimal schema):", insertedDocs3);
+              migratedDocumentsCount = insertedDocs3.length;
+            }
+          } else {
+            console.log("✅ Completed documents inserted (boolean status):", insertedDocs2);
+            migratedDocumentsCount = insertedDocs2.length;
+          }
+        } else {
+          console.log("✅ Completed documents inserted (no status):", insertedDocs);
+          migratedDocumentsCount = insertedDocs.length;
+        }
+      } else {
+        console.log("📋 No completed documents to migrate");
       }
+    } else {
+      console.log("📋 No completed documents found in anonymous data");
     }
 
     // Clear anonymous data after successful migration
     AnonymousDataService.clearData();
 
-    console.log("Anonymous data successfully migrated to authenticated user");
-    return data;
+    console.log("✅ Anonymous data successfully migrated to authenticated user");
+    console.log(`📊 Migration summary: Application ID: ${data.id}, Documents migrated: ${migratedDocumentsCount}`);
+    
+    // Return the migration result with new application ID
+    return {
+      applicationId: data.id,
+      userAnswers: data,
+      migratedDocuments: migratedDocumentsCount,
+      completedDocuments: completedDocsToInsert // Return the docs for immediate use
+    };
 
   } catch (error) {
-    console.error("Error during anonymous data migration:", error);
+    console.error("❌ Error during anonymous data migration:", error);
     return null;
-  }
-}
-
-// Keep existing sync function for compatibility
-async function syncAnonymousDataToUser(anonymousId, newUserId, answers) {
-  const { error } = await supabase
-    .from("userAnswers")
-    .update({ userId: newUserId })
-    .eq("userId", anonymousId);
-
-  if (error) {
-    throw new Error(error.message);
   }
 }

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import styled, { keyframes, css } from "styled-components";
+import { AnonymousDataService } from "../utils/anonymousDataService";
 
 // Icon Components
 const IconRocket = () => (
@@ -808,7 +809,7 @@ const StepIndicator = ({
     if (userType === "authenticated" && userSelections?.length > 0) {
       return userSelections[0].id; // Real Supabase ID
     }
-    return applicationId || `anonymous-${Date.now()}`; // Anonymous fallback
+    return AnonymousDataService.getConsistentApplicationId(); // ← FIXED: Use consistent ID
   };
 
   const realApplicationId = getRealApplicationId();

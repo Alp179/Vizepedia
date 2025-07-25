@@ -1,4 +1,4 @@
-// utils/anonymousDataService.js - Fixed conversion for documents + Migration Support
+// utils/anonymousDataService.js - Fixed conversion for documents + Migration Support + ID Consistency
 
 export class AnonymousDataService {
   static STORAGE_KEYS = {
@@ -81,7 +81,7 @@ export class AnonymousDataService {
     if (!selections) return null;
 
     const convertedAnswer = {
-      id: applicationId || this.getApplicationId(),
+      id: applicationId || this.getConsistentApplicationId(), // ← FIXED: Use consistent ID
       userId: 'anonymous',
       ans_country: selections.country || '',
       ans_purpose: selections.purpose || '',
@@ -184,13 +184,28 @@ export class AnonymousDataService {
     return applicationId;
   }
 
-  // NEW: Get current application ID for migration (ensures we have the right ID)
+  // NEW: Get consistent application ID (solves ID mismatch problem)
+  static getConsistentApplicationId() {
+    // Önce userAnswers'dan ID'yi almaya çalış
+    const userAnswers = localStorage.getItem(this.STORAGE_KEYS.USER_ANSWERS);
+    if (userAnswers) {
+      const parsed = JSON.parse(userAnswers);
+      if (parsed.id) {
+        return parsed.id;
+      }
+    }
+    
+    // Yoksa normal getApplicationId kullan
+    return this.getApplicationId();
+  }
+
+  // UPDATED: Get current application ID for migration (ensures we have the right ID)
   static getCurrentApplicationId() {
     const userAnswers = this.getUserAnswers();
     if (userAnswers && userAnswers.length > 0) {
       return userAnswers[0].id;
     }
-    return this.getApplicationId();
+    return this.getConsistentApplicationId(); // ← FIXED: Use consistent ID
   }
 
   // Check if user is anonymous
@@ -198,10 +213,10 @@ export class AnonymousDataService {
     return localStorage.getItem(this.STORAGE_KEYS.IS_ANONYMOUS) === 'true';
   }
 
-  // UPDATED: Better Supabase format conversion for dashboard compatibility
+  // FIXED: Better Supabase format conversion for dashboard compatibility with consistent ID
   static convertToSupabaseFormat() {
     const selections = this.getUserSelections();
-    const applicationId = this.getApplicationId();
+    const applicationId = this.getConsistentApplicationId(); // ← FIXED: Use consistent ID
     const createdAt = localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString();
     
     if (!selections) return null;
@@ -225,52 +240,84 @@ export class AnonymousDataService {
   }
 
   // ENHANCED: Prepare data for migration to authenticated user
-  static prepareDataForMigration() {
-    try {
-      const selections = this.getUserSelections();
-      const completedDocs = this.getCompletedDocuments();
-      const applicationId = this.getApplicationId();
-      const createdAt = localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString();
-      
-      console.log("🔄 Preparing anonymous data for migration:");
-      console.log("selections:", selections);
-      console.log("completedDocs:", completedDocs);
-      console.log("applicationId:", applicationId);
+  // ENHANCED: Prepare data for migration to authenticated user
+static prepareDataForMigration() {
+  try {
+    const selections = this.getUserSelections();
+    const completedDocs = this.getCompletedDocuments();
+    const applicationId = this.getConsistentApplicationId();
+    const createdAt = localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString();
+    
+    console.log("🔄 Preparing anonymous data for migration:");
+    console.log("selections:", selections);
+    console.log("completedDocs:", completedDocs);
+    console.log("applicationId:", applicationId);
 
-      if (!selections || !this.hasCompletedOnboarding()) {
-        console.log("❌ No onboarding data to migrate");
-        return { userAnswers: null, completedDocuments: null };
-      }
-
-      // Convert selections to userAnswers format
-      const userAnswers = {
-        ans_country: selections.country,
-        ans_purpose: selections.purpose,
-        ans_profession: selections.profession,
-        ans_vehicle: selections.vehicle,
-        ans_kid: selections.kid !== undefined ? selections.kid : false,
-        ans_accommodation: selections.accommodation,
-        ans_hassponsor: selections.hasSponsor || false,
-        ans_sponsor_profession: selections.sponsorProfession || null,
-        has_appointment: false,
-        has_filled_form: false,
-        created_at: createdAt
-      };
-
-      // Convert completed documents to migration format
-      const completedDocuments = this.getAllCompletedDocuments();
-      
-      console.log("✅ Migration data prepared:", { userAnswers, completedDocuments });
-      
-      return {
-        userAnswers: userAnswers,
-        completedDocuments: completedDocuments
-      };
-    } catch (error) {
-      console.error("Error preparing data for migration:", error);
+    if (!selections || !this.hasCompletedOnboarding()) {
+      console.log("❌ No onboarding data to migrate");
       return { userAnswers: null, completedDocuments: null };
     }
+
+    // Convert selections to userAnswers format
+    const userAnswers = {
+      ans_country: selections.country,
+      ans_purpose: selections.purpose,
+      ans_profession: selections.profession,
+      ans_vehicle: selections.vehicle,
+      ans_kid: selections.kid !== undefined ? selections.kid : false,
+      ans_accommodation: selections.accommodation,
+      ans_hassponsor: selections.hasSponsor || false,
+      ans_sponsor_profession: selections.sponsorProfession || null,
+      has_appointment: false,
+      has_filled_form: false,
+      created_at: createdAt
+    };
+
+    // CRITICAL: Convert completed documents to migration format with detailed logging
+    console.log("🔍 Processing completed documents for migration...");
+    console.log("Raw completed documents:", completedDocs);
+    
+    let completedDocuments = {};
+    
+    if (completedDocs && typeof completedDocs === 'object') {
+      Object.keys(completedDocs).forEach(appId => {
+        console.log(`📋 Processing application ${appId}:`, completedDocs[appId]);
+        
+        if (completedDocs[appId] && typeof completedDocs[appId] === 'object') {
+          completedDocuments[appId] = {};
+          
+          Object.keys(completedDocs[appId]).forEach(docName => {
+            const docValue = completedDocs[appId][docName];
+            console.log(`  - Document ${docName}:`, docValue);
+            
+            if (docValue === true) {
+              // Simple boolean format - convert to object
+              completedDocuments[appId][docName] = {
+                document_name: docName,
+                completion_date: new Date().toISOString(),
+                status: 'completed'
+              };
+            } else if (typeof docValue === 'object' && docValue.document_name) {
+              // Already in object format
+              completedDocuments[appId][docName] = docValue;
+            }
+          });
+        }
+      });
+    }
+    
+    console.log("✅ Processed completed documents:", completedDocuments);
+    console.log("✅ Migration data prepared:", { userAnswers, completedDocuments });
+    
+    return {
+      userAnswers: userAnswers,
+      completedDocuments: completedDocuments
+    };
+  } catch (error) {
+    console.error("❌ Error preparing data for migration:", error);
+    return { userAnswers: null, completedDocuments: null };
   }
+}
 
   // NEW: Get all completed documents in proper format for migration
   static getAllCompletedDocuments() {
@@ -339,7 +386,7 @@ export class AnonymousDataService {
       selections: selections ? JSON.parse(JSON.stringify(selections)) : null,
       userAnswers: userAnswers ? JSON.parse(userAnswers) : null,
       completedDocuments: completedDocs || {},
-      applicationId: this.getApplicationId()
+      applicationId: this.getConsistentApplicationId() // ← FIXED: Use consistent ID
     };
   }
 
@@ -428,9 +475,11 @@ export class AnonymousDataService {
     console.log('Raw selections:', this.getUserSelections());
     console.log('Converted to Supabase format:', this.convertToSupabaseFormat());
     console.log('Application ID:', this.getApplicationId());
+    console.log('Consistent Application ID:', this.getConsistentApplicationId()); // ← NEW DEBUG LINE
     console.log('Has completed onboarding:', this.hasCompletedOnboarding());
     console.log('Needs migration:', this.needsMigration());
     console.log('Migration data:', this.prepareDataForMigration());
+    console.log('Completed documents:', this.getCompletedDocuments());
     console.log('=============================');
   }
 }

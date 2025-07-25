@@ -500,28 +500,39 @@ const PlannedDocumentDetail = () => {
   // FIXED: Real application ID aware action handler
   const handleAction = async () => {
     if (!selectedDocument) return;
-
+  
     try {
       if (isAnonymous) {
-        // Anonymous user - localStorage'da işlem yap
+        // FIXED: Anonymous user - consistent application ID kullan
+        const correctApplicationId = AnonymousDataService.getConsistentApplicationId();
+        
+        console.log("🎯 Anonymous user action:");
+        console.log("URL applicationId:", applicationId);
+        console.log("Correct applicationId:", correctApplicationId);
+        
         if (isCompleted) {
-          AnonymousDataService.uncompleteDocument(applicationId, selectedDocument.docName);
+          AnonymousDataService.uncompleteDocument(correctApplicationId, selectedDocument.docName);
           dispatch({
             type: "UNCOMPLETE_DOCUMENT",
-            payload: { documentName: selectedDocument.docName, applicationId },
+            payload: { 
+              documentName: selectedDocument.docName, 
+              applicationId: correctApplicationId  // ← Consistent ID kullanıyoruz
+            },
           });
         } else {
-          AnonymousDataService.completeDocument(applicationId, selectedDocument.docName);
+          AnonymousDataService.completeDocument(correctApplicationId, selectedDocument.docName);
           dispatch({
             type: "COMPLETE_DOCUMENT",
-            payload: { documentName: selectedDocument.docName, applicationId },
+            payload: { 
+              documentName: selectedDocument.docName, 
+              applicationId: correctApplicationId  // ← Consistent ID kullanıyoruz
+            },
           });
         }
       } else {
-        // FIXED: Authenticated user - use real application ID consistently
+        // AUTHENTICATED USER LOGIC - değişmedi
         if (!userId || !userSelections || userSelections.length === 0) return;
         
-        // Get the real application ID from userSelections
         const realApplicationId = userSelections[0].id;
         
         console.log("🔄 Using real application ID for authenticated user:");
@@ -530,37 +541,34 @@ const PlannedDocumentDetail = () => {
         
         if (isCompleted) {
           await uncompleteDocument(userId, selectedDocument.docName, realApplicationId);
-          // CRITICAL FIX: Use real application ID in dispatch too
           dispatch({
             type: "UNCOMPLETE_DOCUMENT",
             payload: { 
               documentName: selectedDocument.docName, 
-              applicationId: realApplicationId  // ← Bu çok önemli!
+              applicationId: realApplicationId
             },
           });
           console.log("✅ Document uncompleted and context updated with real ID");
         } else {
           await completeDocument(userId, selectedDocument.docName, realApplicationId);
-          // CRITICAL FIX: Use real application ID in dispatch too
           dispatch({
             type: "COMPLETE_DOCUMENT",
             payload: { 
               documentName: selectedDocument.docName, 
-              applicationId: realApplicationId  // ← Bu çok önemli!
+              applicationId: realApplicationId
             },
           });
           console.log("✅ Document completed and context updated with real ID");
         }
       }
-
+  
+      // NAVIGATION LOGIC - değişmedi
       console.log("🔄 Navigation after document action:");
       console.log("applicationId:", applicationId);
       console.log("user:", user);
       console.log("userType:", userType);
-
+  
       if (user && userType === "authenticated") {
-        // For authenticated users, redirect to dashboard without applicationId 
-        // Dashboard will automatically use the real application ID
         navigate("/dashboard");
       } else if (applicationId && !applicationId.startsWith("anonymous-")) {
         navigate(`/dashboard/${applicationId}`);
