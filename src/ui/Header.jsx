@@ -96,7 +96,6 @@ const ButtonContainer = styled.div`
   align-items: center;
 `;
 
-// NEW: Additional buttons for new visitors (ADDITIVE, not replacing)
 const GetStartedButton = styled.button`
   width: 200px;
   height: 50px;
@@ -177,7 +176,23 @@ const WelcomeMessage = styled.div`
   }
 `;
 
-// PRESERVED: All existing modal styles
+// Loading state for migration
+const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  span {
+    color: var(--color-grey-913);
+    font-weight: 500;
+    font-size: 1.4rem;
+  }
+`;
+
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -275,21 +290,17 @@ const ModalButton = styled.button`
 `;
 
 function Header() {
-  // PRESERVED: All existing state
+  const { user, isLoading: userLoading } = useUser();
+  
   const [isAnonymous, setIsAnonymous] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  
-  // NEW: Multi-step onboarding modal state
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
   
   const { logout } = useLogout();
   const navigate = useNavigate();
 
-  // NEW: Additional user type detection (non-breaking)
-  const { userType } = useUser();
-
-  // PRESERVED: All existing SVG icons
+  // SVG icons
   const LogoutIcon = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -326,7 +337,36 @@ function Header() {
     </svg>
   );
 
-  // PRESERVED: All existing event handlers
+  const LoadingIcon = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ animation: 'spin 1s linear infinite' }}
+    >
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+        strokeDasharray="32"
+        strokeDashoffset="8"
+      />
+    </svg>
+  );
+
+  // Event handlers
   const handleAnonymousLogout = () => {
     setShowLogoutModal(true);
   };
@@ -349,36 +389,54 @@ function Header() {
     }
   };
 
-  // NEW: Additional handlers for new visitors
   const handleLogin = () => {
     navigate("/login");
   };
 
-  // UPDATED: New get started handler to open multi-step modal
   const handleGetStarted = () => {
     setShowOnboardingModal(true);
   };
 
-  // NEW: Handle onboarding completion
   const handleOnboardingComplete = () => {
     setShowOnboardingModal(false);
-    
-    // Force page refresh to update dashboard
     console.log("Onboarding completed, refreshing page to update dashboard");
     window.location.reload();
   };
 
-  // PRESERVED: All existing useEffect hooks
+  // UPDATED: Enhanced useEffect with migration flag detection
   useEffect(() => {
-    const anonymousStatus = localStorage.getItem("isAnonymous") === "true";
-    setIsAnonymous(anonymousStatus);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    const handleStorageChange = () => {
+    const updateUserState = () => {
       const anonymousStatus = localStorage.getItem("isAnonymous") === "true";
       setIsAnonymous(anonymousStatus);
+      setLoading(false);
+      
+      // CRITICAL: Close any open modals when user becomes authenticated
+      if (user && !anonymousStatus) {
+        console.log("User is now authenticated, closing any open modals");
+        setShowLogoutModal(false);
+        setShowOnboardingModal(false);
+        
+        // Force close any ModalSignup that might be open
+        const modalSignupOverlay = document.querySelector('[data-modal-signup-overlay]');
+        if (modalSignupOverlay) {
+          modalSignupOverlay.click();
+        }
+        
+        // Alternative: dispatch a custom event to close modals
+        window.dispatchEvent(new CustomEvent('closeAllModals'));
+      }
+      
+      console.log("Header state updated:", {
+        user: user,
+        isAnonymous: anonymousStatus,
+        userLoading: userLoading
+      });
+    };
+
+    updateUserState();
+
+    const handleStorageChange = () => {
+      updateUserState();
     };
 
     window.addEventListener("storage", handleStorageChange);
@@ -386,37 +444,83 @@ function Header() {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, [user, userLoading]);
 
-  if (loading) return <Spinner />;
+  // CRITICAL: Enhanced user type detection with migration safety
+  const getUserType = () => {
+    // CRITICAL: Check if migration is in progress
+    const isMigrating = localStorage.getItem("userMigrating") === "true";
+    if (isMigrating) return "migrating";
+    
+    // If still loading user data, show loading
+    if (userLoading || loading) return "loading";
+    
+    // CRITICAL: If user exists, always prioritize authenticated state
+    // This prevents login modal from showing during migration
+    if (user) {
+      // If user exists but isAnonymous is still true, it might be mid-migration
+      // Give it some grace time to update
+      if (isAnonymous) {
+        // Check if this is a fresh migration (user just signed up)
+        const hasJustSignedUp = localStorage.getItem("justSignedUp") === "true";
+        if (hasJustSignedUp) {
+          // Clean up the flag and treat as authenticated
+          localStorage.removeItem("justSignedUp");
+          localStorage.removeItem("isAnonymous");
+          return "authenticated";
+        }
+        return "anonymous";
+      }
+      return "authenticated";
+    }
+    
+    // If no user at all, it's new visitor
+    return "new_visitor";
+  };
 
-  // ENHANCED: Check for new visitors first (ADDITIVE logic)
-  const isNewVisitor = userType === "new_visitor" && !isAnonymous;
+  const currentUserType = getUserType();
+
+  // Show spinner while loading
+  if (currentUserType === "loading") {
+    return <Spinner />;
+  }
+
+  console.log("Header rendering with userType:", currentUserType, {
+    user: user,
+    isAnonymous: isAnonymous,
+    userLoading: userLoading
+  });
 
   return (
     <>
       <StyledHeader>
-        {/* NEW: Special header for new visitors */}
-        {isNewVisitor ? (
+        {/* Show migration loading state */}
+        {currentUserType === "migrating" ? (
+          <LoadingContainer>
+            <LoadingIcon />
+            <span>Hesabınız hazırlanıyor...</span>
+          </LoadingContainer>
+        ) : currentUserType === "new_visitor" ? (
           <ButtonContainer>
             <WelcomeMessage>
               <span>👋 Vize Dashboarduna Hoş Geldiniz!</span>
             </WelcomeMessage>
-            {/* UPDATED: Use new multi-step modal instead of ModalSignup */}
             <GetStartedButton onClick={handleGetStarted}>
               Hemen Başlayın
             </GetStartedButton>
             <LoginButton onClick={handleLogin}>Giriş Yap</LoginButton>
           </ButtonContainer>
-        ) : // PRESERVED: All existing logic unchanged
-        isAnonymous ? (
+        ) : currentUserType === "anonymous" ? (
           <ButtonContainer>
             <ModalSignup>
               <ModalSignup.Open opens="signUpForm">
                 <HemenUyeOl>Hemen Üye Ol</HemenUyeOl>
               </ModalSignup.Open>
               <ModalSignup.Window name="signUpForm">
-                <SignupForm />
+                <SignupForm onCloseModal={() => {
+                  // Force close modal when signup is successful
+                  console.log("SignupForm requested modal close");
+                }} />
               </ModalSignup.Window>
             </ModalSignup>
 
@@ -426,6 +530,7 @@ function Header() {
             </LogoutButton>
           </ButtonContainer>
         ) : (
+          // Authenticated user
           <>
             <ProfileButton size="large" variation="primary" />
             <HeaderMenu />
@@ -433,13 +538,11 @@ function Header() {
         )}
       </StyledHeader>
 
-      {/* NEW: Multi-step onboarding modal */}
       <MultiStepOnboardingModal 
         isOpen={showOnboardingModal}
         onClose={handleOnboardingComplete}
       />
 
-      {/* PRESERVED: Existing logout modal unchanged */}
       {showLogoutModal &&
         createPortal(
           <ModalOverlay onClick={handleOverlayClick}>

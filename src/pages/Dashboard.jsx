@@ -22,7 +22,6 @@ import MobileCarousel from "../ui/MobileCarousel";
 import VisaCheckModal from "../ui/VisaCheckModal";
 import VisaStatusBanner from "../ui/VisaStatusBanner";
 import { useUser } from "../features/authentication/useUser";
-import OnboardingWarningBanner from "../ui/OnboardingWarningBanner";
 import StaticDashboardContent from "../ui/StaticDashboardContent";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 
@@ -774,7 +773,6 @@ const Dashboard = () => {
 
     return (
       <DashboardContainer>
-        <OnboardingWarningBanner />
         <StaticDashboardContent />
       </DashboardContainer>
     );
@@ -783,7 +781,6 @@ const Dashboard = () => {
   if (isUserSelectionsError) {
     return (
       <DashboardContainer>
-        <OnboardingWarningBanner />
         <div
           style={{
             padding: "20px",

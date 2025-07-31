@@ -236,7 +236,7 @@ const LoadingIndicator = styled.div`
   gap: 8px;
 `;
 
-// Header component with FIXED anonymous logic
+// FIXED Header component - Now directs to /dashboard instead of wellcome pages
 export const Header = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -261,29 +261,27 @@ export const Header = () => {
       return;
     }
 
-    // Use localStorage-only anonymous logic instead of Supabase
+    // For anonymous users, redirect to dashboard immediately
     await handleAnonymousSignIn();
   };
 
-  // FIXED: No more Supabase anonymous sessions
+  // FIXED: Direct to dashboard approach
   const handleAnonymousSignIn = async () => {
     try {
       setIsLoading(true);
 
-      // Instead of Supabase, use our AnonymousDataService
+      
+      // Initialize empty user data for anonymous user
       AnonymousDataService.saveUserSelections({});
       
       console.log("Anonymous mode activated (localStorage only)");
 
-      // Check if user has already answered wellcome questions
-      const hasOnboardingData = AnonymousDataService.hasCompletedOnboarding();
-
-      if (hasOnboardingData) {
-        const applicationId = AnonymousDataService.getApplicationId();
-        navigate(`/dashboard/${applicationId}`);
-      } else {
-        navigate("/wellcome-2");
-      }
+      // Always redirect to dashboard
+      // Dashboard will handle the three scenarios:
+      // 1. Static Dashboard (no onboarding completed)
+      // 2. Anonymous Dashboard (onboarding completed, anonymous)
+      // 3. Authenticated Dashboard (onboarding completed, authenticated)
+      navigate("/dashboard");
 
       setIsLoading(false);
     } catch (error) {
@@ -376,7 +374,7 @@ export const Header = () => {
   );
 };
 
-// CountryCard component remains exactly the same...
+// CountryCard and HeroParallax components remain exactly the same...
 export const CountryCard = ({ country, translate }) => {
   const flagRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
@@ -436,7 +434,6 @@ export const CountryCard = ({ country, translate }) => {
   );
 };
 
-// HeroParallax component remains exactly the same...
 export const HeroParallax = ({ countries = [] }) => {
   const defaultCountries = [
     { name: "Amerika Birleşik Devletleri", code: "US" },

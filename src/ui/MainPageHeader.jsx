@@ -9,7 +9,6 @@ import MainPageHamburger from "./MainPageHamburger";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getCurrentUser, isUserAnonymous } from "../services/apiAuth";
-import supabase from "../services/supabase";
 import ProfileButton from "./ProfileButton";
 
 // Scroll hide/show özellikli modern header
@@ -326,42 +325,32 @@ function MainPageHeader({ setMenuOpen }) {
     };
   }, []);
 
-  // Anonim giriş fonksiyonu
-  const handleAnonymousSignIn = async () => {
-    try {
-      setIsLoading(true); // Yükleniyor durumunu başlat
+  // FIXED: Simplified anonymous sign in that goes directly to dashboard
+  // FIXED: Simplified anonymous sign in that goes directly to dashboard
+const handleAnonymousSignIn = async () => {
+  try {
+    setIsLoading(true); // Yükleniyor durumunu başlat
 
-      // Supabase anonim oturum açma fonksiyonu
-      const { data, error } = await supabase.auth.signInAnonymously();
-      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+    // DON'T set anonymous flag immediately - dashboard will determine this
+    // localStorage.setItem("isAnonymous", "true"); // ← REMOVED
+    
+    // Initialize empty anonymous user data for potential onboarding
+    localStorage.setItem("anonymousUserData", JSON.stringify({}));
+    
+    console.log("Redirecting to dashboard for anonymous user");
 
-      if (error) {
-        console.error("Anonim oturum açma hatası:", error.message);
-        setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
-        return;
-      }
+    // Always redirect to dashboard - dashboard will handle the three scenarios:
+    // 1. No onboarding completed → Static Dashboard (with onboarding CTA)
+    // 2. Onboarding completed + anonymous → Anonymous Dashboard  
+    // 3. Onboarding completed + authenticated → Authenticated Dashboard
+    navigate("/dashboard");
 
-      if (data) {
-        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
-        const wellcomesAnswered =
-          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
-
-        if (wellcomesAnswered === "true") {
-          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
-          navigate("/dashboard");
-        } else {
-          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
-          navigate("/wellcome-2");
-        }
-
-        // Yükleniyor durumunu kapat (navigate işlemi gerçekleştiğinde otomatik kapanacak)
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Oturum açma sırasında hata oluştu:", error.message);
-      setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
-    }
-  };
+    setIsLoading(false);
+  } catch (error) {
+    console.error("Anonymous mode activation error:", error);
+    setIsLoading(false);
+  }
+};
 
   // Kullanıcı oturum kontrolü
   useEffect(() => {

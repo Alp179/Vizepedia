@@ -8,7 +8,6 @@ import DarkModeToggle from "./DarkModeToggle";
 import { getCurrentUser } from "../services/apiAuth";
 import { useUser } from "../features/authentication/useUser";
 import { useLogout } from "../features/authentication/useLogout";
-import supabase from "../services/supabase";
 import ModalSignup from "../ui/ModalSignup";
 import SignupForm from "../features/authentication/SignupForm";
 
@@ -728,46 +727,35 @@ const MainPageHamburger = ({ setMenuOpen }) => {
       setMenuOpen(false);
   };
 
-  // Anonim giriş fonksiyonu
+  // FIXED: Simplified anonymous sign in that goes directly to dashboard
   const handleAnonymousSignIn = async () => {
     try {
       // Eğer zaten yükleniyorsa, fonksiyondan çık
       if (isLoading) return;
-
+  
       setIsLoading(true); // Yükleniyor durumunu başlat
-
-      // Supabase anonim oturum açma fonksiyonu
-      const { data, error } = await supabase.auth.signInAnonymously();
-      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
-
-      if (error) {
-        console.error("Anonim oturum açma hatası:", error.message);
-        setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
-        return;
-      }
-
-      if (data) {
-        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
-        const wellcomesAnswered =
-          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
-
-        // Menüyü kapat
-        setIsOpen(false);
-        setMenuOpen(false);
-
-        if (wellcomesAnswered === "true") {
-          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
-          navigate("/dashboard");
-        } else {
-          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
-          navigate("/wellcome-2");
-        }
-
-        // Yükleniyor durumunu kapat (navigate işlemi gerçekleştiğinde otomatik kapanacak)
-        setIsLoading(false);
-      }
+  
+      // DON'T set anonymous flag immediately - dashboard will determine this based on onboarding status
+      // localStorage.setItem("isAnonymous", "true"); // ← REMOVED
+      
+      // Initialize empty anonymous user data for potential onboarding
+      localStorage.setItem("anonymousUserData", JSON.stringify({}));
+      
+      console.log("Redirecting to dashboard for anonymous user");
+  
+      // Menüyü kapat
+      setIsOpen(false);
+      setMenuOpen(false);
+  
+      // Always redirect to dashboard - dashboard will handle the three scenarios:
+      // 1. No onboarding completed → Static Dashboard (shows onboarding prompt)
+      // 2. Onboarding completed + anonymous → Anonymous Dashboard (functional)
+      // 3. Onboarding completed + authenticated → Authenticated Dashboard (full features)
+      navigate("/dashboard");
+      
+      setIsLoading(false);
     } catch (error) {
-      console.error("Oturum açma sırasında hata oluştu:", error.message);
+      console.error("Anonymous sign in error:", error.message);
       setIsLoading(false); // Hata durumunda yükleniyor durumunu kapat
     }
   };
@@ -794,6 +782,8 @@ const MainPageHamburger = ({ setMenuOpen }) => {
     logout();
     localStorage.removeItem("isAnonymous"); // Logout olunca anonim bilgisini temizle
     localStorage.removeItem("wellcomesAnswered"); // wellcomes bilgisini de temizle
+    localStorage.removeItem("anonymousUserData"); // Anonymous user data temizle
+    localStorage.removeItem("anonymousApplicationId"); // Anonymous application ID temizle
     setIsOpen(false);
     setMenuOpen(false);
   };
