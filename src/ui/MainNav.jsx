@@ -21,6 +21,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 import ModalDocs from "./ModalDocs";
 import { useUser } from "../features/authentication/useUser";
+// NEW: Import MultiStepOnboardingModal
+import MultiStepOnboardingModal from "../ui/MultiStepOnboardingModal";
 
 // PRESERVED: All existing keyframes
 const glowing = keyframes`
@@ -129,7 +131,7 @@ const GlowButton = styled.button`
   }
 `;
 
-// NEW: Welcome button for new visitors
+// NEW: Welcome button for new visitors - Updated with better styling
 const WelcomeButton = styled.button`
   width: 220px;
   height: 50px;
@@ -538,6 +540,9 @@ function MainNav() {
   const [userId, setUserId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAppId, setSelectedAppId] = useState(null);
+  // NEW: Multi-step onboarding modal state
+  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
+  
   const navigate = useNavigate();
   const { id: applicationId } = useParams();
   const {
@@ -647,10 +652,18 @@ function MainNav() {
     }
   };
 
-  // NEW: Handlers for new visitors
+  // UPDATED: New handlers for new visitors - Open onboarding modal
   const handleGetStarted = () => {
-    // CTA butonu sadece görsel - yönlendirme yok
-    console.log("Get Started button clicked");
+    setShowOnboardingModal(true);
+  };
+
+  // NEW: Handle onboarding completion - same as Header.jsx
+  const handleOnboardingComplete = () => {
+    setShowOnboardingModal(false);
+    
+    // Force page refresh to update dashboard
+    console.log("Onboarding completed, refreshing page to update dashboard");
+    window.location.reload();
   };
 
   const handleShowDocs = () => {
@@ -670,97 +683,105 @@ function MainNav() {
   const isNewVisitor = userType === 'new_visitor';
 
   return (
-    <nav className="navbar-dash">
-      <Toaster />
-      
-      {/* NEW: Different button for new visitors */}
-      {isNewVisitor ? (
-        <WelcomeButton onClick={handleGetStarted}>
-          Başlayın
-        </WelcomeButton>
-      ) : (
-        <GlowButton onClick={continueToDocument}>Devam et</GlowButton>
-      )}
-
-      <NavList>
-        {/* NEW: Simplified navigation for new visitors */}
+    <>
+      <nav className="navbar-dash">
+        <Toaster />
+        
+        {/* UPDATED: Different button for new visitors - now opens onboarding modal */}
         {isNewVisitor ? (
-          <></>
+          <WelcomeButton onClick={handleGetStarted}>
+            Başlayın
+          </WelcomeButton>
         ) : (
-          <>
-            {/* PRESERVED: All existing navigation for other users */}
-            <li>
-              <ModalDocs>
-                <ModalDocs.Open opens="allDocs">
-                  <AllDocsButton style={{ width: "100%" }}>
-                    <HiDocument
-                      className="mainnavicons"
-                      style={{ color: "var(--color-grey-924)" }}
-                    />
-                    <span className="sidebartext">Tüm belgeler</span>
-                  </AllDocsButton>
-                </ModalDocs.Open>
-                <ModalDocs.Window name="allDocs">
-                  <AllDocs style={{ color: "var(--color-grey-924)" }} />
-                </ModalDocs.Window>
-              </ModalDocs>
-            </li>
-            <ScrollableDiv>
-              {applications.map((app) => (
-                <li className="mainnav-buzlucam" key={app.id}>
-                  <StyledNavLink to={`/dashboard/${app.id}`}>
-                    <AppInfo>
-                      <AppTitle>{app.ans_country}</AppTitle>
-                      <AppSubtitle>
-                        {app.ans_purpose} - {app.ans_profession}
-                      </AppSubtitle>
-                    </AppInfo>
-                    {applications.length > 1 && (
-                      <ActionButton
-                        onClick={(e) => openDeleteModal(app.id, e)}
-                        aria-label="Vize başvurusunu sil"
-                        title="Vize başvurusunu sil"
-                      >
-                        <MdDelete />
-                      </ActionButton>
-                    )}
-                  </StyledNavLink>
-                </li>
-              ))}
-            </ScrollableDiv>
-            <li>
-              <SimpleButton onClick={handleGetStarted}>
-                <HiPlus
-                  className="mainnavicons"
-                  style={{ color: "var(--color-grey-924)" }}
-                />
-                <span className="sidebartext">Yeni</span>
-              </SimpleButton>
-            </li>
-          </>
+          <GlowButton onClick={continueToDocument}>Devam et</GlowButton>
         )}
-      </NavList>
 
-      {/* PRESERVED: Delete confirmation modal */}
-      {showDeleteModal && (
-        <ModalOverlay onClick={closeDeleteModal}>
-          <ConfirmationModal onClick={(e) => e.stopPropagation()}>
-            <ModalHeader>
-              <MdDelete size={24} />
-              <h3>Vize Başvurusunu Sil</h3>
-            </ModalHeader>
-            <ModalContent>
-              Bu vize başvurusunu silmek istediğinizden emin misiniz? Bu işlem
-              geri alınamaz.
-            </ModalContent>
-            <ModalActions>
-              <CancelButton onClick={closeDeleteModal}>İptal</CancelButton>
-              <DeleteButton onClick={handleDelete}>Sil</DeleteButton>
-            </ModalActions>
-          </ConfirmationModal>
-        </ModalOverlay>
-      )}
-    </nav>
+        <NavList>
+          {/* NEW: Simplified navigation for new visitors */}
+          {isNewVisitor ? (
+            <></>
+          ) : (
+            <>
+              {/* PRESERVED: All existing navigation for other users */}
+              <li>
+                <ModalDocs>
+                  <ModalDocs.Open opens="allDocs">
+                    <AllDocsButton style={{ width: "100%" }}>
+                      <HiDocument
+                        className="mainnavicons"
+                        style={{ color: "var(--color-grey-924)" }}
+                      />
+                      <span className="sidebartext">Tüm belgeler</span>
+                    </AllDocsButton>
+                  </ModalDocs.Open>
+                  <ModalDocs.Window name="allDocs">
+                    <AllDocs style={{ color: "var(--color-grey-924)" }} />
+                  </ModalDocs.Window>
+                </ModalDocs>
+              </li>
+              <ScrollableDiv>
+                {applications.map((app) => (
+                  <li className="mainnav-buzlucam" key={app.id}>
+                    <StyledNavLink to={`/dashboard/${app.id}`}>
+                      <AppInfo>
+                        <AppTitle>{app.ans_country}</AppTitle>
+                        <AppSubtitle>
+                          {app.ans_purpose} - {app.ans_profession}
+                        </AppSubtitle>
+                      </AppInfo>
+                      {applications.length > 1 && (
+                        <ActionButton
+                          onClick={(e) => openDeleteModal(app.id, e)}
+                          aria-label="Vize başvurusunu sil"
+                          title="Vize başvurusunu sil"
+                        >
+                          <MdDelete />
+                        </ActionButton>
+                      )}
+                    </StyledNavLink>
+                  </li>
+                ))}
+              </ScrollableDiv>
+              <li>
+                <SimpleButton onClick={handleGetStarted}>
+                  <HiPlus
+                    className="mainnavicons"
+                    style={{ color: "var(--color-grey-924)" }}
+                  />
+                  <span className="sidebartext">Yeni</span>
+                </SimpleButton>
+              </li>
+            </>
+          )}
+        </NavList>
+
+        {/* PRESERVED: Delete confirmation modal */}
+        {showDeleteModal && (
+          <ModalOverlay onClick={closeDeleteModal}>
+            <ConfirmationModal onClick={(e) => e.stopPropagation()}>
+              <ModalHeader>
+                <MdDelete size={24} />
+                <h3>Vize Başvurusunu Sil</h3>
+              </ModalHeader>
+              <ModalContent>
+                Bu vize başvurusunu silmek istediğinizden emin misiniz? Bu işlem
+                geri alınamaz.
+              </ModalContent>
+              <ModalActions>
+                <CancelButton onClick={closeDeleteModal}>İptal</CancelButton>
+                <DeleteButton onClick={handleDelete}>Sil</DeleteButton>
+              </ModalActions>
+            </ConfirmationModal>
+          </ModalOverlay>
+        )}
+      </nav>
+
+      {/* NEW: Multi-step onboarding modal - same as Header.jsx */}
+      <MultiStepOnboardingModal 
+        isOpen={showOnboardingModal}
+        onClose={handleOnboardingComplete}
+      />
+    </>
   );
 }
 

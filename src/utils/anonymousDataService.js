@@ -1,4 +1,4 @@
-// utils/anonymousDataService.js - Fixed conversion for documents + Migration Support + ID Consistency
+// utils/anonymousDataService.js - Fixed conversion for documents + Migration Support + ID Consistency + Onboarding Logic Fix
 
 export class AnonymousDataService {
   static STORAGE_KEYS = {
@@ -7,10 +7,12 @@ export class AnonymousDataService {
     IS_ANONYMOUS: 'isAnonymous',
     USER_ANSWERS: 'userAnswers',
     CREATED_AT: 'anonymousCreatedAt',
-    COMPLETED_DOCUMENTS: 'completedDocuments'
+    COMPLETED_DOCUMENTS: 'completedDocuments',
+    // ADDED: Compatibility with old wellcome system
+    WELLCOMES_ANSWERED: 'wellcomesAnswered'
   };
 
-  // Save user selections to localStorage
+  // FIXED: Save user selections to localStorage - Only set isAnonymous AFTER onboarding completion
   static saveUserSelections(selections) {
     const existingSelections = this.getUserSelections() || {};
     const updatedSelections = {
@@ -20,7 +22,11 @@ export class AnonymousDataService {
     };
     
     localStorage.setItem(this.STORAGE_KEYS.USER_SELECTIONS, JSON.stringify(updatedSelections));
-    localStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
+    
+    // FIXED: Only set isAnonymous AFTER onboarding is completed
+    if (this.hasCompletedOnboarding()) {
+      localStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
+    }
     
     // Set created date if not exists
     if (!localStorage.getItem(this.STORAGE_KEYS.CREATED_AT)) {
@@ -34,7 +40,7 @@ export class AnonymousDataService {
     return selections ? JSON.parse(selections) : null;
   }
 
-  // Save completed user answers (equivalent to Supabase userAnswers table)
+  // FIXED: Save completed user answers (equivalent to Supabase userAnswers table)
   static saveUserAnswers(answers) {
     const applicationId = this.getApplicationId();
     const userAnswers = {
@@ -54,6 +60,11 @@ export class AnonymousDataService {
     };
 
     localStorage.setItem(this.STORAGE_KEYS.USER_ANSWERS, JSON.stringify(userAnswers));
+    
+    // FIXED: Mark both onboarding complete AND set anonymous flag
+    this.markOnboardingComplete();
+    localStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
+    
     return userAnswers;
   }
 
@@ -150,6 +161,13 @@ export class AnonymousDataService {
 
   // Check if user has completed onboarding
   static hasCompletedOnboarding() {
+    // UPDATED: Check both new system and old wellcomesAnswered flag for backward compatibility
+    const oldWellcomesAnswered = localStorage.getItem(this.STORAGE_KEYS.WELLCOMES_ANSWERED) === 'true';
+    
+    if (oldWellcomesAnswered) {
+      return true;
+    }
+    
     const selections = this.getUserSelections();
     if (!selections) return false;
     
@@ -163,6 +181,13 @@ export class AnonymousDataService {
     const hasKidField = selections.kid !== undefined && selections.kid !== null;
 
     return hasRequiredFields && hasKidField;
+  }
+
+  // FIXED: Mark onboarding as complete and set anonymous flag
+  static markOnboardingComplete() {
+    localStorage.setItem(this.STORAGE_KEYS.WELLCOMES_ANSWERED, 'true');
+    // Also set isAnonymous when onboarding is completed
+    localStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
   }
 
   // Generate application ID for anonymous users
@@ -208,9 +233,13 @@ export class AnonymousDataService {
     return this.getConsistentApplicationId(); // ← FIXED: Use consistent ID
   }
 
-  // Check if user is anonymous
+  // FIXED: Check if user is anonymous (only if onboarding is completed)
   static isAnonymousUser() {
-    return localStorage.getItem(this.STORAGE_KEYS.IS_ANONYMOUS) === 'true';
+    const hasAnonymousFlag = localStorage.getItem(this.STORAGE_KEYS.IS_ANONYMOUS) === 'true';
+    const hasCompletedOnboarding = this.hasCompletedOnboarding();
+    
+    // User is only considered anonymous if they have completed onboarding AND have the anonymous flag
+    return hasAnonymousFlag && hasCompletedOnboarding;
   }
 
   // FIXED: Better Supabase format conversion for dashboard compatibility with consistent ID
@@ -240,84 +269,83 @@ export class AnonymousDataService {
   }
 
   // ENHANCED: Prepare data for migration to authenticated user
-  // ENHANCED: Prepare data for migration to authenticated user
-static prepareDataForMigration() {
-  try {
-    const selections = this.getUserSelections();
-    const completedDocs = this.getCompletedDocuments();
-    const applicationId = this.getConsistentApplicationId();
-    const createdAt = localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString();
-    
-    console.log("🔄 Preparing anonymous data for migration:");
-    console.log("selections:", selections);
-    console.log("completedDocs:", completedDocs);
-    console.log("applicationId:", applicationId);
+  static prepareDataForMigration() {
+    try {
+      const selections = this.getUserSelections();
+      const completedDocs = this.getCompletedDocuments();
+      const applicationId = this.getConsistentApplicationId();
+      const createdAt = localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString();
+      
+      console.log("🔄 Preparing anonymous data for migration:");
+      console.log("selections:", selections);
+      console.log("completedDocs:", completedDocs);
+      console.log("applicationId:", applicationId);
 
-    if (!selections || !this.hasCompletedOnboarding()) {
-      console.log("❌ No onboarding data to migrate");
+      if (!selections || !this.hasCompletedOnboarding()) {
+        console.log("❌ No onboarding data to migrate");
+        return { userAnswers: null, completedDocuments: null };
+      }
+
+      // Convert selections to userAnswers format
+      const userAnswers = {
+        ans_country: selections.country,
+        ans_purpose: selections.purpose,
+        ans_profession: selections.profession,
+        ans_vehicle: selections.vehicle,
+        ans_kid: selections.kid !== undefined ? selections.kid : false,
+        ans_accommodation: selections.accommodation,
+        ans_hassponsor: selections.hasSponsor || false,
+        ans_sponsor_profession: selections.sponsorProfession || null,
+        has_appointment: false,
+        has_filled_form: false,
+        created_at: createdAt
+      };
+
+      // CRITICAL: Convert completed documents to migration format with detailed logging
+      console.log("🔍 Processing completed documents for migration...");
+      console.log("Raw completed documents:", completedDocs);
+      
+      let completedDocuments = {};
+      
+      if (completedDocs && typeof completedDocs === 'object') {
+        Object.keys(completedDocs).forEach(appId => {
+          console.log(`📋 Processing application ${appId}:`, completedDocs[appId]);
+          
+          if (completedDocs[appId] && typeof completedDocs[appId] === 'object') {
+            completedDocuments[appId] = {};
+            
+            Object.keys(completedDocs[appId]).forEach(docName => {
+              const docValue = completedDocs[appId][docName];
+              console.log(`  - Document ${docName}:`, docValue);
+              
+              if (docValue === true) {
+                // Simple boolean format - convert to object
+                completedDocuments[appId][docName] = {
+                  document_name: docName,
+                  completion_date: new Date().toISOString(),
+                  status: 'completed'
+                };
+              } else if (typeof docValue === 'object' && docValue.document_name) {
+                // Already in object format
+                completedDocuments[appId][docName] = docValue;
+              }
+            });
+          }
+        });
+      }
+      
+      console.log("✅ Processed completed documents:", completedDocuments);
+      console.log("✅ Migration data prepared:", { userAnswers, completedDocuments });
+      
+      return {
+        userAnswers: userAnswers,
+        completedDocuments: completedDocuments
+      };
+    } catch (error) {
+      console.error("❌ Error preparing data for migration:", error);
       return { userAnswers: null, completedDocuments: null };
     }
-
-    // Convert selections to userAnswers format
-    const userAnswers = {
-      ans_country: selections.country,
-      ans_purpose: selections.purpose,
-      ans_profession: selections.profession,
-      ans_vehicle: selections.vehicle,
-      ans_kid: selections.kid !== undefined ? selections.kid : false,
-      ans_accommodation: selections.accommodation,
-      ans_hassponsor: selections.hasSponsor || false,
-      ans_sponsor_profession: selections.sponsorProfession || null,
-      has_appointment: false,
-      has_filled_form: false,
-      created_at: createdAt
-    };
-
-    // CRITICAL: Convert completed documents to migration format with detailed logging
-    console.log("🔍 Processing completed documents for migration...");
-    console.log("Raw completed documents:", completedDocs);
-    
-    let completedDocuments = {};
-    
-    if (completedDocs && typeof completedDocs === 'object') {
-      Object.keys(completedDocs).forEach(appId => {
-        console.log(`📋 Processing application ${appId}:`, completedDocs[appId]);
-        
-        if (completedDocs[appId] && typeof completedDocs[appId] === 'object') {
-          completedDocuments[appId] = {};
-          
-          Object.keys(completedDocs[appId]).forEach(docName => {
-            const docValue = completedDocs[appId][docName];
-            console.log(`  - Document ${docName}:`, docValue);
-            
-            if (docValue === true) {
-              // Simple boolean format - convert to object
-              completedDocuments[appId][docName] = {
-                document_name: docName,
-                completion_date: new Date().toISOString(),
-                status: 'completed'
-              };
-            } else if (typeof docValue === 'object' && docValue.document_name) {
-              // Already in object format
-              completedDocuments[appId][docName] = docValue;
-            }
-          });
-        }
-      });
-    }
-    
-    console.log("✅ Processed completed documents:", completedDocuments);
-    console.log("✅ Migration data prepared:", { userAnswers, completedDocuments });
-    
-    return {
-      userAnswers: userAnswers,
-      completedDocuments: completedDocuments
-    };
-  } catch (error) {
-    console.error("❌ Error preparing data for migration:", error);
-    return { userAnswers: null, completedDocuments: null };
   }
-}
 
   // NEW: Get all completed documents in proper format for migration
   static getAllCompletedDocuments() {
@@ -420,14 +448,18 @@ static prepareDataForMigration() {
     };
   }
 
-  // Check if user should be redirected to onboarding
+  // UPDATED: Check if user should be redirected to onboarding (compatible with new flow)
   static shouldRedirectToOnboarding(currentPath) {
     const hasSelections = this.getUserSelections();
+    const hasCompletedOnboarding = this.hasCompletedOnboarding();
     const dashboardPaths = ['/dashboard'];
     
-    // If on dashboard without selections, redirect to onboarding
-    if (dashboardPaths.some(path => currentPath.startsWith(path)) && !hasSelections) {
-      return '/wellcome-2';
+    // If on dashboard without any onboarding completion, show static dashboard instead of redirect
+    if (dashboardPaths.some(path => currentPath.startsWith(path))) {
+      if (!hasCompletedOnboarding && !hasSelections) {
+        // Return null to show static dashboard, not redirect
+        return null;
+      }
     }
     
     return null;
@@ -450,7 +482,7 @@ static prepareDataForMigration() {
     return Math.round((completedSteps / steps.length) * 100);
   }
 
-  // Update specific selection field
+  // FIXED: Update specific selection field
   static updateSelection(field, value) {
     const existingSelections = this.getUserSelections() || {};
     const updatedSelections = {
@@ -460,7 +492,11 @@ static prepareDataForMigration() {
     };
     
     localStorage.setItem(this.STORAGE_KEYS.USER_SELECTIONS, JSON.stringify(updatedSelections));
-    localStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
+    
+    // FIXED: Only set isAnonymous if onboarding is now complete
+    if (this.hasCompletedOnboarding()) {
+      this.markOnboardingComplete();
+    }
   }
 
   // Get specific selection field
@@ -477,6 +513,9 @@ static prepareDataForMigration() {
     console.log('Application ID:', this.getApplicationId());
     console.log('Consistent Application ID:', this.getConsistentApplicationId()); // ← NEW DEBUG LINE
     console.log('Has completed onboarding:', this.hasCompletedOnboarding());
+    console.log('Old wellcomesAnswered flag:', localStorage.getItem(this.STORAGE_KEYS.WELLCOMES_ANSWERED));
+    console.log('isAnonymous flag:', localStorage.getItem(this.STORAGE_KEYS.IS_ANONYMOUS));
+    console.log('Is anonymous user (computed):', this.isAnonymousUser());
     console.log('Needs migration:', this.needsMigration());
     console.log('Migration data:', this.prepareDataForMigration());
     console.log('Completed documents:', this.getCompletedDocuments());

@@ -3,7 +3,6 @@ import BlogLogo from "./BlogLogo";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
-import supabase from "../services/supabase";
 import { getCurrentUser } from "../services/apiAuth";
 
 // Simple animations
@@ -351,6 +350,7 @@ function Footer() {
     checkLoginStatus();
   }, []);
 
+  // FIXED: Now redirects to /dashboard instead of wellcome pages
   const handleButtonClick = async () => {
     if (isLoggedIn) {
       window.scrollTo(0, 0);
@@ -360,33 +360,31 @@ function Footer() {
     await handleAnonymousSignIn();
   };
 
+  // FIXED: Simplified anonymous sign in that goes directly to dashboard
   const handleAnonymousSignIn = async () => {
     try {
       if (isLoading) return;
       setIsLoading(true);
-
-      const { data, error } = await supabase.auth.signInAnonymously();
-      localStorage.setItem("isAnonymous", "true");
-
-      if (error) {
-        console.error("Anonymous sign in error:", error.message);
-        setIsLoading(false);
-        return;
-      }
-
-      if (data) {
-        const wellcomesAnswered = localStorage.getItem("wellcomesAnswered") || "false";
-        window.scrollTo(0, 0);
-        
-        if (wellcomesAnswered === "true") {
-          navigate("/dashboard");
-        } else {
-          navigate("/wellcome-2");
-        }
-        setIsLoading(false);
-      }
+  
+      // DON'T set isAnonymous flag immediately - let dashboard determine the state
+      // localStorage.setItem("isAnonymous", "true"); // ← REMOVED
+  
+      // Initialize empty anonymous user data for potential onboarding
+      localStorage.setItem("anonymousUserData", JSON.stringify({}));
+  
+      console.log("Redirecting to dashboard for anonymous user");
+  
+      window.scrollTo(0, 0);
+      
+      // Always redirect to dashboard - dashboard will handle the three scenarios:
+      // 1. No onboarding → Static Dashboard
+      // 2. Onboarding complete + anonymous → Anonymous Dashboard
+      // 3. Onboarding complete + authenticated → Authenticated Dashboard
+      navigate("/dashboard");
+      
+      setIsLoading(false);
     } catch (error) {
-      console.error("Sign in error:", error.message);
+      console.error("Anonymous sign in error:", error.message);
       setIsLoading(false);
     }
   };
