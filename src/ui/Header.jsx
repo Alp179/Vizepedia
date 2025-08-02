@@ -455,26 +455,16 @@ function Header() {
     // If still loading user data, show loading
     if (userLoading || loading) return "loading";
     
-    // CRITICAL: If user exists, always prioritize authenticated state
-    // This prevents login modal from showing during migration
-    if (user) {
-      // If user exists but isAnonymous is still true, it might be mid-migration
-      // Give it some grace time to update
-      if (isAnonymous) {
-        // Check if this is a fresh migration (user just signed up)
-        const hasJustSignedUp = localStorage.getItem("justSignedUp") === "true";
-        if (hasJustSignedUp) {
-          // Clean up the flag and treat as authenticated
-          localStorage.removeItem("justSignedUp");
-          localStorage.removeItem("isAnonymous");
-          return "authenticated";
-        }
-        return "anonymous";
-      }
-      return "authenticated";
-    }
+    // Check localStorage for anonymous status FIRST
+    const anonymousStatus = localStorage.getItem("isAnonymous") === "true";
     
-    // If no user at all, it's new visitor
+    // If user is marked as anonymous in localStorage, they are anonymous
+    if (anonymousStatus) return "anonymous";
+    
+    // If user exists in auth context, they are authenticated
+    if (user) return "authenticated";
+    
+    // If no user and not anonymous, it's new visitor
     return "new_visitor";
   };
 
