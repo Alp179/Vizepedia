@@ -8,6 +8,8 @@ import AnimatedFlag from "./AnimatedFlag";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
 import { getCurrentUser } from "../services/apiAuth";
+import { AnonymousDataService } from "../utils/anonymousDataService";
+import { useUser } from "../features/authentication/useUser";
 
 const StyledAppLayout = styled.div`
   background: var(--color-grey-1);
@@ -69,24 +71,93 @@ function DocumentLayout() {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
   const [countryCode, setCountryCode] = useState("");
+  
+  // FIXED: Add user type detection like Dashboard
+  const { user } = useUser();
+  const [userType, setUserType] = useState("loading");
+  
+  const isAnonymous = applicationId?.startsWith("anonymous-") || 
+    (AnonymousDataService.isAnonymousUser() && !user);
 
+  console.log("🔍 DocumentLayout Debug:");
+  console.log("applicationId:", applicationId);
+  console.log("user:", user);
+  console.log("isAnonymous:", isAnonymous);
+  console.log("userType:", userType);
+
+  // FIXED: Improved user type detection
   useEffect(() => {
-    getCurrentUser().then((user) => {
-      if (user) {
+    async function determineUserType() {
+      console.log("🔍 DocumentLayout - Determining user type...");
+      
+      if (user && user.id) {
+        console.log("👤 DocumentLayout - User type: authenticated");
+        setUserType("authenticated");
         setUserId(user.id);
+        return;
       }
-    });
-  }, []);
 
+      try {
+        const currentUser = await getCurrentUser();
+        if (currentUser && currentUser.id) {
+          console.log("👤 DocumentLayout - User type: authenticated (session)");
+          setUserType("authenticated");
+          setUserId(currentUser.id);
+          return;
+        }
+      } catch (error) {
+        console.log("❌ DocumentLayout - Error checking user:", error);
+      }
+
+      if (isAnonymous && AnonymousDataService.isAnonymousUser()) {
+        console.log("👤 DocumentLayout - User type: anonymous");
+        setUserType("anonymous");
+        return;
+      }
+
+      console.log("👤 DocumentLayout - User type: unknown");
+      setUserType("unknown");
+    }
+
+    determineUserType();
+  }, [user, isAnonymous]);
+
+  // FIXED: Enhanced query to support both user types
   const { data: userSelections, isSuccess: isUserSelectionsSuccess } = useQuery({
-    queryKey: ["userSelections", userId, applicationId],
-    queryFn: () => fetchUserSelectionsDash(userId, applicationId),
-    enabled: !!userId && !!applicationId,
+    queryKey: ["userSelections", userId, applicationId, userType],
+    queryFn: () => {
+      console.log("🔄 DocumentLayout - Fetching user selections...");
+      console.log("userType:", userType, "userId:", userId, "applicationId:", applicationId);
+      
+      if (userType === "anonymous") {
+        console.log("📄 DocumentLayout - Using AnonymousDataService");
+        const anonymousData = AnonymousDataService.convertToSupabaseFormat();
+        console.log("📄 DocumentLayout - Anonymous data:", anonymousData);
+        return anonymousData;
+      } else if (userType === "authenticated" && userId) {
+        console.log("📄 DocumentLayout - Using fetchUserSelectionsDash");
+        return fetchUserSelectionsDash(userId, applicationId);
+      }
+      
+      console.log("❌ DocumentLayout - No valid query parameters");
+      return null;
+    },
+    // FIXED: Enable query for both authenticated and anonymous users
+    enabled: (userType === "authenticated" && !!userId) || 
+             (userType === "anonymous" && AnonymousDataService.hasCompletedOnboarding()),
+    staleTime: 5 * 60 * 1000,
   });
 
+  // FIXED: Enhanced country code detection
   useEffect(() => {
+    console.log("🔄 DocumentLayout - Country code effect triggered");
+    console.log("userSelections:", userSelections);
+    console.log("isUserSelectionsSuccess:", isUserSelectionsSuccess);
+    
     if (isUserSelectionsSuccess && userSelections?.length > 0) {
       const ansCountry = userSelections[0]?.ans_country;
+      console.log("🌍 DocumentLayout - Found country:", ansCountry);
+      
       if (ansCountry) {
         const countryToCode = {
           Almanya: "de",
@@ -124,10 +195,16 @@ function DocumentLayout() {
           Hırvatistan: "hr",
         };
 
-        setCountryCode(countryToCode[ansCountry] || "");
+        const newCountryCode = countryToCode[ansCountry] || "";
+        console.log("🏳️ DocumentLayout - Setting country code:", newCountryCode);
+        setCountryCode(newCountryCode);
       }
+    } else {
+      console.log("⚠️ DocumentLayout - No user selections or not successful");
     }
   }, [userSelections, isUserSelectionsSuccess]);
+
+  console.log("🏳️ DocumentLayout - Final country code:", countryCode);
 
   return (
     <StyledAppLayout>
