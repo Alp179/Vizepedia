@@ -273,7 +273,6 @@ const DashboardItems = styled.div`
 const Dashboard = () => {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
-  const [currentStep, setCurrentStep] = useState(0);
   const [createdAt, setCreatedAt] = useState(null);
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 710);
@@ -803,15 +802,6 @@ const Dashboard = () => {
     return <div>Error loading data.</div>;
   }
 
-  const handleStepClick = (step) => {
-    setCurrentStep(step);
-    navigate(`/summary/${applicationId}`);
-  };
-
-  const stepLabels = documents?.map((doc) => doc.docName) || [];
-  const hasSponsor = userSelections?.find(
-    (selection) => selection.ans_hassponsor === true
-  );
 
   return (
     <DashboardContainer>
@@ -1094,14 +1084,18 @@ const Dashboard = () => {
         {/* Mobile carousel view */}
         {isMobile && (
           <MobileCarousel
-            stepLabels={stepLabels}
-            currentStep={currentStep}
-            handleStepClick={handleStepClick}
+            
             completedDocuments={completedDocuments}
             documents={documents}
-            hasSponsor={hasSponsor}
             firmLocation={firmLocation}
             isFirmLocationSuccess={isFirmLocationSuccess}
+            
+            // FIXED: Added missing props for authenticated users
+            applicationId={applicationId}
+            userSelections={userSelections}
+            userType={userType}
+            isLoading={isDocumentsLoading}
+            isError={isDocumentsError}
           />
         )}
       </DashboardItems>

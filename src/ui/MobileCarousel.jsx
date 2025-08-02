@@ -169,13 +169,17 @@ const CarouselWrapper = styled.div`
 `;
 
 const MobileCarousel = ({
-  stepLabels,
-  currentStep,
-  handleStepClick,
   completedDocuments,
   documents,
   firmLocation,
   isFirmLocationSuccess,
+  // FIXED: Added missing props for authenticated users
+  applicationId,        // ← YENİ PROP
+  userSelections,       // ← YENİ PROP  
+  userType,             // ← YENİ PROP
+  isLoading = false,    // ← YENİ PROP
+  isError = false       // ← YENİ PROP
+  // REMOVED: stepLabels, currentStep, handleStepClick (no longer used)
 }) => {
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
@@ -290,6 +294,12 @@ const MobileCarousel = ({
     }
   };
 
+  console.log("🔍 MobileCarousel Debug:");
+  console.log("applicationId:", applicationId);
+  console.log("userSelections:", userSelections);
+  console.log("userType:", userType);
+  console.log("completedDocuments:", completedDocuments);
+
   return (
     <div style={{ position: "relative" }} ref={containerRef}>
       <ScrollbarContainer>
@@ -379,12 +389,15 @@ const MobileCarousel = ({
             <CarouselItem width={itemWidth} active={activeCardIndex === 0}>
               <StepIndicatorWrapper>
                 <Heading as="h14">Başvuru Sahibinin Belgeleri</Heading>
+                {/* FIXED: Updated StepIndicator props to match new component structure */}
                 <StepIndicator
-                  steps={stepLabels}
-                  currentStep={currentStep}
-                  onStepClick={handleStepClick}
-                  completedDocuments={completedDocuments}
                   documents={documents}
+                  completedDocuments={completedDocuments}
+                  applicationId={applicationId}
+                  userSelections={userSelections}
+                  userType={userType}
+                  isLoading={isLoading}
+                  isError={isError}
                 />
               </StepIndicatorWrapper>
             </CarouselItem>

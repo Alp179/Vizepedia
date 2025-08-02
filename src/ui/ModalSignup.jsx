@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { cloneElement, createContext, useContext, useState } from "react";
+import { cloneElement, createContext, useContext, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
 import { useOutsideClick } from "../hooks/useOutsideClick";
+import { useUser } from "../features/authentication/useUser";
 
 const StyledModal = styled.div`
   z-index: 3000;
@@ -66,9 +67,40 @@ const ModalContext = createContext();
 
 function ModalSignup({ children }) {
   const [openName, setOpenName] = useState("");
+  const { user } = useUser(); // Import edildi yukarıda
 
   const close = () => setOpenName("");
   const open = setOpenName;
+
+  // NEW: useEffect to close modal when user becomes authenticated
+  useEffect(() => {
+    const handleCloseModals = () => {
+      // Modal açıksa kapat
+      if (openName) {
+        close();
+        console.log("ModalSignup closed due to closeAllModals event");
+      }
+    };
+
+    // Listen for the close event from Header
+    window.addEventListener('closeAllModals', handleCloseModals);
+
+    return () => {
+      window.removeEventListener('closeAllModals', handleCloseModals);
+    };
+  }, [openName]);
+
+  // NEW: Listen for user authentication changes
+  useEffect(() => {
+    // If user becomes authenticated, close the modal
+    if (user && openName) {
+      const isAnonymous = localStorage.getItem("isAnonymous") === "true";
+      if (!isAnonymous) {
+        close();
+        console.log("ModalSignup closed - user is now authenticated");
+      }
+    }
+  }, [user, openName]);
 
   return (
     <ModalContext.Provider value={{ openName, close, open }}>

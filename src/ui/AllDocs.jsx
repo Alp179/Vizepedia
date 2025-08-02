@@ -14,32 +14,7 @@ import { fetchCompletedDocuments } from "../utils/supabaseActions";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
 
-// Category colors and metadata
-const categoryColors = {
-  hazir: {
-    background: "#e6fff2",
-    border: "#00cc66",
-    text: "#00703a",
-    title: "Hemen Hazır",
-    route: "ready-documents"
-  },
-  planla: {
-    background: "#fff5e6",
-    border: "#ffaa33",
-    text: "#cc7700",
-    title: "Planla ve Topla",
-    route: "planned-documents"
-  },
-  bizimle: {
-    background: "#e6f0ff",
-    border: "#3377ff",
-    text: "#004de6",
-    title: "Bizimle Kolay",
-    route: "withus-documents"
-  },
-};
-
-// ENHANCED: Main container with better styling
+// SIMPLIFIED: Main container
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -47,61 +22,7 @@ const Container = styled.div`
   z-index: 3000;
 `;
 
-// ENHANCED: Category section for organized display
-const CategorySection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-`;
-
-const CategoryHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background-color: ${(props) => props.color?.background || "rgba(255, 255, 255, 0.5)"};
-  border-left: 4px solid ${(props) => props.color?.border || "#004466"};
-  margin-bottom: 8px;
-`;
-
-const CategoryTitle = styled.h3`
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: ${(props) => props.color?.text || "#333"};
-`;
-
-const CategoryProgress = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const ProgressBar = styled.div`
-  height: 6px;
-  width: 60px;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 3px;
-  overflow: hidden;
-`;
-
-const ProgressFill = styled.div`
-  height: 100%;
-  width: ${(props) => `${props.progress}%`};
-  background-color: ${(props) => props.color || "#004466"};
-  border-radius: 3px;
-  transition: width 0.5s ease;
-`;
-
-const ProgressText = styled.span`
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.7);
-`;
-
-// ENHANCED: Document item with better design
+// SIMPLIFIED: Document item - only names
 const DocumentItem = styled.li`
   display: flex;
   align-items: center;
@@ -111,9 +32,7 @@ const DocumentItem = styled.li`
   background-color: ${(props) =>
     props.isCompleted 
       ? "#00ffa2" 
-      : props.isSponsor 
-        ? "rgba(245, 240, 255, 0.9)" 
-        : "rgba(255, 255, 255, 0.85)"};
+      : "rgba(255, 255, 255, 0.85)"};
   color: ${(props) => props.isCompleted ? "#374151" : "var(--color-grey-700)"};
   cursor: pointer;
   transition: all 0.2s ease;
@@ -121,8 +40,6 @@ const DocumentItem = styled.li`
     ${(props) =>
       props.isCompleted
         ? "#2ecc71"
-        : props.isSponsor
-        ? "#8533ff"
         : "transparent"};
   font-size: 16px;
   margin: 0;
@@ -131,9 +48,7 @@ const DocumentItem = styled.li`
     background-color: ${(props) => 
       props.isCompleted 
         ? "#cde0d9" 
-        : props.isSponsor
-          ? "rgba(245, 240, 255, 0.95)"
-          : "#f0f0f0"};
+        : "#f0f0f0"};
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
@@ -143,42 +58,13 @@ const DocumentItem = styled.li`
   }
 `;
 
-// ENHANCED: Document info section
-const DocumentInfo = styled.div`
-  display: flex;
-  flex-direction: column;
+// SIMPLIFIED: Document name only
+const DocumentName = styled.div`
+  font-weight: 500;
   flex: 1;
 `;
 
-const DocumentName = styled.div`
-  font-weight: 500;
-  margin-bottom: 4px;
-`;
-
-const DocumentMeta = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const DocumentType = styled.span`
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
-  background-color: rgba(0, 0, 0, 0.05);
-  padding: 2px 6px;
-  border-radius: 4px;
-`;
-
-const SponsorBadge = styled.span`
-  font-size: 10px;
-  font-weight: 500;
-  color: #5a00e6;
-  background-color: #f0e6ff;
-  border: 1px solid #8533ff;
-  padding: 2px 6px;
-  border-radius: 4px;
-`;
-
+// SIMPLIFIED: Status indicator
 const DocumentStatus = styled.div`
   display: flex;
   align-items: center;
@@ -198,7 +84,6 @@ const DocumentStatus = styled.div`
   }
 `;
 
-// PRESERVED: Original styling elements
 const Bracket = styled.div`
   background-color: var(--color-grey-300);
   height: 1px;
@@ -260,7 +145,7 @@ const HeadingSmall = styled.p`
   }
 `;
 
-// ENHANCED: Empty state
+// Empty state
 const EmptyState = styled.div`
   display: flex;
   flex-direction: column;
@@ -290,7 +175,6 @@ const EmptyStateSubtext = styled.div`
 
 function AllDocs({ 
   onCloseModal,
-  // NEW: Props from MainNav for enhanced functionality
   documents: propDocuments,
   completedDocuments: propCompletedDocuments,
   applicationId: propApplicationId,
@@ -307,134 +191,214 @@ function AllDocs({
     dispatch,
   } = useDocuments();
 
-  // ENHANCED: User type detection
   const { user, userType } = useUser();
   
-  // Use props if available (from MainNav), otherwise detect
+  // FIXED: Application ID detection - use same logic as StepIndicator
   const applicationId = propApplicationId || paramsApplicationId;
   const isAnonymous = propIsAnonymous !== undefined 
     ? propIsAnonymous 
-    : (userType === 'anonymous' || (!user && applicationId?.startsWith('anonymous-')));
+    : (userType === 'anonymous' || localStorage.getItem("isAnonymous") === "true" || (!user && applicationId?.startsWith('anonymous-')));
 
   console.log("🔍 AllDocs Debug:");
   console.log("applicationId:", applicationId);
   console.log("propDocuments:", propDocuments?.length || 0);
   console.log("userType:", propUserType || userType);
   console.log("isAnonymous:", isAnonymous);
+  console.log("user:", user);
+  console.log("userId:", userId);
 
-  // ENHANCED: User detection with anonymous support
   useEffect(() => {
     if (isAnonymous) {
+      console.log("Setting anonymous user");
       setUserId('anonymous-user');
     } else {
-      getCurrentUser().then((user) => {
-        if (user) {
-          setUserId(user.id);
-          // Only fetch completed documents if not using props
-          if (!propCompletedDocuments && applicationId) {
-            fetchCompletedDocuments(user.id, applicationId).then((data) => {
-              const completedDocsMap = data.reduce((acc, doc) => {
-                if (!acc[applicationId]) {
-                  acc[applicationId] = {};
-                }
-                acc[applicationId][doc.document_name] = true;
-                return acc;
-              }, {});
-              dispatch({
-                type: "SET_COMPLETED_DOCUMENTS",
-                payload: completedDocsMap,
-              });
-            });
+      console.log("Getting authenticated user...");
+      getCurrentUser()
+        .then((user) => {
+          console.log("getCurrentUser result:", user);
+          if (user) {
+            setUserId(user.id);
+            console.log("Set userId to:", user.id);
+            
+            if (!propCompletedDocuments && applicationId) {
+              console.log("Fetching completed documents for:", user.id, applicationId);
+              fetchCompletedDocuments(user.id, applicationId)
+                .then((data) => {
+                  console.log("Fetched completed documents:", data);
+                  const completedDocsMap = data.reduce((acc, doc) => {
+                    if (!acc[applicationId]) {
+                      acc[applicationId] = {};
+                    }
+                    acc[applicationId][doc.document_name] = true;
+                    return acc;
+                  }, {});
+                  dispatch({
+                    type: "SET_COMPLETED_DOCUMENTS",
+                    payload: completedDocsMap,
+                  });
+                })
+                .catch((error) => {
+                  console.error("Error fetching completed documents:", error);
+                });
+            }
+          } else {
+            console.log("No user found from getCurrentUser");
           }
-        }
-      });
+        })
+        .catch((error) => {
+          console.error("Error in getCurrentUser:", error);
+        });
     }
   }, [isAnonymous, applicationId, propCompletedDocuments, dispatch]);
 
-  // ENHANCED: Anonymous-aware queries (only if props not provided)
+  // FIXED: Query logic - improved for authenticated users
   const {
     data: userSelections,
     isLoading: isLoadingSelections,
     isError: isErrorSelections,
+    error: selectionsError,
   } = useQuery({
     queryKey: ["userSelectionsAllDocs", userId, applicationId, userType],
     queryFn: () => {
+      console.log("🔄 Fetching user selections...");
+      console.log("isAnonymous:", isAnonymous);
+      console.log("userId:", userId);
+      console.log("applicationId:", applicationId);
+      
       if (isAnonymous) {
-        return AnonymousDataService.convertToSupabaseFormat();
+        console.log("Using AnonymousDataService");
+        const result = AnonymousDataService.convertToSupabaseFormat();
+        console.log("Anonymous result:", result);
+        return result;
+      } else {
+        console.log("Using fetchUserSelectionsDash for authenticated user");
+        // For authenticated users, pass null as applicationId to get all user's applications
+        const result = fetchUserSelectionsDash(userId, null);
+        console.log("Authenticated fetch started with userId:", userId);
+        return result;
       }
-      return fetchUserSelectionsDash(userId, applicationId);
     },
-    enabled: !propUserSelections && (isAnonymous || (!!userId && !!applicationId)),
+    // FIXED: Enable query for authenticated users even without applicationId
+    enabled: !propUserSelections && (isAnonymous ? true : !!userId),
     staleTime: 5 * 60 * 1000,
+    onSuccess: (data) => {
+      console.log("✅ User selections query success:", data);
+    },
+    onError: (error) => {
+      console.error("❌ User selections query error:", error);
+    },
   });
 
-  // Use props or query data
   const finalUserSelections = propUserSelections || userSelections;
+  console.log("Final user selections:", finalUserSelections);
+  
   const documentNames = finalUserSelections
     ? getDocumentsForSelections(finalUserSelections)
     : [];
+  console.log("Document names from selections:", documentNames);
 
   const {
     data: documents,
     isLoading: isLoadingDocuments,
     isError: isErrorDocuments,
+    error: documentsError,
   } = useQuery({
     queryKey: ["documentDetailsAllDocs", documentNames],
-    queryFn: () => fetchDocumentDetails(documentNames),
+    queryFn: () => {
+      console.log("🔄 Fetching document details for:", documentNames);
+      return fetchDocumentDetails(documentNames);
+    },
     enabled: !propDocuments && !!documentNames.length,
     staleTime: 5 * 60 * 1000,
+    onSuccess: (data) => {
+      console.log("✅ Document details query success:", data);
+    },
+    onError: (error) => {
+      console.error("❌ Document details query error:", error);
+    },
   });
 
-  // Use props or query data
   const finalDocuments = propDocuments || documents || [];
   const finalCompletedDocuments = propCompletedDocuments || contextCompletedDocuments || {};
 
-  // Loading and error handling
-  if (!propDocuments && (isLoadingSelections || isLoadingDocuments)) {
-    return <Spinner />;
-  }
+  console.log("Final documents count:", finalDocuments.length);
+  console.log("Final completed documents:", finalCompletedDocuments);
 
-  if (!propDocuments && (isErrorSelections || isErrorDocuments)) {
-    return <div>Error loading data.</div>;
-  }
-
-  // ENHANCED: Get real application ID
+  // FIXED: Real application ID detection - improved for authenticated users
   const getRealApplicationId = () => {
-    if (!isAnonymous && finalUserSelections?.length > 0) {
-      return finalUserSelections[0].id; // Real Supabase ID
+    const currentUserType = propUserType || userType;
+    if (currentUserType === "authenticated" && finalUserSelections?.length > 0) {
+      // For authenticated users, use the first application's ID or fallback to URL applicationId
+      return finalUserSelections[0].id || applicationId;
     }
-    return applicationId || `anonymous-${Date.now()}`;
+    // For anonymous users, use consistent ID
+    return AnonymousDataService.getConsistentApplicationId();
   };
 
   const realApplicationId = getRealApplicationId();
+  console.log("🔑 AllDocs Real application ID for completion check:", realApplicationId);
+  console.log("🔑 AllDocs Completed documents keys:", Object.keys(finalCompletedDocuments));
+  console.log("🔑 AllDocs Completed documents for realApplicationId:", finalCompletedDocuments[realApplicationId]);
 
-  console.log("Real application ID for completion check:", realApplicationId);
+  if (!propDocuments && (isLoadingSelections || isLoadingDocuments)) {
+    console.log("Loading state:", { isLoadingSelections, isLoadingDocuments });
+    return (
+      <Container>
+        <HeadingBig>Tüm Belgeler</HeadingBig>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '20px' }}>
+          <Spinner />
+          <span>
+            {isLoadingSelections ? "Kullanıcı seçimleri yükleniyor..." : "Belgeler yükleniyor..."}
+          </span>
+        </div>
+      </Container>
+    );
+  }
 
-  // ENHANCED: Handle document click with stage-based routing
+  if (!propDocuments && (isErrorSelections || isErrorDocuments)) {
+    console.error("Error state:", { isErrorSelections, isErrorDocuments, selectionsError, documentsError });
+    return (
+      <Container>
+        <HeadingBig>Tüm Belgeler</HeadingBig>
+        <div style={{ padding: '20px', color: 'red' }}>
+          <p>Belgeler yüklenirken hata oluştu:</p>
+          {isErrorSelections && (
+            <p>Kullanıcı seçimleri hatası: {selectionsError?.message}</p>
+          )}
+          {isErrorDocuments && (
+            <p>Belge detayları hatası: {documentsError?.message}</p>
+          )}
+        </div>
+      </Container>
+    );
+  }
+
+  // FIXED: Handle document click with stage-based routing (same as StepIndicator)
   const handleDocumentClick = (document) => {
-    console.log("📄 AllDocs - Document clicked:", document.docName, document.docStage);
+    console.log("📄 AllDocs - Document clicked:", document.docName, "stage:", document.docStage);
     
     setSelectedDocument(document);
     
-    // Close modal first
     if (onCloseModal) {
       onCloseModal();
     }
 
-    // Navigate based on document stage
+    // FIXED: Navigate based on document stage (same as StepIndicator)
     const urlApplicationId = applicationId || realApplicationId;
-    const categoryInfo = categoryColors[document.docStage];
     
-    if (categoryInfo?.route) {
-      console.log("🔗 Navigating to:", `/${categoryInfo.route}/${urlApplicationId}`);
-      navigate(`/${categoryInfo.route}/${urlApplicationId}`);
-    } else {
-      // Fallback for unknown stages or old system
-      navigate(`/documents/${urlApplicationId}`);
-    }
+    // Map document stages to their corresponding routes
+    const stageRoutes = {
+      'hazir': 'ready-documents',
+      'planla': 'planned-documents', 
+      'bizimle': 'withus-documents'
+    };
+    
+    const route = stageRoutes[document.docStage] || 'ready-documents'; // Default to ready-documents
+    
+    console.log("🔗 AllDocs - Navigating to:", `/${route}/${urlApplicationId}`);
+    navigate(`/${route}/${urlApplicationId}`);
   };
 
-  // Check if we have any documents
   if (!finalDocuments || finalDocuments.length === 0) {
     return (
       <Container>
@@ -453,28 +417,6 @@ function AllDocs({
     );
   }
 
-  // ENHANCED: Group documents by stage
-  const groupedDocuments = finalDocuments.reduce((acc, doc, index) => {
-    const stage = doc.docStage || "planla";
-    if (!acc[stage]) acc[stage] = [];
-    acc[stage].push({ ...doc, index });
-    return acc;
-  }, {});
-
-  const categoryOrder = ["hazir", "planla", "bizimle"];
-
-  // ENHANCED: Calculate category progress with real application ID
-  const calculateCategoryProgress = (docs) => {
-    if (!docs || !docs.length) return 0;
-    const completedCount = docs.filter(
-      (doc) => finalCompletedDocuments[realApplicationId]?.[doc.docName]
-    ).length;
-    return Math.round((completedCount / docs.length) * 100);
-  };
-
-  // Check if we should use the new categorized view
-  const hasDocStages = finalDocuments.some(doc => doc.docStage);
-
   return (
     <Container>
       <HeadingBig>
@@ -485,106 +427,31 @@ function AllDocs({
       </HeadingSmall>
 
       <ScrollableDiv>
-        {hasDocStages ? (
-          // NEW: Categorized view
-          <>
-            {categoryOrder.map((category) => {
-              const docs = groupedDocuments[category];
-              
-              if (!docs || docs.length === 0) {
-                return null;
-              }
+        {finalDocuments.map((document, index) => {
+          // FIXED: Use realApplicationId for consistency with StepIndicator
+          const isCompleted = finalCompletedDocuments[realApplicationId]?.[document.docName];
+          
+          console.log(`📄 Document "${document.docName}" completion check:`, {
+            realApplicationId,
+            isCompleted,
+            completedDocsForApp: finalCompletedDocuments[realApplicationId]
+          });
 
-              const progress = calculateCategoryProgress(docs);
-              const colorSet = categoryColors[category];
-
-              return (
-                <CategorySection key={category}>
-                  <CategoryHeader color={colorSet}>
-                    <CategoryTitle color={colorSet}>
-                      {colorSet.title} ({docs.length})
-                    </CategoryTitle>
-                    <CategoryProgress>
-                      <ProgressBar>
-                        <ProgressFill progress={progress} color={colorSet.border} />
-                      </ProgressBar>
-                      <ProgressText>{progress}%</ProgressText>
-                    </CategoryProgress>
-                  </CategoryHeader>
-
-                  {docs.map((doc, index) => {
-                    const isCompleted = finalCompletedDocuments[realApplicationId]?.[doc.docName];
-                    const isSponsor = doc.docName?.startsWith("Sponsor");
-
-                    return (
-                      <div key={doc.id}>
-                        <DocumentItem
-                          isCompleted={isCompleted}
-                          isSponsor={isSponsor}
-                          onClick={() => handleDocumentClick(doc)}
-                        >
-                          <DocumentInfo>
-                            <DocumentName>{doc.docName}</DocumentName>
-                            <DocumentMeta>
-                              {doc.docType && (
-                                <DocumentType>{doc.docType}</DocumentType>
-                              )}
-                              {doc.estimatedCompletionTime && (
-                                <DocumentType>{doc.estimatedCompletionTime}</DocumentType>
-                              )}
-                              {isSponsor && <SponsorBadge>Sponsor</SponsorBadge>}
-                            </DocumentMeta>
-                          </DocumentInfo>
-                          <DocumentStatus isCompleted={isCompleted}>
-                            {isCompleted ? "Tamamlandı" : "Bekliyor"}
-                          </DocumentStatus>
-                        </DocumentItem>
-                        {index < docs.length - 1 && <Bracket />}
-                      </div>
-                    );
-                  })}
-                </CategorySection>
-              );
-            })}
-          </>
-        ) : (
-          // PRESERVED: Original flat view for backwards compatibility
-          <>
-            {finalDocuments.map((document, index) => {
-              const isCompleted = finalCompletedDocuments[realApplicationId]?.[document.docName];
-              const isSponsor = document.docName?.startsWith("Sponsor");
-
-              return (
-                <div key={document.id}>
-                  <DocumentItem
-                    isCompleted={isCompleted}
-                    isSponsor={isSponsor}
-                    onClick={() => handleDocumentClick(document)}
-                  >
-                    <DocumentInfo>
-                      <DocumentName>{document.docName}</DocumentName>
-                      {(document.docType || document.estimatedCompletionTime || isSponsor) && (
-                        <DocumentMeta>
-                          {document.docType && (
-                            <DocumentType>{document.docType}</DocumentType>
-                          )}
-                          {document.estimatedCompletionTime && (
-                            <DocumentType>{document.estimatedCompletionTime}</DocumentType>
-                          )}
-                          {isSponsor && <SponsorBadge>Sponsor</SponsorBadge>}
-                        </DocumentMeta>
-                      )}
-                    </DocumentInfo>
-                    <DocumentStatus isCompleted={isCompleted}>
-                      {isCompleted ? "Tamamlandı" : "Bekliyor"}
-                    </DocumentStatus>
-                  </DocumentItem>
-                  {index < finalDocuments.length - 1 && <Bracket />}
-                </div>
-              );
-            })}
-          </>
-        )}
+          return (
+            <div key={document.id}>
+              <DocumentItem
+                isCompleted={isCompleted}
+                onClick={() => handleDocumentClick(document)}
+              >
+                <DocumentName>{document.docName}</DocumentName>
+                <DocumentStatus isCompleted={isCompleted}>
+                  {isCompleted ? "Tamamlandı" : "Bekliyor"}
+                </DocumentStatus>
+              </DocumentItem>
+              {index < finalDocuments.length - 1 && <Bracket />}
+            </div>
+          );
+        })}
       </ScrollableDiv>
     </Container>
   );
