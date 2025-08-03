@@ -1,19 +1,6 @@
 User-agent: *
-Disallow: /dashboard
-Disallow: /dashboard/
 Disallow: /account
-Disallow: /wellcome
-Disallow: /wellcome-1
-Disallow: /wellcome-2
-Disallow: /wellcome-3
-Disallow: /wellcome-4
-Disallow: /wellcome-4a
-Disallow: /wellcome-5
 Disallow: /test
-Disallow: /documents/
-Disallow: /ready-documents/
-Disallow: /planned-documents/
-Disallow: /withus-documents/
 Disallow: /summary
 Disallow: /summary/
 

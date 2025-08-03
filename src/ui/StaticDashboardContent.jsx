@@ -1,4 +1,5 @@
 import { styled } from "styled-components";
+import { useEffect } from "react";
 
 const StaticContainer = styled.div`
   padding: 40px 20px;
@@ -205,8 +206,85 @@ const StepText = styled.span`
   }
 `;
 
+// AdSense reklam alanı için styled component
+const AdContainer = styled.div`
+  width: 100%;
+  min-height: 250px;
+  margin: 40px 0;
+  display: flex;
+  justify-content: center;
+  
+  /* Reklam alanının görünür olduğundan emin ol */
+  .adsbygoogle {
+    display: block !important;
+    width: 100%;
+    min-width: 300px;
+    min-height: 250px;
+  }
+  
+  @media (max-width: 600px) {
+    margin: 30px 0;
+    min-height: 200px;
+    
+    .adsbygoogle {
+      min-height: 200px;
+    }
+  }
+`;
 
 const StaticDashboardContent = () => {
+  useEffect(() => {
+    // Önceki AdSense script'lerini temizle
+    const existingScripts = document.querySelectorAll('script[src*="adsbygoogle.js"]');
+    existingScripts.forEach(script => script.remove());
+
+    // AdSense script'ini yükle
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9096433647543770';
+    script.crossOrigin = 'anonymous';
+    
+    script.onload = () => {
+      console.log("AdSense script loaded successfully");
+      
+      // Reklam alanının görünür olmasını bekle
+      const checkAndInitializeAd = () => {
+        const adElement = document.querySelector('.adsbygoogle');
+        if (adElement && adElement.offsetWidth > 0) {
+          // Daha önce reklam yüklenmemiş mi kontrol et
+          if (!adElement.dataset.adsbygoogleStatus) {
+            try {
+              (window.adsbygoogle = window.adsbygoogle || []).push({});
+              adElement.dataset.adsbygoogleStatus = 'done';
+              console.log("AdSense ad pushed to queue");
+            } catch (e) {
+              console.error("AdSense initialization error:", e);
+            }
+          }
+        } else {
+          // Element henüz hazır değilse 100ms sonra tekrar dene
+          setTimeout(checkAndInitializeAd, 100);
+        }
+      };
+      
+      // Kısa bir gecikme ile kontrol et
+      setTimeout(checkAndInitializeAd, 200);
+    };
+    
+    script.onerror = (error) => {
+      console.warn("AdSense script could not be loaded:", error);
+    };
+    
+    document.head.appendChild(script);
+
+    // Cleanup
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, []);
+
   return (
     <StaticContainer>
       <HeadingStatic
@@ -284,7 +362,19 @@ const StaticDashboardContent = () => {
           </FeatureDescription>
         </FeatureCard>
       </FeatureGrid>
-     
+
+      {/* Google AdSense Reklam Alanı */}
+      <AdContainer>
+        <ins 
+          className="adsbygoogle"
+          style={{ display: 'block' }}
+          data-ad-client="ca-pub-9096433647543770"
+          data-ad-slot="4888104758"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
+      </AdContainer>
+
       <ProcessSteps style={{ counterReset: "step" }}>
         <HeadingSteps
           as="h2"
