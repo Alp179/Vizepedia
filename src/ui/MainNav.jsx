@@ -24,7 +24,6 @@ import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 import ModalDocs from "./ModalDocs";
 import { useUser } from "../features/authentication/useUser";
 // NEW: Import MultiStepOnboardingModal
-import { AnonymousDataService } from "../utils/anonymousDataService";
 import MultiStepOnboardingModal from "../ui/MultiStepOnboardingModal";
 
 // PRESERVED: All existing keyframes
@@ -592,89 +591,6 @@ function MainNav() {
     enabled: !!documentNames.length,
   });
 
-<<<<<<< Updated upstream
-  // PRESERVED: All existing functions
-  // MainNav.jsx içinde continueToDocument fonksiyonunu şu şekilde değiştir:
-
-// UPDATED: Enhanced continueToDocument function with proper application ID handling
-const continueToDocument = () => {
-  // DEBUG: Log all relevant data
-  console.log("🚀 MainNav continueToDocument called");
-  console.log("📊 documentsQuery.data:", documentsQuery.data);
-  console.log("👤 userId:", userId);
-  console.log("🆔 applicationId:", applicationId);
-  console.log("📁 completedDocuments:", completedDocuments);
-  
-  if (!documentsQuery.data) {
-    console.log("❌ No documentsQuery.data");
-    return;
-  }
-  
-  if (!userId) {
-    console.log("❌ No userId");
-    return;
-  }
-  
-  if (!applicationId) {
-    console.log("❌ No applicationId");
-    return;
-  }
-
-  // Get user type to determine how to handle application ID
-  const isAnonymous = localStorage.getItem("isAnonymous") === "true";
-  
-  // Determine the correct application ID for completed documents lookup
-  let lookupApplicationId;
-  if (isAnonymous) {
-    // For anonymous users, use consistent anonymous application ID
-    lookupApplicationId = AnonymousDataService.getConsistentApplicationId();
-  } else {
-    // For authenticated users, use the real application ID from URL
-    lookupApplicationId = applicationId;
-  }
-
-  console.log("🔍 MainNav continueToDocument Debug:");
-  console.log("Original applicationId:", applicationId);
-  console.log("isAnonymous:", isAnonymous);
-  console.log("lookupApplicationId:", lookupApplicationId);
-  console.log("completedDocuments:", completedDocuments);
-  console.log("completedDocuments[lookupApplicationId]:", completedDocuments[lookupApplicationId]);
-
-  // Find first incomplete document using the correct application ID
-  const firstIncompleteIndex = documentsQuery.data.findIndex(
-    (doc) => {
-      const isCompleted = completedDocuments[lookupApplicationId] && 
-                         completedDocuments[lookupApplicationId][doc.docName];
-      console.log(`📄 Document ${doc.docName}: isCompleted = ${isCompleted}`);
-      return !isCompleted;
-    }
-  );
-
-  console.log("📄 firstIncompleteIndex:", firstIncompleteIndex);
-
-  if (firstIncompleteIndex !== -1) {
-    const selectedDocument = documentsQuery.data[firstIncompleteIndex];
-    console.log("📄 selectedDocument:", selectedDocument);
-    
-    setSelectedDocument(selectedDocument);
-
-    // Navigate based on document stage, using original applicationId for URL consistency
-    const urlApplicationId = applicationId; // Keep original for URL
-    
-    if (selectedDocument.docStage === "hazir") {
-      console.log("🔗 Navigate to ready-documents:", `/ready-documents/${urlApplicationId}`);
-      navigate(`/ready-documents/${urlApplicationId}`);
-    } else if (selectedDocument.docStage === "planla") {
-      console.log("🔗 Navigate to planned-documents:", `/planned-documents/${urlApplicationId}`);
-      navigate(`/planned-documents/${urlApplicationId}`);
-    } else if (selectedDocument.docStage === "bizimle") {
-      console.log("🔗 Navigate to withus-documents:", `/withus-documents/${urlApplicationId}`);
-      navigate(`/withus-documents/${urlApplicationId}`);
-    } else {
-      // Fallback to documents route
-      console.log("🔗 Navigate to documents (fallback):", `/documents/${selectedDocument.id}`);
-      navigate(`/documents/${selectedDocument.id}`);
-=======
   // ENHANCED: Dashboard ile aynı completedDocuments yükleme mekanizması
   useEffect(() => {
     console.log("🔄 MainNav - Loading completed documents...");
@@ -816,13 +732,8 @@ const continueToDocument = () => {
           secondary: "#333",
         },
       });
->>>>>>> Stashed changes
     }
-  } else {
-    console.log("📋 All documents completed, staying on dashboard");
-    // All documents are completed, optionally show a message or stay on dashboard
-  }
-};
+  };
 
   const openDeleteModal = (appId, e) => {
     e.preventDefault();
