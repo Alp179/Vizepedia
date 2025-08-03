@@ -27,14 +27,13 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: white;
+  background: var(--color-grey-1);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   padding: 24px;
   max-width: 500px;
   width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
+  max-height: 90vh;
   animation: fadeInScale 0.3s ease;
 
   @keyframes fadeInScale {
@@ -75,11 +74,11 @@ const StepCounter = styled.div`
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 0px;
+  right: 0px;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 32px;
   cursor: pointer;
   color: #999;
   width: 32px;

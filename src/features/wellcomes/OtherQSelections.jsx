@@ -16,13 +16,14 @@ const Container = styled.div`
   margin-top: 10px;
   padding: 18px;
   border-radius: 16px;
-  box-shadow: 0 8px 300px rgba(0, 0, 0, 0.2); /* Gölgeyi artırdık */
+  box-shadow: 0 8px 300px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(6.3px);
   -webkit-backdrop-filter: blur(6.3px);
   background: rgba(255, 255, 255, 0.37);
   border: 1px solid rgba(255, 255, 255, 0.52);
   width: 100%;
   max-width: 400px;
+
   @media (max-height: 810px) {
     gap: 8px;
   }
@@ -76,6 +77,10 @@ const ButtonGroup = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
+
+  @media (max-height: 800px) {
+    display: none;
+  }
 `;
 
 const HorizontalButtonGroup = styled.div`
@@ -83,6 +88,35 @@ const HorizontalButtonGroup = styled.div`
   justify-content: center;
   align-items: center;
   gap: 5px;
+
+  @media (max-height: 800px) {
+    display: none;
+  }
+`;
+
+const DropdownContainer = styled.div`
+  display: none;
+  width: 100%;
+  max-width: 300px;
+
+  @media (max-height: 800px) {
+    display: block;
+  }
+`;
+
+const DropdownSelect = styled.select`
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 16px;
+  border: 1px solid #ccc;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  cursor: pointer;
+  
+  &:focus {
+    outline: none;
+    border: 2px solid #3498db;
+  }
 `;
 
 const Divider = styled.div`
@@ -96,7 +130,7 @@ const Divider = styled.div`
 `;
 
 const VerticalDivider = styled.div`
-  height: 24px; /* Adjust height to match button height */
+  height: 24px;
   width: 1px;
   background-color: rgba(0, 0, 0, 0.2);
 `;
@@ -133,6 +167,8 @@ function OtherQSelections({
     <Container>
       <Section>
         <Heading as="h7">Konaklama türü</Heading>
+        
+        {/* Büyük ekranlar için butonlar */}
         <HorizontalButtonGroup style={{ marginLeft: "-24px" }}>
           {accommodationsData &&
             accommodationsData.map((accommodation, index) => (
@@ -152,10 +188,33 @@ function OtherQSelections({
               </React.Fragment>
             ))}
         </HorizontalButtonGroup>
+
+        {/* Küçük ekranlar için dropdown */}
+        <DropdownContainer>
+          <DropdownSelect
+            value={selectedAccommodation || ""}
+            onChange={(e) => handleAccommodation(e.target.value)}
+          >
+            <option value="">Konaklama türü seçin</option>
+            {accommodationsData &&
+              accommodationsData.map((accommodation) => (
+                <option
+                  key={accommodation.id}
+                  value={accommodation.accommodationTypeName}
+                >
+                  {accommodation.accommodationTypeName}
+                </option>
+              ))}
+          </DropdownSelect>
+        </DropdownContainer>
       </Section>
+
       <Divider />
+
       <Section>
         <Heading as="h7">Seyahat Aracı</Heading>
+        
+        {/* Büyük ekranlar için butonlar */}
         <ButtonGroup>
           {vehiclesData &&
             vehiclesData.map((vehicles) => (
@@ -169,10 +228,30 @@ function OtherQSelections({
               </SelectionButton>
             ))}
         </ButtonGroup>
+
+        {/* Küçük ekranlar için dropdown */}
+        <DropdownContainer>
+          <DropdownSelect
+            value={selectedVehicle || ""}
+            onChange={(e) => handleVehicle(e.target.value)}
+          >
+            <option value="">Seyahat aracı seçin</option>
+            {vehiclesData &&
+              vehiclesData.map((vehicle) => (
+                <option key={vehicle.id} value={vehicle.travelVehicleName}>
+                  {vehicle.travelVehicleName}
+                </option>
+              ))}
+          </DropdownSelect>
+        </DropdownContainer>
       </Section>
+
       <Divider />
+
       <Section>
         <Heading as="h7">Çocuklu yolculuk</Heading>
+        
+        {/* Büyük ekranlar için butonlar */}
         <HorizontalButtonGroup>
           {kidsData &&
             kidsData.map((kids, index) => (
@@ -187,6 +266,22 @@ function OtherQSelections({
               </React.Fragment>
             ))}
         </HorizontalButtonGroup>
+
+        {/* Küçük ekranlar için dropdown */}
+        <DropdownContainer>
+          <DropdownSelect
+            value={selectedKid || ""}
+            onChange={(e) => handleKid(e.target.value)}
+          >
+            <option value="">Çocuk durumu seçin</option>
+            {kidsData &&
+              kidsData.map((kid) => (
+                <option key={kid.id} value={kid.kidState}>
+                  {kid.kidState}
+                </option>
+              ))}
+          </DropdownSelect>
+        </DropdownContainer>
       </Section>
     </Container>
   );

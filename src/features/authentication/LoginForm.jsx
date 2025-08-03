@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import supabase from "../../services/supabase";
 import { useNavigate } from "react-router-dom";
 import Button from "../../ui/Button";
 import Form from "../../ui/Form";
@@ -10,6 +9,7 @@ import { useLogin } from "./useLogin";
 import SpinnerMini from "../../ui/SpinnerMini";
 import { toast } from "react-hot-toast"; // toast import edildi
 import { resetPassword, signInWithGoogle } from "../../services/apiAuth";
+import { AnonymousDataService } from "../../utils/anonymousDataService";
 
 const BracketContainer = styled.div`
   display: flex;
@@ -107,33 +107,23 @@ function LoginForm() {
     }
   }
 
-  // Anonim oturum açma butonu için event handler
+  // UPDATED: Anonim oturum açma - HeroParallax ile aynı mantık
   async function handleGuestSignIn() {
     try {
-      // Supabase anonim oturum açma fonksiyonu
-      const { data, error } = await supabase.auth.signInAnonymously();
-      localStorage.setItem("isAnonymous", "true"); // LocalStorage'a isAnonymous bilgisi ekliyoruz
+      // Initialize empty user data for anonymous user
+      AnonymousDataService.saveUserSelections({});
+      
+      console.log("Anonymous mode activated (localStorage only)");
 
-      if (error) {
-        console.error("Anonim oturum açma hatası:", error.message);
-        return;
-      }
+      // Always redirect to dashboard
+      // Dashboard will handle the three scenarios:
+      // 1. Static Dashboard (no onboarding completed)
+      // 2. Anonymous Dashboard (onboarding completed, anonymous)
+      // 3. Authenticated Dashboard (onboarding completed, authenticated)
+      navigate("/dashboard");
 
-      if (data) {
-        // LocalStorage'da wellcomes sorularının cevaplanıp cevaplanmadığını kontrol ediyoruz
-        const wellcomesAnswered =
-          localStorage.getItem("wellcomesAnswered") || "false"; // Varsayılan olarak 'false'
-
-        if (wellcomesAnswered === "true") {
-          // Eğer sorular cevaplanmışsa /dashboard'a yönlendir
-          navigate("/dashboard");
-        } else {
-          // LocalStorage boşsa wellcome-2 (WellcomeA) sayfasına yönlendir
-          navigate("/wellcome-2");
-        }
-      }
     } catch (error) {
-      console.error("Oturum açma sırasında hata oluştu:", error.message);
+      console.error("Anonymous mode activation error:", error);
     }
   }
 

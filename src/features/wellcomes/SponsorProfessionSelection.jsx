@@ -2,8 +2,13 @@
 import styled from "styled-components";
 import Spinner from "../../ui/Spinner";
 import { useProfessions } from "./useProfession";
+import { useState, useRef, useEffect } from "react";
 
 const Container = styled.div`
+  position: relative;
+  max-height: calc(100vh - 40rem);
+  overflow: auto;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,12 +18,31 @@ const Container = styled.div`
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Gölgeyi artırdık */
   backdrop-filter: blur(6.3px);
   -webkit-backdrop-filter: blur(6.3px);
-  background: rgba(255, 255, 255, 0.37);
+  background: ${({ hasOverflow }) =>
+    hasOverflow ? "rgba(255, 255, 255, 0.37)" : "rgba(255, 255, 255, 0.37)"};
   border: 1px solid rgba(255, 255, 255, 0.52);
   width: 100%;
   max-width: 400px;
+
   @media (max-width: 450px) {
     max-width: 300px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 16px;
+    @media (max-width: 710px) {
+      width: 12px;
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-grey-54);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
   }
 `;
 
@@ -62,14 +86,12 @@ function SponsorProfessionSelection({
   selectedProfession,
 }) {
   const { isLoading, professionsData } = useProfessions();
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const containerRef = useRef(null);
 
   const handleProfession = (value) => {
     onProfessionChange(value);
   };
-
-  if (isLoading) {
-    return <Spinner />;
-  }
 
   // "Çocuk (0-6 yaş)" ve "Öğrenci" mesleklerini filtrele
   const filteredProfessions =
@@ -79,8 +101,28 @@ function SponsorProfessionSelection({
         profession.professionName !== "Öğrenci"
     ) || [];
 
+  // Overflow kontrol useEffect'i
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (containerRef.current) {
+        const { scrollHeight, clientHeight } = containerRef.current;
+        setHasOverflow(scrollHeight > clientHeight);
+      }
+    };
+
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+    return () => {
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [filteredProfessions]); // filteredProfessions değiştiğinde de kontrol et
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
-    <Container>
+    <Container ref={containerRef} hasOverflow={hasOverflow}>
       <ButtonGroup>
         {filteredProfessions.map((profession) => (
           <SelectionButton

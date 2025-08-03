@@ -33,7 +33,7 @@ const DocumentItem = styled.li`
     props.isCompleted 
       ? "#00ffa2" 
       : "rgba(255, 255, 255, 0.85)"};
-  color: ${(props) => props.isCompleted ? "#374151" : "var(--color-grey-700)"};
+  color: ${(props) => props.isCompleted ? "#374151" : "black"};
   cursor: pointer;
   transition: all 0.2s ease;
   border-left: 3px solid

@@ -3,9 +3,9 @@
 import styled from "styled-components";
 import Spinner from "../../ui/Spinner";
 import { usePurpose } from "./usePurpose";
+import { useState, useRef, useEffect } from "react";
 
 // Stil tanımlamaları
-
 
 const RadioLabel = styled.label`
   font-size: 18px;
@@ -72,42 +72,80 @@ const RadioLabel = styled.label`
 `;
 
 const Container = styled.div`
+  position: relative;
+  max-height: calc(100vh - 40rem);
+  overflow: auto;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  border-radius: 16px;
   gap: 20px;
-  max-width: 1000px; /* Genişlik sınırı */
+  max-width: 1000px;
+  position: relative;
+  background-color: ${({ hasOverflow }) =>
+    hasOverflow ? "rgba(255, 255, 255, 0.37)" : "transparent"};
+  -webkit-backdrop-filter: ${({ hasOverflow }) =>
+    hasOverflow ? "blur(6.3px)" : "none"};
+  border: ${({ hasOverflow }) =>
+    hasOverflow ? "1px solid rgba(255, 255, 255, 0.52)" : "none"};
 
   @media (max-width: 768px) {
-    justify-content: space-around; /* Mobil ekranlarda düzgün sıralama için */
+    justify-content: space-around;
   }
   @media (max-width: 450px) {
     gap: 0;
   }
+
+  &::-webkit-scrollbar {
+    width: 16px;
+    @media (max-width: 710px) {
+      width: 12px;
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--color-grey-2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-grey-54);
+    border-radius: 10px;
+    border: 3px solid var(--color-grey-2);
+  }
 `;
-
-
-
 
 function PurposeSelection({ onPurposeChange, selectedPurpose }) {
   const { isLoading, purposeRegData } = usePurpose();
-  
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const containerRef = useRef(null);
 
   const handlePurposeChange = (value) => {
     onPurposeChange(value);
-    
   };
 
+  // Overflow kontrol useEffect'i
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (containerRef.current) {
+        const { scrollHeight, clientHeight } = containerRef.current;
+        setHasOverflow(scrollHeight > clientHeight);
+      }
+    };
 
-  
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+    return () => {
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [purposeRegData]); // purposeRegData değiştiğinde de kontrol et
+
   if (isLoading) {
     return <Spinner />;
   }
 
   return (
-    <Container>
- 
-
+    <Container ref={containerRef} hasOverflow={hasOverflow}>
       {purposeRegData &&
         purposeRegData.map((purpose) => {
           let iconUrl;

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useUserSelections } from "./useUserSelections";
 import Button from "../../ui/Button";
 import ControlScreenDropdowns from "./ControlScreenDropdowns";
@@ -15,6 +15,8 @@ function ControlScreen({ onModalComplete }) {
   const { state, dispatch } = useUserSelections();
   const navigate = useNavigate();
   const { user, isUserLoading } = useUser();
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const containerRef = useRef(null);
 
   // Check if user is anonymous OR in modal flow without authentication
   const isAnonymous = AnonymousDataService.isAnonymousUser();
@@ -36,6 +38,22 @@ function ControlScreen({ onModalComplete }) {
       navigate("/wellcome");
     }
   }, [state, navigate, onModalComplete]);
+
+  // Overflow kontrol useEffect'i
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (containerRef.current) {
+        const { scrollHeight, clientHeight } = containerRef.current;
+        setHasOverflow(scrollHeight > clientHeight);
+      }
+    };
+
+    checkOverflow();
+    window.addEventListener("resize", checkOverflow);
+    return () => {
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [state]); // state değiştiğinde de kontrol et
 
   const handleSubmit = async () => {
     // Handle anonymous users OR modal flow users without authentication
@@ -149,6 +167,10 @@ function ControlScreen({ onModalComplete }) {
   }
 
   const ModalScreenContainer = styled.div`
+    position: relative;
+    max-height: calc(100vh - 40rem);
+    overflow: auto;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -190,15 +212,32 @@ function ControlScreen({ onModalComplete }) {
       height: auto;
       max-height: 500px;
       overflow-y: auto;
-      background: transparent;
+      background: ${hasOverflow ? "rgba(255, 255, 255, 0.37)" : "transparent"};
       box-shadow: none;
       border: none;
       backdrop-filter: none;
     `}
+
+    &::-webkit-scrollbar {
+      width: 16px;
+      @media (max-width: 710px) {
+        width: 12px;
+      }
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--color-grey-2);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--color-grey-54);
+      border-radius: 10px;
+      border: 3px solid var(--color-grey-2);
+    }
   `;
 
   return (
-    <ModalScreenContainer>
+    <ModalScreenContainer ref={containerRef} hasOverflow={hasOverflow}>
       <Heading as="h8">Bilgi Kontrol Ekranı</Heading>
       <ControlScreenDropdowns
         selectedCountry={state.country}
