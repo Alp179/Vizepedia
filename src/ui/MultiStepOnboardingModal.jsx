@@ -62,7 +62,7 @@ const ProgressFill = styled.div`
   background: linear-gradient(135deg, #004466, #00ffa2);
   border-radius: 2px;
   transition: width 0.3s ease;
-  width: ${props => props.progress}%;
+  width: ${(props) => props.progress}%;
 `;
 
 const StepCounter = styled.div`
@@ -101,41 +101,39 @@ const ModalContentWrapper = styled.div`
 
 // Step definitions
 const STEPS = {
-  SIGNUP: 'signup',
-  COUNTRY: 'country',
-  PURPOSE: 'purpose', 
-  PROFESSION: 'profession',
-  SPONSOR_PROFESSION: 'sponsor_profession',
-  OTHER_DETAILS: 'other_details',
-  CONTROL: 'control'
+  COUNTRY: "country",
+  PURPOSE: "purpose",
+  PROFESSION: "profession",
+  SPONSOR_PROFESSION: "sponsor_profession",
+  OTHER_DETAILS: "other_details",
+  CONTROL: "control",
 };
 
 function MultiStepOnboardingModal({ isOpen, onClose }) {
-  const [currentStep, setCurrentStep] = useState(STEPS.SIGNUP);
+  const [currentStep, setCurrentStep] = useState(STEPS.COUNTRY);
   const { refetchUser } = useUser();
 
   // Handle modal close - clean up incomplete selections
   const handleClose = () => {
     // If user didn't complete the onboarding, clear any partial selections
     if (currentStep !== STEPS.CONTROL) {
-      console.log("Modal closed before completion - clearing partial selections");
-      
+      console.log(
+        "Modal closed before completion - clearing partial selections"
+      );
+
       // Use AnonymousDataService to clear all data
       AnonymousDataService.clearData();
-      
+
       // Also clear specific keys that might have been set
-      const additionalKeysToRemove = [
-        'isAnonymous',
-        'wellcomesAnswered'
-      ];
-      
-      additionalKeysToRemove.forEach(key => {
+      const additionalKeysToRemove = ["isAnonymous", "wellcomesAnswered"];
+
+      additionalKeysToRemove.forEach((key) => {
         localStorage.removeItem(key);
       });
-      
+
       console.log("Partial selections cleared successfully");
     }
-    
+
     onClose();
   };
 
@@ -149,45 +147,44 @@ function MultiStepOnboardingModal({ isOpen, onClose }) {
   // Handle escape key
   useEffect(() => {
     const handleEscapeKey = (e) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === "Escape" && isOpen) {
         handleClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscapeKey);
+      document.addEventListener("keydown", handleEscapeKey);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
+      document.removeEventListener("keydown", handleEscapeKey);
     };
   }, [isOpen, handleClose]);
 
   // Step progression logic
   const getStepNumber = (step) => {
     const stepOrder = [
-      STEPS.SIGNUP,
       STEPS.COUNTRY,
       STEPS.PURPOSE,
       STEPS.PROFESSION,
       STEPS.SPONSOR_PROFESSION,
       STEPS.OTHER_DETAILS,
-      STEPS.CONTROL
+      STEPS.CONTROL,
     ];
     return stepOrder.indexOf(step) + 1;
   };
 
   const getTotalSteps = () => {
     const selections = AnonymousDataService.getUserSelections();
-    
+
     // Base steps: signup, country, purpose, profession, other_details, control
     let totalSteps = 6;
-    
+
     // Add sponsor profession step if user has sponsor and is not business owner
     if (selections?.hasSponsor && selections?.profession !== "İş veren") {
       totalSteps = 7;
     }
-    
+
     return totalSteps;
   };
 
@@ -200,14 +197,14 @@ function MultiStepOnboardingModal({ isOpen, onClose }) {
   // Handle authentication completion
   const handleAuthComplete = async () => {
     console.log("Authentication completed, moving to next step...");
-    
+
     // Force immediate step transition
     console.log("Current step before:", currentStep);
     setCurrentStep(STEPS.COUNTRY);
     console.log("Setting step to:", STEPS.COUNTRY);
-    
+
     // Refetch user in background (don't wait for it)
-    refetchUser().catch(err => console.log("User refetch error:", err));
+    refetchUser().catch((err) => console.log("User refetch error:", err));
   };
 
   // Handle step navigation
@@ -224,7 +221,7 @@ function MultiStepOnboardingModal({ isOpen, onClose }) {
 
   // Enhanced components with step navigation
   const EnhancedSignupForm = () => (
-    <SignupForm 
+    <SignupForm
       onCloseModal={handleAuthComplete}
       onAuthComplete={handleAuthComplete}
       isInModal={true}
@@ -236,7 +233,7 @@ function MultiStepOnboardingModal({ isOpen, onClose }) {
       console.log("WellcomeB completed, moving to PURPOSE step");
       handleStepComplete(STEPS.PURPOSE);
     };
-    
+
     console.log("EnhancedWellcomeB rendering - bypassing wrapper");
     return <WellcomeB onModalNext={handleNext} />;
   };
@@ -252,7 +249,10 @@ function MultiStepOnboardingModal({ isOpen, onClose }) {
   const EnhancedWellcomeD = () => {
     const handleNext = (hasSponsor) => {
       console.log("WellcomeD completed with sponsor:", hasSponsor);
-      if (hasSponsor && AnonymousDataService.getUserSelections()?.profession !== "İş veren") {
+      if (
+        hasSponsor &&
+        AnonymousDataService.getUserSelections()?.profession !== "İş veren"
+      ) {
         handleStepComplete(STEPS.SPONSOR_PROFESSION);
       } else {
         handleStepComplete(STEPS.OTHER_DETAILS);
@@ -274,8 +274,11 @@ function MultiStepOnboardingModal({ isOpen, onClose }) {
       console.log("WellcomeE completed, moving to CONTROL step");
       handleStepComplete(STEPS.CONTROL);
     };
-    
-    console.log("EnhancedWellcomeE rendering, providing handleNext:", typeof handleNext);
+
+    console.log(
+      "EnhancedWellcomeE rendering, providing handleNext:",
+      typeof handleNext
+    );
     return <WellcomeE onModalNext={handleNext} />;
   };
 
@@ -294,7 +297,7 @@ function MultiStepOnboardingModal({ isOpen, onClose }) {
       <ModalContent>
         <ModalContentWrapper>
           <CloseButton onClick={handleClose}>×</CloseButton>
-          
+
           {currentStep !== STEPS.SIGNUP && (
             <>
               <StepCounter>

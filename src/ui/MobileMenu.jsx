@@ -1,4 +1,4 @@
-// MobileMenu.jsx - Enhanced for new visitors
+// MobileMenu.jsx - Updated with MultiStepOnboardingModal
 import { useState, useEffect, useRef } from "react";
 import { HiDocument, HiPlus } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
@@ -13,10 +13,10 @@ import { fetchDocumentDetails } from "../utils/documentFetch";
 import AllDocs from "./AllDocs";
 import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
-import ModalSignup from "../ui/ModalSignup";
-import SignupForm from "../features/authentication/SignupForm";
 import { useUser } from "../features/authentication/useUser";
 import DarkModeToggle from "./DarkModeToggle";
+// NEW: Import MultiStepOnboardingModal instead of ModalSignup
+import MultiStepOnboardingModal from "../ui/MultiStepOnboardingModal";
 
 // İkon ve Animasyonlar
 import {
@@ -67,18 +67,18 @@ const MobileMenu = () => {
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
   const [isDocsModalClosing, setIsDocsModalClosing] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
+  // NEW: Multi-step onboarding modal state
+  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
 
   const navigate = useNavigate();
   const { logout } = useLogout();
-  const { applications, dispatch: applicationsDispatch } = useVisaApplications();
+  const { applications, dispatch: applicationsDispatch } =
+    useVisaApplications();
 
   const [userId, setUserId] = useState(null);
   const menuRef = useRef();
   const iconRef = useRef();
-  const { user } = useUser();
-
-  // NEW: Additional user type detection (non-breaking)
-  const { userType } = useUser();
+  const { user, userType } = useUser();
 
   // PRESERVED: All existing useEffect hooks
   useEffect(() => {
@@ -124,6 +124,8 @@ const MobileMenu = () => {
       if (e.key === "Escape") {
         if (isDocsModalOpen) {
           closeDocsModal();
+        } else if (showOnboardingModal) {
+          setShowOnboardingModal(false);
         } else if (isOpen) {
           setIsOpen(false);
         }
@@ -134,7 +136,7 @@ const MobileMenu = () => {
     return () => {
       window.removeEventListener("keydown", handleEscape);
     };
-  }, [isDocsModalOpen, isOpen]);
+  }, [isDocsModalOpen, showOnboardingModal, isOpen]);
 
   // PRESERVED: All existing queries
   const userSelectionsQuery = useQuery({
@@ -250,11 +252,19 @@ const MobileMenu = () => {
     setIsOpen(false);
   };
 
-  // NEW: Additional handlers for new visitors
+  // UPDATED: Use MultiStepOnboardingModal for all "get started" actions
   const handleGetStarted = () => {
-    // CTA butonu sadece görsel - yönlendirme yok
-    console.log("Get Started button clicked");
-    setIsOpen(false);
+    setShowOnboardingModal(true);
+    setIsOpen(false); // Close mobile menu
+  };
+
+  // NEW: Handle onboarding completion - same as MainNav.jsx
+  const handleOnboardingComplete = () => {
+    setShowOnboardingModal(false);
+
+    // Force page refresh to update dashboard
+    console.log("Onboarding completed, refreshing page to update dashboard");
+    window.location.reload();
   };
 
   const handleLogin = () => {
@@ -291,7 +301,7 @@ const MobileMenu = () => {
   }
 
   // NEW: Check for new visitors (ADDITIVE logic)
-  const isNewVisitor = userType === 'new_visitor' && !isAnonymous;
+  const isNewVisitor = userType === "new_visitor" && !isAnonymous;
 
   return (
     <>
@@ -331,22 +341,11 @@ const MobileMenu = () => {
                   </ProfileHeader>
                 </ProfileInfoContainer>
 
-                {/* NEW: CTA buttons for new visitors */}
-                <ModalSignup>
-                  <ModalSignup.Open opens="mobileSignUpForm">
-                    <CreateAccountButton>
-                      <IconUpgrade />
-                      Hemen Başlayın
-                    </CreateAccountButton>
-                  </ModalSignup.Open>
-                  <ModalSignup.Window name="mobileSignUpForm">
-                    <SignupForm
-                      onCloseModal={() => {
-                        setIsOpen(false);
-                      }}
-                    />
-                  </ModalSignup.Window>
-                </ModalSignup>
+                {/* UPDATED: Use handleGetStarted instead of ModalSignup */}
+                <CreateAccountButton onClick={handleGetStarted}>
+                  <IconUpgrade />
+                  Hemen Başlayın
+                </CreateAccountButton>
 
                 <NavButton onClick={handleLogin}>
                   <IconLogout />
@@ -368,23 +367,12 @@ const MobileMenu = () => {
                   </ProfileHeader>
                 </ProfileInfoContainer>
 
-                {/* PRESERVED: Anonymous user account creation */}
+                {/* UPDATED: Anonymous user account creation with MultiStepOnboardingModal */}
                 {isAnonymous && (
-                  <ModalSignup>
-                    <ModalSignup.Open opens="mobileSignUpForm">
-                      <CreateAccountButton>
-                        <IconUpgrade />
-                        Hesap Oluştur
-                      </CreateAccountButton>
-                    </ModalSignup.Open>
-                    <ModalSignup.Window name="mobileSignUpForm">
-                      <SignupForm
-                        onCloseModal={() => {
-                          setIsOpen(false);
-                        }}
-                      />
-                    </ModalSignup.Window>
-                  </ModalSignup>
+                  <CreateAccountButton onClick={handleGetStarted}>
+                    <IconUpgrade />
+                    Hesap Oluştur
+                  </CreateAccountButton>
                 )}
 
                 <NavButton onClick={openDocsModal}>
@@ -422,7 +410,7 @@ const MobileMenu = () => {
                   ))}
                 </div>
 
-                {/* PRESERVED: New application button */}
+                {/* UPDATED: New application button uses MultiStepOnboardingModal */}
                 <NavButton onClick={handleGetStarted}>
                   <HiPlus size={22} />
                   <span>Yeni Başvuru</span>
@@ -433,7 +421,7 @@ const MobileMenu = () => {
 
           <div className="bottom-section">
             <Divider />
-            
+
             {/* PRESERVED: Profile settings for non-anonymous users */}
             {!isAnonymous && !isNewVisitor && (
               <NavButton onClick={handleProfileClick}>
@@ -441,7 +429,7 @@ const MobileMenu = () => {
                 <span>Profil Ayarları</span>
               </NavButton>
             )}
-            
+
             {/* PRESERVED: Logout button (hidden for new visitors) */}
             {!isNewVisitor && (
               <NavButton onClick={handleLogout} style={{ color: "#e74c3c" }}>
@@ -458,7 +446,7 @@ const MobileMenu = () => {
         </MenuContents>
       </MenuContainer>
 
-      {/* PRESERVED: All existing modals */}
+      {/* PRESERVED: Delete confirmation modal */}
       {showDeleteModal && (
         <ModalOverlay onClick={closeDeleteModal}>
           <ConfirmationModal onClick={(e) => e.stopPropagation()}>
@@ -478,6 +466,7 @@ const MobileMenu = () => {
         </ModalOverlay>
       )}
 
+      {/* PRESERVED: Documents modal */}
       {isDocsModalOpen && (
         <DocsModalOverlay
           isClosing={isDocsModalClosing}
@@ -495,6 +484,12 @@ const MobileMenu = () => {
           </DocsModalContainer>
         </DocsModalOverlay>
       )}
+
+      {/* NEW: Multi-step onboarding modal - replaces ModalSignup */}
+      <MultiStepOnboardingModal
+        isOpen={showOnboardingModal}
+        onClose={handleOnboardingComplete}
+      />
     </>
   );
 };
