@@ -21,6 +21,9 @@ export async function resetPassword(email) {
 export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
+    options: {
+      redirectTo: "https://www.vizepedia.com/dashboard",
+    },
   });
 
   if (error) {
@@ -30,7 +33,6 @@ export async function signInWithGoogle() {
 
   return { data };
 }
-
 export async function signup({ email, password }) {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -56,7 +58,7 @@ export async function getCurrentUser() {
   try {
     const { data: session } = await supabase.auth.getSession();
     if (!session.session) return null;
-    
+
     const { data, error } = await supabase.auth.getUser();
 
     if (error) throw new Error(error.message);
@@ -96,7 +98,7 @@ export async function isUserAnonymous() {
 
     // If user exists but no email, might be anonymous session
     const isAnonymous = currentUser.app_metadata?.provider === "anonymous";
-    
+
     return isAnonymous;
   } catch (error) {
     console.error("Error checking anonymous status:", error);
@@ -113,7 +115,7 @@ export async function checkAuthStatus() {
         isLoggedIn: false,
         isAnonymous: false,
         user: null,
-        userType: 'bot'
+        userType: "bot",
       };
     }
 
@@ -123,7 +125,7 @@ export async function checkAuthStatus() {
         isLoggedIn: false,
         isAnonymous: true,
         user: null,
-        userType: 'anonymous'
+        userType: "anonymous",
       };
     }
 
@@ -135,7 +137,7 @@ export async function checkAuthStatus() {
       isLoggedIn: !!currentUser,
       isAnonymous: userIsAnonymous,
       user: currentUser,
-      userType: currentUser ? 'authenticated' : 'new_visitor'
+      userType: currentUser ? "authenticated" : "new_visitor",
     };
   } catch (error) {
     console.error("Error checking auth status:", error);
@@ -143,7 +145,7 @@ export async function checkAuthStatus() {
       isLoggedIn: false,
       isAnonymous: false,
       user: null,
-      userType: 'new_visitor'
+      userType: "new_visitor",
     };
   }
 }
@@ -241,23 +243,25 @@ export async function updateCurrentUser({ email, password, fullName, avatar }) {
 export async function signInAsGuest() {
   // DISABLED: Don't create Supabase anonymous sessions
   console.log("Anonymous Supabase sessions disabled for AdSense compliance");
-  
+
   // Instead, just mark as anonymous in localStorage
   AnonymousDataService.saveUserSelections({});
-  
+
   return {
     data: { user: null },
-    error: null
+    error: null,
   };
 }
 
 export async function convertAnonymousToUser({ email, password }) {
   try {
     // Don't try to convert Supabase anonymous users, just sign up normally
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password
-    });
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+      {
+        email,
+        password,
+      }
+    );
 
     if (signUpError) {
       throw new Error(signUpError.message);
@@ -283,7 +287,7 @@ export async function convertAnonymousToUser({ email, password }) {
 export async function migrateAnonymousToAuthenticated(userId) {
   try {
     const anonymousData = AnonymousDataService.prepareDataForMigration();
-    
+
     if (!anonymousData.userAnswers) {
       console.log("No anonymous data to migrate");
       return null;
@@ -304,7 +308,8 @@ export async function migrateAnonymousToAuthenticated(userId) {
         ans_kid: anonymousData.userAnswers.ans_kid,
         ans_accommodation: anonymousData.userAnswers.ans_accommodation,
         ans_hassponsor: anonymousData.userAnswers.ans_hassponsor,
-        ans_sponsor_profession: anonymousData.userAnswers.ans_sponsor_profession,
+        ans_sponsor_profession:
+          anonymousData.userAnswers.ans_sponsor_profession,
         has_appointment: false,
         has_filled_form: false,
       })
@@ -324,43 +329,48 @@ export async function migrateAnonymousToAuthenticated(userId) {
 
     // FIXED: Check Supabase schema first
     console.log("🔍 Checking completed_documents table schema...");
-    
+
     // ENHANCED: Migrate completed documents with proper Supabase schema
-    if (anonymousData.completedDocuments && Object.keys(anonymousData.completedDocuments).length > 0) {
-      
+    if (
+      anonymousData.completedDocuments &&
+      Object.keys(anonymousData.completedDocuments).length > 0
+    ) {
       // Get the anonymous application ID and documents
-      Object.keys(anonymousData.completedDocuments).forEach(anonymousAppId => {
-        const appDocs = anonymousData.completedDocuments[anonymousAppId];
-        
-        if (appDocs && typeof appDocs === 'object') {
-          Object.keys(appDocs).forEach(docName => {
-            const docData = appDocs[docName];
-            
-            // FIXED: Handle both boolean and object formats with proper schema
-            if (docData === true) {
-              // Simple boolean format - INSERT with proper schema
-              completedDocsToInsert.push({
-                userId: userId,
-                document_name: docName,
-                completion_date: new Date().toISOString(),
-                // CRITICAL FIX: Remove 'status' if it's causing schema issues
-                // status: 'completed', // ← Bu satırı kaldırın veya boolean yapın
-                application_id: data.id // Use the new authenticated application ID
-              });
-            } else if (typeof docData === 'object' && docData.document_name) {
-              // Object format - INSERT with proper schema  
-              completedDocsToInsert.push({
-                userId: userId,
-                document_name: docData.document_name,
-                completion_date: docData.completion_date || new Date().toISOString(),
-                // CRITICAL FIX: Remove 'status' if it's causing schema issues
-                // status: 'completed', // ← Bu satırı kaldırın veya boolean yapın
-                application_id: data.id // Use the new authenticated application ID
-              });
-            }
-          });
+      Object.keys(anonymousData.completedDocuments).forEach(
+        (anonymousAppId) => {
+          const appDocs = anonymousData.completedDocuments[anonymousAppId];
+
+          if (appDocs && typeof appDocs === "object") {
+            Object.keys(appDocs).forEach((docName) => {
+              const docData = appDocs[docName];
+
+              // FIXED: Handle both boolean and object formats with proper schema
+              if (docData === true) {
+                // Simple boolean format - INSERT with proper schema
+                completedDocsToInsert.push({
+                  userId: userId,
+                  document_name: docName,
+                  completion_date: new Date().toISOString(),
+                  // CRITICAL FIX: Remove 'status' if it's causing schema issues
+                  // status: 'completed', // ← Bu satırı kaldırın veya boolean yapın
+                  application_id: data.id, // Use the new authenticated application ID
+                });
+              } else if (typeof docData === "object" && docData.document_name) {
+                // Object format - INSERT with proper schema
+                completedDocsToInsert.push({
+                  userId: userId,
+                  document_name: docData.document_name,
+                  completion_date:
+                    docData.completion_date || new Date().toISOString(),
+                  // CRITICAL FIX: Remove 'status' if it's causing schema issues
+                  // status: 'completed', // ← Bu satırı kaldırın veya boolean yapın
+                  application_id: data.id, // Use the new authenticated application ID
+                });
+              }
+            });
+          }
         }
-      });
+      );
 
       console.log("📋 Completed documents to insert:", completedDocsToInsert);
 
@@ -373,50 +383,70 @@ export async function migrateAnonymousToAuthenticated(userId) {
           .select();
 
         if (docsError) {
-          console.error("❌ Error inserting completed documents (Option 1):", docsError);
-          
+          console.error(
+            "❌ Error inserting completed documents (Option 1):",
+            docsError
+          );
+
           // OPTION 2: Try with boolean status if first attempt fails
-          const completedDocsWithBooleanStatus = completedDocsToInsert.map(doc => ({
-            ...doc,
-            status: true // Boolean instead of string
-          }));
-          
-          console.log("🔄 Retrying with boolean status...", completedDocsWithBooleanStatus);
-          
+          const completedDocsWithBooleanStatus = completedDocsToInsert.map(
+            (doc) => ({
+              ...doc,
+              status: true, // Boolean instead of string
+            })
+          );
+
+          console.log(
+            "🔄 Retrying with boolean status...",
+            completedDocsWithBooleanStatus
+          );
+
           const { data: insertedDocs2, error: docsError2 } = await supabase
             .from("completed_documents")
             .insert(completedDocsWithBooleanStatus)
             .select();
-            
+
           if (docsError2) {
-            console.error("❌ Error inserting completed documents (Option 2):", docsError2);
-            
+            console.error(
+              "❌ Error inserting completed documents (Option 2):",
+              docsError2
+            );
+
             // OPTION 3: Try minimal schema - just essential fields
-            const minimalDocs = completedDocsToInsert.map(doc => ({
+            const minimalDocs = completedDocsToInsert.map((doc) => ({
               userId: doc.userId,
               document_name: doc.document_name,
-              application_id: doc.application_id
+              application_id: doc.application_id,
             }));
-            
+
             console.log("🔄 Retrying with minimal schema...", minimalDocs);
-            
+
             const { data: insertedDocs3, error: docsError3 } = await supabase
               .from("completed_documents")
               .insert(minimalDocs)
               .select();
-              
+
             if (docsError3) {
               console.error("❌ Final attempt failed:", docsError3);
             } else {
-              console.log("✅ Completed documents inserted (minimal schema):", insertedDocs3);
+              console.log(
+                "✅ Completed documents inserted (minimal schema):",
+                insertedDocs3
+              );
               migratedDocumentsCount = insertedDocs3.length;
             }
           } else {
-            console.log("✅ Completed documents inserted (boolean status):", insertedDocs2);
+            console.log(
+              "✅ Completed documents inserted (boolean status):",
+              insertedDocs2
+            );
             migratedDocumentsCount = insertedDocs2.length;
           }
         } else {
-          console.log("✅ Completed documents inserted (no status):", insertedDocs);
+          console.log(
+            "✅ Completed documents inserted (no status):",
+            insertedDocs
+          );
           migratedDocumentsCount = insertedDocs.length;
         }
       } else {
@@ -429,17 +459,20 @@ export async function migrateAnonymousToAuthenticated(userId) {
     // Clear anonymous data after successful migration
     AnonymousDataService.clearData();
 
-    console.log("✅ Anonymous data successfully migrated to authenticated user");
-    console.log(`📊 Migration summary: Application ID: ${data.id}, Documents migrated: ${migratedDocumentsCount}`);
-    
+    console.log(
+      "✅ Anonymous data successfully migrated to authenticated user"
+    );
+    console.log(
+      `📊 Migration summary: Application ID: ${data.id}, Documents migrated: ${migratedDocumentsCount}`
+    );
+
     // Return the migration result with new application ID
     return {
       applicationId: data.id,
       userAnswers: data,
       migratedDocuments: migratedDocumentsCount,
-      completedDocuments: completedDocsToInsert // Return the docs for immediate use
+      completedDocuments: completedDocsToInsert, // Return the docs for immediate use
     };
-
   } catch (error) {
     console.error("❌ Error during anonymous data migration:", error);
     return null;

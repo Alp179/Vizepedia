@@ -16,6 +16,8 @@ import {
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import { useVisaApplications } from "../context/VisaApplicationContext";
+import { fetchCompletedDocuments } from "../utils/supabaseActions"; // ← EKLENDI
+import { AnonymousDataService } from "../utils/anonymousDataService"; // ← EKLENDI
 
 import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
@@ -543,7 +545,7 @@ function MainNav() {
   const [selectedAppId, setSelectedAppId] = useState(null);
   // NEW: Multi-step onboarding modal state
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
-  
+
   const navigate = useNavigate();
   const { id: applicationId } = useParams();
   const {
@@ -573,9 +575,9 @@ function MainNav() {
     });
   }, []);
 
-  // PRESERVED: All existing queries
+  // UPDATED: Use SAME query keys as Dashboard.jsx
   const userSelectionsQuery = useQuery({
-    queryKey: ["userSelectionsNav", userId, applicationId],
+    queryKey: ["userSelections", userId, applicationId, userType], // ← Dashboard ile aynı
     queryFn: () => fetchUserSelectionsDash(userId, applicationId),
     enabled: !!userId && !!applicationId,
   });
@@ -585,11 +587,12 @@ function MainNav() {
     : [];
 
   const documentsQuery = useQuery({
-    queryKey: ["documentDetailsNav", documentNames],
+    queryKey: ["documentDetails", documentNames], // ← Dashboard ile aynı
     queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !!documentNames.length,
   });
 
+<<<<<<< Updated upstream
   // PRESERVED: All existing functions
   // MainNav.jsx içinde continueToDocument fonksiyonunu şu şekilde değiştir:
 
@@ -671,6 +674,149 @@ const continueToDocument = () => {
       // Fallback to documents route
       console.log("🔗 Navigate to documents (fallback):", `/documents/${selectedDocument.id}`);
       navigate(`/documents/${selectedDocument.id}`);
+=======
+  // ENHANCED: Dashboard ile aynı completedDocuments yükleme mekanizması
+  useEffect(() => {
+    console.log("🔄 MainNav - Loading completed documents...");
+    console.log(
+      "userType:",
+      userType,
+      "userId:",
+      userId,
+      "applicationId:",
+      applicationId
+    );
+    console.log("userSelections:", userSelectionsQuery.data);
+
+    if (
+      userType === "authenticated" &&
+      userId &&
+      userSelectionsQuery.data?.length > 0
+    ) {
+      // Dashboard ile aynı: Real application ID kullan
+      const realApplicationId = userSelectionsQuery.data[0].id;
+
+      console.log(
+        "🔄 Fetching completed documents with real ID:",
+        realApplicationId
+      );
+      fetchCompletedDocuments(userId, realApplicationId)
+        .then((data) => {
+          console.log("📋 MainNav - Raw completed documents:", data);
+
+          if (data && data.length > 0) {
+            const completedDocsMap = data.reduce((acc, doc) => {
+              if (!acc[realApplicationId]) {
+                acc[realApplicationId] = {};
+              }
+              acc[realApplicationId][doc.document_name] = true;
+              return acc;
+            }, {});
+
+            console.log(
+              "✅ MainNav - Formatted completed documents:",
+              completedDocsMap
+            );
+
+            documentsDispatch({
+              type: "SET_COMPLETED_DOCUMENTS",
+              payload: completedDocsMap,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(
+            "❌ MainNav - Error fetching completed documents:",
+            error
+          );
+        });
+    } else if (userType === "anonymous" && applicationId) {
+      // Anonymous user logic
+      const anonymousCompletedDocs =
+        AnonymousDataService.fetchCompletedDocuments(applicationId);
+      const completedDocsMap = anonymousCompletedDocs.reduce((acc, doc) => {
+        if (!acc[applicationId]) {
+          acc[applicationId] = {};
+        }
+        acc[applicationId][doc.document_name] = true;
+        return acc;
+      }, {});
+
+      documentsDispatch({
+        type: "SET_COMPLETED_DOCUMENTS",
+        payload: completedDocsMap,
+      });
+    }
+  }, [
+    userType,
+    userId,
+    userSelectionsQuery.data,
+    applicationId,
+    documentsDispatch,
+  ]);
+
+  // ENHANCED: Real application ID ile tamamlanma kontrolü
+  const continueToDocument = () => {
+    const documents = documentsQuery.data;
+
+    console.log("🔗 MainNav continueToDocument:");
+    console.log("documents:", documents);
+    console.log("applicationId:", applicationId);
+    console.log("completedDocuments:", completedDocuments);
+
+    if (!documents || documents.length === 0) {
+      console.log("No documents found");
+      return;
+    }
+
+    // Dashboard ile aynı: Real application ID kullan
+    const realApplicationId =
+      userSelectionsQuery.data?.[0]?.id || applicationId;
+    console.log("Real application ID for completion check:", realApplicationId);
+    console.log(
+      "Completed docs for real ID:",
+      completedDocuments[realApplicationId]
+    );
+
+    // StepIndicator ile AYNI MANTIK - Real ID ile kontrol
+    const firstIncompleteIndex = documents.findIndex((doc) => {
+      const isCompleted = completedDocuments[realApplicationId]?.[doc.docName];
+      console.log(`Document ${doc.docName}: completed = ${isCompleted}`);
+      return !isCompleted;
+    });
+
+    console.log("First incomplete index:", firstIncompleteIndex);
+
+    if (firstIncompleteIndex !== -1) {
+      const selectedDocument = documents[firstIncompleteIndex];
+      setSelectedDocument(selectedDocument);
+
+      console.log("Navigating with docStage:", selectedDocument.docStage);
+
+      // StepIndicator ile AYNI YÖNLENDİRME - URL için original applicationId kullan
+      if (selectedDocument.docStage === "hazir") {
+        navigate(`/ready-documents/${applicationId}`);
+      } else if (selectedDocument.docStage === "planla") {
+        navigate(`/planned-documents/${applicationId}`);
+      } else if (selectedDocument.docStage === "bizimle") {
+        navigate(`/withus-documents/${applicationId}`);
+      } else {
+        navigate(`/documents/${selectedDocument.id}`);
+      }
+    } else {
+      console.log("All documents completed!");
+      toast.success("Tüm belgeler tamamlandı! 🎉", {
+        style: {
+          borderRadius: "10px",
+          background: "#333",
+          color: "#fff",
+        },
+        iconTheme: {
+          primary: "#00ffa2",
+          secondary: "#333",
+        },
+      });
+>>>>>>> Stashed changes
     }
   } else {
     console.log("📋 All documents completed, staying on dashboard");
@@ -732,7 +878,7 @@ const continueToDocument = () => {
   // NEW: Handle onboarding completion - same as Header.jsx
   const handleOnboardingComplete = () => {
     setShowOnboardingModal(false);
-    
+
     // Force page refresh to update dashboard
     console.log("Onboarding completed, refreshing page to update dashboard");
     window.location.reload();
@@ -752,18 +898,16 @@ const continueToDocument = () => {
   }
 
   // NEW: Check for new visitors (ADDITIVE logic)
-  const isNewVisitor = userType === 'new_visitor';
+  const isNewVisitor = userType === "new_visitor";
 
   return (
     <>
       <nav className="navbar-dash">
         <Toaster />
-        
+
         {/* UPDATED: Different button for new visitors - now opens onboarding modal */}
         {isNewVisitor ? (
-          <WelcomeButton onClick={handleGetStarted}>
-            Başlayın
-          </WelcomeButton>
+          <WelcomeButton onClick={handleGetStarted}>Başlayın</WelcomeButton>
         ) : (
           <GlowButton onClick={continueToDocument}>Devam et</GlowButton>
         )}
@@ -792,27 +936,29 @@ const continueToDocument = () => {
                 </ModalDocs>
               </li>
               <ScrollableDiv>
-                {applications.map((app) => (
-                  <li className="mainnav-buzlucam" key={app.id}>
-                    <StyledNavLink to={`/dashboard/${app.id}`}>
-                      <AppInfo>
-                        <AppTitle>{app.ans_country}</AppTitle>
-                        <AppSubtitle>
-                          {app.ans_purpose} - {app.ans_profession}
-                        </AppSubtitle>
-                      </AppInfo>
-                      {applications.length > 1 && (
-                        <ActionButton
-                          onClick={(e) => openDeleteModal(app.id, e)}
-                          aria-label="Vize başvurusunu sil"
-                          title="Vize başvurusunu sil"
-                        >
-                          <MdDelete />
-                        </ActionButton>
-                      )}
-                    </StyledNavLink>
-                  </li>
-                ))}
+                {applications
+                  .sort((a, b) => b.id - a.id) // ← EN BÜYÜK ID EN ÜSTTE
+                  .map((app) => (
+                    <li className="mainnav-buzlucam" key={app.id}>
+                      <StyledNavLink to={`/dashboard/${app.id}`}>
+                        <AppInfo>
+                          <AppTitle>{app.ans_country}</AppTitle>
+                          <AppSubtitle>
+                            {app.ans_purpose} - {app.ans_profession}
+                          </AppSubtitle>
+                        </AppInfo>
+                        {applications.length > 1 && (
+                          <ActionButton
+                            onClick={(e) => openDeleteModal(app.id, e)}
+                            aria-label="Vize başvurusunu sil"
+                            title="Vize başvurusunu sil"
+                          >
+                            <MdDelete />
+                          </ActionButton>
+                        )}
+                      </StyledNavLink>
+                    </li>
+                  ))}
               </ScrollableDiv>
               <li>
                 <SimpleButton onClick={handleGetStarted}>
@@ -849,7 +995,7 @@ const continueToDocument = () => {
       </nav>
 
       {/* NEW: Multi-step onboarding modal - same as Header.jsx */}
-      <MultiStepOnboardingModal 
+      <MultiStepOnboardingModal
         isOpen={showOnboardingModal}
         onClose={handleOnboardingComplete}
       />
