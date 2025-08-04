@@ -43,7 +43,6 @@ import WellcomeDa from "./features/wellcomes/WellcomeDa";
 import ResetPassword from "./features/authentication/ResetPassword";
 import CerezPolitikasi from "./pages/CerezPolitikasi";
 import Davetiye from "./pages/Davetiye";
-
 // Çerez sistemi import'ları
 import { CookieConsentProvider } from "./hooks/useCookieConsent.jsx";
 import { CookieBanner } from "./ui/CookieBanner.jsx";
@@ -151,6 +150,9 @@ function AppWithGA() {
       <Route path="cerez-politikasi" element={<CerezPolitikasi />} />
       <Route path="davetiye-olustur" element={<Davetiye />} />
       <Route path="*" element={<PageNotFound />} />
+      <Route path="/ready-documents" element={<ReadyDocumentDetail />} />
+      <Route path="/planned-documents" element={<PlannedDocumentDetail />} />
+      <Route path="/withus-documents" element={<WithUsDocumentDetail />} />
     </Routes>
   );
 }
@@ -165,7 +167,9 @@ function RedirectIfLoggedIn({ children }) {
         const currentUser = await getCurrentUser();
         if (currentUser) {
           // Authenticated user varsa, onboarding check'i yapalım
-          const latestApplication = await fetchLatestApplication(currentUser.id);
+          const latestApplication = await fetchLatestApplication(
+            currentUser.id
+          );
           if (latestApplication) {
             localStorage.setItem("latestApplicationId", latestApplication.id);
             navigate(`/dashboard/${latestApplication.id}`);
@@ -242,6 +246,4 @@ function App() {
   );
 }
 
-
 export default App;
-

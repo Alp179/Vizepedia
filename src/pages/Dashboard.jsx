@@ -22,7 +22,7 @@ import MobileCarousel from "../ui/MobileCarousel";
 import VisaCheckModal from "../ui/VisaCheckModal";
 import VisaStatusBanner from "../ui/VisaStatusBanner";
 import { useUser } from "../features/authentication/useUser";
-import StaticDashboardContent from "../ui/StaticDashboardContent";
+import PublicDashboard from "../ui/PublicDashboard";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 
 // Styled components remain the same...
@@ -758,7 +758,7 @@ const Dashboard = () => {
   if (userType === "bot" || userType === "new_visitor") {
     return (
       <DashboardContainer>
-        <StaticDashboardContent />
+        <PublicDashboard />
       </DashboardContainer>
     );
   }
@@ -773,7 +773,7 @@ const Dashboard = () => {
 
     return (
       <DashboardContainer>
-        <StaticDashboardContent />
+        <PublicDashboard />
       </DashboardContainer>
     );
   }
@@ -790,7 +790,7 @@ const Dashboard = () => {
         >
           Veriler yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.
         </div>
-        <StaticDashboardContent />
+        <PublicDashboard />
       </DashboardContainer>
     );
   }

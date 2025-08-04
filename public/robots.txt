@@ -19,4 +19,4 @@ Disallow: /summary/
 
 Allow: /
 
-Sitemap: https://www.vizepedia.com/sitemap.xml
+Sitemap: https://www.vizepedia.com/api/generate-sitemap

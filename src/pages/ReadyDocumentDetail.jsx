@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import styled, { keyframes } from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
@@ -29,7 +29,7 @@ const fadeIn = keyframes`
   }
 `;
 
-// Tekrar kullanılabilir stiller
+// Styled components (aynı kalıyor)
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -320,31 +320,58 @@ const ReadyDocumentDetail = () => {
     dispatch,
   } = useContext(DocumentsContext);
 
-  // FIXED: User type detection
-  const { user, userType } = useUser();
-  const isAnonymous =
-    userType === "anonymous" ||
-    (!user && paramApplicationId?.startsWith("anonymous-"));
+  // DEMO MODE DETECTION
+  const isDemoMode = !paramApplicationId;
+  console.log("🎭 Demo mode:", isDemoMode);
 
-  const applicationId = paramApplicationId || `anonymous-${Date.now()}`;
+  // Demo için sabit veriler
+  const demoUserSelections = useMemo(() => [
+    {
+      id: "demo-application",
+      created_at: new Date().toISOString(),
+      ans_country: "Almanya",
+      ans_purpose: "Turistik",
+      ans_profession: "Öğrenci", 
+      ans_vehicle: "Uçak",
+      ans_kid: "Hayir",
+      ans_accommodation: "Otel",
+      ans_hassponsor: true,
+      ans_sponsor_profession: "Çalışan",
+      has_appointment: false,
+      has_filled_form: false
+    }
+  ], []);
+
+  // User type detection
+  const { user, userType } = useUser();
+  const isAnonymous = !isDemoMode && (
+    userType === "anonymous" ||
+    (!user && paramApplicationId?.startsWith("anonymous-"))
+  );
+
+  const applicationId = isDemoMode ? "demo-application" : (paramApplicationId || `anonymous-${Date.now()}`);
 
   console.log("🔍 ReadyDocumentDetail Debug:");
+  console.log("isDemoMode:", isDemoMode);
   console.log("paramApplicationId:", paramApplicationId);
   console.log("applicationId:", applicationId);
   console.log("userType:", userType);
   console.log("user:", user ? "authenticated" : "none");
   console.log("isAnonymous:", isAnonymous);
 
-  // FIXED: Anonymous-aware query
+  // Query for user selections
   const { data: userSelections } = useQuery({
-    queryKey: ["userSelections", userId, applicationId, userType],
+    queryKey: ["userSelections", userId, applicationId, userType, isDemoMode],
     queryFn: () => {
+      if (isDemoMode) {
+        return demoUserSelections;
+      }
       if (isAnonymous) {
         return AnonymousDataService.convertToSupabaseFormat();
       }
       return fetchUserSelectionsDash(userId, applicationId);
     },
-    enabled: isAnonymous || (!!userId && !!applicationId),
+    enabled: isDemoMode || isAnonymous || (!!userId && !!applicationId),
     staleTime: 5 * 60 * 1000,
   });
 
@@ -359,9 +386,11 @@ const ReadyDocumentDetail = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // FIXED: User detection
+  // User detection
   useEffect(() => {
-    if (isAnonymous) {
+    if (isDemoMode) {
+      setUserId("demo-user");
+    } else if (isAnonymous) {
       setUserId("anonymous-user");
     } else {
       getCurrentUser().then((user) => {
@@ -370,7 +399,7 @@ const ReadyDocumentDetail = () => {
         }
       });
     }
-  }, [isAnonymous]);
+  }, [isDemoMode, isAnonymous]);
 
   useEffect(() => {
     if (isDocumentsSuccess && documents && !selectedDocument) {
@@ -404,22 +433,27 @@ const ReadyDocumentDetail = () => {
     return <Spinner />;
   }
 
-  const isCompleted = isAnonymous
-  ? completedDocuments[applicationId]?.[selectedDocument?.docName]
-  : userSelections?.length > 0
-    ? completedDocuments[userSelections[0].id]?.[selectedDocument?.docName]
-    : false;
-  // FIXED: Anonymous-aware action handler
-  // Her üç document detail dosyasında da handleAction fonksiyonunu bulun ve bu şekilde güncelleyin:
-
-  // ReadyDocumentDetail.jsx, PlannedDocumentDetail.jsx, WithUsDocumentDetail.jsx'te handleAction fonksiyonunu değiştirin:
+  const isCompleted = isDemoMode 
+    ? false // Demo modunda hiçbir belge tamamlanmamış
+    : isAnonymous
+      ? completedDocuments[applicationId]?.[selectedDocument?.docName]
+      : userSelections?.length > 0
+        ? completedDocuments[userSelections[0].id]?.[selectedDocument?.docName]
+        : false;
 
   const handleAction = async () => {
     if (!selectedDocument) return;
   
     try {
+      if (isDemoMode) {
+        // Demo modunda sadece navigate
+        console.log("🎭 Demo mode - navigating to dashboard");
+        navigate("/dashboard");
+        return;
+      }
+
       if (isAnonymous) {
-        // FIXED: Anonymous user - consistent application ID kullan
+        // Anonymous user logic
         const correctApplicationId = AnonymousDataService.getConsistentApplicationId();
         
         console.log("🎯 Anonymous user action:");
@@ -432,7 +466,7 @@ const ReadyDocumentDetail = () => {
             type: "UNCOMPLETE_DOCUMENT",
             payload: { 
               documentName: selectedDocument.docName, 
-              applicationId: correctApplicationId  // ← Consistent ID kullanıyoruz
+              applicationId: correctApplicationId
             },
           });
         } else {
@@ -441,12 +475,12 @@ const ReadyDocumentDetail = () => {
             type: "COMPLETE_DOCUMENT",
             payload: { 
               documentName: selectedDocument.docName, 
-              applicationId: correctApplicationId  // ← Consistent ID kullanıyoruz
+              applicationId: correctApplicationId
             },
           });
         }
       } else {
-        // AUTHENTICATED USER LOGIC - değişmedi
+        // Authenticated user logic
         if (!userId || !userSelections || userSelections.length === 0) return;
         
         const realApplicationId = userSelections[0].id;
@@ -478,8 +512,9 @@ const ReadyDocumentDetail = () => {
         }
       }
   
-      // NAVIGATION LOGIC - değişmedi
+      // Navigation logic
       console.log("🔄 Navigation after document action:");
+      console.log("isDemoMode:", isDemoMode);
       console.log("applicationId:", applicationId);
       console.log("user:", user);
       console.log("userType:", userType);
@@ -550,6 +585,11 @@ const ReadyDocumentDetail = () => {
           {selectedDocument.docType && (
             <MetaTag>{selectedDocument.docType}</MetaTag>
           )}
+          {isDemoMode && (
+            <MetaTag style={{backgroundColor: "rgba(255, 165, 0, 0.2)", color: "#ff8c00"}}>
+              DEMO
+            </MetaTag>
+          )}
         </MetaInfo>
       </DocTitleCont>
 
@@ -579,7 +619,7 @@ const ReadyDocumentDetail = () => {
                 isCompleted={isCompleted}
                 className="action-button"
               >
-                {isCompleted ? "Tamamlandı" : "Tamamla"}
+                {isDemoMode ? "Dashboard'a Dön" : (isCompleted ? "Tamamlandı" : "Tamamla")}
               </ActionButton>
             </ButtonsContainer>
           </DescriptionLayout>
