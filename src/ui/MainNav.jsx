@@ -16,15 +16,160 @@ import {
 import { getDocumentsForSelections } from "../utils/documentsFilter";
 import { fetchDocumentDetails } from "../utils/documentFetch";
 import { useVisaApplications } from "../context/VisaApplicationContext";
-import { fetchCompletedDocuments } from "../utils/supabaseActions"; // ← EKLENDI
-import { AnonymousDataService } from "../utils/anonymousDataService"; // ← EKLENDI
+import { fetchCompletedDocuments } from "../utils/supabaseActions";
+import { AnonymousDataService } from "../utils/anonymousDataService";
 
 import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 import ModalDocs from "./ModalDocs";
 import { useUser } from "../features/authentication/useUser";
-// NEW: Import MultiStepOnboardingModal
 import MultiStepOnboardingModal from "../ui/MultiStepOnboardingModal";
+
+// Demo data for bot/new visitors - same as StaticDashboardContent
+const DEMO_USER_DATA = {
+  id: 405,
+  userId: '6c76fda7-555c-4b68-894c-7f0a985b2336',
+  ans_country: 'Almanya',
+  ans_purpose: 'Turistik',
+  ans_profession: 'Çalışan',
+  ans_vehicle: 'Uçak',
+  ans_accommodation: 'Otel',
+  ans_kid: 'Hayır',
+  ans_hassponsor: false,
+  ans_sponsor_profession: null,
+  has_appointment: true,
+  has_filled_form: true,
+  created_at: '2025-05-11T10:43:19.8535+00:00'
+};
+
+const DEMO_DOCUMENTS = [
+  {
+    id: 1,
+    docName: "Biyometrik Fotoğraf",
+    docStage: "hazir",
+    is_required: true,
+    order_index: 1
+  },
+  {
+    id: 2,
+    docName: "Kimlik Fotokopisi",
+    docStage: "hazir",
+    is_required: true,
+    order_index: 2
+  },
+  {
+    id: 3,
+    docName: "Nüfus Kayıt Örneği",
+    docStage: "planla",
+    is_required: true,
+    order_index: 3
+  },
+  {
+    id: 4,
+    docName: "Seyahat Sağlık Sigortası",
+    docStage: "planla",
+    is_required: true,
+    order_index: 4
+  },
+  {
+    id: 5,
+    docName: "İkametgah Belgesi",
+    docStage: "planla",
+    is_required: true,
+    order_index: 5
+  },
+  {
+    id: 6,
+    docName: "Pasaport",
+    docStage: "hazir",
+    is_required: true,
+    order_index: 6
+  },
+  {
+    id: 7,
+    docName: "Malvarlık Belgeleri",
+    docStage: "bizimle",
+    is_required: true,
+    order_index: 7
+  },
+  {
+    id: 8,
+    docName: "Faaliyet Belgesi",
+    docStage: "bizimle",
+    is_required: true,
+    order_index: 8
+  },
+  {
+    id: 9,
+    docName: "SGK İşe Giriş Belgesi",
+    docStage: "bizimle",
+    is_required: true,
+    order_index: 9
+  },
+  {
+    id: 10,
+    docName: "Son 3 Aylık Maaş Bordrosu",
+    docStage: "bizimle",
+    is_required: true,
+    order_index: 10
+  },
+  {
+    id: 11,
+    docName: "Son 3 Aylık Banka Hesap Dökümü",
+    docStage: "bizimle",
+    is_required: true,
+    order_index: 11
+  },
+  {
+    id: 12,
+    docName: "Uçak Rezervasyonu",
+    docStage: "planla",
+    is_required: true,
+    order_index: 12
+  },
+  {
+    id: 13,
+    docName: "Otel Rezervasyonu",
+    docStage: "planla",
+    is_required: true,
+    order_index: 13
+  }
+];
+
+const DEMO_COMPLETED_DOCUMENTS = {
+  405: {
+    "Biyometrik Fotoğraf": true,
+    "Kimlik Fotokopisi": true,
+    "Pasaport": true,
+    "Uçak Rezervasyonu": true,
+    "Otel Rezervasyonu": true
+  }
+};
+
+// Demo applications data
+const DEMO_APPLICATIONS = [
+  {
+    id: 405,
+    ans_country: 'Almanya',
+    ans_purpose: 'Turistik',
+    ans_profession: 'Çalışan',
+    created_at: '2025-05-11T10:43:19.8535+00:00'
+  },
+  {
+    id: 389,
+    ans_country: 'Fransa',
+    ans_purpose: 'İş',
+    ans_profession: 'Mühendis',
+    created_at: '2025-04-15T14:22:10.123Z'
+  },
+  {
+    id: 367,
+    ans_country: 'İtalya',
+    ans_purpose: 'Eğitim',
+    ans_profession: 'Öğrenci',
+    created_at: '2025-03-28T09:15:30.456Z'
+  }
+];
 
 // PRESERVED: All existing keyframes
 const glowing = keyframes`
@@ -133,7 +278,6 @@ const GlowButton = styled.button`
   }
 `;
 
-// NEW: Welcome button for new visitors - Updated with better styling
 const WelcomeButton = styled.button`
   width: 220px;
   height: 50px;
@@ -176,7 +320,6 @@ const NavList = styled.ul`
   }
 `;
 
-// PRESERVED: All existing styled components
 const ActionButton = styled.button`
   background: none;
   border: none;
@@ -277,6 +420,52 @@ const StyledNavLink = styled(NavLink)`
     opacity: 1;
     transform: scale(1);
     transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+`;
+
+// Demo styled component for non-clickable nav items
+const DemoNavItem = styled.div`
+  min-height: 65px;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-right: 50px;
+  gap: 1.2rem;
+  color: var(--color-grey-600);
+  font-size: 1.6rem;
+  font-weight: 500;
+  padding: 1.2rem 2.4rem;
+  background-color: transparent;
+  cursor: default;
+  
+  @media (max-width: 1300px) {
+    gap: 0.6rem;    font-size: 14px;
+    width: 150px;
+    padding-right: 40px;
+  }
+  @media (max-width: 1050px) {
+    width: 130px;
+    gap: 8px;
+    font-size: 13px;
+    padding-right: 36px;
+  }
+
+  & svg {
+    width: 2.4rem;
+    height: 2.4rem;
+    color: var(--color-grey-400);
+  }
+
+  &.active {
+    width: 100%;
+    background: var(--color-grey-905);
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    
+    & svg {
+      color: var(--color-brand-600);
+    }
   }
 `;
 
@@ -461,7 +650,6 @@ const AllDocsButton = styled(NavLink)`
   }
 `;
 
-// NEW: Simple button for new visitors (no link)
 const SimpleButton = styled.button`
   flex-shrink: 0;
   min-height: 65px;
@@ -542,7 +730,6 @@ function MainNav() {
   const [userId, setUserId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAppId, setSelectedAppId] = useState(null);
-  // NEW: Multi-step onboarding modal state
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
 
   const navigate = useNavigate();
@@ -558,7 +745,6 @@ function MainNav() {
     dispatch: applicationsDispatch,
   } = useVisaApplications();
 
-  // NEW: Additional user type detection (non-breaking)
   const { userType } = useUser();
 
   // PRESERVED: All existing useEffect hooks
@@ -576,9 +762,9 @@ function MainNav() {
 
   // UPDATED: Use SAME query keys as Dashboard.jsx
   const userSelectionsQuery = useQuery({
-    queryKey: ["userSelections", userId, applicationId, userType], // ← Dashboard ile aynı
+    queryKey: ["userSelections", userId, applicationId, userType],
     queryFn: () => fetchUserSelectionsDash(userId, applicationId),
-    enabled: !!userId && !!applicationId,
+    enabled: !!userId && !!applicationId && userType !== "bot" && userType !== "new_visitor",
   });
 
   const documentNames = userSelectionsQuery.data
@@ -586,13 +772,22 @@ function MainNav() {
     : [];
 
   const documentsQuery = useQuery({
-    queryKey: ["documentDetails", documentNames], // ← Dashboard ile aynı
+    queryKey: ["documentDetails", documentNames],
     queryFn: () => fetchDocumentDetails(documentNames),
-    enabled: !!documentNames.length,
+    enabled: !!documentNames.length && userType !== "bot" && userType !== "new_visitor",
   });
 
   // ENHANCED: Dashboard ile aynı completedDocuments yükleme mekanizması
   useEffect(() => {
+    if (userType === "bot" || userType === "new_visitor") {
+      // For bot/new visitors, use demo completed documents
+      documentsDispatch({
+        type: "SET_COMPLETED_DOCUMENTS",
+        payload: DEMO_COMPLETED_DOCUMENTS,
+      });
+      return;
+    }
+
     console.log("🔄 MainNav - Loading completed documents...");
     console.log(
       "userType:",
@@ -671,8 +866,49 @@ function MainNav() {
     documentsDispatch,
   ]);
 
-  // ENHANCED: Real application ID ile tamamlanma kontrolü
+  // ENHANCED: Real application ID ile tamamlanma kontrolü + Demo logic
   const continueToDocument = () => {
+    // Demo logic for bot/new visitors
+    if (userType === "bot" || userType === "new_visitor") {
+      const documents = DEMO_DOCUMENTS;
+      const firstIncompleteIndex = documents.findIndex((doc) => {
+        const isCompleted = DEMO_COMPLETED_DOCUMENTS[DEMO_USER_DATA.id]?.[doc.docName];
+        return !isCompleted;
+      });
+
+      if (firstIncompleteIndex !== -1) {
+        const selectedDocument = documents[firstIncompleteIndex];
+        setSelectedDocument(selectedDocument);
+
+        // Demo navigation - just show toast since these aren't real routes
+        toast.success(`Demo: "${selectedDocument.docName}" belgesi seçildi`, {
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+          iconTheme: {
+            primary: "#00ffa2",
+            secondary: "#333",
+          },
+        });
+      } else {
+        toast.success("Demo: Tüm belgeler tamamlandı! 🎉", {
+          style: {
+            borderRadius: "10px",
+            background: "#333",
+            color: "#fff",
+          },
+          iconTheme: {
+            primary: "#00ffa2",
+            secondary: "#333",
+          },
+        });
+      }
+      return;
+    }
+
+    // Original logic for authenticated users
     const documents = documentsQuery.data;
 
     console.log("🔗 MainNav continueToDocument:");
@@ -685,7 +921,6 @@ function MainNav() {
       return;
     }
 
-    // Dashboard ile aynı: Real application ID kullan
     const realApplicationId =
       userSelectionsQuery.data?.[0]?.id || applicationId;
     console.log("Real application ID for completion check:", realApplicationId);
@@ -694,7 +929,6 @@ function MainNav() {
       completedDocuments[realApplicationId]
     );
 
-    // StepIndicator ile AYNI MANTIK - Real ID ile kontrol
     const firstIncompleteIndex = documents.findIndex((doc) => {
       const isCompleted = completedDocuments[realApplicationId]?.[doc.docName];
       console.log(`Document ${doc.docName}: completed = ${isCompleted}`);
@@ -709,7 +943,6 @@ function MainNav() {
 
       console.log("Navigating with docStage:", selectedDocument.docStage);
 
-      // StepIndicator ile AYNI YÖNLENDİRME - URL için original applicationId kullan
       if (selectedDocument.docStage === "hazir") {
         navigate(`/ready-documents/${applicationId}`);
       } else if (selectedDocument.docStage === "planla") {
@@ -786,50 +1019,81 @@ function MainNav() {
     setShowOnboardingModal(true);
   };
 
-  // NEW: Handle onboarding completion - same as Header.jsx
+  // Handle onboarding completion
   const handleOnboardingComplete = () => {
     setShowOnboardingModal(false);
-
-    // Force page refresh to update dashboard
     console.log("Onboarding completed, refreshing page to update dashboard");
     window.location.reload();
   };
 
-  const handleShowDocs = () => {
-    // Belgeler butonuna tıklama - sadece görsel
-    console.log("Show docs button clicked");
-  };
-
-  if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
+  // Loading states for non-demo users
+  if ((userType !== "bot" && userType !== "new_visitor") && 
+      (userSelectionsQuery.isLoading || documentsQuery.isLoading)) {
     return <div>Loading...</div>;
   }
 
-  if (userSelectionsQuery.isError || documentsQuery.isError) {
+  if ((userType !== "bot" && userType !== "new_visitor") && 
+      (userSelectionsQuery.isError || documentsQuery.isError)) {
     return <div>Error loading data.</div>;
   }
 
-  // NEW: Check for new visitors (ADDITIVE logic)
-  const isNewVisitor = userType === "new_visitor";
+  // Check for bot/new visitors
+  const isBotOrNewVisitor = userType === "bot" || userType === "new_visitor";
 
   return (
     <>
       <nav className="navbar-dash">
         <Toaster />
 
-        {/* UPDATED: Different button for new visitors - now opens onboarding modal */}
-        {isNewVisitor ? (
+        {/* Different button for bot/new visitors */}
+        {isBotOrNewVisitor ? (
           <WelcomeButton onClick={handleGetStarted}>Başlayın</WelcomeButton>
         ) : (
           <GlowButton onClick={continueToDocument}>Devam et</GlowButton>
         )}
 
         <NavList>
-          {/* NEW: Simplified navigation for new visitors */}
-          {isNewVisitor ? (
-            <></>
-          ) : (
+          {isBotOrNewVisitor ? (
+            // Demo navigation for bot/new visitors
             <>
-              {/* PRESERVED: All existing navigation for other users */}
+              <li>
+                <DemoNavItem>
+                  <HiDocument
+                    className="mainnavicons"
+                    style={{ color: "var(--color-grey-924)" }}
+                  />
+                  <span className="sidebartext">Tüm belgeler</span>
+                </DemoNavItem>
+              </li>
+              <ScrollableDiv>
+                {DEMO_APPLICATIONS
+                  .sort((a, b) => b.id - a.id)
+                  .map((app) => (
+                    <li className="mainnav-buzlucam" key={app.id}>
+                      <DemoNavItem className={app.id === DEMO_USER_DATA.id ? 'active' : ''}>
+                        <AppInfo>
+                          <AppTitle>{app.ans_country}</AppTitle>
+                          <AppSubtitle>
+                            {app.ans_purpose} - {app.ans_profession}
+                          </AppSubtitle>
+                        </AppInfo>
+                      </DemoNavItem>
+                    </li>
+                  ))}
+              </ScrollableDiv>
+              <li>
+                <SimpleButton onClick={handleGetStarted}>
+                  <HiPlus
+                    className="mainnavicons"
+                    style={{ color: "var(--color-grey-924)" }}
+                  />
+                  <span className="sidebartext">Yeni</span>
+                </SimpleButton>
+              </li>
+            </>
+          ) : (
+            // Real navigation for authenticated users
+            <>
               <li>
                 <ModalDocs>
                   <ModalDocs.Open opens="allDocs">
@@ -848,7 +1112,7 @@ function MainNav() {
               </li>
               <ScrollableDiv>
                 {applications
-                  .sort((a, b) => b.id - a.id) // ← EN BÜYÜK ID EN ÜSTTE
+                  .sort((a, b) => b.id - a.id)
                   .map((app) => (
                     <li className="mainnav-buzlucam" key={app.id}>
                       <StyledNavLink to={`/dashboard/${app.id}`}>
@@ -884,8 +1148,8 @@ function MainNav() {
           )}
         </NavList>
 
-        {/* PRESERVED: Delete confirmation modal */}
-        {showDeleteModal && (
+        {/* Delete confirmation modal - only for authenticated users */}
+        {!isBotOrNewVisitor && showDeleteModal && (
           <ModalOverlay onClick={closeDeleteModal}>
             <ConfirmationModal onClick={(e) => e.stopPropagation()}>
               <ModalHeader>
@@ -905,7 +1169,7 @@ function MainNav() {
         )}
       </nav>
 
-      {/* NEW: Multi-step onboarding modal - same as Header.jsx */}
+      {/* Multi-step onboarding modal */}
       <MultiStepOnboardingModal
         isOpen={showOnboardingModal}
         onClose={handleOnboardingComplete}

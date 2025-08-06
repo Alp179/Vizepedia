@@ -74,10 +74,28 @@ function AppWithGA() {
         <Route path="hakkimizda" element={<AboutPage />} />
       </Route>
 
-      {/* FIXED: Dashboard Routes - Direct Dashboard for base route */}
+      {/* Dashboard Routes - Public for bot/new visitor access */}
       <Route element={<AppLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="dashboard/:id" element={<Dashboard />} />
+      </Route>
+
+      {/* PUBLIC Document Routes - Accessible by bots/new visitors */}
+      <Route element={<DocumentLayout />}>
+        <Route path="documents/:id" element={<Documents />} />
+        
+        {/* Bot/New Visitor Routes (without ID) */}
+        <Route path="ready-documents" element={<ReadyDocumentDetail />} />
+        <Route path="planned-documents" element={<PlannedDocumentDetail />} />
+        <Route path="withus-documents" element={<WithUsDocumentDetail />} />
+        
+        {/* Regular Routes (with ID) for authenticated/anonymous users */}
+        <Route path="ready-documents/:id" element={<ReadyDocumentDetail />} />
+        <Route path="planned-documents/:id" element={<PlannedDocumentDetail />} />
+        <Route path="withus-documents/:id" element={<WithUsDocumentDetail />} />
+        
+        <Route path="summary" element={<DocumentSummary />} />
+        <Route path="summary/:id" element={<DocumentSummary />} />
       </Route>
 
       {/* PUBLIC Onboarding Routes - No ProtectedRoute wrapper */}
@@ -101,25 +119,6 @@ function AppWithGA() {
         }
       >
         <Route path="account" element={<Account />} />
-      </Route>
-
-      {/* Protected Document Routes */}
-      <Route
-        element={
-          <ProtectedRoute>
-            <DocumentLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="documents/:id" element={<Documents />} />
-        <Route path="ready-documents/:id" element={<ReadyDocumentDetail />} />
-        <Route
-          path="planned-documents/:id"
-          element={<PlannedDocumentDetail />}
-        />
-        <Route path="withus-documents/:id" element={<WithUsDocumentDetail />} />
-        <Route path="summary" element={<DocumentSummary />} />
-        <Route path="summary/:id" element={<DocumentSummary />} />
       </Route>
 
       {/* Blog Routes */}
@@ -242,6 +241,4 @@ function App() {
   );
 }
 
-
 export default App;
-
