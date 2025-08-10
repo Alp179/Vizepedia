@@ -109,7 +109,7 @@ const DropdownSelect = styled.select`
   padding: 0.75rem;
   border-radius: 16px;
   border: 1px solid #ccc;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--color-grey-2);
   font-size: 16px;
   cursor: pointer;
   

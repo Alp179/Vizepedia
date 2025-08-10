@@ -33,7 +33,7 @@ const ModalContent = styled.div`
   padding: 24px;
   max-width: 500px;
   width: 90%;
-  max-height: 90vh;
+  max-height: 95vh;
   animation: fadeInScale 0.3s ease;
 
   @keyframes fadeInScale {

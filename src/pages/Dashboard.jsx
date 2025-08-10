@@ -62,12 +62,10 @@ const CustomRow = styled(Row)`
   }
   padding: 0;
   @media (max-width: 710px) {
-    margin: 20px auto 10px auto;
+    margin: 60px auto 10px auto;
     justify-content: center;
   }
-  @media (max-width: 450px) {
-    margin-top: 15px;
-  }
+ 
 `;
 
 const DashboardContainer = styled.div`

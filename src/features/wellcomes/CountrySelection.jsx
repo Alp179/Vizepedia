@@ -117,7 +117,7 @@ const RadioLabel = styled.label`
 
 const Container = styled.div`
   position: relative;
-  max-height: calc(100vh - 40rem);
+  max-height: calc(100vh - 30rem);
   overflow: auto;
   z-index: 1;
   display: flex;
@@ -212,10 +212,11 @@ const DropdownMenu = styled(motion.ul)`
   border-radius: 10px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  z-index: 9999; /* Üstte görünmesini sağlar */
+  z-index: 99999; /* Modaldan daha yüksek z-index */
   width: 170px;
   max-height: 300px; /* Maksimum yükseklik */
   overflow-y: auto; /* İçerik fazla olursa kaydırma çubuğu ekler */
+  
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -239,12 +240,14 @@ const DropdownItem = styled(motion.li)`
   align-items: center;
   text-align: center;
   justify-content: center;
+  border-radius: 5px;
+  
   &:hover {
-    background-color: rgba(100, 100, 255, 0.1); /* Light indigo background */
+    background-color: rgba(100, 100, 255, 0.1);
   }
 
   &:active {
-    transform: scale(0.95); /* Active durumu için küçültme efekti */
+    transform: scale(0.95);
   }
 `;
 
@@ -293,7 +296,7 @@ const CountrySelection = ({ selectedCountry, onCountryChange }) => {
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const containerRef = useRef(null);
   const dropdownRef = useRef(null);
-  const dropdownButtonRef = useRef(null); // Button için ref ekledik
+  const dropdownButtonRef = useRef(null);
 
   useEffect(() => {
     if (!schCounData || !mainCounData) return;
@@ -347,6 +350,7 @@ const CountrySelection = ({ selectedCountry, onCountryChange }) => {
     if (
       dropdownRef.current &&
       !dropdownRef.current.contains(event.target) &&
+      dropdownButtonRef.current &&
       !dropdownButtonRef.current.contains(event.target)
     ) {
       setDropdownOpen(false);
@@ -354,11 +358,13 @@ const CountrySelection = ({ selectedCountry, onCountryChange }) => {
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    if (dropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [dropdownOpen]);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -401,34 +407,39 @@ const CountrySelection = ({ selectedCountry, onCountryChange }) => {
               </motion.span>
             </div>
           </DropdownButton>
-          {dropdownOpen &&
-            ReactDOM.createPortal(
-              <DropdownMenu
-                ref={dropdownRef}
-                initial="closed"
-                animate="open"
-                exit="closed"
-                variants={menuVariants}
-                style={{
-                  position: "absolute",
-                  top: `calc(${dropdownPosition.top}px - 10px)`,
-                  left: `${dropdownPosition.left}px`,
-                  width: `${dropdownPosition.width}px`,
-                }}
-              >
-                {schCounData.map((country) => (
-                  <DropdownItem
-                    key={country.id}
-                    variants={itemVariants}
-                    onClick={() => handleChange(country.schCountryNames)}
-                  >
-                    {country.schCountryNames}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>,
-              document.body
-            )}
         </StyledSelectContainer>
+
+        {/* Portal kullanarak dropdown'ı body'e render et */}
+        {dropdownOpen &&
+          ReactDOM.createPortal(
+            <DropdownMenu
+              ref={dropdownRef}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={menuVariants}
+              style={{
+                position: "absolute",
+                top: `calc(${dropdownPosition.top}px - 10px)`,
+                left: `${dropdownPosition.left}px`,
+                width: `${dropdownPosition.width}px`,
+              }}
+            >
+              {schCounData.map((country) => (
+                <DropdownItem
+                  key={country.id}
+                  variants={itemVariants}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleChange(country.schCountryNames);
+                  }}
+                >
+                  {country.schCountryNames}
+                </DropdownItem>
+              ))}
+            </DropdownMenu>,
+            document.body
+          )}
       </DropdownContainer>
 
       {mainCounData.map((country) => {
@@ -455,7 +466,6 @@ const CountrySelection = ({ selectedCountry, onCountryChange }) => {
     </Container>
   );
 };
-
 
 // Ülke adlarının bayrak kodlarına dönüştürülmesi
 const countryToCode = {
