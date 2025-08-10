@@ -4,6 +4,17 @@ Disallow: /test
 Disallow: /summary
 Disallow: /summary/
 
+# Authenticated veya ID'li sayfaları engelle
+Disallow: /dashboard/
+Allow: /dashboard$
+Disallow: /ready-documents/
+Allow: /ready-documents$
+Disallow: /withus-documents/
+Allow: /withus-documents$
+Disallow: /planned-documents/
+Allow: /planned-documents$
+
+# Tüm diğer public sayfalar serbest
 Allow: /
 
-Sitemap: https://www.vizepedia.com/sitemap.xml
+Sitemap: https://www.vizepedia.com/api/generate-sitemap
