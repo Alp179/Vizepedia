@@ -10,18 +10,18 @@ import MobileCarousel from "../ui/MobileCarousel";
 // Real user data from your system
 const DEMO_USER_DATA = {
   id: 405,
-  userId: '6c76fda7-555c-4b68-894c-7f0a985b2336',
-  ans_country: 'Almanya',
-  ans_purpose: 'Turistik',
-  ans_profession: 'Çalışan',
-  ans_vehicle: 'Uçak',
-  ans_accommodation: 'Otel',
-  ans_kid: 'Hayır',
+  userId: "6c76fda7-555c-4b68-894c-7f0a985b2336",
+  ans_country: "Almanya",
+  ans_purpose: "Turistik",
+  ans_profession: "Çalışan",
+  ans_vehicle: "Uçak",
+  ans_accommodation: "Otel",
+  ans_kid: "Hayır",
   ans_hassponsor: false,
   ans_sponsor_profession: null,
   has_appointment: true,
   has_filled_form: true,
-  created_at: '2025-05-11T10:43:19.8535+00:00'
+  created_at: "2025-05-11T10:43:19.8535+00:00",
 };
 
 // Real documents data from your system
@@ -33,7 +33,7 @@ const DEMO_DOCUMENTS = [
     category: "Fotoğraf",
     docStage: "hazir",
     is_required: true,
-    order_index: 1
+    order_index: 1,
   },
   {
     id: 2,
@@ -42,7 +42,7 @@ const DEMO_DOCUMENTS = [
     category: "Kimlik Belgeleri",
     docStage: "hazir",
     is_required: true,
-    order_index: 2
+    order_index: 2,
   },
   {
     id: 3,
@@ -51,7 +51,7 @@ const DEMO_DOCUMENTS = [
     category: "Kimlik Belgeleri",
     docStage: "planla",
     is_required: true,
-    order_index: 3
+    order_index: 3,
   },
   {
     id: 4,
@@ -60,16 +60,17 @@ const DEMO_DOCUMENTS = [
     category: "Sigorta",
     docStage: "planla",
     is_required: true,
-    order_index: 4
+    order_index: 4,
   },
   {
     id: 5,
     docName: "İkametgah Belgesi",
-    description: "Muhtarlıktan veya nüfus müdürlüğünden alınmış ikametgah belgesi",
+    description:
+      "Muhtarlıktan veya nüfus müdürlüğünden alınmış ikametgah belgesi",
     category: "İkamet Belgeleri",
     docStage: "planla",
     is_required: true,
-    order_index: 5
+    order_index: 5,
   },
   {
     id: 6,
@@ -78,7 +79,7 @@ const DEMO_DOCUMENTS = [
     category: "Kimlik Belgeleri",
     docStage: "hazir",
     is_required: true,
-    order_index: 6
+    order_index: 6,
   },
   {
     id: 7,
@@ -87,7 +88,7 @@ const DEMO_DOCUMENTS = [
     category: "Mali Belgeler",
     docStage: "bizimle",
     is_required: true,
-    order_index: 7
+    order_index: 7,
   },
   {
     id: 8,
@@ -96,7 +97,7 @@ const DEMO_DOCUMENTS = [
     category: "İş Belgeleri",
     docStage: "bizimle",
     is_required: true,
-    order_index: 8
+    order_index: 8,
   },
   {
     id: 9,
@@ -105,7 +106,7 @@ const DEMO_DOCUMENTS = [
     category: "İş Belgeleri",
     docStage: "bizimle",
     is_required: true,
-    order_index: 9
+    order_index: 9,
   },
   {
     id: 10,
@@ -114,7 +115,7 @@ const DEMO_DOCUMENTS = [
     category: "Mali Belgeler",
     docStage: "bizimle",
     is_required: true,
-    order_index: 10
+    order_index: 10,
   },
   {
     id: 11,
@@ -123,7 +124,7 @@ const DEMO_DOCUMENTS = [
     category: "Mali Belgeler",
     docStage: "bizimle",
     is_required: true,
-    order_index: 11
+    order_index: 11,
   },
   {
     id: 12,
@@ -132,7 +133,7 @@ const DEMO_DOCUMENTS = [
     category: "Seyahat Belgeleri",
     docStage: "planla",
     is_required: true,
-    order_index: 12
+    order_index: 12,
   },
   {
     id: 13,
@@ -141,8 +142,8 @@ const DEMO_DOCUMENTS = [
     category: "Seyahat Belgeleri",
     docStage: "planla",
     is_required: true,
-    order_index: 13
-  }
+    order_index: 13,
+  },
 ];
 
 // Real firm location data from your system
@@ -155,7 +156,7 @@ const DEMO_FIRM_LOCATION = {
   firm_url: "https://www.idata.com.tr/de/tr/office",
   visa_fee: "80",
   service_fee: "25",
-  office_hours: "Pazartesi-Cuma: 09:00-17:00"
+  office_hours: "Pazartesi-Cuma: 09:00-17:00",
 };
 
 // Demo completed documents (realistic progress - some completed, some not)
@@ -163,11 +164,11 @@ const DEMO_COMPLETED_DOCUMENTS = {
   405: {
     "Biyometrik Fotoğraf": true,
     "Kimlik Fotokopisi": true,
-    "Pasaport": true,
+    Pasaport: true,
     "Uçak Rezervasyonu": true,
-    "Otel Rezervasyonu": true
+    "Otel Rezervasyonu": true,
     // Other documents intentionally left incomplete for realistic demo
-  }
+  },
 };
 
 // Styled components (same as original Dashboard)
@@ -377,7 +378,7 @@ const StaticDashboardContent = () => {
           <>
             <StepIndicatorWrapper>
               <Heading as="h14">{DEMO_USER_DATA.ans_country}</Heading>
-              
+
               <StepIndicator
                 documents={DEMO_DOCUMENTS}
                 completedDocuments={DEMO_COMPLETED_DOCUMENTS}
@@ -391,7 +392,7 @@ const StaticDashboardContent = () => {
 
             <InfoContainerWrapper>
               <Heading as="h14">Başvuru adresi</Heading>
-              
+
               <FirmMap firmLocation={DEMO_FIRM_LOCATION} />
             </InfoContainerWrapper>
           </>

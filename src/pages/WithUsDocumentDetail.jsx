@@ -15,6 +15,109 @@ import ImageViewer from "../ui/ImageViewer";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
 
+// Demo documents for "bizimle" stage - bot/new visitor data
+const DEMO_WITHUS_DOCUMENTS = [
+  {
+    id: 73,
+    docName: "Faaliyet Belgesi",
+    docDescription:
+      "Şirketin yasal olarak faal olduğunu gösteren resmi kayıt belgesi.",
+    docImage:
+      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/faaliyet.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9mYWFsaXlldC5wbmciLCJpYXQiOjE3NDg3ODkyMDUsImV4cCI6NjU0ODc0MTIwNX0.GKB9NBik-KIDZhIAuiYHTU5FEEdiaK5fDdBZnbj7ivk",
+    docType: "Şirket Belgesi",
+    docStage: "bizimle",
+    docSource: "Ticaret Odası",
+    docSourceLink: null,
+    referenceLinks: "https://idata.com.tr/tr/",
+    referenceName: "iDATA – Şirket Belgeleri",
+    docImportant:
+      "\n- Ticaret Odası tarafından düzenlenmiş olmalı.\n- Şirket adı, faaliyet alanı ve sicil numarası yer almalı.\n- Son 6 ay içinde alınmış olmalı.",
+    docWhere: "İlgili Ticaret Odası'ndan alınabilir.",
+    is_required: true,
+    order_index: 8,
+    estimatedCompletionTime: "Vizepedia ile",
+  },
+  {
+    id: 90,
+    docName: "Seyahat Sağlık Sigortası",
+    docDescription:
+      "Seyahat süresince yurt dışında geçerli, zorunlu seyahat sağlık sigortası poliçesi.",
+    docImage:
+      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/sigorta.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9zaWdvcnRhLnBuZyIsImlhdCI6MTc0ODc4OTM0NSwiZXhwIjo3NDQ4MjEyMzk0NX0.k2Bv8LtHWxQ9eRzA5nY3jG4fKpE6sT7bC8wX1uH2fDo",
+    docType: "Sigorta Belgesi",
+    docStage: "bizimle",
+    docSource: "Sigorta Şirketi",
+    docSourceLink: null,
+    referenceLinks: "https://visa.vfsglobal.com/tur/tr/deu/what-to-submit",
+    referenceName: "VFS Global – Seyahat Sağlık Sigortası",
+    docImportant:
+      "\n- En az 30.000 Euro teminatlı olmalı.\n- Tüm seyahat süresini kapsamalı.\n- Başvuru sahibinin adı yer almalı.",
+    docWhere:
+      "Bankalar, mobil bankacılık sistemleri, sigorta acenteleri veya online sigorta platformlarından alınabilir.",
+    is_required: true,
+    order_index: 4,
+    estimatedCompletionTime: "Vizepedia ile",
+  },
+  {
+    id: 95,
+    docName: "Vize Başvuru Formu",
+    docDescription:
+      "Konsolosluk tarafından belirlenen resmi vize başvuru formu. Tüm bilgiler eksiksiz ve doğru olarak doldurulmalıdır.",
+    docImage:
+      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/vizeform.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by92aXplZm9ybS5wbmciLCJpYXQiOjE3NDg3ODkzODUsImV4cCI6NzQ0ODIxMjM5ODV9.X3bY2eK5qT8vF9jR6pS4wL1nH7cA9tGmE6uV5iO3xJz",
+    docType: "Başvuru Belgesi",
+    docStage: "bizimle",
+    docSource: "Konsolosluk",
+    docSourceLink: "https://visa.vfsglobal.com/tur/tr/deu/apply-visa",
+    referenceLinks: "https://visa.vfsglobal.com/tur/tr/deu/apply-visa",
+    referenceName: "VFS Global – Vize Başvuru Formu",
+    docImportant:
+      "\n- Tüm alanlar doldurulmalı.\n- İmza ve tarih atılmalı.\n- Fotokopi değil orijinal form kullanılmalı.",
+    docWhere:
+      "Konsolosluk web sitesinden indirilebilir veya VFS merkezlerinden alınabilir.",
+    is_required: true,
+    order_index: 1,
+    estimatedCompletionTime: "Vizepedia ile",
+  },
+  {
+    id: 96,
+    docName: "Davet Mektubu",
+    docDescription:
+      "Seyahat edilecek ülkede bulunan kişi, kurum veya şirket tarafından düzenlenen resmi davet mektubu.",
+    docImage:
+      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/davet.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9kYXZldC5wbmciLCJpYXQiOjE3NDg3ODk0MjUsImV4cCI6NzQ0ODIxMjQwMjV9.M9nP6bL5tR8aF2cX7jS3wK4hG1vQ9eY6uT5nI8rA3oZ",
+    docType: "Destek Belgesi",
+    docStage: "bizimle",
+    docSource: "Davet Eden Taraf",
+    docSourceLink: null,
+    referenceLinks: "https://idata.com.tr/tr/",
+    referenceName: "iDATA – Davet Mektubu Örnekleri",
+    docImportant:
+      "\n- Davet edenin kimlik bilgileri yer almalı.\n- Seyahat tarihleri ve amacı belirtilmeli.\n- İmza ve kaşe bulunmalı.",
+    docWhere: "Seyahat edilecek ülkedeki davet eden tarafından hazırlanır.",
+    is_required: false,
+    order_index: 10,
+    estimatedCompletionTime: "Vizepedia ile",
+  },
+];
+
+// Demo user data for bot/new visitors
+const DEMO_USER_DATA = {
+  id: 405,
+  name: "Demo User",
+  email: "demo@vizepedia.com",
+};
+
+const DEMO_COMPLETED_DOCUMENTS = {
+  [DEMO_USER_DATA.id]: {
+    "Faaliyet Belgesi": false,
+    "Seyahat Sağlık Sigortası": true,
+    "Vize Başvuru Formu": false,
+    "Davet Mektubu": true,
+    // Mixed completion status for realistic demo
+  },
+};
+
 // Tekrar kullanılabilir stiller
 const PageContainer = styled.div`
   display: flex;
@@ -193,7 +296,7 @@ const ButtonsContainer = styled.div`
   display: flex;
   gap: 15px;
   margin-top: 5px;
-  
+
   @media (max-width: 680px) {
     flex-direction: column;
     align-items: center;
@@ -286,7 +389,7 @@ const SourceSectionContainer = styled.div`
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     background-color: rgba(142, 68, 173, 0.05);
   }
-  
+
   @media (max-width: 800px) {
     order: 6;
   }
@@ -375,7 +478,7 @@ const SideComponents = styled.div`
   width: 40%;
   flex-direction: column;
   gap: 20px;
-  
+
   @media (max-width: 800px) {
     width: 100%;
     order: 5;
@@ -414,14 +517,22 @@ const WithUsDocumentDetail = () => {
     dispatch,
   } = useContext(DocumentsContext);
 
-  // FIXED: User type detection
+  // User type detection
   const { user, userType } = useUser();
   const isAnonymous =
     userType === "anonymous" ||
     (!user && paramApplicationId?.startsWith("anonymous-"));
+  const isBotOrNewVisitor = userType === "bot" || userType === "new_visitor";
 
-  // FIXED: Safe applicationId
   const applicationId = paramApplicationId || `anonymous-${Date.now()}`;
+
+  // Bot/new visitor URL handling - redirect to clean URL
+  useEffect(() => {
+    if (isBotOrNewVisitor && paramApplicationId) {
+      // Redirect to clean URL without ID for bots/new visitors
+      navigate("/withus-documents", { replace: true });
+    }
+  }, [isBotOrNewVisitor, paramApplicationId, navigate]);
 
   console.log("🔍 WithUsDocumentDetail Debug:");
   console.log("paramApplicationId:", paramApplicationId);
@@ -429,8 +540,9 @@ const WithUsDocumentDetail = () => {
   console.log("userType:", userType);
   console.log("user:", user ? "authenticated" : "none");
   console.log("isAnonymous:", isAnonymous);
+  console.log("isBotOrNewVisitor:", isBotOrNewVisitor);
 
-  // FIXED: Anonymous-aware query
+  // Query for real users (not bot/new visitors)
   const { data: userSelections } = useQuery({
     queryKey: ["userSelections", userId, applicationId, userType],
     queryFn: () => {
@@ -439,25 +551,34 @@ const WithUsDocumentDetail = () => {
       }
       return fetchUserSelectionsDash(userId, applicationId);
     },
-    enabled: isAnonymous || (!!userId && !!applicationId),
+    enabled:
+      !isBotOrNewVisitor && (isAnonymous || (!!userId && !!applicationId)),
     staleTime: 5 * 60 * 1000,
   });
 
-  const documentNames = userSelections
-    ? getDocumentsForSelections(userSelections)
-    : [];
+  const documentNames =
+    !isBotOrNewVisitor && userSelections
+      ? getDocumentsForSelections(userSelections)
+      : [];
 
   const { data: documents, isSuccess: isDocumentsSuccess } = useQuery({
     queryKey: ["documentDetails", documentNames],
     queryFn: () => fetchDocumentDetails(documentNames),
-    enabled: !!documentNames.length,
+    enabled: !isBotOrNewVisitor && !!documentNames.length,
     staleTime: 5 * 60 * 1000,
   });
 
-  // FIXED: User detection
+  // User detection
   useEffect(() => {
-    if (isAnonymous) {
-      setUserId('anonymous-user');
+    if (isBotOrNewVisitor) {
+      setUserId("demo-user");
+      // Set demo completed documents for bot/new visitors
+      dispatch({
+        type: "SET_COMPLETED_DOCUMENTS",
+        payload: DEMO_COMPLETED_DOCUMENTS,
+      });
+    } else if (isAnonymous) {
+      setUserId("anonymous-user");
     } else {
       getCurrentUser().then((user) => {
         if (user) {
@@ -465,118 +586,214 @@ const WithUsDocumentDetail = () => {
         }
       });
     }
-  }, [isAnonymous]);
+  }, [isBotOrNewVisitor, isAnonymous, dispatch]);
 
+  // Document initialization - Force re-initialization when navigating
   useEffect(() => {
-    if (isDocumentsSuccess && documents && !selectedDocument) {
-      // Sadece "bizimle" kategorisindeki belgeleri filtrele
-      const withusDocuments = documents.filter(
+    if (isBotOrNewVisitor) {
+      // Always reset for bot/new visitors to ensure fresh state
+      setSelectedDocument(null);
+      setCurrentDocumentIndex(0);
+
+      // Set demo completed documents for bot/new visitors
+      dispatch({
+        type: "SET_COMPLETED_DOCUMENTS",
+        payload: DEMO_COMPLETED_DOCUMENTS,
+      });
+
+      // Use demo documents for bot/new visitors
+      const withusDocuments = DEMO_WITHUS_DOCUMENTS.filter(
         (doc) => doc.docStage === "bizimle"
       );
       const initialDocument = withusDocuments[0];
 
       if (initialDocument) {
+        console.log(
+          "🎯 Bot/New Visitor: Setting initial withus document:",
+          initialDocument.docName
+        );
+        setSelectedDocument(initialDocument);
+        setCurrentDocumentIndex(0);
+      }
+    } else if (isDocumentsSuccess && documents) {
+      // Real documents for authenticated/anonymous users
+      const withusDocuments = documents.filter(
+        (doc) => doc.docStage === "bizimle"
+      );
+      const initialDocument = withusDocuments[0];
+
+      if (initialDocument && !selectedDocument) {
+        console.log(
+          "🎯 Real User: Setting initial withus document:",
+          initialDocument.docName
+        );
         setSelectedDocument(initialDocument);
         setCurrentDocumentIndex(0);
       }
     }
-  }, [isDocumentsSuccess, documents, selectedDocument, setSelectedDocument]);
+  }, [
+    isBotOrNewVisitor,
+    isDocumentsSuccess,
+    documents,
+    dispatch,
+    setSelectedDocument,
+  ]);
 
   useEffect(() => {
-    if (selectedDocument && documents) {
-      // Sadece "bizimle" kategorisindeki belgeleri filtrele
-      const withusDocuments = documents.filter(
-        (doc) => doc.docStage === "bizimle"
-      );
-      const index = withusDocuments.findIndex(
-        (doc) => doc.docName === selectedDocument.docName
-      );
-      setCurrentDocumentIndex(index);
+    if (selectedDocument) {
+      const documentsToUse = isBotOrNewVisitor
+        ? DEMO_WITHUS_DOCUMENTS
+        : documents;
+      if (documentsToUse) {
+        const withusDocuments = documentsToUse.filter(
+          (doc) => doc.docStage === "bizimle"
+        );
+        const index = withusDocuments.findIndex(
+          (doc) => doc.docName === selectedDocument.docName
+        );
+        setCurrentDocumentIndex(index);
+      }
     }
-  }, [selectedDocument, documents]);
+  }, [selectedDocument, documents, isBotOrNewVisitor]);
 
   if (!selectedDocument) {
     return <Spinner />;
   }
 
-  // FIXED: Use real application ID for completion check
-  const isCompleted = isAnonymous
-    ? completedDocuments[applicationId]?.[selectedDocument?.docName]
-    : userSelections?.length > 0
-      ? completedDocuments[userSelections[0].id]?.[selectedDocument?.docName]
-      : false;
+  // Get completion status
+  const getCompletionStatus = () => {
+    if (isBotOrNewVisitor) {
+      return (
+        DEMO_COMPLETED_DOCUMENTS[DEMO_USER_DATA.id]?.[
+          selectedDocument?.docName
+        ] || false
+      );
+    } else if (isAnonymous) {
+      return (
+        completedDocuments[applicationId]?.[selectedDocument?.docName] || false
+      );
+    } else if (userSelections?.length > 0) {
+      return (
+        completedDocuments[userSelections[0].id]?.[selectedDocument?.docName] ||
+        false
+      );
+    }
+    return false;
+  };
 
-  // FIXED: Real application ID aware action handler
+  const isCompleted = getCompletionStatus();
+
+  // Action handler
   const handleAction = async () => {
     if (!selectedDocument) return;
-  
+
     try {
+      if (isBotOrNewVisitor) {
+        // Demo action for bot/new visitors
+        const newStatus = !isCompleted;
+
+        // Update demo completed documents in context
+        const updatedDemoCompleted = {
+          ...DEMO_COMPLETED_DOCUMENTS,
+          [DEMO_USER_DATA.id]: {
+            ...DEMO_COMPLETED_DOCUMENTS[DEMO_USER_DATA.id],
+            [selectedDocument.docName]: newStatus,
+          },
+        };
+
+        dispatch({
+          type: "SET_COMPLETED_DOCUMENTS",
+          payload: updatedDemoCompleted,
+        });
+
+        // Navigate back to demo dashboard
+        navigate("/dashboard");
+        return;
+      }
+
+      // Real action logic for authenticated/anonymous users
       if (isAnonymous) {
-        // FIXED: Anonymous user - consistent application ID kullan
-        const correctApplicationId = AnonymousDataService.getConsistentApplicationId();
-        
+        const correctApplicationId =
+          AnonymousDataService.getConsistentApplicationId();
+
         console.log("🎯 Anonymous user action:");
         console.log("URL applicationId:", applicationId);
         console.log("Correct applicationId:", correctApplicationId);
-        
+
         if (isCompleted) {
-          AnonymousDataService.uncompleteDocument(correctApplicationId, selectedDocument.docName);
+          AnonymousDataService.uncompleteDocument(
+            correctApplicationId,
+            selectedDocument.docName
+          );
           dispatch({
             type: "UNCOMPLETE_DOCUMENT",
-            payload: { 
-              documentName: selectedDocument.docName, 
-              applicationId: correctApplicationId  // ← Consistent ID kullanıyoruz
+            payload: {
+              documentName: selectedDocument.docName,
+              applicationId: correctApplicationId,
             },
           });
         } else {
-          AnonymousDataService.completeDocument(correctApplicationId, selectedDocument.docName);
+          AnonymousDataService.completeDocument(
+            correctApplicationId,
+            selectedDocument.docName
+          );
           dispatch({
             type: "COMPLETE_DOCUMENT",
-            payload: { 
-              documentName: selectedDocument.docName, 
-              applicationId: correctApplicationId  // ← Consistent ID kullanıyoruz
+            payload: {
+              documentName: selectedDocument.docName,
+              applicationId: correctApplicationId,
             },
           });
         }
       } else {
-        // AUTHENTICATED USER LOGIC - değişmedi
+        // Authenticated user logic
         if (!userId || !userSelections || userSelections.length === 0) return;
-        
+
         const realApplicationId = userSelections[0].id;
-        
+
         console.log("🔄 Using real application ID for authenticated user:");
         console.log("URL applicationId:", applicationId);
         console.log("Real applicationId:", realApplicationId);
-        
+
         if (isCompleted) {
-          await uncompleteDocument(userId, selectedDocument.docName, realApplicationId);
+          await uncompleteDocument(
+            userId,
+            selectedDocument.docName,
+            realApplicationId
+          );
           dispatch({
             type: "UNCOMPLETE_DOCUMENT",
-            payload: { 
-              documentName: selectedDocument.docName, 
-              applicationId: realApplicationId
+            payload: {
+              documentName: selectedDocument.docName,
+              applicationId: realApplicationId,
             },
           });
-          console.log("✅ Document uncompleted and context updated with real ID");
+          console.log(
+            "✅ Document uncompleted and context updated with real ID"
+          );
         } else {
-          await completeDocument(userId, selectedDocument.docName, realApplicationId);
+          await completeDocument(
+            userId,
+            selectedDocument.docName,
+            realApplicationId
+          );
           dispatch({
             type: "COMPLETE_DOCUMENT",
-            payload: { 
-              documentName: selectedDocument.docName, 
-              applicationId: realApplicationId
+            payload: {
+              documentName: selectedDocument.docName,
+              applicationId: realApplicationId,
             },
           });
           console.log("✅ Document completed and context updated with real ID");
         }
       }
-  
-      // NAVIGATION LOGIC - değişmedi
+
+      // Navigation logic
       console.log("🔄 Navigation after document action:");
       console.log("applicationId:", applicationId);
       console.log("user:", user);
       console.log("userType:", userType);
-  
+
       if (user && userType === "authenticated") {
         navigate("/dashboard");
       } else if (applicationId && !applicationId.startsWith("anonymous-")) {
@@ -591,10 +808,12 @@ const WithUsDocumentDetail = () => {
   };
 
   const handleNavigation = (direction) => {
-    if (!documents) return;
+    const documentsToUse = isBotOrNewVisitor
+      ? DEMO_WITHUS_DOCUMENTS
+      : documents;
+    if (!documentsToUse) return;
 
-    // Sadece "bizimle" kategorisindeki belgeleri filtrele
-    const withusDocuments = documents.filter(
+    const withusDocuments = documentsToUse.filter(
       (doc) => doc.docStage === "bizimle"
     );
 
@@ -628,9 +847,10 @@ const WithUsDocumentDetail = () => {
     }
   };
 
-  // Filtrelenmiş "bizimle" belgeleri
-  const withusDocuments = documents
-    ? documents.filter((doc) => doc.docStage === "bizimle")
+  // Get withus documents
+  const documentsToUse = isBotOrNewVisitor ? DEMO_WITHUS_DOCUMENTS : documents;
+  const withusDocuments = documentsToUse
+    ? documentsToUse.filter((doc) => doc.docStage === "bizimle")
     : [];
 
   return (
@@ -645,25 +865,23 @@ const WithUsDocumentDetail = () => {
             currentDocumentIndex === withusDocuments.length - 1
           }
         />
-        
+
         <DocProgress>
           {withusDocuments.map((_, index) => (
             <ProgressDot key={index} active={index === currentDocumentIndex} />
           ))}
         </DocProgress>
-        
+
         <DocTitleCont>
           <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
           <MetaInfo>
-            <MetaTag>
-              {selectedDocument.estimatedCompletionTime}
-            </MetaTag>
+            <MetaTag>{selectedDocument.estimatedCompletionTime}</MetaTag>
             {selectedDocument.docType && (
               <MetaTag>{selectedDocument.docType}</MetaTag>
             )}
           </MetaInfo>
         </DocTitleCont>
-        
+
         <InfoContainer>
           <DocumentDescription>
             <SideComponents>
@@ -673,7 +891,7 @@ const WithUsDocumentDetail = () => {
                 readyDocuments={withusDocuments}
                 currentIndex={currentDocumentIndex}
               />
-              
+
               {selectedDocument.referenceName && (
                 <SourceSectionContainer
                   color="#8e44ad"
@@ -706,10 +924,10 @@ const WithUsDocumentDetail = () => {
                 </SourceSectionContainer>
               )}
             </SideComponents>
-            
+
             <DescriptionLayout>
               <MainText>{selectedDocument.docDescription}</MainText>
-              
+
               {selectedDocument.docImportant && (
                 <AttentionSection>
                   <SectionHeading>Dikkat</SectionHeading>
@@ -770,8 +988,8 @@ const WithUsDocumentDetail = () => {
                   </SourceButton>
                 )}
 
-                <ActionButton 
-                  onClick={handleAction} 
+                <ActionButton
+                  onClick={handleAction}
                   isCompleted={isCompleted}
                   className="action-button"
                 >
