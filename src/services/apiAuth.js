@@ -33,6 +33,7 @@ export async function signInWithGoogle() {
 
   return { data };
 }
+
 export async function signup({ email, password }) {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -73,7 +74,7 @@ export async function getCurrentUser() {
 
 // Keep the original function but make it safe
 export async function isUserAnonymous() {
-  // First check localStorage (no Supabase call)
+  // First check sessionStorage (no Supabase call) - UPDATED
   if (AnonymousDataService.isAnonymousUser()) {
     return true;
   }
@@ -91,8 +92,9 @@ export async function isUserAnonymous() {
 
     // If user exists and has email, definitely not anonymous
     if (currentUser.email) {
-      // Clear any stale anonymous flags
+      // Clear any stale anonymous flags - UPDATED to also clear sessionStorage
       localStorage.removeItem("isAnonymous");
+      sessionStorage.removeItem("isAnonymous");
       return false;
     }
 
@@ -119,7 +121,7 @@ export async function checkAuthStatus() {
       };
     }
 
-    // Check localStorage anonymous flag
+    // Check sessionStorage anonymous flag - UPDATED
     if (AnonymousDataService.isAnonymousUser()) {
       return {
         isLoggedIn: false,
@@ -185,6 +187,7 @@ function clearAllStorageAndCookies() {
     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
   }
 
+  // UPDATED: Clear sessionStorage as well
   sessionStorage.clear();
   console.log("Tüm veriler ve çerezler temizlendi");
 }
@@ -244,7 +247,7 @@ export async function signInAsGuest() {
   // DISABLED: Don't create Supabase anonymous sessions
   console.log("Anonymous Supabase sessions disabled for AdSense compliance");
 
-  // Instead, just mark as anonymous in localStorage
+  // Instead, just mark as anonymous in sessionStorage
   AnonymousDataService.saveUserSelections({});
 
   return {
@@ -267,7 +270,7 @@ export async function convertAnonymousToUser({ email, password }) {
       throw new Error(signUpError.message);
     }
 
-    // Migrate localStorage data to new user
+    // Migrate sessionStorage data to new user
     if (signUpData.user) {
       await migrateAnonymousToAuthenticated(signUpData.user.id);
     }
@@ -279,11 +282,7 @@ export async function convertAnonymousToUser({ email, password }) {
   }
 }
 
-// New migration function for localStorage to Supabase
-// apiAuth.js - migrateAnonymousToAuthenticated fonksiyonunu bu şekilde güncelleyin:
-
-// apiAuth.js - migrateAnonymousToAuthenticated fonksiyonunu bu şekilde değiştirin:
-
+// New migration function for sessionStorage to Supabase
 export async function migrateAnonymousToAuthenticated(userId) {
   try {
     const anonymousData = AnonymousDataService.prepareDataForMigration();
@@ -323,14 +322,14 @@ export async function migrateAnonymousToAuthenticated(userId) {
 
     console.log("✅ User answers migrated, new application ID:", data.id);
 
-    // CRITICAL: Initialize completedDocsToInsert properly
+    // Initialize completedDocsToInsert properly
     const completedDocsToInsert = [];
     let migratedDocumentsCount = 0;
 
-    // FIXED: Check Supabase schema first
+    // Check Supabase schema first
     console.log("🔍 Checking completed_documents table schema...");
 
-    // ENHANCED: Migrate completed documents with proper Supabase schema
+    // Migrate completed documents with proper Supabase schema
     if (
       anonymousData.completedDocuments &&
       Object.keys(anonymousData.completedDocuments).length > 0
@@ -344,15 +343,13 @@ export async function migrateAnonymousToAuthenticated(userId) {
             Object.keys(appDocs).forEach((docName) => {
               const docData = appDocs[docName];
 
-              // FIXED: Handle both boolean and object formats with proper schema
+              // Handle both boolean and object formats with proper schema
               if (docData === true) {
                 // Simple boolean format - INSERT with proper schema
                 completedDocsToInsert.push({
                   userId: userId,
                   document_name: docName,
                   completion_date: new Date().toISOString(),
-                  // CRITICAL FIX: Remove 'status' if it's causing schema issues
-                  // status: 'completed', // ← Bu satırı kaldırın veya boolean yapın
                   application_id: data.id, // Use the new authenticated application ID
                 });
               } else if (typeof docData === "object" && docData.document_name) {
@@ -362,8 +359,6 @@ export async function migrateAnonymousToAuthenticated(userId) {
                   document_name: docData.document_name,
                   completion_date:
                     docData.completion_date || new Date().toISOString(),
-                  // CRITICAL FIX: Remove 'status' if it's causing schema issues
-                  // status: 'completed', // ← Bu satırı kaldırın veya boolean yapın
                   application_id: data.id, // Use the new authenticated application ID
                 });
               }
@@ -374,9 +369,9 @@ export async function migrateAnonymousToAuthenticated(userId) {
 
       console.log("📋 Completed documents to insert:", completedDocsToInsert);
 
-      // CRITICAL: Insert completed documents if any exist
+      // Insert completed documents if any exist
       if (completedDocsToInsert.length > 0) {
-        // OPTION 1: Try without 'status' field first
+        // Try without 'status' field first
         const { data: insertedDocs, error: docsError } = await supabase
           .from("completed_documents")
           .insert(completedDocsToInsert)
@@ -388,7 +383,7 @@ export async function migrateAnonymousToAuthenticated(userId) {
             docsError
           );
 
-          // OPTION 2: Try with boolean status if first attempt fails
+          // Try with boolean status if first attempt fails
           const completedDocsWithBooleanStatus = completedDocsToInsert.map(
             (doc) => ({
               ...doc,
@@ -412,7 +407,7 @@ export async function migrateAnonymousToAuthenticated(userId) {
               docsError2
             );
 
-            // OPTION 3: Try minimal schema - just essential fields
+            // Try minimal schema - just essential fields
             const minimalDocs = completedDocsToInsert.map((doc) => ({
               userId: doc.userId,
               document_name: doc.document_name,

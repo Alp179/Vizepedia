@@ -1,4 +1,4 @@
-// utils/anonymousDataService.js - Fixed conversion for documents + Migration Support + ID Consistency + Onboarding Logic Fix
+// utils/anonymousDataService.js - Updated to use sessionStorage instead of localStorage
 
 export class AnonymousDataService {
   static STORAGE_KEYS = {
@@ -12,7 +12,7 @@ export class AnonymousDataService {
     WELLCOMES_ANSWERED: 'wellcomesAnswered'
   };
 
-  // FIXED: Save user selections to localStorage - Only set isAnonymous AFTER onboarding completion
+  // FIXED: Save user selections to sessionStorage - Only set isAnonymous AFTER onboarding completion
   static saveUserSelections(selections) {
     const existingSelections = this.getUserSelections() || {};
     const updatedSelections = {
@@ -21,22 +21,22 @@ export class AnonymousDataService {
       updatedAt: new Date().toISOString()
     };
     
-    localStorage.setItem(this.STORAGE_KEYS.USER_SELECTIONS, JSON.stringify(updatedSelections));
+    sessionStorage.setItem(this.STORAGE_KEYS.USER_SELECTIONS, JSON.stringify(updatedSelections));
     
     // FIXED: Only set isAnonymous AFTER onboarding is completed
     if (this.hasCompletedOnboarding()) {
-      localStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
+      sessionStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
     }
     
     // Set created date if not exists
-    if (!localStorage.getItem(this.STORAGE_KEYS.CREATED_AT)) {
-      localStorage.setItem(this.STORAGE_KEYS.CREATED_AT, new Date().toISOString());
+    if (!sessionStorage.getItem(this.STORAGE_KEYS.CREATED_AT)) {
+      sessionStorage.setItem(this.STORAGE_KEYS.CREATED_AT, new Date().toISOString());
     }
   }
 
-  // Get user selections from localStorage
+  // Get user selections from sessionStorage
   static getUserSelections() {
-    const selections = localStorage.getItem(this.STORAGE_KEYS.USER_SELECTIONS);
+    const selections = sessionStorage.getItem(this.STORAGE_KEYS.USER_SELECTIONS);
     return selections ? JSON.parse(selections) : null;
   }
 
@@ -59,18 +59,18 @@ export class AnonymousDataService {
       created_at: new Date().toISOString()
     };
 
-    localStorage.setItem(this.STORAGE_KEYS.USER_ANSWERS, JSON.stringify(userAnswers));
+    sessionStorage.setItem(this.STORAGE_KEYS.USER_ANSWERS, JSON.stringify(userAnswers));
     
     // FIXED: Mark both onboarding complete AND set anonymous flag
     this.markOnboardingComplete();
-    localStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
+    sessionStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
     
     return userAnswers;
   }
 
   // Get user answers (equivalent to fetchUserSelectionsDash)
   static getUserAnswers(applicationId) {
-    const answers = localStorage.getItem(this.STORAGE_KEYS.USER_ANSWERS);
+    const answers = sessionStorage.getItem(this.STORAGE_KEYS.USER_ANSWERS);
     if (!answers) {
       // If no saved answers, try to convert from selections
       return this.convertSelectionsToAnswers(applicationId);
@@ -86,13 +86,13 @@ export class AnonymousDataService {
     return [parsedAnswers]; // Return as array to match Supabase format
   }
 
-  // CRITICAL: Convert localStorage selections to Supabase format for document filtering
+  // CRITICAL: Convert sessionStorage selections to Supabase format for document filtering
   static convertSelectionsToAnswers(applicationId) {
     const selections = this.getUserSelections();
     if (!selections) return null;
 
     const convertedAnswer = {
-      id: applicationId || this.getConsistentApplicationId(), // ← FIXED: Use consistent ID
+      id: applicationId || this.getConsistentApplicationId(),
       userId: 'anonymous',
       ans_country: selections.country || '',
       ans_purpose: selections.purpose || '',
@@ -104,7 +104,7 @@ export class AnonymousDataService {
       ans_sponsor_profession: selections.sponsorProfession || null,
       has_appointment: false,
       has_filled_form: false,
-      created_at: localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString()
+      created_at: sessionStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString()
     };
 
     return [convertedAnswer]; // Return as array to match Supabase format
@@ -120,7 +120,7 @@ export class AnonymousDataService {
     
     completedDocs[applicationId][documentName] = true; // Simple boolean format for consistency
 
-    localStorage.setItem(this.STORAGE_KEYS.COMPLETED_DOCUMENTS, JSON.stringify(completedDocs));
+    sessionStorage.setItem(this.STORAGE_KEYS.COMPLETED_DOCUMENTS, JSON.stringify(completedDocs));
     return { data: { document_name: documentName, completed: true } };
   }
 
@@ -147,7 +147,7 @@ export class AnonymousDataService {
     
     if (completedDocs[applicationId] && completedDocs[applicationId][documentName]) {
       delete completedDocs[applicationId][documentName];
-      localStorage.setItem(this.STORAGE_KEYS.COMPLETED_DOCUMENTS, JSON.stringify(completedDocs));
+      sessionStorage.setItem(this.STORAGE_KEYS.COMPLETED_DOCUMENTS, JSON.stringify(completedDocs));
     }
 
     return { data: null };
@@ -155,14 +155,14 @@ export class AnonymousDataService {
 
   // Helper to get completed documents
   static getCompletedDocuments() {
-    const docs = localStorage.getItem(this.STORAGE_KEYS.COMPLETED_DOCUMENTS);
+    const docs = sessionStorage.getItem(this.STORAGE_KEYS.COMPLETED_DOCUMENTS);
     return docs ? JSON.parse(docs) : {};
   }
 
   // Check if user has completed onboarding
   static hasCompletedOnboarding() {
     // UPDATED: Check both new system and old wellcomesAnswered flag for backward compatibility
-    const oldWellcomesAnswered = localStorage.getItem(this.STORAGE_KEYS.WELLCOMES_ANSWERED) === 'true';
+    const oldWellcomesAnswered = sessionStorage.getItem(this.STORAGE_KEYS.WELLCOMES_ANSWERED) === 'true';
     
     if (oldWellcomesAnswered) {
       return true;
@@ -185,9 +185,9 @@ export class AnonymousDataService {
 
   // FIXED: Mark onboarding as complete and set anonymous flag
   static markOnboardingComplete() {
-    localStorage.setItem(this.STORAGE_KEYS.WELLCOMES_ANSWERED, 'true');
+    sessionStorage.setItem(this.STORAGE_KEYS.WELLCOMES_ANSWERED, 'true');
     // Also set isAnonymous when onboarding is completed
-    localStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
+    sessionStorage.setItem(this.STORAGE_KEYS.IS_ANONYMOUS, 'true');
   }
 
   // Generate application ID for anonymous users
@@ -199,11 +199,11 @@ export class AnonymousDataService {
 
   // Get or create application ID
   static getApplicationId() {
-    let applicationId = localStorage.getItem(this.STORAGE_KEYS.APPLICATION_ID);
+    let applicationId = sessionStorage.getItem(this.STORAGE_KEYS.APPLICATION_ID);
     
     if (!applicationId) {
       applicationId = this.generateApplicationId();
-      localStorage.setItem(this.STORAGE_KEYS.APPLICATION_ID, applicationId);
+      sessionStorage.setItem(this.STORAGE_KEYS.APPLICATION_ID, applicationId);
     }
     
     return applicationId;
@@ -211,8 +211,8 @@ export class AnonymousDataService {
 
   // NEW: Get consistent application ID (solves ID mismatch problem)
   static getConsistentApplicationId() {
-    // Önce userAnswers'dan ID'yi almaya çalış
-    const userAnswers = localStorage.getItem(this.STORAGE_KEYS.USER_ANSWERS);
+    // First try to get ID from userAnswers
+    const userAnswers = sessionStorage.getItem(this.STORAGE_KEYS.USER_ANSWERS);
     if (userAnswers) {
       const parsed = JSON.parse(userAnswers);
       if (parsed.id) {
@@ -220,7 +220,7 @@ export class AnonymousDataService {
       }
     }
     
-    // Yoksa normal getApplicationId kullan
+    // Otherwise use normal getApplicationId
     return this.getApplicationId();
   }
 
@@ -230,12 +230,12 @@ export class AnonymousDataService {
     if (userAnswers && userAnswers.length > 0) {
       return userAnswers[0].id;
     }
-    return this.getConsistentApplicationId(); // ← FIXED: Use consistent ID
+    return this.getConsistentApplicationId();
   }
 
   // FIXED: Check if user is anonymous (only if onboarding is completed)
   static isAnonymousUser() {
-    const hasAnonymousFlag = localStorage.getItem(this.STORAGE_KEYS.IS_ANONYMOUS) === 'true';
+    const hasAnonymousFlag = sessionStorage.getItem(this.STORAGE_KEYS.IS_ANONYMOUS) === 'true';
     const hasCompletedOnboarding = this.hasCompletedOnboarding();
     
     // User is only considered anonymous if they have completed onboarding AND have the anonymous flag
@@ -245,8 +245,8 @@ export class AnonymousDataService {
   // FIXED: Better Supabase format conversion for dashboard compatibility with consistent ID
   static convertToSupabaseFormat() {
     const selections = this.getUserSelections();
-    const applicationId = this.getConsistentApplicationId(); // ← FIXED: Use consistent ID
-    const createdAt = localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString();
+    const applicationId = this.getConsistentApplicationId();
+    const createdAt = sessionStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString();
     
     if (!selections) return null;
 
@@ -274,7 +274,7 @@ export class AnonymousDataService {
       const selections = this.getUserSelections();
       const completedDocs = this.getCompletedDocuments();
       const applicationId = this.getConsistentApplicationId();
-      const createdAt = localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString();
+      const createdAt = sessionStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString();
       
       console.log("🔄 Preparing anonymous data for migration:");
       console.log("selections:", selections);
@@ -390,13 +390,13 @@ export class AnonymousDataService {
     try {
       console.log("🧹 Clearing anonymous data after successful migration");
       
-      // Clear all anonymous-related localStorage items
+      // Clear all anonymous-related sessionStorage items
       Object.values(this.STORAGE_KEYS).forEach(key => {
-        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
       });
       
       // Also clear any other anonymous flags
-      localStorage.removeItem('currentStep');
+      sessionStorage.removeItem('currentStep');
       
       console.log("✅ Anonymous data cleared successfully");
     } catch (error) {
@@ -404,21 +404,7 @@ export class AnonymousDataService {
     }
   }
 
-  // Migrate anonymous data to authenticated user (for when they sign up)
-  static prepareDataForMigration_OLD() {
-    const selections = this.getUserSelections();
-    const userAnswers = localStorage.getItem(this.STORAGE_KEYS.USER_ANSWERS);
-    const completedDocs = this.getCompletedDocuments();
-    
-    return {
-      selections: selections ? JSON.parse(JSON.stringify(selections)) : null,
-      userAnswers: userAnswers ? JSON.parse(userAnswers) : null,
-      completedDocuments: completedDocs || {},
-      applicationId: this.getConsistentApplicationId() // ← FIXED: Use consistent ID
-    };
-  }
-
-  // Check if this is a bot (no localStorage interactions for bots)
+  // Check if this is a bot (no sessionStorage interactions for bots)
   static isBotUser() {
     if (typeof window === 'undefined') return false;
     
@@ -444,7 +430,7 @@ export class AnonymousDataService {
       vehicle: selections.vehicle || '',
       accommodation: selections.accommodation || '',
       hasSponsor: selections.hasSponsor || false,
-      createdAt: localStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString()
+      createdAt: sessionStorage.getItem(this.STORAGE_KEYS.CREATED_AT) || new Date().toISOString()
     };
   }
 
@@ -491,7 +477,7 @@ export class AnonymousDataService {
       updatedAt: new Date().toISOString()
     };
     
-    localStorage.setItem(this.STORAGE_KEYS.USER_SELECTIONS, JSON.stringify(updatedSelections));
+    sessionStorage.setItem(this.STORAGE_KEYS.USER_SELECTIONS, JSON.stringify(updatedSelections));
     
     // FIXED: Only set isAnonymous if onboarding is now complete
     if (this.hasCompletedOnboarding()) {
@@ -511,14 +497,62 @@ export class AnonymousDataService {
     console.log('Raw selections:', this.getUserSelections());
     console.log('Converted to Supabase format:', this.convertToSupabaseFormat());
     console.log('Application ID:', this.getApplicationId());
-    console.log('Consistent Application ID:', this.getConsistentApplicationId()); // ← NEW DEBUG LINE
+    console.log('Consistent Application ID:', this.getConsistentApplicationId());
     console.log('Has completed onboarding:', this.hasCompletedOnboarding());
-    console.log('Old wellcomesAnswered flag:', localStorage.getItem(this.STORAGE_KEYS.WELLCOMES_ANSWERED));
-    console.log('isAnonymous flag:', localStorage.getItem(this.STORAGE_KEYS.IS_ANONYMOUS));
+    console.log('Old wellcomesAnswered flag:', sessionStorage.getItem(this.STORAGE_KEYS.WELLCOMES_ANSWERED));
+    console.log('isAnonymous flag:', sessionStorage.getItem(this.STORAGE_KEYS.IS_ANONYMOUS));
     console.log('Is anonymous user (computed):', this.isAnonymousUser());
     console.log('Needs migration:', this.needsMigration());
     console.log('Migration data:', this.prepareDataForMigration());
     console.log('Completed documents:', this.getCompletedDocuments());
     console.log('=============================');
+  }
+
+  // MIGRATION HELPER: Transfer existing localStorage data to sessionStorage (run once)
+  static migrateFromLocalStorage() {
+    try {
+      console.log("🔄 Migrating from localStorage to sessionStorage...");
+      
+      // Check if already migrated
+      if (sessionStorage.getItem('migration_completed')) {
+        console.log("✅ Migration already completed");
+        return;
+      }
+      
+      let hasMigratedData = false;
+      
+      // Migrate each key from localStorage to sessionStorage
+      Object.values(this.STORAGE_KEYS).forEach(key => {
+        const localData = localStorage.getItem(key);
+        if (localData) {
+          console.log(`📦 Migrating ${key}:`, localData);
+          sessionStorage.setItem(key, localData);
+          localStorage.removeItem(key); // Clean up old data
+          hasMigratedData = true;
+        }
+      });
+      
+      // Also migrate any other anonymous flags
+      const additionalKeys = ['currentStep'];
+      additionalKeys.forEach(key => {
+        const localData = localStorage.getItem(key);
+        if (localData) {
+          sessionStorage.setItem(key, localData);
+          localStorage.removeItem(key);
+          hasMigratedData = true;
+        }
+      });
+      
+      if (hasMigratedData) {
+        console.log("✅ Data migrated successfully from localStorage to sessionStorage");
+        sessionStorage.setItem('migration_completed', 'true');
+      } else {
+        console.log("📝 No localStorage data found to migrate");
+        sessionStorage.setItem('migration_completed', 'true');
+      }
+      
+    } catch (error) {
+      console.error("❌ Error during localStorage to sessionStorage migration:", error);
+    }
   }
 }

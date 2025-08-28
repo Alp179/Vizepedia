@@ -53,6 +53,9 @@ import { useGoogleAnalytics } from "./hooks/useGoogleAnalytics.jsx";
 import { CookiePreferences } from "./ui/CookiePreferences.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 
+// UPDATED: Import AnonymousDataService for migration
+import { AnonymousDataService } from "./utils/anonymousDataService";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -166,7 +169,7 @@ function RedirectIfLoggedIn({ children }) {
           // Authenticated user varsa, onboarding check'i yapalım
           const latestApplication = await fetchLatestApplication(currentUser.id);
           if (latestApplication) {
-            localStorage.setItem("latestApplicationId", latestApplication.id);
+            sessionStorage.setItem("latestApplicationId", latestApplication.id);
             navigate(`/dashboard/${latestApplication.id}`);
           } else {
             navigate("/dashboard");
@@ -192,6 +195,10 @@ function App() {
     ) {
       GoogleAnalytics.initialize();
     }
+
+    // UPDATED: Migrate localStorage to sessionStorage (run once per session)
+    console.log("🔄 Starting localStorage to sessionStorage migration...");
+    AnonymousDataService.migrateFromLocalStorage();
   }, []);
 
   return (

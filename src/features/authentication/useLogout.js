@@ -6,12 +6,12 @@ export function useLogout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Tüm localStorage ve çerezleri temizleyen işlev
+  // Clear all localStorage, sessionStorage and cookies
   const clearAllStorageAndCookies = () => {
-    // Tüm localStorage temizle
+    // Clear all localStorage
     localStorage.clear();
 
-    // Supabase oturum anahtarını özel olarak temizle
+    // Clear Supabase session key specifically
     const supabaseKey = Object.keys(localStorage).find((key) =>
       key.includes("-auth-token")
     );
@@ -19,7 +19,7 @@ export function useLogout() {
       localStorage.removeItem(supabaseKey);
     }
 
-    // Tüm çerezleri temizle
+    // Clear all cookies
     const cookies = document.cookie.split("; ");
     for (let cookie of cookies) {
       const eqPos = cookie.indexOf("=");
@@ -27,27 +27,27 @@ export function useLogout() {
       document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
     }
 
-    // Tarayıcı özel oturum depolamasını temizle
+    // UPDATED: Clear sessionStorage as well (for anonymous data)
     sessionStorage.clear();
 
-    console.log("Oturum kapatıldı: Tüm veriler ve çerezler temizlendi");
+    console.log("Logout completed: All data and cookies cleared");
   };
 
   const { mutate, isLoading } = useMutation({
     mutationFn: logoutApi,
     onSuccess: () => {
-      // React Query önbelleğini temizle
+      // Clear React Query cache
       queryClient.removeQueries();
 
-      // Tüm localStorage ve çerezleri temizle
+      // Clear all localStorage, sessionStorage and cookies
       clearAllStorageAndCookies();
 
-      // Giriş sayfasına yönlendir
+      // Redirect to login page
       navigate("/login", { replace: true });
     },
   });
 
-  // Kullanım kolaylığı için wrapper fonksiyon
+  // Wrapper function for ease of use
   const logout = () => {
     mutate();
   };

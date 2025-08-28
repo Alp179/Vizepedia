@@ -373,8 +373,9 @@ function Header() {
 
   const handleConfirmLogout = () => {
     logout();
-    localStorage.removeItem("isAnonymous");
-    localStorage.removeItem("wellcomesAnswered");
+    // UPDATED: Clear sessionStorage instead of localStorage
+    sessionStorage.removeItem("isAnonymous");
+    sessionStorage.removeItem("wellcomesAnswered");
     setShowLogoutModal(false);
   };
 
@@ -403,10 +404,11 @@ function Header() {
     window.location.reload();
   };
 
-  // UPDATED: Enhanced useEffect with migration flag detection
+  // UPDATED: Enhanced useEffect with sessionStorage migration flag detection
   useEffect(() => {
     const updateUserState = () => {
-      const anonymousStatus = localStorage.getItem("isAnonymous") === "true";
+      // UPDATED: Check sessionStorage instead of localStorage
+      const anonymousStatus = sessionStorage.getItem("isAnonymous") === "true";
       setIsAnonymous(anonymousStatus);
       setLoading(false);
       
@@ -439,6 +441,7 @@ function Header() {
       updateUserState();
     };
 
+    // UPDATED: Listen to sessionStorage changes (though sessionStorage doesn't fire storage events across tabs like localStorage)
     window.addEventListener("storage", handleStorageChange);
 
     return () => {
@@ -448,17 +451,17 @@ function Header() {
 
   // CRITICAL: Enhanced user type detection with migration safety
   const getUserType = () => {
-    // CRITICAL: Check if migration is in progress
-    const isMigrating = localStorage.getItem("userMigrating") === "true";
+    // UPDATED: Check sessionStorage for migration status
+    const isMigrating = sessionStorage.getItem("userMigrating") === "true";
     if (isMigrating) return "migrating";
     
     // If still loading user data, show loading
     if (userLoading || loading) return "loading";
     
-    // Check localStorage for anonymous status FIRST
-    const anonymousStatus = localStorage.getItem("isAnonymous") === "true";
+    // UPDATED: Check sessionStorage for anonymous status FIRST
+    const anonymousStatus = sessionStorage.getItem("isAnonymous") === "true";
     
-    // If user is marked as anonymous in localStorage, they are anonymous
+    // If user is marked as anonymous in sessionStorage, they are anonymous
     if (anonymousStatus) return "anonymous";
     
     // If user exists in auth context, they are authenticated
