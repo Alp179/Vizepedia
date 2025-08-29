@@ -1020,22 +1020,19 @@ function MainNav() {
   };
 
   // Handle onboarding completion
-  const handleOnboardingComplete = () => {
+  const handleOnboardingComplete = (newApplicationId) => {
     setShowOnboardingModal(false);
     console.log("Onboarding completed, refreshing page to update dashboard");
-    window.location.reload();
+    
+    if (newApplicationId) {
+      // Navigate directly to the new application dashboard
+      console.log("Navigating to new application:", newApplicationId);
+      window.location.href = `/dashboard/${newApplicationId}`;
+    } else {
+      // Fallback to refresh if no application ID provided
+      window.location.reload();
+    }
   };
-
-  // Loading states for non-demo users
-  if ((userType !== "bot" && userType !== "new_visitor") && 
-      (userSelectionsQuery.isLoading || documentsQuery.isLoading)) {
-    return <div>Loading...</div>;
-  }
-
-  if ((userType !== "bot" && userType !== "new_visitor") && 
-      (userSelectionsQuery.isError || documentsQuery.isError)) {
-    return <div>Error loading data.</div>;
-  }
 
   // Check for bot/new visitors
   const isBotOrNewVisitor = userType === "bot" || userType === "new_visitor";

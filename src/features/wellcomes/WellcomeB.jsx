@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-// WellcomeB.jsx - Modal only version
+// WellcomeB.jsx - Modal only version with auth user support
 import { useUserSelections } from "./useUserSelections";
 import Heading from "../../ui/Heading";
 import CountrySelection from "./CountrySelection";
@@ -7,6 +7,7 @@ import Button from "../../ui/Button";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { AnonymousDataService } from "../../utils/anonymousDataService";
+import { useUser } from "../authentication/useUser";
 
 const QuestionContainer = styled.div`
   display: flex;
@@ -17,31 +18,40 @@ const QuestionContainer = styled.div`
 
 function WellcomeB({ onModalNext }) {
   const { state, dispatch } = useUserSelections();
+  const { user, userType } = useUser();
   const [selectedCountry, setSelectedCountry] = useState(state.country);
 
-  // Load from localStorage if available
+  // Determine if we should save to sessionStorage (only for anonymous users)
+  const shouldSaveToSessionStorage = !user || userType !== "authenticated";
+
+  // Load from sessionStorage only if anonymous
   useEffect(() => {
-    const savedSelections = AnonymousDataService.getUserSelections();
-    if (savedSelections && savedSelections.country && !selectedCountry) {
-      setSelectedCountry(savedSelections.country);
-      dispatch({ type: "SET_COUNTRY", payload: savedSelections.country });
+    if (shouldSaveToSessionStorage) {
+      const savedSelections = AnonymousDataService.getUserSelections();
+      if (savedSelections && savedSelections.country && !selectedCountry) {
+        setSelectedCountry(savedSelections.country);
+        dispatch({ type: "SET_COUNTRY", payload: savedSelections.country });
+      }
     }
-  }, [dispatch, selectedCountry]);
+  }, [dispatch, selectedCountry, shouldSaveToSessionStorage]);
 
   const handleCountryChange = (country) => {
     setSelectedCountry(country);
     dispatch({ type: "SET_COUNTRY", payload: country });
 
-    // Save to anonymous user service
-    AnonymousDataService.saveUserSelections({
-      country,
-    });
+    // Only save to sessionStorage for anonymous users
+    if (shouldSaveToSessionStorage) {
+      AnonymousDataService.saveUserSelections({
+        country,
+      });
+    }
   };
 
   const handleContinue = () => {
     console.log("WellcomeB handleContinue called");
     console.log("selectedCountry:", selectedCountry);
-    console.log("onModalNext type:", typeof onModalNext);
+    console.log("user:", user);
+    console.log("shouldSaveToSessionStorage:", shouldSaveToSessionStorage);
     
     if (selectedCountry && onModalNext) {
       console.log("Calling onModalNext from WellcomeB");

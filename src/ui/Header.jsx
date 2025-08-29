@@ -398,10 +398,17 @@ function Header() {
     setShowOnboardingModal(true);
   };
 
-  const handleOnboardingComplete = () => {
+  const handleOnboardingComplete = (newApplicationId) => {
     setShowOnboardingModal(false);
-    console.log("Onboarding completed, refreshing page to update dashboard");
-    window.location.reload();
+    console.log("Onboarding completed with new application ID:", newApplicationId);
+    
+    if (newApplicationId) {
+      // Navigate to the new application dashboard
+      window.location.href = `/dashboard/${newApplicationId}`;
+    } else {
+      // Fallback: refresh current page
+      window.location.reload();
+    }
   };
 
   // UPDATED: Enhanced useEffect with sessionStorage migration flag detection

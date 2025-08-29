@@ -193,19 +193,20 @@ function AllDocs({
 
   const { user, userType } = useUser();
   
-  // FIXED: Application ID detection - use same logic as StepIndicator
-  const applicationId = propApplicationId || paramsApplicationId;
+  // FIXED: Get current application ID from URL params (most important fix)
+  const currentApplicationId = propApplicationId || paramsApplicationId;
+  
+  // UPDATED: Use sessionStorage instead of localStorage for anonymous check
   const isAnonymous = propIsAnonymous !== undefined 
     ? propIsAnonymous 
-    : (userType === 'anonymous' || localStorage.getItem("isAnonymous") === "true" || (!user && applicationId?.startsWith('anonymous-')));
+    : (userType === 'anonymous' || sessionStorage.getItem("isAnonymous") === "true" || (!user && currentApplicationId?.startsWith('anonymous-')));
 
   console.log("🔍 AllDocs Debug:");
-  console.log("applicationId:", applicationId);
+  console.log("currentApplicationId:", currentApplicationId);
   console.log("propDocuments:", propDocuments?.length || 0);
   console.log("userType:", propUserType || userType);
   console.log("isAnonymous:", isAnonymous);
   console.log("user:", user);
-  console.log("userId:", userId);
 
   useEffect(() => {
     if (isAnonymous) {
@@ -219,28 +220,6 @@ function AllDocs({
           if (user) {
             setUserId(user.id);
             console.log("Set userId to:", user.id);
-            
-            if (!propCompletedDocuments && applicationId) {
-              console.log("Fetching completed documents for:", user.id, applicationId);
-              fetchCompletedDocuments(user.id, applicationId)
-                .then((data) => {
-                  console.log("Fetched completed documents:", data);
-                  const completedDocsMap = data.reduce((acc, doc) => {
-                    if (!acc[applicationId]) {
-                      acc[applicationId] = {};
-                    }
-                    acc[applicationId][doc.document_name] = true;
-                    return acc;
-                  }, {});
-                  dispatch({
-                    type: "SET_COMPLETED_DOCUMENTS",
-                    payload: completedDocsMap,
-                  });
-                })
-                .catch((error) => {
-                  console.error("Error fetching completed documents:", error);
-                });
-            }
           } else {
             console.log("No user found from getCurrentUser");
           }
@@ -249,37 +228,40 @@ function AllDocs({
           console.error("Error in getCurrentUser:", error);
         });
     }
-  }, [isAnonymous, applicationId, propCompletedDocuments, dispatch]);
+  }, [isAnonymous]);
 
-  // FIXED: Query logic - improved for authenticated users
+  // FIXED: Query for current application's data specifically
   const {
     data: userSelections,
     isLoading: isLoadingSelections,
     isError: isErrorSelections,
     error: selectionsError,
   } = useQuery({
-    queryKey: ["userSelectionsAllDocs", userId, applicationId, userType],
+    queryKey: ["userSelectionsAllDocs", userId, currentApplicationId, userType],
     queryFn: () => {
-      console.log("🔄 Fetching user selections...");
+      console.log("🔄 Fetching user selections for current application...");
       console.log("isAnonymous:", isAnonymous);
       console.log("userId:", userId);
-      console.log("applicationId:", applicationId);
+      console.log("currentApplicationId:", currentApplicationId);
       
       if (isAnonymous) {
         console.log("Using AnonymousDataService");
         const result = AnonymousDataService.convertToSupabaseFormat();
         console.log("Anonymous result:", result);
         return result;
-      } else {
-        console.log("Using fetchUserSelectionsDash for authenticated user");
-        // For authenticated users, pass null as applicationId to get all user's applications
-        const result = fetchUserSelectionsDash(userId, null);
-        console.log("Authenticated fetch started with userId:", userId);
+      } else if (userId && currentApplicationId) {
+        console.log("Using fetchUserSelectionsDash for specific application");
+        // FIXED: Pass the specific application ID to get only that application's data
+        const result = fetchUserSelectionsDash(userId, currentApplicationId);
+        console.log("Authenticated fetch started with userId:", userId, "applicationId:", currentApplicationId);
         return result;
+      } else {
+        console.log("Missing userId or currentApplicationId");
+        return null;
       }
     },
-    // FIXED: Enable query for authenticated users even without applicationId
-    enabled: !propUserSelections && (isAnonymous ? true : !!userId),
+    // FIXED: Only enable when we have the necessary data
+    enabled: !propUserSelections && ((isAnonymous && AnonymousDataService.hasCompletedOnboarding()) || (!!userId && !!currentApplicationId)),
     staleTime: 5 * 60 * 1000,
     onSuccess: (data) => {
       console.log("✅ User selections query success:", data);
@@ -318,21 +300,64 @@ function AllDocs({
     },
   });
 
+  // FIXED: Fetch completed documents for the specific current application
+  useEffect(() => {
+    if (!propCompletedDocuments && userId && currentApplicationId && !isAnonymous) {
+      console.log("🔄 Fetching completed documents for current application:", userId, currentApplicationId);
+      fetchCompletedDocuments(userId, currentApplicationId)
+        .then((data) => {
+          console.log("✅ Fetched completed documents for current app:", data);
+          if (data && data.length > 0) {
+            const completedDocsMap = data.reduce((acc, doc) => {
+              if (!acc[currentApplicationId]) {
+                acc[currentApplicationId] = {};
+              }
+              acc[currentApplicationId][doc.document_name] = true;
+              return acc;
+            }, {});
+            dispatch({
+              type: "SET_COMPLETED_DOCUMENTS",
+              payload: { ...contextCompletedDocuments, ...completedDocsMap },
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("❌ Error fetching completed documents for current app:", error);
+        });
+    } else if (isAnonymous && currentApplicationId) {
+      // FIXED: For anonymous users, get completed documents for current application
+      const anonymousCompletedDocs = AnonymousDataService.fetchCompletedDocuments(currentApplicationId);
+      const completedDocsMap = anonymousCompletedDocs.reduce((acc, doc) => {
+        if (!acc[currentApplicationId]) {
+          acc[currentApplicationId] = {};
+        }
+        acc[currentApplicationId][doc.document_name] = true;
+        return acc;
+      }, {});
+      
+      if (Object.keys(completedDocsMap).length > 0) {
+        dispatch({
+          type: "SET_COMPLETED_DOCUMENTS",
+          payload: { ...contextCompletedDocuments, ...completedDocsMap },
+        });
+      }
+    }
+  }, [userId, currentApplicationId, isAnonymous, propCompletedDocuments, dispatch, contextCompletedDocuments]);
+
   const finalDocuments = propDocuments || documents || [];
   const finalCompletedDocuments = propCompletedDocuments || contextCompletedDocuments || {};
 
   console.log("Final documents count:", finalDocuments.length);
   console.log("Final completed documents:", finalCompletedDocuments);
 
-  // FIXED: Real application ID detection - improved for authenticated users
+  // FIXED: Use current application ID for completion checks
   const getRealApplicationId = () => {
-    const currentUserType = propUserType || userType;
-    if (currentUserType === "authenticated" && finalUserSelections?.length > 0) {
-      // For authenticated users, use the first application's ID or fallback to URL applicationId
-      return finalUserSelections[0].id || applicationId;
+    if (isAnonymous) {
+      return currentApplicationId || AnonymousDataService.getConsistentApplicationId();
+    } else {
+      // For authenticated users, use the current application ID or the first selection's ID
+      return currentApplicationId || finalUserSelections?.[0]?.id;
     }
-    // For anonymous users, use consistent ID
-    return AnonymousDataService.getConsistentApplicationId();
   };
 
   const realApplicationId = getRealApplicationId();
@@ -373,7 +398,7 @@ function AllDocs({
     );
   }
 
-  // FIXED: Handle document click with stage-based routing (same as StepIndicator)
+  // Handle document click with stage-based routing
   const handleDocumentClick = (document) => {
     console.log("📄 AllDocs - Document clicked:", document.docName, "stage:", document.docStage);
     
@@ -383,8 +408,8 @@ function AllDocs({
       onCloseModal();
     }
 
-    // FIXED: Navigate based on document stage (same as StepIndicator)
-    const urlApplicationId = applicationId || realApplicationId;
+    // Navigate based on document stage using current application ID
+    const urlApplicationId = realApplicationId;
     
     // Map document stages to their corresponding routes
     const stageRoutes = {
@@ -393,7 +418,7 @@ function AllDocs({
       'bizimle': 'withus-documents'
     };
     
-    const route = stageRoutes[document.docStage] || 'ready-documents'; // Default to ready-documents
+    const route = stageRoutes[document.docStage] || 'ready-documents';
     
     console.log("🔗 AllDocs - Navigating to:", `/${route}/${urlApplicationId}`);
     navigate(`/${route}/${urlApplicationId}`);
@@ -407,9 +432,9 @@ function AllDocs({
           <EmptyStateIcon>📄</EmptyStateIcon>
           <EmptyStateText>Henüz belge bulunamadı</EmptyStateText>
           <EmptyStateSubtext>
-            {isAnonymous 
-              ? "Başvuru oluşturun ve belgelerinizi görün"
-              : "Bir başvuru seçin veya yeni başvuru oluşturun"
+            {!currentApplicationId
+              ? "Bir başvuru seçin veya yeni başvuru oluşturun"
+              : "Bu başvuru için belge bilgisi yüklenemedi"
             }
           </EmptyStateSubtext>
         </EmptyState>
@@ -423,12 +448,12 @@ function AllDocs({
         Tüm Belgeler ({finalDocuments.length})
       </HeadingBig>
       <HeadingSmall>
-        Başvurunuzda gerekli olan tüm belgeleri aşağıda görebilirsiniz
+        Bu başvurunuzda gerekli olan tüm belgeleri aşağıda görebilirsiniz
       </HeadingSmall>
 
       <ScrollableDiv>
         {finalDocuments.map((document, index) => {
-          // FIXED: Use realApplicationId for consistency with StepIndicator
+          // Use realApplicationId for consistency
           const isCompleted = finalCompletedDocuments[realApplicationId]?.[document.docName];
           
           console.log(`📄 Document "${document.docName}" completion check:`, {

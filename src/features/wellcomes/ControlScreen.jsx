@@ -14,14 +14,17 @@ import PropTypes from "prop-types";
 function ControlScreen({ onModalComplete }) {
   const { state, dispatch } = useUserSelections();
   const navigate = useNavigate();
-  const { user, isUserLoading } = useUser();
+  const { user, isUserLoading, userType } = useUser();
   const [hasOverflow, setHasOverflow] = useState(false);
   const containerRef = useRef(null);
 
-  // Check if user is anonymous OR in modal flow without authentication
+  // UPDATED: Check if user is anonymous OR in modal flow OR authenticated
   const isAnonymous = AnonymousDataService.isAnonymousUser();
   const isInModalFlow = !!onModalComplete;
-  const shouldTreatAsAnonymous = isAnonymous || (isInModalFlow && !user);
+  const isAuthenticated = userType === "authenticated" && user?.id;
+  
+  // Determine the flow type
+  const shouldTreatAsAnonymous = isAnonymous || (isInModalFlow && !user?.id);
 
   useEffect(() => {
     const allSelectionsMade =
@@ -31,7 +34,7 @@ function ControlScreen({ onModalComplete }) {
       state.vehicle &&
       state.kid !== undefined &&
       state.accommodation &&
-      (state.hasSponsor === false || state.sponsorProfession); // Sponsor kontrolü
+      (state.hasSponsor === false || state.sponsorProfession);
       
     if (!allSelectionsMade && !onModalComplete) {
       // Only redirect if not in modal
@@ -39,7 +42,7 @@ function ControlScreen({ onModalComplete }) {
     }
   }, [state, navigate, onModalComplete]);
 
-  // Overflow kontrol useEffect'i
+  // Overflow control useEffect
   useEffect(() => {
     const checkOverflow = () => {
       if (containerRef.current) {
@@ -53,18 +56,79 @@ function ControlScreen({ onModalComplete }) {
     return () => {
       window.removeEventListener("resize", checkOverflow);
     };
-  }, [state]); // state değiştiğinde de kontrol et
+  }, [state]);
 
   const handleSubmit = async () => {
-    // Handle anonymous users OR modal flow users without authentication
+    console.log("🚀 ControlScreen handleSubmit called");
+    console.log("User:", user);
+    console.log("UserType:", userType);
+    console.log("isAuthenticated:", isAuthenticated);
+    console.log("shouldTreatAsAnonymous:", shouldTreatAsAnonymous);
+    console.log("isInModalFlow:", isInModalFlow);
+
+    // UPDATED: Handle authenticated users in modal flow
+    if (isAuthenticated && isInModalFlow) {
+      console.log("📝 Creating new Supabase application for authenticated user");
+      
+      try {
+        // Create new application in Supabase for authenticated user
+        const { data, error } = await supabase
+          .from("userAnswers")
+          .insert({
+            userId: user.id,
+            ans_country: state.country,
+            ans_purpose: state.purpose,
+            ans_profession: state.profession,
+            ans_vehicle: state.vehicle,
+            ans_kid: state.kid,
+            ans_accommodation: state.accommodation,
+            ans_hassponsor: state.hasSponsor,
+            ans_sponsor_profession: state.sponsorProfession || null,
+            has_appointment: false,
+            has_filled_form: false,
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error("❌ Error creating new application:", error);
+          throw error;
+        }
+
+        console.log("✅ New application created successfully:", data);
+        
+        // Clear visa check modal for new application
+        sessionStorage.removeItem(`visa_check_modal_shown_${data.id}`);
+        
+        if (onModalComplete) {
+          // Pass the new application ID to the modal completion handler
+          onModalComplete(data.id);
+        } else {
+          // Direct navigation for non-modal flow
+          navigate(`/dashboard/${data.id}`);
+        }
+        return;
+      } catch (error) {
+        console.error("❌ Unexpected error creating application:", error);
+        // Fallback - close modal and stay on current dashboard
+        if (onModalComplete) {
+          onModalComplete();
+        }
+        return;
+      }
+    }
+
+    // UPDATED: Handle anonymous users (existing logic)
     if (shouldTreatAsAnonymous) {
-      // NOW set the anonymous flag when user actually completes onboarding
+      console.log("📝 Creating sessionStorage application for anonymous user");
+      
+      // Set the anonymous flag when user completes onboarding in modal
       if (!isAnonymous && isInModalFlow) {
         console.log("Setting anonymous flag after completing modal onboarding");
-        localStorage.setItem("isAnonymous", "true");
+        sessionStorage.setItem("isAnonymous", "true");
       }
       
-      // Save to localStorage instead of Supabase
+      // Save to sessionStorage instead of Supabase
       const userAnswers = AnonymousDataService.saveUserAnswers({
         country: state.country,
         purpose: state.purpose,
@@ -76,10 +140,10 @@ function ControlScreen({ onModalComplete }) {
         sponsorProfession: state.sponsorProfession
       });
 
-      console.log("Anonymous user selections saved to localStorage:", userAnswers);
+      console.log("Anonymous user selections saved to sessionStorage:", userAnswers);
       
       // Clear visa check modal for anonymous users
-      localStorage.removeItem(`visa_check_modal_shown_${userAnswers.id}`);
+      sessionStorage.removeItem(`visa_check_modal_shown_${userAnswers.id}`);
       
       if (onModalComplete) {
         // In modal flow - close modal and stay on dashboard
@@ -91,29 +155,52 @@ function ControlScreen({ onModalComplete }) {
       return;
     }
 
-    // Handle authenticated users (existing Supabase logic)
-    try {
-      const { data, error } = await supabase
-        .from("userAnswers")
-        .insert({
-          userId: user.id,
-          ans_country: state.country,
-          ans_purpose: state.purpose,
-          ans_profession: state.profession,
-          ans_vehicle: state.vehicle,
-          ans_kid: state.kid,
-          ans_accommodation: state.accommodation,
-          ans_hassponsor: state.hasSponsor,
-          ans_sponsor_profession: state.sponsorProfession || null,
-          has_appointment: false,
-          has_filled_form: false,
-        })
-        .select()
-        .single();
+    // UPDATED: Handle authenticated users NOT in modal (existing authenticated flow)
+    if (isAuthenticated && !isInModalFlow) {
+      console.log("📝 Creating Supabase application for authenticated user (non-modal)");
+      
+      try {
+        const { data, error } = await supabase
+          .from("userAnswers")
+          .insert({
+            userId: user.id,
+            ans_country: state.country,
+            ans_purpose: state.purpose,
+            ans_profession: state.profession,
+            ans_vehicle: state.vehicle,
+            ans_kid: state.kid,
+            ans_accommodation: state.accommodation,
+            ans_hassponsor: state.hasSponsor,
+            ans_sponsor_profession: state.sponsorProfession || null,
+            has_appointment: false,
+            has_filled_form: false,
+          })
+          .select()
+          .single();
 
-      if (error) {
-        console.error("Seçimler kaydedilirken hata oluştu:", error);
-        // Fallback to anonymous mode if Supabase fails
+        if (error) {
+          console.error("Seçimler kaydedilirken hata oluştu:", error);
+          // Fallback to anonymous mode if Supabase fails
+          const userAnswers = AnonymousDataService.saveUserAnswers({
+            country: state.country,
+            purpose: state.purpose,
+            profession: state.profession,
+            vehicle: state.vehicle,
+            kid: state.kid,
+            accommodation: state.accommodation,
+            hasSponsor: state.hasSponsor,
+            sponsorProfession: state.sponsorProfession
+          });
+          
+          navigate(`/dashboard/${userAnswers.id}`);
+        } else {
+          console.log("Kullanıcı seçimleri başarıyla kaydedildi:", data);
+          sessionStorage.removeItem(`visa_check_modal_shown_${data.id}`);
+          navigate(`/dashboard/${data.id}`);
+        }
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        // Fallback to anonymous mode
         const userAnswers = AnonymousDataService.saveUserAnswers({
           country: state.country,
           purpose: state.purpose,
@@ -125,40 +212,28 @@ function ControlScreen({ onModalComplete }) {
           sponsorProfession: state.sponsorProfession
         });
         
-        if (onModalComplete) {
-          onModalComplete();
-        } else {
-          navigate(`/dashboard/${userAnswers.id}`);
-        }
-      } else {
-        console.log("Kullanıcı seçimleri başarıyla kaydedildi:", data);
-        localStorage.removeItem(`visa_check_modal_shown_${data.id}`);
-        
-        if (onModalComplete) {
-          onModalComplete();
-        } else {
-          navigate(`/dashboard/${data.id}`);
-        }
-      }
-    } catch (error) {
-      console.error("Unexpected error:", error);
-      // Fallback to anonymous mode
-      const userAnswers = AnonymousDataService.saveUserAnswers({
-        country: state.country,
-        purpose: state.purpose,
-        profession: state.profession,
-        vehicle: state.vehicle,
-        kid: state.kid,
-        accommodation: state.accommodation,
-        hasSponsor: state.hasSponsor,
-        sponsorProfession: state.sponsorProfession
-      });
-      
-      if (onModalComplete) {
-        onModalComplete();
-      } else {
         navigate(`/dashboard/${userAnswers.id}`);
       }
+      return;
+    }
+
+    // FALLBACK: If none of the above conditions match, fallback to anonymous
+    console.log("⚠️ Fallback to anonymous mode");
+    const userAnswers = AnonymousDataService.saveUserAnswers({
+      country: state.country,
+      purpose: state.purpose,
+      profession: state.profession,
+      vehicle: state.vehicle,
+      kid: state.kid,
+      accommodation: state.accommodation,
+      hasSponsor: state.hasSponsor,
+      sponsorProfession: state.sponsorProfession
+    });
+    
+    if (onModalComplete) {
+      onModalComplete();
+    } else {
+      navigate(`/dashboard/${userAnswers.id}`);
     }
   };
 
@@ -244,7 +319,7 @@ function ControlScreen({ onModalComplete }) {
         onCountryChange={(country) => {
           dispatch({ type: "SET_COUNTRY", payload: country });
           // Update anonymous data if applicable
-          if (isAnonymous) {
+          if (shouldTreatAsAnonymous) {
             const existing = AnonymousDataService.getUserSelections();
             AnonymousDataService.saveUserSelections({ ...existing, country });
           }
@@ -252,7 +327,7 @@ function ControlScreen({ onModalComplete }) {
         selectedPurpose={state.purpose}
         onPurposeChange={(purpose) => {
           dispatch({ type: "SET_PURPOSE", payload: purpose });
-          if (isAnonymous) {
+          if (shouldTreatAsAnonymous) {
             const existing = AnonymousDataService.getUserSelections();
             AnonymousDataService.saveUserSelections({ ...existing, purpose });
           }
@@ -260,7 +335,7 @@ function ControlScreen({ onModalComplete }) {
         selectedProfession={state.profession}
         onProfessionChange={(profession) => {
           dispatch({ type: "SET_PROFESSION", payload: profession });
-          if (isAnonymous) {
+          if (shouldTreatAsAnonymous) {
             const existing = AnonymousDataService.getUserSelections();
             AnonymousDataService.saveUserSelections({ ...existing, profession });
           }
@@ -270,21 +345,21 @@ function ControlScreen({ onModalComplete }) {
         selectedVehicle={state.vehicle}
         onVehicleChange={(vehicle) => {
           dispatch({ type: "SET_VEHICLE", payload: vehicle });
-          if (isAnonymous) {
+          if (shouldTreatAsAnonymous) {
             const existing = AnonymousDataService.getUserSelections();
             AnonymousDataService.saveUserSelections({ ...existing, vehicle });
           }
         }}
         onKidChange={(kid) => {
           dispatch({ type: "SET_KID", payload: kid });
-          if (isAnonymous) {
+          if (shouldTreatAsAnonymous) {
             const existing = AnonymousDataService.getUserSelections();
             AnonymousDataService.saveUserSelections({ ...existing, kid });
           }
         }}
         onAccommodationChange={(accommodation) => {
           dispatch({ type: "SET_ACCOMMODATION", payload: accommodation });
-          if (isAnonymous) {
+          if (shouldTreatAsAnonymous) {
             const existing = AnonymousDataService.getUserSelections();
             AnonymousDataService.saveUserSelections({ ...existing, accommodation });
           }
@@ -296,7 +371,7 @@ function ControlScreen({ onModalComplete }) {
             type: "SET_SPONSOR_PROFESSION",
             payload: sponsorProfession,
           });
-          if (isAnonymous) {
+          if (shouldTreatAsAnonymous) {
             const existing = AnonymousDataService.getUserSelections();
             AnonymousDataService.saveUserSelections({ ...existing, sponsorProfession });
           }
@@ -304,7 +379,11 @@ function ControlScreen({ onModalComplete }) {
       />
 
       <Button variation="question" size="baslayalim" onClick={handleSubmit}>
-        {shouldTreatAsAnonymous ? "Anonim Olarak Başlayalım" : "Başlayalım"}
+        {isAuthenticated && isInModalFlow 
+          ? "Yeni Başvuru Oluştur" 
+          : shouldTreatAsAnonymous 
+            ? "Anonim Olarak Başlayalım" 
+            : "Başlayalım"}
       </Button>
     </ModalScreenContainer>
   );
@@ -313,5 +392,5 @@ function ControlScreen({ onModalComplete }) {
 export default ControlScreen;
 
 ControlScreen.propTypes = {
-  onModalComplete: PropTypes.func.isRequired, // or just PropTypes.func if it's optional
+  onModalComplete: PropTypes.func,
 };

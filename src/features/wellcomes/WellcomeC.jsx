@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-// WellcomeC.jsx - Modal only version
+// WellcomeC.jsx - Modal only version with auth user support
 import { useState, useEffect } from "react";
 import { useUserSelections } from "./useUserSelections";
 import PurposeSelection from "./PurposeSelection";
@@ -7,6 +7,7 @@ import Heading from "../../ui/Heading";
 import Button from "../../ui/Button";
 import styled from "styled-components";
 import { AnonymousDataService } from "../../utils/anonymousDataService";
+import { useUser } from "../authentication/useUser";
 
 const QuestionContainer = styled.div`
   display: flex;
@@ -17,35 +18,42 @@ const QuestionContainer = styled.div`
 
 function WellcomeC({ onModalNext }) {
   const { state, dispatch } = useUserSelections();
+  const { user, userType } = useUser();
   const [selectedPurpose, setSelectedPurpose] = useState(state.purpose);
 
-  // Load from localStorage if available
+  // Determine if we should save to sessionStorage (only for anonymous users)
+  const shouldSaveToSessionStorage = !user || userType !== "authenticated";
+
+  // Load from sessionStorage only if anonymous
   useEffect(() => {
-    const savedSelections = AnonymousDataService.getUserSelections();
-    if (savedSelections && savedSelections.purpose && !selectedPurpose) {
-      setSelectedPurpose(savedSelections.purpose);
-      dispatch({ type: "SET_PURPOSE", payload: savedSelections.purpose });
+    if (shouldSaveToSessionStorage) {
+      const savedSelections = AnonymousDataService.getUserSelections();
+      if (savedSelections && savedSelections.purpose && !selectedPurpose) {
+        setSelectedPurpose(savedSelections.purpose);
+        dispatch({ type: "SET_PURPOSE", payload: savedSelections.purpose });
+      }
     }
-  }, [dispatch, selectedPurpose]);
+  }, [dispatch, selectedPurpose, shouldSaveToSessionStorage]);
 
   const handlePurposeChange = (purpose) => {
     setSelectedPurpose(purpose);
     dispatch({ type: "SET_PURPOSE", payload: purpose });
 
-    // Save to anonymous user service
-    const existingSelections = AnonymousDataService.getUserSelections();
-    AnonymousDataService.saveUserSelections({
-      ...existingSelections,
-      purpose,
-    });
+    // Only save to sessionStorage for anonymous users
+    if (shouldSaveToSessionStorage) {
+      const existingSelections = AnonymousDataService.getUserSelections();
+      AnonymousDataService.saveUserSelections({
+        ...existingSelections,
+        purpose,
+      });
+    }
   };
 
   const handleContinue = () => {
     if (selectedPurpose) {
-      // Generate application ID when user completes basic selections
-      if (
-        !localStorage.getItem(AnonymousDataService.STORAGE_KEYS.APPLICATION_ID)
-      ) {
+      // Generate application ID only for anonymous users
+      if (shouldSaveToSessionStorage && 
+          !sessionStorage.getItem(AnonymousDataService.STORAGE_KEYS.APPLICATION_ID)) {
         AnonymousDataService.getApplicationId();
       }
 

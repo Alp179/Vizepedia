@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-// WellcomeD.jsx - Modal only version
+// WellcomeD.jsx - Modal only version with auth user support
 import { useState, useEffect } from "react";
 import { useUserSelections } from "./useUserSelections";
 import ProfessionSelection from "./ProfessionSelection";
@@ -7,6 +7,7 @@ import Button from "../../ui/Button";
 import Heading from "../../ui/Heading";
 import styled from "styled-components";
 import { AnonymousDataService } from "../../utils/anonymousDataService";
+import { useUser } from "../authentication/useUser";
 
 // Styled components
 const QuestionContainer = styled.div`
@@ -68,21 +69,27 @@ const ButtonContainer = styled.div`
 
 function WellcomeD({ onModalNext }) {
   const { state, dispatch } = useUserSelections();
+  const { user, userType } = useUser();
   const [selectedProfession, setSelectedProfession] = useState(
     state.profession || ""
   );
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Load from localStorage if available
-  useEffect(() => {
-    const savedSelections = AnonymousDataService.getUserSelections();
-    if (savedSelections && savedSelections.profession && !selectedProfession) {
-      setSelectedProfession(savedSelections.profession);
-      dispatch({ type: "SET_PROFESSION", payload: savedSelections.profession });
-    }
-  }, [dispatch, selectedProfession]);
+  // Determine if we should save to sessionStorage (only for anonymous users)
+  const shouldSaveToSessionStorage = !user || userType !== "authenticated";
 
-  // Component unmount olduğunda modal'ı temizle
+  // Load from sessionStorage only if anonymous
+  useEffect(() => {
+    if (shouldSaveToSessionStorage) {
+      const savedSelections = AnonymousDataService.getUserSelections();
+      if (savedSelections && savedSelections.profession && !selectedProfession) {
+        setSelectedProfession(savedSelections.profession);
+        dispatch({ type: "SET_PROFESSION", payload: savedSelections.profession });
+      }
+    }
+  }, [dispatch, selectedProfession, shouldSaveToSessionStorage]);
+
+  // Component unmount cleanup
   useEffect(() => {
     return () => {
       setIsModalVisible(false);
@@ -93,25 +100,30 @@ function WellcomeD({ onModalNext }) {
     setSelectedProfession(profession);
     dispatch({ type: "SET_PROFESSION", payload: profession });
 
-    // Save to anonymous user service
-    const existingSelections = AnonymousDataService.getUserSelections();
-    AnonymousDataService.saveUserSelections({
-      ...existingSelections,
-      profession,
-    });
-
-    // Eğer "İş veren" değilse sponsor sorusunu sor
-    if (profession && profession !== "İş veren") {
-      setIsModalVisible(true);
-    } else if (profession === "İş veren") {
-      // İş veren ise direkt devam et butonu aktif olsun, modal açılmasın
-      dispatch({ type: "SET_HAS_SPONSOR", payload: null });
-      // Save hasSponsor as null for business owners
+    // Only save to sessionStorage for anonymous users
+    if (shouldSaveToSessionStorage) {
+      const existingSelections = AnonymousDataService.getUserSelections();
       AnonymousDataService.saveUserSelections({
         ...existingSelections,
         profession,
-        hasSponsor: null,
       });
+    }
+
+    // Show sponsor modal if not business owner
+    if (profession && profession !== "İş veren") {
+      setIsModalVisible(true);
+    } else if (profession === "İş veren") {
+      // Business owner - set hasSponsor to null and save only for anonymous users
+      dispatch({ type: "SET_HAS_SPONSOR", payload: null });
+      
+      if (shouldSaveToSessionStorage) {
+        const existingSelections = AnonymousDataService.getUserSelections();
+        AnonymousDataService.saveUserSelections({
+          ...existingSelections,
+          profession,
+          hasSponsor: null,
+        });
+      }
     }
   };
 
@@ -120,7 +132,6 @@ function WellcomeD({ onModalNext }) {
     console.log("selectedProfession:", selectedProfession);
     console.log("onModalNext type:", typeof onModalNext);
     
-    // Meslek seçilmişse bir sonraki sayfaya yönlendir
     if (selectedProfession && onModalNext) {
       console.log("Calling onModalNext from WellcomeD with profession:", selectedProfession);
       onModalNext();
@@ -134,14 +145,16 @@ function WellcomeD({ onModalNext }) {
     dispatch({ type: "SET_HAS_SPONSOR", payload: hasSponsor });
     setIsModalVisible(false);
 
-    // Save sponsor decision
-    const existingSelections = AnonymousDataService.getUserSelections();
-    AnonymousDataService.saveUserSelections({
-      ...existingSelections,
-      hasSponsor,
-    });
+    // Only save sponsor decision for anonymous users
+    if (shouldSaveToSessionStorage) {
+      const existingSelections = AnonymousDataService.getUserSelections();
+      AnonymousDataService.saveUserSelections({
+        ...existingSelections,
+        hasSponsor,
+      });
+    }
 
-    // Sponsor durumuna göre modal callback'ini çağır
+    // Call modal callback
     if (onModalNext) {
       console.log("Calling onModalNext from handleModalResponse with sponsor:", hasSponsor);
       onModalNext(hasSponsor);
@@ -149,20 +162,22 @@ function WellcomeD({ onModalNext }) {
   };
 
   const handleOverlayClick = (e) => {
-    // Modal içine tıklamalarda overlay'in kapanmasını engelle
+    // Prevent modal close on inner click
     if (e.target === e.currentTarget) {
       setIsModalVisible(false);
 
-      // Modal kapatıldığında meslek seçimini sıfırla
+      // Reset profession selection
       setSelectedProfession("");
       dispatch({ type: "SET_PROFESSION", payload: "" });
 
-      // Clear from localStorage as well
-      const existingSelections = AnonymousDataService.getUserSelections();
-      AnonymousDataService.saveUserSelections({
-        ...existingSelections,
-        profession: "",
-      });
+      // Clear from sessionStorage for anonymous users only
+      if (shouldSaveToSessionStorage) {
+        const existingSelections = AnonymousDataService.getUserSelections();
+        AnonymousDataService.saveUserSelections({
+          ...existingSelections,
+          profession: "",
+        });
+      }
     }
   };
 
