@@ -377,128 +377,99 @@ const Dashboard = () => {
 
   const handleUserConversion = async () => {
     console.log("🔄 User conversion started - forcing authenticated state");
-
+    
     setUserType("authenticated");
-
+  
     try {
       const currentUser = await getCurrentUser();
       if (currentUser && currentUser.id) {
         setUserId(currentUser.id);
         console.log("✅ User conversion complete:", currentUser.email);
-
-        console.log("🔍 Checking for migration result...");
-
-        setTimeout(async () => {
+  
+        // ENHANCED: Try multiple strategies to find the application
+        let newApplicationId = null;
+        let retryCount = 0;
+        const maxRetries = 5;
+  
+        while (!newApplicationId && retryCount < maxRetries) {
           try {
-            const { data: userApplications, error } = await supabase
+            console.log(`🔍 Attempt ${retryCount + 1}: Fetching user applications...`);
+            
+            // Strategy 1: Check for very recent applications (last 10 seconds)
+            const { data: recentApps, error: recentError } = await supabase
               .from("userAnswers")
-              .select("id")
+              .select("id, created_at")
+              .eq("userId", currentUser.id)
+              .gte("created_at", new Date(Date.now() - 10000).toISOString())
+              .order("created_at", { ascending: false })
+              .limit(1);
+  
+            if (!recentError && recentApps && recentApps.length > 0) {
+              newApplicationId = recentApps[0].id;
+              console.log("✅ Found recent application:", newApplicationId);
+              break;
+            }
+  
+            // Strategy 2: Get latest application overall
+            const { data: latestApps, error: latestError } = await supabase
+              .from("userAnswers")
+              .select("id, created_at")
               .eq("userId", currentUser.id)
               .order("created_at", { ascending: false })
               .limit(1);
-
-            if (error) {
-              console.error("❌ Error fetching applications:", error);
-              navigate("/dashboard");
-              return;
+  
+            if (!latestError && latestApps && latestApps.length > 0) {
+              newApplicationId = latestApps[0].id;
+              console.log("✅ Found latest application:", newApplicationId);
+              break;
             }
-
-            if (userApplications && userApplications.length > 0) {
-              const newApplicationId = userApplications[0].id;
-              console.log(
-                "✅ Found migrated application ID:",
-                newApplicationId
-              );
-
-              try {
-                console.log(
-                  "🔄 Loading completed documents for migrated user..."
-                );
-
-                let completedDocs = [];
-                let retryCount = 0;
-                const maxRetries = 3;
-
-                while (retryCount < maxRetries) {
-                  try {
-                    completedDocs = await fetchCompletedDocuments(
-                      currentUser.id,
-                      newApplicationId
-                    );
-                    if (completedDocs && completedDocs.length > 0) {
-                      console.log(
-                        "✅ Completed documents found:",
-                        completedDocs
-                      );
-                      break;
-                    }
-
-                    if (retryCount < maxRetries - 1) {
-                      console.log(
-                        `⏳ No completed docs found, retrying... (${
-                          retryCount + 1
-                        }/${maxRetries})`
-                      );
-                      await new Promise((resolve) => setTimeout(resolve, 1000));
-                    }
-
-                    retryCount++;
-                  } catch (fetchError) {
-                    console.error(
-                      `❌ Retry ${retryCount + 1} failed:`,
-                      fetchError
-                    );
-                    retryCount++;
-                    if (retryCount < maxRetries) {
-                      await new Promise((resolve) => setTimeout(resolve, 1000));
-                    }
-                  }
-                }
-
-                const completedDocsMap = completedDocs.reduce((acc, doc) => {
-                  if (!acc[newApplicationId]) {
-                    acc[newApplicationId] = {};
-                  }
-                  acc[newApplicationId][doc.document_name] = true;
-                  return acc;
-                }, {});
-
-                console.log(
-                  "✅ Completed documents formatted for context:",
-                  completedDocsMap
-                );
-
-                if (Object.keys(completedDocsMap).length > 0) {
-                  dispatch({
-                    type: "SET_COMPLETED_DOCUMENTS",
-                    payload: completedDocsMap,
-                  });
-                  console.log(
-                    "✅ Context updated with migrated completed documents"
-                  );
-                } else {
-                  console.log("⚠️ No completed documents to add to context");
-                }
-
-                navigate(`/dashboard/${newApplicationId}`);
-              } catch (docsError) {
-                console.error(
-                  "❌ Error loading completed documents after migration:",
-                  docsError
-                );
-                navigate(`/dashboard/${newApplicationId}`);
-              }
-            } else {
-              console.log(
-                "⚠️ No applications found, redirecting to plain dashboard"
-              );
-              navigate("/dashboard");
+  
+            // Wait before retry
+            if (retryCount < maxRetries - 1) {
+              console.log(`⏳ No application found, waiting 1s before retry...`);
+              await new Promise((resolve) => setTimeout(resolve, 1000));
             }
+  
+            retryCount++;
           } catch (fetchError) {
-            console.error("❌ Error during application fetch:", fetchError);
-            navigate("/dashboard");
+            console.error(`❌ Fetch attempt ${retryCount + 1} failed:`, fetchError);
+            retryCount++;
+            if (retryCount < maxRetries) {
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+            }
           }
-        }, 2000);
+        }
+  
+        if (newApplicationId) {
+          console.log("🎯 Navigating to application:", newApplicationId);
+          
+          // Load completed documents for the new application
+          try {
+            const completedDocs = await fetchCompletedDocuments(currentUser.id, newApplicationId);
+            if (completedDocs && completedDocs.length > 0) {
+              const completedDocsMap = completedDocs.reduce((acc, doc) => {
+                if (!acc[newApplicationId]) {
+                  acc[newApplicationId] = {};
+                }
+                acc[newApplicationId][doc.document_name] = true;
+                return acc;
+              }, {});
+  
+              dispatch({
+                type: "SET_COMPLETED_DOCUMENTS",
+                payload: completedDocsMap,
+              });
+            }
+          } catch (docsError) {
+            console.error("⚠️ Error loading completed documents:", docsError);
+          }
+  
+          // Navigate with application ID
+          window.location.href = `/dashboard/${newApplicationId}`;
+        } else {
+          console.log("⚠️ No application found after migration, redirecting to general dashboard");
+          navigate("/dashboard");
+        }
       } else {
         console.log("❌ User conversion failed - no user found");
         navigate("/dashboard");

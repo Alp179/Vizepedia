@@ -1022,17 +1022,20 @@ function MainNav() {
   // Handle onboarding completion
   const handleOnboardingComplete = (newApplicationId) => {
     setShowOnboardingModal(false);
-    console.log("Onboarding completed, refreshing page to update dashboard");
+    console.log("🎯 Onboarding completed with application ID:", newApplicationId);
     
     if (newApplicationId) {
-      // Navigate directly to the new application dashboard
-      console.log("Navigating to new application:", newApplicationId);
+      console.log("✅ Navigating to new application dashboard:", newApplicationId);
+      sessionStorage.setItem("latestApplicationId", newApplicationId);
+      
+      // Use window.location for clean navigation
       window.location.href = `/dashboard/${newApplicationId}`;
     } else {
-      // Fallback to refresh if no application ID provided
+      console.log("⚠️ No application ID provided, reloading page");
       window.location.reload();
     }
   };
+  
 
   // Check for bot/new visitors
   const isBotOrNewVisitor = userType === "bot" || userType === "new_visitor";

@@ -195,6 +195,7 @@ function ControlScreen({ onModalComplete }) {
           navigate(`/dashboard/${userAnswers.id}`);
         } else {
           console.log("Kullanıcı seçimleri başarıyla kaydedildi:", data);
+          sessionStorage.setItem("latestApplicationId", data.id);
           sessionStorage.removeItem(`visa_check_modal_shown_${data.id}`);
           navigate(`/dashboard/${data.id}`);
         }

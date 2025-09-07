@@ -258,21 +258,26 @@ export async function signInAsGuest() {
 
 export async function convertAnonymousToUser({ email, password }) {
   try {
-    // Don't try to convert Supabase anonymous users, just sign up normally
-    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
-      {
-        email,
-        password,
-      }
-    );
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
     if (signUpError) {
       throw new Error(signUpError.message);
     }
 
-    // Migrate sessionStorage data to new user
+    // WAIT for migration to complete before returning
     if (signUpData.user) {
-      await migrateAnonymousToAuthenticated(signUpData.user.id);
+      const migrationResult = await migrateAnonymousToAuthenticated(signUpData.user.id);
+      
+      // Add a small delay to ensure sessionStorage is set
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      return {
+        ...signUpData,
+        migrationResult
+      };
     }
 
     return signUpData;
@@ -292,7 +297,7 @@ export async function migrateAnonymousToAuthenticated(userId) {
       return null;
     }
 
-    console.log("🔄 Starting migration for user:", userId);
+    console.log("Starting migration for user:", userId);
     console.log("Anonymous data to migrate:", anonymousData);
 
     // Insert user answers
@@ -320,14 +325,18 @@ export async function migrateAnonymousToAuthenticated(userId) {
       return null;
     }
 
-    console.log("✅ User answers migrated, new application ID:", data.id);
+    console.log("User answers migrated, new application ID:", data.id);
+
+    // CRITICAL FIX: Set the migration flags that RedirectIfLoggedIn checks for
+    sessionStorage.setItem("latestApplicationId", data.id);
+    sessionStorage.setItem("migrationComplete", "true");
 
     // Initialize completedDocsToInsert properly
     const completedDocsToInsert = [];
     let migratedDocumentsCount = 0;
 
     // Check Supabase schema first
-    console.log("🔍 Checking completed_documents table schema...");
+    console.log("Checking completed_documents table schema...");
 
     // Migrate completed documents with proper Supabase schema
     if (
@@ -367,7 +376,7 @@ export async function migrateAnonymousToAuthenticated(userId) {
         }
       );
 
-      console.log("📋 Completed documents to insert:", completedDocsToInsert);
+      console.log("Completed documents to insert:", completedDocsToInsert);
 
       // Insert completed documents if any exist
       if (completedDocsToInsert.length > 0) {
@@ -379,7 +388,7 @@ export async function migrateAnonymousToAuthenticated(userId) {
 
         if (docsError) {
           console.error(
-            "❌ Error inserting completed documents (Option 1):",
+            "Error inserting completed documents (Option 1):",
             docsError
           );
 
@@ -392,7 +401,7 @@ export async function migrateAnonymousToAuthenticated(userId) {
           );
 
           console.log(
-            "🔄 Retrying with boolean status...",
+            "Retrying with boolean status...",
             completedDocsWithBooleanStatus
           );
 
@@ -403,7 +412,7 @@ export async function migrateAnonymousToAuthenticated(userId) {
 
           if (docsError2) {
             console.error(
-              "❌ Error inserting completed documents (Option 2):",
+              "Error inserting completed documents (Option 2):",
               docsError2
             );
 
@@ -414,7 +423,7 @@ export async function migrateAnonymousToAuthenticated(userId) {
               application_id: doc.application_id,
             }));
 
-            console.log("🔄 Retrying with minimal schema...", minimalDocs);
+            console.log("Retrying with minimal schema...", minimalDocs);
 
             const { data: insertedDocs3, error: docsError3 } = await supabase
               .from("completed_documents")
@@ -422,43 +431,43 @@ export async function migrateAnonymousToAuthenticated(userId) {
               .select();
 
             if (docsError3) {
-              console.error("❌ Final attempt failed:", docsError3);
+              console.error("Final attempt failed:", docsError3);
             } else {
               console.log(
-                "✅ Completed documents inserted (minimal schema):",
+                "Completed documents inserted (minimal schema):",
                 insertedDocs3
               );
               migratedDocumentsCount = insertedDocs3.length;
             }
           } else {
             console.log(
-              "✅ Completed documents inserted (boolean status):",
+              "Completed documents inserted (boolean status):",
               insertedDocs2
             );
             migratedDocumentsCount = insertedDocs2.length;
           }
         } else {
           console.log(
-            "✅ Completed documents inserted (no status):",
+            "Completed documents inserted (no status):",
             insertedDocs
           );
           migratedDocumentsCount = insertedDocs.length;
         }
       } else {
-        console.log("📋 No completed documents to migrate");
+        console.log("No completed documents to migrate");
       }
     } else {
-      console.log("📋 No completed documents found in anonymous data");
+      console.log("No completed documents found in anonymous data");
     }
 
     // Clear anonymous data after successful migration
     AnonymousDataService.clearData();
 
     console.log(
-      "✅ Anonymous data successfully migrated to authenticated user"
+      "Anonymous data successfully migrated to authenticated user"
     );
     console.log(
-      `📊 Migration summary: Application ID: ${data.id}, Documents migrated: ${migratedDocumentsCount}`
+      `Migration summary: Application ID: ${data.id}, Documents migrated: ${migratedDocumentsCount}`
     );
 
     // Return the migration result with new application ID
@@ -469,7 +478,7 @@ export async function migrateAnonymousToAuthenticated(userId) {
       completedDocuments: completedDocsToInsert, // Return the docs for immediate use
     };
   } catch (error) {
-    console.error("❌ Error during anonymous data migration:", error);
+    console.error("Error during anonymous data migration:", error);
     return null;
   }
 }

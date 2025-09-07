@@ -158,6 +158,7 @@ function AppWithGA() {
 }
 
 // Yeni bileşen: Kullanıcı oturum açmışsa dashboard'a yönlendirir
+// 3. UPDATE: App.jsx - Enhanced RedirectIfLoggedIn component
 function RedirectIfLoggedIn({ children }) {
   const navigate = useNavigate();
 
@@ -166,18 +167,32 @@ function RedirectIfLoggedIn({ children }) {
       try {
         const currentUser = await getCurrentUser();
         if (currentUser) {
-          // Authenticated user varsa, onboarding check'i yapalım
+          console.log("✅ Authenticated user found:", currentUser.email);
+
+          // Check for recent migration first
+          const migrationComplete = sessionStorage.getItem("migrationComplete");
+          const storedAppId = sessionStorage.getItem("latestApplicationId");
+
+          if (migrationComplete === "true" && storedAppId) {
+            console.log("🔄 Migration detected, using stored application ID:", storedAppId);
+            sessionStorage.removeItem("migrationComplete"); // Clean up
+            navigate(`/dashboard/${storedAppId}`);
+            return;
+          }
+
+          // Otherwise, fetch latest application
           const latestApplication = await fetchLatestApplication(currentUser.id);
           if (latestApplication) {
+            console.log("📋 Latest application found:", latestApplication.id);
             sessionStorage.setItem("latestApplicationId", latestApplication.id);
             navigate(`/dashboard/${latestApplication.id}`);
           } else {
-            navigate("/dashboard");
+            console.log("⚠️ No applications found, staying on login/signup page");
+            // Don't redirect if no applications - let user complete onboarding
           }
         }
       } catch (error) {
         console.error("Error checking user in RedirectIfLoggedIn:", error);
-        // Hata durumunda children'ı render et
       }
     }
     checkUser();
