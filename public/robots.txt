@@ -1,20 +1,46 @@
+# Robots.txt for Vizepedia
+# https://www.vizepedia.com/robots.txt
+
+# Allow all search engines to crawl the site
 User-agent: *
-Disallow: /account
-Disallow: /test
-Disallow: /summary
-Disallow: /summary/
-
-# Authenticated veya ID'li sayfaları engelle
-Disallow: /dashboard/
-Allow: /dashboard$
-Disallow: /ready-documents/
-Allow: /ready-documents$
-Disallow: /withus-documents/
-Allow: /withus-documents$
-Disallow: /planned-documents/
-Allow: /planned-documents$
-
-# Tüm diğer public sayfalar serbest
 Allow: /
 
+# Block crawling of private user areas only
+Disallow: /account
+Disallow: /reset-password
+
+# Allow dashboard crawling (shows ads to all user types)
+Allow: /dashboard
+Allow: /dashboard/
+
+# Allow document pages (designed for ad visibility)
+Allow: /ready-documents
+Allow: /planned-documents
+Allow: /withus-documents
+Allow: /documents/
+
+# Block API endpoints and internal files
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /*.json$
+
+# Allow all public content and tools
+Allow: /login
+Allow: /sign-up
+Allow: /blog/
+Allow: /hakkimizda
+Allow: /iletisim
+Allow: /gizlilik-politikasi
+Allow: /kisisel-verilerin-korunmasi
+Allow: /kullanim-sartlari
+Allow: /yasal-uyari
+Allow: /cerez-politikasi
+Allow: /davetiye-olustur
+Allow: /site-haritasi
+
+# Sitemap location
 Sitemap: https://www.vizepedia.com/api/generate-sitemap
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1

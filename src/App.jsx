@@ -14,32 +14,22 @@ import AppLayout from "./ui/AppLayout";
 import BlogLayout from "./ui/BlogLayout";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import { DarkModeProvider } from "./context/DarkModeContext";
-import Wellcome from "./pages/Wellcome";
 import Documents from "./pages/Documents";
 import ReadyDocumentDetail from "./pages/ReadyDocumentDetail";
 import PlannedDocumentDetail from "./pages/PlannedDocumentDetail";
 import WithUsDocumentDetail from "./pages/WithUsDocumentDetail";
 import MainPage from "./pages/MainPage";
-import WellcomeA from "./features/wellcomes/WellcomeA";
-import WellcomeD from "./features/wellcomes/WellcomeD";
-import WellcomeC from "./features/wellcomes/WellcomeC";
-import WellcomeB from "./features/wellcomes/WellcomeB";
-import WellcomeE from "./features/wellcomes/WellcomeE";
 import { UserSelectionsProvider } from "./context/UserSelectionsContext";
-import ControlScreen from "./features/wellcomes/ControlScreen";
 import DocumentLayout from "./ui/DocumentLayout";
 import { SelectedDocumentProvider } from "./context/SelectedDocumentContext";
 import { DocumentsProvider } from "./context/DocumentsContext";
-import DocumentSummary from "./pages/DocumentSummary";
 import { VisaApplicationProvider } from "./context/VisaApplicationContext";
-import QuestionsLayout from "./ui/QuesitonsLayout";
 import MainPageLayout from "./ui/MainPageLayout";
 import BlogHome from "./pages/BlogHome";
 import BlogDetail from "./pages/BlogDetail";
 import Kvkk from "./pages/Kvkk";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
-import WellcomeDa from "./features/wellcomes/WellcomeDa";
 import ResetPassword from "./features/authentication/ResetPassword";
 import CerezPolitikasi from "./pages/CerezPolitikasi";
 import Davetiye from "./pages/Davetiye";
@@ -55,6 +45,11 @@ import AboutPage from "./pages/AboutPage.jsx";
 
 // UPDATED: Import AnonymousDataService for migration
 import { AnonymousDataService } from "./utils/anonymousDataService";
+import Disclaimer from "./pages/Disclaimer";
+import TermsOfService from "./pages/TermsOfService";
+import GizlilikPolitikasi from "./pages/GizlilikPolitikasi";
+import Iletisim from "./pages/Iletisim";
+import SiteHaritasi from "./pages/SiteHaritasi";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -74,7 +69,6 @@ function AppWithGA() {
       <Route element={<MainPageLayout />}>
         <Route index element={<MainPage />} />
         <Route path="mainpage" element={<MainPage />} />
-        <Route path="hakkimizda" element={<AboutPage />} />
       </Route>
 
       {/* Dashboard Routes - Public for bot/new visitor access */}
@@ -86,31 +80,20 @@ function AppWithGA() {
       {/* PUBLIC Document Routes - Accessible by bots/new visitors */}
       <Route element={<DocumentLayout />}>
         <Route path="documents/:id" element={<Documents />} />
-        
+
         {/* Bot/New Visitor Routes (without ID) */}
         <Route path="ready-documents" element={<ReadyDocumentDetail />} />
         <Route path="planned-documents" element={<PlannedDocumentDetail />} />
         <Route path="withus-documents" element={<WithUsDocumentDetail />} />
-        
+
         {/* Regular Routes (with ID) for authenticated/anonymous users */}
         <Route path="ready-documents/:id" element={<ReadyDocumentDetail />} />
-        <Route path="planned-documents/:id" element={<PlannedDocumentDetail />} />
+        <Route
+          path="planned-documents/:id"
+          element={<PlannedDocumentDetail />}
+        />
         <Route path="withus-documents/:id" element={<WithUsDocumentDetail />} />
-        
-        <Route path="summary" element={<DocumentSummary />} />
-        <Route path="summary/:id" element={<DocumentSummary />} />
-      </Route>
 
-      {/* PUBLIC Onboarding Routes - No ProtectedRoute wrapper */}
-      <Route element={<QuestionsLayout />}>
-        <Route path="wellcome" element={<Wellcome />} />
-        <Route path="wellcome-1" element={<WellcomeA />} />
-        <Route path="wellcome-2" element={<WellcomeB />} />
-        <Route path="wellcome-3" element={<WellcomeC />} />
-        <Route path="wellcome-4" element={<WellcomeD />} />
-        <Route path="wellcome-4a" element={<WellcomeDa />} />
-        <Route path="wellcome-5" element={<WellcomeE />} />
-        <Route path="test" element={<ControlScreen />} />
       </Route>
 
       {/* Protected Routes for authenticated users only */}
@@ -149,9 +132,16 @@ function AppWithGA() {
       />
       <Route path="reset-password" element={<ResetPassword />} />
 
+      <Route path="gizlilik-politikasi" element={<GizlilikPolitikasi />} />
       <Route path="kisisel-verilerin-korunmasi" element={<Kvkk />} />
+      <Route path="yasal-uyari" element={<Disclaimer />} />
+      <Route path="kullanim-sartlari" element={<TermsOfService />} />
       <Route path="cerez-politikasi" element={<CerezPolitikasi />} />
+      <Route path="hakkimizda" element={<AboutPage />} />
       <Route path="davetiye-olustur" element={<Davetiye />} />
+      <Route path="iletisim" element={<Iletisim />} />
+      <Route path="site-haritasi" element={<SiteHaritasi />} />
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
@@ -174,20 +164,27 @@ function RedirectIfLoggedIn({ children }) {
           const storedAppId = sessionStorage.getItem("latestApplicationId");
 
           if (migrationComplete === "true" && storedAppId) {
-            console.log("🔄 Migration detected, using stored application ID:", storedAppId);
+            console.log(
+              "🔄 Migration detected, using stored application ID:",
+              storedAppId
+            );
             sessionStorage.removeItem("migrationComplete"); // Clean up
             navigate(`/dashboard/${storedAppId}`);
             return;
           }
 
           // Otherwise, fetch latest application
-          const latestApplication = await fetchLatestApplication(currentUser.id);
+          const latestApplication = await fetchLatestApplication(
+            currentUser.id
+          );
           if (latestApplication) {
             console.log("📋 Latest application found:", latestApplication.id);
             sessionStorage.setItem("latestApplicationId", latestApplication.id);
             navigate(`/dashboard/${latestApplication.id}`);
           } else {
-            console.log("⚠️ No applications found, staying on login/signup page");
+            console.log(
+              "⚠️ No applications found, staying on login/signup page"
+            );
             // Don't redirect if no applications - let user complete onboarding
           }
         }

@@ -17,33 +17,62 @@ export default async function handler(req, res) {
   }
 
   const baseUrl = 'https://www.vizepedia.com';
+  
+  // Updated static routes with priorities and proper organization
   const staticRoutes = [
-    '',
-    '/blog',
-    '/hakkimizda',
-    '/dashboard',
-    '/ready-documents',
-    '/planned-documents',
-    '/withus-documents',
-    '/cerez-politikasi',
-    '/kisisel-verilerin-korunmasi',
-    '/davetiye-olustur',
+    // Main pages (highest priority)
+    { path: '', priority: '1.0', changefreq: 'weekly' },
+    { path: '/mainpage', priority: '0.9', changefreq: 'weekly' },
+    { path: '/dashboard', priority: '0.8', changefreq: 'daily' },
+    
+    // Document management pages
+    { path: '/ready-documents', priority: '0.8', changefreq: 'weekly' },
+    { path: '/planned-documents', priority: '0.8', changefreq: 'weekly' },
+    { path: '/withus-documents', priority: '0.8', changefreq: 'weekly' },
+    
+    // Blog section
+    { path: '/blog', priority: '0.8', changefreq: 'daily' },
+    
+    // Tools and utilities
+    { path: '/davetiye-olustur', priority: '0.7', changefreq: 'monthly' },
+    { path: '/site-haritasi', priority: '0.5', changefreq: 'monthly' },
+    
+    // User authentication pages
+    { path: '/login', priority: '0.5', changefreq: 'yearly' },
+    { path: '/sign-up', priority: '0.5', changefreq: 'yearly' },
+    { path: '/reset-password', priority: '0.3', changefreq: 'yearly' },
+    
+    // Corporate and informational pages
+    { path: '/hakkimizda', priority: '0.6', changefreq: 'monthly' },
+    { path: '/iletisim', priority: '0.7', changefreq: 'monthly' },
+    
+    // Legal pages (required for AdSense)
+    { path: '/gizlilik-politikasi', priority: '0.4', changefreq: 'quarterly' },
+    { path: '/kisisel-verilerin-korunmasi', priority: '0.4', changefreq: 'quarterly' },
+    { path: '/kullanim-sartlari', priority: '0.4', changefreq: 'quarterly' },
+    { path: '/yasal-uyari', priority: '0.4', changefreq: 'quarterly' },
+    { path: '/cerez-politikasi', priority: '0.4', changefreq: 'quarterly' }
   ];
 
   let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n`;
   sitemap += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-  for (const pathItem of staticRoutes) {
+  // Add static routes with enhanced metadata
+  for (const route of staticRoutes) {
     sitemap += `  <url>\n`;
-    sitemap += `    <loc>${baseUrl}${pathItem}</loc>\n`;
-    sitemap += `    <priority>0.6</priority>\n`;
+    sitemap += `    <loc>${baseUrl}${route.path}</loc>\n`;
+    sitemap += `    <lastmod>${dayjs().format('YYYY-MM-DD')}</lastmod>\n`;
+    sitemap += `    <changefreq>${route.changefreq}</changefreq>\n`;
+    sitemap += `    <priority>${route.priority}</priority>\n`;
     sitemap += `  </url>\n`;
   }
 
+  // Add blog posts
   for (const post of posts) {
     sitemap += `  <url>\n`;
     sitemap += `    <loc>${baseUrl}/blog/${post.slug}</loc>\n`;
     sitemap += `    <lastmod>${dayjs(post.updated_at).format('YYYY-MM-DD')}</lastmod>\n`;
+    sitemap += `    <changefreq>monthly</changefreq>\n`;
     sitemap += `    <priority>0.7</priority>\n`;
     sitemap += `  </url>\n`;
   }
@@ -51,5 +80,6 @@ export default async function handler(req, res) {
   sitemap += `</urlset>\n`;
 
   res.setHeader('Content-Type', 'application/xml');
+  res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=86400'); // Cache for 24 hours
   res.status(200).send(sitemap);
 }

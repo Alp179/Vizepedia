@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Footer from "../ui/Footer";
-
+import MainPageHeader from "../ui/MainPageHeader";
 // Reuse existing styled components from kvkk.jsx
 import {
   FullPage,
@@ -315,7 +315,7 @@ export default function AboutPage() {
   return (
     <FullPage>
       <ScrollIndicator ref={scrollIndicatorRef} />
-     
+      <MainPageHeader />
       <Main>
         <Heading>Vizepedia – Hakkımızda</Heading>
         <LastUpdate>Son Güncelleme: 10.06.2025</LastUpdate>
