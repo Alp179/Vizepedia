@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -120,18 +120,35 @@ const FlagContainer = styled.div`
   background-color: #f5f5f5;
 `;
 
-const FlagImage = styled.div`
+// OPTIMIZED: Changed to img for better performance
+const FlagImage = styled.img`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  inset: 0;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+`;
 
-  svg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+// OPTIMIZED: Added skeleton loader
+const FlagSkeleton = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
 `;
 
@@ -236,7 +253,7 @@ const LoadingIndicator = styled.div`
   gap: 8px;
 `;
 
-// FIXED Header component - Now directs to /dashboard instead of wellcome pages
+// OPTIMIZED Header component - Memoized for better performance
 export const Header = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -260,29 +277,15 @@ export const Header = () => {
       navigate("/dashboard");
       return;
     }
-
-    // For anonymous users, redirect to dashboard immediately
     await handleAnonymousSignIn();
   };
 
-  // FIXED: Direct to dashboard approach
   const handleAnonymousSignIn = async () => {
     try {
       setIsLoading(true);
-
-      
-      // Initialize empty user data for anonymous user
       AnonymousDataService.saveUserSelections({});
-      
       console.log("Anonymous mode activated (localStorage only)");
-
-      // Always redirect to dashboard
-      // Dashboard will handle the three scenarios:
-      // 1. Static Dashboard (no onboarding completed)
-      // 2. Anonymous Dashboard (onboarding completed, anonymous)
-      // 3. Authenticated Dashboard (onboarding completed, authenticated)
       navigate("/dashboard");
-
       setIsLoading(false);
     } catch (error) {
       console.error("Anonymous mode activation error:", error);
@@ -290,8 +293,8 @@ export const Header = () => {
     }
   };
 
-  // Icon components remain the same...
-  const IconRocket = () => (
+  // Memoized icons to prevent re-renders
+  const IconRocket = useMemo(() => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
@@ -306,9 +309,9 @@ export const Header = () => {
       <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
       <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
     </svg>
-  );
+  ), []);
 
-  const IconContinue = () => (
+  const IconContinue = useMemo(() => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
@@ -320,7 +323,7 @@ export const Header = () => {
     >
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
-  );
+  ), []);
 
   return (
     <HeaderContainer>
@@ -363,7 +366,7 @@ export const Header = () => {
               </LoadingIndicator>
             ) : (
               <>
-                {isLoggedIn ? <IconContinue /> : <IconRocket />}
+                {isLoggedIn ? IconContinue : IconRocket}
                 {isLoggedIn ? "Devam et" : "Hemen başlayın"}
               </>
             )}
@@ -374,49 +377,72 @@ export const Header = () => {
   );
 };
 
-// CountryCard and HeroParallax components remain exactly the same...
+// OPTIMIZED CountryCard - Progressive enhancement approach
 export const CountryCard = ({ country, translate }) => {
-  const flagRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [svgLoaded, setSvgLoaded] = useState(false);
+  const flagRef = useRef(null);
 
-  const flagUrl = country.code
-    ? `https://purecatamphetamine.github.io/country-flag-icons/3x2/${country.code.toUpperCase()}.svg`
-    : null;
-
-  useEffect(() => {
-    if (!flagUrl) return;
-
-    const fetchAndStretchSVG = async () => {
-      try {
-        const response = await fetch(flagUrl);
-        const svgText = await response.text();
-        const modifiedSvg = svgText.replace(
-          "<svg",
-          '<svg preserveAspectRatio="none"'
-        );
-
-        if (flagRef.current) {
-          flagRef.current.innerHTML = modifiedSvg;
-          const svgEl = flagRef.current.querySelector("svg");
-          if (svgEl) {
-            svgEl.style.width = "100%";
-            svgEl.style.height = "100%";
-          }
-          setLoaded(true);
-        }
-      } catch (error) {
-        console.error("Bayrak yüklenirken hata oluştu:", error);
-      }
+  // Try multiple flag sources for reliability
+  const flagSources = useMemo(() => {
+    if (!country.code) return null;
+    const code = country.code.toUpperCase();
+    return {
+      // High-quality raster option
+      png: `https://flagcdn.com/w320/${code.toLowerCase()}.png`,
+      // Fallback to your original SVG source
+      svg: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${code}.svg`,
+      // Alternative SVG source
+      svgAlt: `https://flagcdn.com/${code.toLowerCase()}.svg`
     };
+  }, [country.code]);
 
-    fetchAndStretchSVG();
-  }, [flagUrl]);
+  // Try to load PNG first (fastest)
+  const handleImageLoad = () => {
+    setLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    // Fallback to SVG if PNG fails
+    loadSVGFallback();
+  };
+
+  // Fallback SVG loading (your original method but optimized)
+  const loadSVGFallback = async () => {
+    if (!flagSources?.svg || !flagRef.current) return;
+
+    try {
+      const response = await fetch(flagSources.svg);
+      if (!response.ok) throw new Error('SVG fetch failed');
+      
+      const svgText = await response.text();
+      const modifiedSvg = svgText.replace(
+        "<svg",
+        '<svg preserveAspectRatio="none"'
+      );
+
+      if (flagRef.current) {
+        flagRef.current.innerHTML = modifiedSvg;
+        const svgEl = flagRef.current.querySelector("svg");
+        if (svgEl) {
+          svgEl.style.width = "100%";
+          svgEl.style.height = "100%";
+        }
+        setSvgLoaded(true);
+      }
+    } catch (error) {
+      console.error("SVG fallback failed:", error);
+    }
+  };
 
   return (
     <CountryCardContainer
       style={{
         x: translate,
-        opacity: loaded ? 1 : 0.3,
+        opacity: 1, // Always show container
       }}
       whileHover={{
         y: -20,
@@ -425,7 +451,60 @@ export const CountryCard = ({ country, translate }) => {
       key={country.name}
     >
       <FlagContainer>
-        <FlagImage ref={flagRef} />
+        {/* Show skeleton while loading */}
+        {!loaded && !svgLoaded && <FlagSkeleton />}
+        
+        {/* Try PNG first */}
+        {flagSources && !imageError && (
+          <FlagImage
+            src={flagSources.png}
+            alt={`${country.name} flag`}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            style={{
+              opacity: loaded ? 1 : 0,
+            }}
+            loading="lazy"
+            decoding="async"
+          />
+        )}
+        
+        {/* SVG fallback container */}
+        <div 
+          ref={flagRef}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            opacity: svgLoaded ? 1 : 0,
+            transition: 'opacity 0.3s ease'
+          }}
+        />
+        
+        {/* Final fallback */}
+        {imageError && !svgLoaded && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: `linear-gradient(135deg, 
+              ${country.name.length % 2 === 0 ? '#4A90E2, #7B68EE' : '#50C878, #32CD32'})`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '1.2rem',
+            fontWeight: '600',
+            textAlign: 'center',
+            padding: '1rem'
+          }}>
+            {country.name}
+          </div>
+        )}
       </FlagContainer>
       <CountryOverlay>
         <CountryName>{country.name}</CountryName>
@@ -434,42 +513,47 @@ export const CountryCard = ({ country, translate }) => {
   );
 };
 
-export const HeroParallax = ({ countries = [] }) => {
-  const defaultCountries = [
-    { name: "Amerika Birleşik Devletleri", code: "US" },
-    { name: "Birleşik Krallık", code: "GB" },
-    { name: "Almanya", code: "DE" },
-    { name: "Fransa", code: "FR" },
-    { name: "İtalya", code: "IT" },
-    { name: "İspanya", code: "ES" },
-    { name: "Hollanda", code: "NL" },
-    { name: "Belçika", code: "BE" },
-    { name: "Lüksemburg", code: "LU" },
-    { name: "İsveç", code: "SE" },
-    { name: "Finlandiya", code: "FI" },
-    { name: "Danimarka", code: "DK" },
-    { name: "Avusturya", code: "AT" },
-    { name: "Çek Cumhuriyeti", code: "CZ" },
-    { name: "Estonya", code: "EE" },
-    { name: "Macaristan", code: "HU" },
-    { name: "Letonya", code: "LV" },
-    { name: "Litvanya", code: "LT" },
-    { name: "Malta", code: "MT" },
-    { name: "Polonya", code: "PL" },
-    { name: "Portekiz", code: "PT" },
-    { name: "Slovakya", code: "SK" },
-    { name: "Slovenya", code: "SI" },
-    { name: "Yunanistan", code: "GR" },
-    { name: "İsviçre", code: "CH" },
-    { name: "Norveç", code: "NO" },
-    { name: "İzlanda", code: "IS" },
-    { name: "Lihtenştayn", code: "LI" },
-  ];
+// OPTIMIZED: Memoized country data to prevent re-computations
+const DEFAULT_COUNTRIES = [
+  { name: "Amerika Birleşik Devletleri", code: "US" },
+  { name: "Birleşik Krallık", code: "GB" },
+  { name: "Almanya", code: "DE" },
+  { name: "Fransa", code: "FR" },
+  { name: "İtalya", code: "IT" },
+  { name: "İspanya", code: "ES" },
+  { name: "Hollanda", code: "NL" },
+  { name: "Belçika", code: "BE" },
+  { name: "Lüksemburg", code: "LU" },
+  { name: "İsveç", code: "SE" },
+  { name: "Finlandiya", code: "FI" },
+  { name: "Danimarka", code: "DK" },
+  { name: "Avusturya", code: "AT" },
+  { name: "Çek Cumhuriyeti", code: "CZ" },
+  { name: "Estonya", code: "EE" },
+  { name: "Macaristan", code: "HU" },
+  { name: "Letonya", code: "LV" },
+  { name: "Litvanya", code: "LT" },
+  { name: "Malta", code: "MT" },
+  { name: "Polonya", code: "PL" },
+  { name: "Portekiz", code: "PT" },
+  { name: "Slovakya", code: "SK" },
+  { name: "Slovenya", code: "SI" },
+  { name: "Yunanistan", code: "GR" },
+  { name: "İsviçre", code: "CH" },
+  { name: "Norveç", code: "NO" },
+  { name: "İzlanda", code: "IS" },
+  { name: "Lihtenştayn", code: "LI" },
+];
 
-  const usedCountries = countries.length > 0 ? countries : defaultCountries;
-  const firstRow = usedCountries.length ? usedCountries.slice(0, 8) : [];
-  const secondRow = usedCountries.length >= 9 ? usedCountries.slice(8, 16) : [];
-  const thirdRow = usedCountries.length >= 17 ? usedCountries.slice(16, 28) : [];
+export const HeroParallax = ({ countries = [] }) => {
+  const usedCountries = countries.length > 0 ? countries : DEFAULT_COUNTRIES;
+  
+  // OPTIMIZED: Memoize country rows to prevent re-computation on scroll
+  const [firstRow, secondRow, thirdRow] = useMemo(() => [
+    usedCountries.slice(0, 8),
+    usedCountries.slice(8, 16),
+    usedCountries.slice(16, 28),
+  ], [usedCountries]);
 
   const ref = useRef(null);
 
@@ -478,7 +562,12 @@ export const HeroParallax = ({ countries = [] }) => {
     offset: ["start start", "end start"],
   });
 
-  const springConfig = { stiffness: 300, damping: 30, bounce: 100 };
+  // OPTIMIZED: Slightly less aggressive spring config for better performance
+  const springConfig = useMemo(() => ({
+    stiffness: 200, // Reduced from 300
+    damping: 25,    // Reduced from 30
+    bounce: 0       // Removed bounce for smoother performance
+  }), []);
 
   const translateX = useSpring(
     useTransform(scrollYProgress, [0, 1], [0, 1000]),
