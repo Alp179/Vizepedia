@@ -15,6 +15,7 @@ import {
 import { useSignup } from "./useSignup";
 import { useUser } from "./useUser";
 import { AnonymousDataService } from "../../utils/anonymousDataService";
+import SEO from "../../components/SEO";
 
 const BracketContainer = styled.div`
   display: flex;
@@ -60,7 +61,7 @@ function SignupForm({ onCloseModal, onAuthComplete, isInModal = false }) {
     try {
       // Instead of Supabase, use our AnonymousDataService
       AnonymousDataService.saveUserSelections({});
-      
+
       console.log("Anonymous mode activated (localStorage only)");
 
       if (isInModal) {
@@ -162,13 +163,13 @@ function SignupForm({ onCloseModal, onAuthComplete, isInModal = false }) {
     if (!error && data) {
       // Clear anonymous data when signing in with Google
       AnonymousDataService.clearData();
-      
+
       if (onCloseModal) {
         onCloseModal();
       }
-      
+
       refetchUser();
-      
+
       if (isInModal) {
         // In modal flow - proceed to next step
         if (onAuthComplete) {
@@ -187,125 +188,141 @@ function SignupForm({ onCloseModal, onAuthComplete, isInModal = false }) {
     if (isInModal) {
       // In modal, we might want to show login form instead
       // For now, just show a message or handle differently
-      setErrorMessage("Giriş yapmak için modal'ı kapatın ve 'Giriş Yap' butonunu kullanın.");
+      setErrorMessage(
+        "Giriş yapmak için modal'ı kapatın ve 'Giriş Yap' butonunu kullanın."
+      );
     } else {
       navigate("/login");
     }
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        <p className="hosgeldiniz">Vizepedia&apos;ya Hoş geldiniz</p>
-        <p className="subtext">
-          Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
-        </p>
-      </div>
-      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-      <FormRow orientation="vertical" label="E-posta Adresi">
-        <Input
-          type="email"
-          id="email"
-          autoComplete="username"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={isLoading}
+    <>
+      {!isInModal && (
+        <SEO
+          title="Kayıt Ol – Vizepedia"
+          description="Vizepedia hesabı oluşturun ve vize başvurularınızı yönetin."
+          url="https://www.vizepedia.com/sign-up"
+          noindex
         />
-      </FormRow>
-      <FormRow orientation="vertical" label="Şifre">
-        <Input
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={isLoading}
-        />
-      </FormRow>
-      <FormRow orientation="vertical">
-        <label
-          style={{
-            display: "flex",
-            gap: "8px",
-            fontSize: "0.85rem",
-            color: "var(--color-grey-600)",
-            alignItems: "center",
-          }}
-        >
-          <input
-            type="checkbox"
-            required
-            style={{ width: "16px", height: "16px" }}
+      )}
+
+      <Form onSubmit={handleSubmit}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          <p className="hosgeldiniz">Vizepedia&apos;ya Hoş geldiniz</p>
+          <p className="subtext">
+            Akıcı ve kolay bir vize başvuru deneyimi için hazır olun.
+          </p>
+        </div>
+        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+        <FormRow orientation="vertical" label="E-posta Adresi">
+          <Input
+            type="email"
+            id="email"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
           />
-          <span style={{fontSize: "12px"}}>
-            <a
-              href="/kisisel-verilerin-korunmasi"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "var(--color-grey-600)", textDecoration: "underline" }}
-            >
-              KVKK Aydınlatma Metni
-            </a>
-            &apos;ni okudum ve kabul ediyorum.
-          </span>
-        </label>
-      </FormRow>
-      <FormRow orientation="vertical">
-        <Button size="login" variation="login" disabled={isLoading}>
-          {!isLoading ? "Hesap oluştur" : <SpinnerMini />}
-        </Button>
-      </FormRow>
-      <BracketContainer>
-        <Bracket />
-        <p style={{ color: "var(--color-grey-700)" }}>ya da</p>
-        <Bracket />
-      </BracketContainer>
-      <FormRow orientation="vertical">
-        <Button
-          size="login"
-          variation="googleauth"
-          type="button"
-          onClick={handleGoogleSignIn}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="bi bi-google"
-            viewBox="0 0 16 16"
-          >
-            <path d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z" />
-          </svg>
-          Google ile Giriş Yap
-        </Button>
-      </FormRow>
-      <FormRow orientation="vertical">
-        <Button
-          size="login"
-          variation="guest"
-          type="button"
-          onClick={handleGuestSignIn}
-        >
-          Anonim Giriş
-        </Button>
-        <FormRow orientation="vertical">
-          <Girisyap>
-            Zaten bir hesabın var mı?{" "}
-            <a
-              onClick={handleLoginClick}
-              style={{
-                cursor: "pointer",
-                color: "#00ffa2",
-                textDecoration: "underline",
-              }}
-            >
-              Giriş yap
-            </a>
-          </Girisyap>
         </FormRow>
-      </FormRow>
-    </Form>
+        <FormRow orientation="vertical" label="Şifre">
+          <Input
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
+          />
+        </FormRow>
+        <FormRow orientation="vertical">
+          <label
+            style={{
+              display: "flex",
+              gap: "8px",
+              fontSize: "0.85rem",
+              color: "var(--color-grey-600)",
+              alignItems: "center",
+            }}
+          >
+            <input
+              type="checkbox"
+              required
+              style={{ width: "16px", height: "16px" }}
+            />
+            <span style={{ fontSize: "12px" }}>
+              <a
+                href="/kisisel-verilerin-korunmasi"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: "var(--color-grey-600)",
+                  textDecoration: "underline",
+                }}
+              >
+                KVKK Aydınlatma Metni
+              </a>
+              &apos;ni okudum ve kabul ediyorum.
+            </span>
+          </label>
+        </FormRow>
+        <FormRow orientation="vertical">
+          <Button size="login" variation="login" disabled={isLoading}>
+            {!isLoading ? "Hesap oluştur" : <SpinnerMini />}
+          </Button>
+        </FormRow>
+        <BracketContainer>
+          <Bracket />
+          <p style={{ color: "var(--color-grey-700)" }}>ya da</p>
+          <Bracket />
+        </BracketContainer>
+        <FormRow orientation="vertical">
+          <Button
+            size="login"
+            variation="googleauth"
+            type="button"
+            onClick={handleGoogleSignIn}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-google"
+              viewBox="0 0 16 16"
+            >
+              <path d="M15.545 6.558a9.4 9.4 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.7 7.7 0 0 1 5.352 2.082l-2.284 2.284A4.35 4.35 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.8 4.8 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.7 3.7 0 0 0 1.599-2.431H8v-3.08z" />
+            </svg>
+            Google ile Giriş Yap
+          </Button>
+        </FormRow>
+        <FormRow orientation="vertical">
+          <Button
+            size="login"
+            variation="guest"
+            type="button"
+            onClick={handleGuestSignIn}
+          >
+            Anonim Giriş
+          </Button>
+          <FormRow orientation="vertical">
+            <Girisyap>
+              Zaten bir hesabın var mı?{" "}
+              <a
+                onClick={handleLoginClick}
+                style={{
+                  cursor: "pointer",
+                  color: "#00ffa2",
+                  textDecoration: "underline",
+                }}
+              >
+                Giriş yap
+              </a>
+            </Girisyap>
+          </FormRow>
+        </FormRow>
+      </Form>
+    </>
   );
 }
 

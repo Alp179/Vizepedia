@@ -10,6 +10,7 @@ import SpinnerMini from "../../ui/SpinnerMini";
 import { toast } from "react-hot-toast"; // toast import edildi
 import { resetPassword, signInWithGoogle } from "../../services/apiAuth";
 import { AnonymousDataService } from "../../utils/anonymousDataService";
+import SEO from "../../components/SEO";
 
 const BracketContainer = styled.div`
   display: flex;
@@ -112,7 +113,7 @@ function LoginForm() {
     try {
       // Initialize empty user data for anonymous user
       AnonymousDataService.saveUserSelections({});
-      
+
       console.log("Anonymous mode activated (localStorage only)");
 
       // Always redirect to dashboard
@@ -121,7 +122,6 @@ function LoginForm() {
       // 2. Anonymous Dashboard (onboarding completed, anonymous)
       // 3. Authenticated Dashboard (onboarding completed, authenticated)
       navigate("/dashboard");
-
     } catch (error) {
       console.error("Anonymous mode activation error:", error);
     }
@@ -141,6 +141,13 @@ function LoginForm() {
 
   return (
     <>
+      <SEO
+        title="Kayıt Ol – Vizepedia"
+        description="Vizepedia hesabı oluşturun ve vize başvurularınızı yönetin."
+        url="https://www.vizepedia.com/sign-up"
+        noindex
+      />
+
       <Form onSubmit={handleSubmit}>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <p className="hosgeldiniz">Vizepedia&apos;ya Hoş geldiniz</p>
