@@ -5,11 +5,12 @@ import Footer from "../ui/Footer";
 import SlideShow from "../ui/SlideShow";
 import VisaInvitationGenerator from "../ui/VisaInvitationGenerator";
 import AnimatedFlag from "../ui/AnimatedFlag";
+import SEO from "../components/SEO";
 
 const FlagContainer = styled.div`
-  position: absolute!important;
+  position: absolute !important;
   transform: translateX(0);
-  z-index:1;
+  z-index: 1;
   right: 0;
 `;
 
@@ -74,18 +75,26 @@ function Davetiye() {
   };
 
   return (
-    <Fullpage>
-      {/* AnimatedFlag'i en üstte yerleştir */}
-      <FlagContainer>
-        <AnimatedFlag countryCode={selectedCountryCode} />
-      </FlagContainer>
-      <MainPageHeader />
-      <DavetiyeContainer>
-        <VisaInvitationGenerator onCountryChange={handleCountryChange} />
-      </DavetiyeContainer>
-      <SlideShow />
-      <Footer />
-    </Fullpage>
+    <>
+      <SEO
+        title="Vize Davetiyesi Oluştur – Vizepedia"
+        description="Vize davetiyesi oluşturma aracımız ile davetiye metninizi adım adım hazırlayın. Seyahat planlarınıza uygun ve resmi formatta davetiye oluşturun."
+        keywords="vize davetiyesi, davetiye oluşturma, vize başvurusu, Vizepedia"
+        url="https://www.vizepedia.com/davetiye-olustur"
+      />
+      <Fullpage>
+        {/* AnimatedFlag'i en üstte yerleştir */}
+        <FlagContainer>
+          <AnimatedFlag countryCode={selectedCountryCode} />
+        </FlagContainer>
+        <MainPageHeader />
+        <DavetiyeContainer>
+          <VisaInvitationGenerator onCountryChange={handleCountryChange} />
+        </DavetiyeContainer>
+        <SlideShow />
+        <Footer />
+      </Fullpage>
+    </>
   );
 }
 

@@ -16,8 +16,9 @@ import {
   ForContactContainer,
   ForContact,
   ForContactInfo,
-  formatContent
+  formatContent,
 } from "./Kvkk"; // Import styled components from KVKK page
+import SEO from "../components/SEO";
 
 // Sections data for Disclaimer
 const sectionsData = [
@@ -28,7 +29,7 @@ const sectionsData = [
     Resmi bir devlet kurumu veya konsolosluk değildir
     Hiçbir ülkenin resmi vize başvuru merkezi değildir
     Vize onayı veya reddi konusunda karar verme yetkisine sahip değildir
-    Sadece bilgilendirme ve rehberlik amacıyla hizmet vermektedir`
+    Sadece bilgilendirme ve rehberlik amacıyla hizmet vermektedir`,
   },
   {
     id: 2,
@@ -43,7 +44,7 @@ const sectionsData = [
     Vize onayı garantisi vermez
     Resmi başvuru işlemlerini yerine getirmez
     Yasal danışmanlık hizmeti değildir
-    Konsolosluk kararlarını etkilemez`
+    Konsolosluk kararlarını etkilemez`,
   },
   {
     id: 3,
@@ -58,7 +59,7 @@ const sectionsData = [
     Tüm bilgileri resmi kaynaklardan doğrulamak
     Güncel gereksinimleri konsolosluklardan teyit etmek
     Başvuru öncesi resmi web sitelerini kontrol etmek
-    Uzman danışmanlık gerektiğinde profesyonel yardım almak`
+    Uzman danışmanlık gerektiğinde profesyonel yardım almak`,
   },
   {
     id: 4,
@@ -73,7 +74,7 @@ const sectionsData = [
     Özel durumlar:
     Hamilelik, sağlık durumu, geçmiş vize redleri gibi özel durumlar mutlaka resmi makamlara bildirilmelidir
     Bu durumlar için ek belgeler gerekebilir
-    Platformumuz bu özel durumlar için kesin çözüm sunamaz`
+    Platformumuz bu özel durumlar için kesin çözüm sunamaz`,
   },
   {
     id: 5,
@@ -87,7 +88,7 @@ const sectionsData = [
     Reklam içerikleri:
     Google AdSense ve diğer reklam ağları üzerinden gösterilen reklamlar
     Reklam verenlerin ürün/hizmetlerinden sorumlu değiliz
-    Reklam tıklamaları kendi sorumluluğunuzda gerçekleştirilir`
+    Reklam tıklamaları kendi sorumluluğunuzda gerçekleştirilir`,
   },
   {
     id: 6,
@@ -101,7 +102,7 @@ const sectionsData = [
     Kullanıcı tarafından paylaşılan içerikler:
     Kullanıcının sorumluluğundadır
     Üçüncü taraf haklarını ihlal etmemelidir
-    Platformumuz bu içerikleri moderasyon hakkını saklı tutar`
+    Platformumuz bu içerikleri moderasyon hakkını saklı tutar`,
   },
   {
     id: 7,
@@ -116,7 +117,7 @@ const sectionsData = [
     Önceden bildirim yapılmaya çalışılır
     Mümkün olan en kısa sürede hizmet restore edilir
     Ancak kesinti süresi garantisi verilmez
-    Oluşabilecek mağduriyetlerden sorumluluk kabul edilmez`
+    Oluşabilecek mağduriyetlerden sorumluluk kabul edilmez`,
   },
   {
     id: 8,
@@ -131,49 +132,50 @@ const sectionsData = [
     KVKK kapsamında veri işleme itirazı
     Hatalı bilgilerin düzeltilmesi talebi
     Kişisel verilerin silinmesi talebi
-    Şikayet ve önerilerin iletilmesi`
-  }
+    Şikayet ve önerilerin iletilmesi`,
+  },
 ];
 
 export default function Disclaimer() {
   const [visibleSections, setVisibleSections] = useState([]);
   const sectionRefs = useRef([]);
   const scrollIndicatorRef = useRef(null);
-  
+
   // Set up scroll progress indicator
   useEffect(() => {
     const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const totalHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
       const progress = window.scrollY / totalHeight;
-      
+
       if (scrollIndicatorRef.current) {
         scrollIndicatorRef.current.style.transform = `scaleX(${progress})`;
       }
     };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  
+
   // Set up intersection observer for fade-in sections
   useEffect(() => {
     const options = {
       root: null,
-      rootMargin: '0px',
-      threshold: 0.15
+      rootMargin: "0px",
+      threshold: 0.15,
     };
-    
+
     const observers = [];
-    
+
     sectionRefs.current.forEach((ref, index) => {
       if (!ref) return;
-      
+
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setVisibleSections(prev => {
+            setVisibleSections((prev) => {
               if (!prev.includes(index)) {
                 return [...prev, index];
               }
@@ -183,67 +185,86 @@ export default function Disclaimer() {
           }
         });
       }, options);
-      
+
       observer.observe(ref);
       observers.push(observer);
     });
-    
+
     return () => {
-      observers.forEach(observer => observer.disconnect());
+      observers.forEach((observer) => observer.disconnect());
     };
   }, []);
-  
+
   // Set section refs
   const setSectionRef = (index) => (el) => {
     sectionRefs.current[index] = el;
   };
 
   return (
-    <FullPage>
-      <ScrollIndicator ref={scrollIndicatorRef} />
-      <MainPageHeader />
-      <Main>
-        <Heading>Vizepedia – Sorumluluk Reddi Beyanı</Heading>
-        <LastUpdate>Son Güncelleme: 8 Eylül 2025</LastUpdate>
-        <SubText>
-          Bu sorumluluk reddi beyanı, Vizepedia platformunu kullanan tüm ziyaretçiler 
-          ve üyeler için geçerlidir. Platformumuzu kullanmadan önce bu metni dikkatlice 
-          okuyunuz. Platform kullanımı, bu şartları kabul ettiğiniz anlamına gelir.
-        </SubText>
-        
-        <ContentContainer>
-          {sectionsData.map((section, index) => (
-            <FadeInSection
-              key={section.id}
-              ref={setSectionRef(index)}
-              className={visibleSections.includes(index) ? 'visible' : ''}
-            >
-              <Section>
-                <SectionHeader>{section.title}</SectionHeader>
-                <SectionContent>
-                  {formatContent(section.content, section.id)}
-                </SectionContent>
-              </Section>
-            </FadeInSection>
-          ))}
-        </ContentContainer>
-        
-        <FadeInSection
-          ref={setSectionRef(sectionsData.length)}
-          className={visibleSections.includes(sectionsData.length) ? 'visible' : ''}
-        >
-          <ForContactContainer>
-            <ForContact>İletişim:</ForContact>
-            <ForContactInfo>
-              <a href="mailto:iletisim@vizepedia.com">iletisim@vizepedia.com</a>
-            </ForContactInfo>
-            <ForContactInfo>
-              <a href="https://www.vizepedia.com" target="_blank" rel="noopener noreferrer">www.vizepedia.com</a>
-            </ForContactInfo>
-          </ForContactContainer>
-        </FadeInSection>
-      </Main>
-      <Footer />
-    </FullPage>
+    <>
+      <SEO
+        title="Yasal Uyarı – Vizepedia"
+        description="Vizepedia platformunun kullanım şartları ve sorumluluk reddi beyanını okuyun. Hizmet kapsamı, bilgi doğruluğu ve kullanıcı yükümlülükleri hakkında detaylı bilgi edinin."
+        keywords="sorumluluk reddi, yasal uyarı, Vizepedia, hukuki sorumluluk"
+        url="https://www.vizepedia.com/yasal-uyari"
+      />
+      <FullPage>
+        <ScrollIndicator ref={scrollIndicatorRef} />
+        <MainPageHeader />
+        <Main>
+          <Heading>Vizepedia – Sorumluluk Reddi Beyanı</Heading>
+          <LastUpdate>Son Güncelleme: 8 Eylül 2025</LastUpdate>
+          <SubText>
+            Bu sorumluluk reddi beyanı, Vizepedia platformunu kullanan tüm
+            ziyaretçiler ve üyeler için geçerlidir. Platformumuzu kullanmadan
+            önce bu metni dikkatlice okuyunuz. Platform kullanımı, bu şartları
+            kabul ettiğiniz anlamına gelir.
+          </SubText>
+
+          <ContentContainer>
+            {sectionsData.map((section, index) => (
+              <FadeInSection
+                key={section.id}
+                ref={setSectionRef(index)}
+                className={visibleSections.includes(index) ? "visible" : ""}
+              >
+                <Section>
+                  <SectionHeader>{section.title}</SectionHeader>
+                  <SectionContent>
+                    {formatContent(section.content, section.id)}
+                  </SectionContent>
+                </Section>
+              </FadeInSection>
+            ))}
+          </ContentContainer>
+
+          <FadeInSection
+            ref={setSectionRef(sectionsData.length)}
+            className={
+              visibleSections.includes(sectionsData.length) ? "visible" : ""
+            }
+          >
+            <ForContactContainer>
+              <ForContact>İletişim:</ForContact>
+              <ForContactInfo>
+                <a href="mailto:iletisim@vizepedia.com">
+                  iletisim@vizepedia.com
+                </a>
+              </ForContactInfo>
+              <ForContactInfo>
+                <a
+                  href="https://www.vizepedia.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  www.vizepedia.com
+                </a>
+              </ForContactInfo>
+            </ForContactContainer>
+          </FadeInSection>
+        </Main>
+        <Footer />
+      </FullPage>
+    </>
   );
 }

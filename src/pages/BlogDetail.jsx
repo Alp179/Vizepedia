@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchBlogBySlug, fetchRelatedBlogsByCategory, fetchRecentBlogs } from "../services/apiBlogs"; // Yeni import
+import {
+  fetchBlogBySlug,
+  fetchRelatedBlogsByCategory,
+  fetchRecentBlogs,
+} from "../services/apiBlogs"; // Yeni import
 import Spinner from "../ui/Spinner";
 import Footer from "../ui/Footer";
 import styled, { keyframes } from "styled-components";
@@ -9,6 +13,7 @@ import SidebarBlogList from "../ui/SidebarBlogList";
 import BlogContentSection from "../ui/BlogContentSection";
 import BlogSources from "../ui/BlogSources";
 import RecentBlogs from "../ui/RecentBlogs"; // Yeni import
+import SEO from "../components/SEO";
 
 // Animasyonlar
 const fadeIn = keyframes`
@@ -281,7 +286,7 @@ const SidebarContainer = styled.div`
 // Mobile Sources Container - Blog içeriğinden hemen sonra
 const MobileSourcesContainer = styled.div`
   display: none;
-  
+
   @media (max-width: 768px) {
     display: block;
     margin-top: 2rem;
@@ -292,7 +297,7 @@ const MobileSourcesContainer = styled.div`
 // Desktop Sources Container - Sadece desktop'ta görünür
 const DesktopSourcesContainer = styled.div`
   display: block;
-  
+
   @media (max-width: 768px) {
     display: none;
   }
@@ -529,6 +534,28 @@ function BlogDetail() {
 
   return (
     <PageContainer>
+      {blog && (
+        // BlogDetail.jsx içinde SEO bileşeninin kullanıldığı kısım:
+
+        <SEO
+          title={`${blog.title} – Vizepedia`}
+          description={
+            blog.excerpt ??
+            (blog.section1_content
+              ? blog.section1_content.replace(/<[^>]*>/g, "").slice(0, 150)
+              : "Vize başvuruları ve seyahat ipuçları hakkında güncel blog yazıları.")
+          }
+          keywords={
+            Array.isArray(blog.tags)
+              ? blog.tags.join(", ")
+              : typeof blog.tags === "string"
+              ? blog.tags
+              : "vize rehberi, blog, Vizepedia"
+          }
+          image={blog.cover_image || "/vite.svg"}
+          url={`https://www.vizepedia.com/blog/${slug}`}
+        />
+      )}
       <ReadingProgress progress={readingProgress} />
 
       <HeroSection>
@@ -587,7 +614,7 @@ function BlogDetail() {
             setActiveHeading={setActiveHeading}
             hideTableOfContents={false}
           />
-          
+
           {/* Mobile'da Kaynaklar - Blog içeriğinden hemen sonra */}
           <MobileSourcesContainer>
             <BlogSources sourcesString={blog?.sources} />

@@ -16,8 +16,9 @@ import {
   ForContactContainer,
   ForContact,
   ForContactInfo,
-  formatContent
+  formatContent,
 } from "./Kvkk"; // Import styled components from KVKK page
+import SEO from "../components/SEO";
 
 // Sections data for Privacy Policy
 const sectionsData = [
@@ -30,7 +31,7 @@ const sectionsData = [
     Verilerinizi kimlerle paylaştığımızı belirtir
     Haklarınızı ve kontrol seçeneklerinizi açıklar
     
-    Bu politika hem Türkiye hem de uluslararası kullanıcılar için geçerlidir ve KVKK, GDPR gibi veri koruma düzenlemelerine uygun olarak hazırlanmıştır.`
+    Bu politika hem Türkiye hem de uluslararası kullanıcılar için geçerlidir ve KVKK, GDPR gibi veri koruma düzenlemelerine uygun olarak hazırlanmıştır.`,
   },
   {
     id: 2,
@@ -52,7 +53,7 @@ const sectionsData = [
     Oturum çerezleri (geçici)
     Kalıcı çerezler (tercihlerinizi hatırlamak için)
     Google Analytics çerezleri
-    Google AdSense reklam çerezleri`
+    Google AdSense reklam çerezleri`,
   },
   {
     id: 3,
@@ -77,7 +78,7 @@ const sectionsData = [
     Reklam ve pazarlama:
     Size uygun reklamları göstermek
     Reklam performansını ölçmek
-    Pazarlama kampanyalarının etkinliğini analiz etmek`
+    Pazarlama kampanyalarının etkinliğini analiz etmek`,
   },
   {
     id: 4,
@@ -101,7 +102,7 @@ const sectionsData = [
     Ulusal güvenlik gereklilikleri
     Kullanıcı güvenliğini korumak için
     
-    Hiçbir durumda ticari amaçlarla üçüncü taraflara kişisel bilgilerinizi satmayız veya kiralamayız.`
+    Hiçbir durumda ticari amaçlarla üçüncü taraflara kişisel bilgilerinizi satmayız veya kiralamayız.`,
   },
   {
     id: 5,
@@ -120,7 +121,7 @@ const sectionsData = [
     AB vatandaşları için özel korumalar:
     GDPR çerçevesinde işlenir
     Yeterlilik kararları olan ülkelere aktarılır
-    Standart sözleşme hükümleri uygulanır`
+    Standart sözleşme hükümleri uygulanır`,
   },
   {
     id: 6,
@@ -141,7 +142,7 @@ const sectionsData = [
     Güçlü şifre önerileri
     İki faktörlü kimlik doğrulama seçenekleri
     Şüpheli aktivite bildirimleri
-    Hesap güvenliği ipuçları`
+    Hesap güvenliği ipuçları`,
   },
   {
     id: 7,
@@ -163,7 +164,7 @@ const sectionsData = [
     Bu haklarınızı kullanmak için:
     E-posta: iletisim@vizepedia.com
     Yanıt süresi: En geç 30 gün
-    Kimlik doğrulama gerekebilir`
+    Kimlik doğrulama gerekebilir`,
   },
   {
     id: 8,
@@ -181,7 +182,7 @@ const sectionsData = [
     Reklam engelleme:
     Reklam engelleyici yazılımlar kullanabilirsiniz
     Bu durum site işlevselliğini etkileyebilir
-    Premium abonelik seçenekleri değerlendirilebilir`
+    Premium abonelik seçenekleri değerlendirilebilir`,
   },
   {
     id: 9,
@@ -199,7 +200,7 @@ const sectionsData = [
     Ebeveynler:
     Çocuğunuzun hesabını kontrol edebilirsiniz
     Veri silme talebinde bulunabilirsiniz
-    Hesap kapatma işlemi yapabilirsiniz`
+    Hesap kapatma işlemi yapabilirsiniz`,
   },
   {
     id: 10,
@@ -218,49 +219,50 @@ const sectionsData = [
     Şikayetler:
     Veri Koruma Kurulu'na başvurabilirsiniz
     AB vatandaşları için: yerel DPA'ya şikayet
-    Çözüm odaklı yaklaşım benimseriz`
-  }
+    Çözüm odaklı yaklaşım benimseriz`,
+  },
 ];
 
 export default function PrivacyPolicy() {
   const [visibleSections, setVisibleSections] = useState([]);
   const sectionRefs = useRef([]);
   const scrollIndicatorRef = useRef(null);
-  
+
   // Set up scroll progress indicator
   useEffect(() => {
     const handleScroll = () => {
-      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const totalHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
       const progress = window.scrollY / totalHeight;
-      
+
       if (scrollIndicatorRef.current) {
         scrollIndicatorRef.current.style.transform = `scaleX(${progress})`;
       }
     };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  
+
   // Set up intersection observer for fade-in sections
   useEffect(() => {
     const options = {
       root: null,
-      rootMargin: '0px',
-      threshold: 0.15
+      rootMargin: "0px",
+      threshold: 0.15,
     };
-    
+
     const observers = [];
-    
+
     sectionRefs.current.forEach((ref, index) => {
       if (!ref) return;
-      
+
       const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setVisibleSections(prev => {
+            setVisibleSections((prev) => {
               if (!prev.includes(index)) {
                 return [...prev, index];
               }
@@ -270,71 +272,89 @@ export default function PrivacyPolicy() {
           }
         });
       }, options);
-      
+
       observer.observe(ref);
       observers.push(observer);
     });
-    
+
     return () => {
-      observers.forEach(observer => observer.disconnect());
+      observers.forEach((observer) => observer.disconnect());
     };
   }, []);
-  
+
   // Set section refs
   const setSectionRef = (index) => (el) => {
     sectionRefs.current[index] = el;
   };
 
   return (
-    <FullPage>
-      <ScrollIndicator ref={scrollIndicatorRef} />
-      <MainPageHeader />
-      <Main>
-        <Heading>Vizepedia – Gizlilik Politikası</Heading>
-        <LastUpdate>Son Güncelleme: 8 Eylül 2025</LastUpdate>
-        <SubText>
-          Bu gizlilik politikası, Vizepedia platformunu kullanan tüm kullanıcıların 
-          kişisel verilerinin nasıl toplandığını, işlendiğini ve korunduğunu açıklar. 
-          Gizliliğiniz bizim için önemlidir ve bu politika şeffaflık prensibimizin 
-          bir yansımasıdır.
-        </SubText>
-        
-        <ContentContainer>
-          {sectionsData.map((section, index) => (
-            <FadeInSection
-              key={section.id}
-              ref={setSectionRef(index)}
-              className={visibleSections.includes(index) ? 'visible' : ''}
-            >
-              <Section>
-                <SectionHeader>{section.title}</SectionHeader>
-                <SectionContent>
-                  {formatContent(section.content, section.id)}
-                </SectionContent>
-              </Section>
-            </FadeInSection>
-          ))}
-        </ContentContainer>
-        
-        <FadeInSection
-          ref={setSectionRef(sectionsData.length)}
-          className={visibleSections.includes(sectionsData.length) ? 'visible' : ''}
-        >
-          <ForContactContainer>
-            <ForContact>Gizlilik ile İlgili İletişim:</ForContact>
-            <ForContactInfo>
-              <a href="mailto:iletisim@vizepedia.com?subject=Gizlilik%20Politikası">iletisim@vizepedia.com</a>
-            </ForContactInfo>
-            <ForContactInfo>
-              Veri Koruma Sorumlusu: Vizepedia Ekibi
-            </ForContactInfo>
-            <ForContactInfo>
-              <a href="https://www.vizepedia.com" target="_blank" rel="noopener noreferrer">www.vizepedia.com</a>
-            </ForContactInfo>
-          </ForContactContainer>
-        </FadeInSection>
-      </Main>
-      <Footer />
-    </FullPage>
+    <>
+      <SEO
+        title="Gizlilik Politikası – Vizepedia"
+        description="Vizepedia’nın gizlilik politikası; kişisel verilerin nasıl toplandığı, işlendiği ve korunduğu hakkında ayrıntılı bilgi edinmek için bu sayfayı okuyun."
+        keywords="gizlilik politikası, privacy policy, kişisel veriler, Vizepedia"
+        url="https://www.vizepedia.com/gizlilik-politikasi"
+      />
+      <FullPage>
+        <ScrollIndicator ref={scrollIndicatorRef} />
+        <MainPageHeader />
+        <Main>
+          <Heading>Vizepedia – Gizlilik Politikası</Heading>
+          <LastUpdate>Son Güncelleme: 8 Eylül 2025</LastUpdate>
+          <SubText>
+            Bu gizlilik politikası, Vizepedia platformunu kullanan tüm
+            kullanıcıların kişisel verilerinin nasıl toplandığını, işlendiğini
+            ve korunduğunu açıklar. Gizliliğiniz bizim için önemlidir ve bu
+            politika şeffaflık prensibimizin bir yansımasıdır.
+          </SubText>
+
+          <ContentContainer>
+            {sectionsData.map((section, index) => (
+              <FadeInSection
+                key={section.id}
+                ref={setSectionRef(index)}
+                className={visibleSections.includes(index) ? "visible" : ""}
+              >
+                <Section>
+                  <SectionHeader>{section.title}</SectionHeader>
+                  <SectionContent>
+                    {formatContent(section.content, section.id)}
+                  </SectionContent>
+                </Section>
+              </FadeInSection>
+            ))}
+          </ContentContainer>
+
+          <FadeInSection
+            ref={setSectionRef(sectionsData.length)}
+            className={
+              visibleSections.includes(sectionsData.length) ? "visible" : ""
+            }
+          >
+            <ForContactContainer>
+              <ForContact>Gizlilik ile İlgili İletişim:</ForContact>
+              <ForContactInfo>
+                <a href="mailto:iletisim@vizepedia.com?subject=Gizlilik%20Politikası">
+                  iletisim@vizepedia.com
+                </a>
+              </ForContactInfo>
+              <ForContactInfo>
+                Veri Koruma Sorumlusu: Vizepedia Ekibi
+              </ForContactInfo>
+              <ForContactInfo>
+                <a
+                  href="https://www.vizepedia.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  www.vizepedia.com
+                </a>
+              </ForContactInfo>
+            </ForContactContainer>
+          </FadeInSection>
+        </Main>
+        <Footer />
+      </FullPage>
+    </>
   );
 }

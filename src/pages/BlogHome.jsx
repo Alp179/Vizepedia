@@ -9,6 +9,7 @@ import SlideShow from "../ui/SlideShow";
 import VectorOk from "../ui/VectorOk";
 import BlogCardsMain from "../ui/BlogCardsMain";
 import SearchBar from "../ui/SearchBar"; // Yeni SearchBar komponentini import ediyoruz
+import SEO from "../components/SEO";
 
 // BlogContainer ve diğer stiller
 const BlogContainer = styled.div`
@@ -17,7 +18,7 @@ const BlogContainer = styled.div`
   margin: 60px auto;
   padding: 120px 50px 30px;
   position: relative;
-  
+
   @media (max-width: 1300px) {
     width: 95%;
     padding: 120px 30px 20px;
@@ -33,12 +34,17 @@ const Divider = styled.div`
   width: 95%;
   height: 1px;
   margin: 40px auto;
-  background: linear-gradient(90deg, transparent, var(--color-grey-904), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-grey-904),
+    transparent
+  );
 `;
 
 const BlogHeaders = styled.div`
   margin-bottom: -30px;
-  
+
   @media (max-width: 910px) {
     margin-bottom: -20px;
   }
@@ -53,7 +59,7 @@ const HeaderveOk = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  
+
   @media (max-width: 550px) {
     margin-bottom: 40px;
   }
@@ -64,8 +70,7 @@ const HeaderveOk = styled.div`
 
 const BlogHeader = styled.h1`
   /* Keep original text color but enhance with shadows */
-  text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5),
-               0px 0px 10px rgba(0, 0, 0, 0.3);
+  text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5), 0px 0px 10px rgba(0, 0, 0, 0.3);
   font-weight: 100;
   color: var(--color-grey-916); /* Restore original color */
   margin-left: auto;
@@ -76,10 +81,10 @@ const BlogHeader = styled.h1`
   line-height: 1.1;
   letter-spacing: -0.5px;
   position: relative;
-  
+
   /* Optional: add a very subtle outline to increase edge definition */
   -webkit-text-stroke: 0.2px rgba(0, 0, 0, 0.2);
-  
+
   @media (max-width: 1300px) {
     font-size: 60px;
   }
@@ -117,11 +122,10 @@ const BlogHeader = styled.h1`
 const StrongText = styled.strong`
   font-weight: 700;
   position: relative;
-  
+
   /* Add just enough shadow to make it stand out without changing its appearance */
-  text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5),
-               0px 0px 12px rgba(0, 0, 0, 0.3);
-  
+  text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5), 0px 0px 12px rgba(0, 0, 0, 0.3);
+
   /* Optional: add a semi-transparent background to increase contrast with gradient behind */
   &:after {
     content: "";
@@ -144,7 +148,7 @@ const LoadingSpinner = styled.div`
   justify-content: center;
   align-items: center;
   height: 300px;
-  
+
   &:after {
     content: "";
     width: 50px;
@@ -154,10 +158,14 @@ const LoadingSpinner = styled.div`
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
-  
+
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -168,12 +176,12 @@ const ErrorMessage = styled.div`
   background-color: rgba(255, 0, 0, 0.1);
   border-radius: 10px;
   margin: 30px 0;
-  
+
   h3 {
     color: #d32f2f;
     margin-bottom: 10px;
   }
-  
+
   p {
     color: var(--color-grey-600);
   }
@@ -199,13 +207,21 @@ function BlogHome() {
     return (
       <ErrorMessage>
         <h3>Üzgünüz!</h3>
-        <p>Bloglar yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.</p>
+        <p>
+          Bloglar yüklenirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.
+        </p>
       </ErrorMessage>
     );
   }
 
   return (
     <>
+      <SEO
+        title="Vizepedia Blog – Güncel Vize Rehberi Yazıları"
+        description="Vize başvurusu süreçleri, seyahat ipuçları ve güncel vize haberlerini bulabileceğiniz Vizepedia blog sayfası."
+        keywords="blog, vize blog, seyahat ipuçları, vize haberleri, Vizepedia"
+        url="https://www.vizepedia.com/blog"
+      />
       <BlogContainer>
         <HeaderveOk>
           <BlogHeaders>
@@ -214,12 +230,12 @@ function BlogHome() {
               <StrongText>Seyahat Edin</StrongText>
             </BlogHeader>
           </BlogHeaders>
-          <VectorOk variant="blogpage"/>
-          
+          <VectorOk variant="blogpage" />
+
           {/* SearchBar komponenti VectorOk'tan sonra, başlığın hemen altında yer alıyor */}
           <SearchBar />
         </HeaderveOk>
-        
+
         {/* BlogCardsMain komponenti blog verilerini props olarak alıyor */}
         <BlogCardsMain blogs={blogs} />
       </BlogContainer>
@@ -229,7 +245,7 @@ function BlogHome() {
       <SlideShow />
 
       <MailerLiteForm />
-      
+
       <Footer />
     </>
   );

@@ -24,8 +24,9 @@ import VisaStatusBanner from "../ui/VisaStatusBanner";
 import { useUser } from "../features/authentication/useUser";
 import StaticDashboardContent from "../ui/StaticDashboardContent";
 import { AnonymousDataService } from "../utils/anonymousDataService";
+import SEO from "../components/SEO";
 
-// Styled components remain the same...
+// Styled components (tümü aynı kalıyor)
 const CreatedAtContainer = styled.div`
   font-size: 1.5rem;
   color: var(--color-grey-700);
@@ -65,7 +66,6 @@ const CustomRow = styled(Row)`
     margin: 60px auto 10px auto;
     justify-content: center;
   }
- 
 `;
 
 const DashboardContainer = styled.div`
@@ -377,24 +377,26 @@ const Dashboard = () => {
 
   const handleUserConversion = async () => {
     console.log("🔄 User conversion started - forcing authenticated state");
-    
+
     setUserType("authenticated");
-  
+
     try {
       const currentUser = await getCurrentUser();
       if (currentUser && currentUser.id) {
         setUserId(currentUser.id);
         console.log("✅ User conversion complete:", currentUser.email);
-  
+
         // ENHANCED: Try multiple strategies to find the application
         let newApplicationId = null;
         let retryCount = 0;
         const maxRetries = 5;
-  
+
         while (!newApplicationId && retryCount < maxRetries) {
           try {
-            console.log(`🔍 Attempt ${retryCount + 1}: Fetching user applications...`);
-            
+            console.log(
+              `🔍 Attempt ${retryCount + 1}: Fetching user applications...`
+            );
+
             // Strategy 1: Check for very recent applications (last 10 seconds)
             const { data: recentApps, error: recentError } = await supabase
               .from("userAnswers")
@@ -403,13 +405,13 @@ const Dashboard = () => {
               .gte("created_at", new Date(Date.now() - 10000).toISOString())
               .order("created_at", { ascending: false })
               .limit(1);
-  
+
             if (!recentError && recentApps && recentApps.length > 0) {
               newApplicationId = recentApps[0].id;
               console.log("✅ Found recent application:", newApplicationId);
               break;
             }
-  
+
             // Strategy 2: Get latest application overall
             const { data: latestApps, error: latestError } = await supabase
               .from("userAnswers")
@@ -417,35 +419,43 @@ const Dashboard = () => {
               .eq("userId", currentUser.id)
               .order("created_at", { ascending: false })
               .limit(1);
-  
+
             if (!latestError && latestApps && latestApps.length > 0) {
               newApplicationId = latestApps[0].id;
               console.log("✅ Found latest application:", newApplicationId);
               break;
             }
-  
+
             // Wait before retry
             if (retryCount < maxRetries - 1) {
-              console.log(`⏳ No application found, waiting 1s before retry...`);
+              console.log(
+                `⏳ No application found, waiting 1s before retry...`
+              );
               await new Promise((resolve) => setTimeout(resolve, 1000));
             }
-  
+
             retryCount++;
           } catch (fetchError) {
-            console.error(`❌ Fetch attempt ${retryCount + 1} failed:`, fetchError);
+            console.error(
+              `❌ Fetch attempt ${retryCount + 1} failed:`,
+              fetchError
+            );
             retryCount++;
             if (retryCount < maxRetries) {
               await new Promise((resolve) => setTimeout(resolve, 1000));
             }
           }
         }
-  
+
         if (newApplicationId) {
           console.log("🎯 Navigating to application:", newApplicationId);
-          
+
           // Load completed documents for the new application
           try {
-            const completedDocs = await fetchCompletedDocuments(currentUser.id, newApplicationId);
+            const completedDocs = await fetchCompletedDocuments(
+              currentUser.id,
+              newApplicationId
+            );
             if (completedDocs && completedDocs.length > 0) {
               const completedDocsMap = completedDocs.reduce((acc, doc) => {
                 if (!acc[newApplicationId]) {
@@ -454,7 +464,7 @@ const Dashboard = () => {
                 acc[newApplicationId][doc.document_name] = true;
                 return acc;
               }, {});
-  
+
               dispatch({
                 type: "SET_COMPLETED_DOCUMENTS",
                 payload: completedDocsMap,
@@ -463,11 +473,13 @@ const Dashboard = () => {
           } catch (docsError) {
             console.error("⚠️ Error loading completed documents:", docsError);
           }
-  
+
           // Navigate with application ID
           window.location.href = `/dashboard/${newApplicationId}`;
         } else {
-          console.log("⚠️ No application found after migration, redirecting to general dashboard");
+          console.log(
+            "⚠️ No application found after migration, redirecting to general dashboard"
+          );
           navigate("/dashboard");
         }
       } else {
@@ -778,16 +790,24 @@ const Dashboard = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Early returns based on user type
+  // Early returns based on user type - HER BİRİNE SEO EKLENDİ
   if (userType === "loading" || isUserLoading) {
     return <Spinner />;
   }
 
   if (userType === "bot" || userType === "new_visitor") {
     return (
-      <DashboardContainer>
-        <StaticDashboardContent />
-      </DashboardContainer>
+      <>
+        <SEO
+          title="Kontrol Paneli – Vizepedia"
+          description="Vize başvurularınızı ve belgelerinizi tek bir yerden yönetin."
+          keywords="kontrol paneli, vize başvuru, vize belgeleri, Vizepedia"
+          url="https://www.vizepedia.com/dashboard"
+        />
+        <DashboardContainer>
+          <StaticDashboardContent />
+        </DashboardContainer>
+      </>
     );
   }
 
@@ -800,26 +820,42 @@ const Dashboard = () => {
     }
 
     return (
-      <DashboardContainer>
-        <StaticDashboardContent />
-      </DashboardContainer>
+      <>
+        <SEO
+          title="Kontrol Paneli – Vizepedia"
+          description="Vize başvurularınızı ve belgelerinizi tek bir yerden yönetin."
+          keywords="kontrol paneli, vize başvuru, vize belgeleri, Vizepedia"
+          url="https://www.vizepedia.com/dashboard"
+        />
+        <DashboardContainer>
+          <StaticDashboardContent />
+        </DashboardContainer>
+      </>
     );
   }
 
   if (isUserSelectionsError) {
     return (
-      <DashboardContainer>
-        <div
-          style={{
-            padding: "20px",
-            textAlign: "center",
-            color: "var(--color-red-700)",
-          }}
-        >
-          Veriler yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.
-        </div>
-        <StaticDashboardContent />
-      </DashboardContainer>
+      <>
+        <SEO
+          title="Kontrol Paneli – Vizepedia"
+          description="Vize başvurularınızı ve belgelerinizi tek bir yerden yönetin."
+          keywords="kontrol paneli, vize başvuru, vize belgeleri, Vizepedia"
+          url="https://www.vizepedia.com/dashboard"
+        />
+        <DashboardContainer>
+          <div
+            style={{
+              padding: "20px",
+              textAlign: "center",
+              color: "var(--color-red-700)",
+            }}
+          >
+            Veriler yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.
+          </div>
+          <StaticDashboardContent />
+        </DashboardContainer>
+      </>
     );
   }
 
@@ -831,122 +867,131 @@ const Dashboard = () => {
     return <div>Error loading data.</div>;
   }
 
+  // ANA DASHBOARD RETURN - SEO EKLENDİ
   return (
-    <DashboardContainer>
-      {isUserSelectionsSuccess &&
-        userSelections?.length > 0 &&
-        userType === "authenticated" && (
-          <BannersContainer>
-            {userSelections[0].has_appointment === false && (
-              <VisaStatusBanner
-                type="appointment"
-                applicationId={applicationId}
-                userId={userId}
-                countryLinks={countryLinks}
-                onSuccess={() => refetchUserSelections()}
-              />
-            )}
-            {userSelections[0].has_filled_form === false && (
-              <VisaStatusBanner
-                type="form"
-                applicationId={applicationId}
-                userId={userId}
-                countryLinks={countryLinks}
-                onSuccess={() => refetchUserSelections()}
-              />
-            )}
-          </BannersContainer>
-        )}
-
-      <AnimatedFlag countryCode={countryCode} />
-
-      <CustomRow type="horizontal">
-        {createdAt && (
-          <CreatedAtContainer style={{ zIndex: "3000" }}>
-            <span
-              role="img"
-              aria-label="calendar"
-              style={{
-                marginRight: "6px",
-                fontSize: isMobile ? "0.95rem" : "1.1rem",
-              }}
-            >
-              📆
-            </span>{" "}
-            {createdAt}
-          </CreatedAtContainer>
-        )}
-      </CustomRow>
-
-      <DashboardItems>
-        {!isMobile && (
-          <>
-            <StepIndicatorWrapper>
-              <Heading as="h14">Ülke adı</Heading>
-              <StepIndicator
-                documents={documents}
-                completedDocuments={completedDocuments}
-                applicationId={applicationId}
-                userSelections={userSelections}
-                userType={userType}
-                isLoading={isDocumentsLoading}
-                isError={isDocumentsError}
-              />
-            </StepIndicatorWrapper>
-
-            <InfoContainerWrapper>
-              <Heading as="h14">Başvuru adresi</Heading>
-              {isFirmLocationSuccess && firmLocation && (
-                <FirmMap firmLocation={firmLocation} />
+    <>
+      <SEO
+        title="Kontrol Paneli – Vizepedia"
+        description="Vize başvurularınızı ve belgelerinizi tek bir yerden yönetin."
+        keywords="kontrol paneli, vize başvuru, vize belgeleri, Vizepedia"
+        url="https://www.vizepedia.com/dashboard"
+      />
+      <DashboardContainer>
+        {isUserSelectionsSuccess &&
+          userSelections?.length > 0 &&
+          userType === "authenticated" && (
+            <BannersContainer>
+              {userSelections[0].has_appointment === false && (
+                <VisaStatusBanner
+                  type="appointment"
+                  applicationId={applicationId}
+                  userId={userId}
+                  countryLinks={countryLinks}
+                  onSuccess={() => refetchUserSelections()}
+                />
               )}
-            </InfoContainerWrapper>
-          </>
+              {userSelections[0].has_filled_form === false && (
+                <VisaStatusBanner
+                  type="form"
+                  applicationId={applicationId}
+                  userId={userId}
+                  countryLinks={countryLinks}
+                  onSuccess={() => refetchUserSelections()}
+                />
+              )}
+            </BannersContainer>
+          )}
+
+        <AnimatedFlag countryCode={countryCode} />
+
+        <CustomRow type="horizontal">
+          {createdAt && (
+            <CreatedAtContainer style={{ zIndex: "3000" }}>
+              <span
+                role="img"
+                aria-label="calendar"
+                style={{
+                  marginRight: "6px",
+                  fontSize: isMobile ? "0.95rem" : "1.1rem",
+                }}
+              >
+                📆
+              </span>{" "}
+              {createdAt}
+            </CreatedAtContainer>
+          )}
+        </CustomRow>
+
+        <DashboardItems>
+          {!isMobile && (
+            <>
+              <StepIndicatorWrapper>
+                <Heading as="h14">Ülke adı</Heading>
+                <StepIndicator
+                  documents={documents}
+                  completedDocuments={completedDocuments}
+                  applicationId={applicationId}
+                  userSelections={userSelections}
+                  userType={userType}
+                  isLoading={isDocumentsLoading}
+                  isError={isDocumentsError}
+                />
+              </StepIndicatorWrapper>
+
+              <InfoContainerWrapper>
+                <Heading as="h14">Başvuru adresi</Heading>
+                {isFirmLocationSuccess && firmLocation && (
+                  <FirmMap firmLocation={firmLocation} />
+                )}
+              </InfoContainerWrapper>
+            </>
+          )}
+
+          {/* Mobile carousel view */}
+          {isMobile && (
+            <MobileCarousel
+              completedDocuments={completedDocuments}
+              documents={documents}
+              firmLocation={firmLocation}
+              isFirmLocationSuccess={isFirmLocationSuccess}
+              // FIXED: Added missing props for authenticated users
+              applicationId={applicationId}
+              userSelections={userSelections}
+              userType={userType}
+              isLoading={isDocumentsLoading}
+              isError={isDocumentsError}
+            />
+          )}
+        </DashboardItems>
+
+        {/* Show signup button for anonymous users */}
+        {userType === "anonymous" && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: isMobile ? "-20px" : "20px",
+            }}
+          >
+            <ModalSignup>
+              <ModalSignup.Open opens="signUpForm">
+                <Ceper>
+                  <UyeDevam>Üye Olarak Devam et</UyeDevam>
+                </Ceper>
+              </ModalSignup.Open>
+              <ModalSignup.Window name="signUpForm">
+                <SignupForm onSuccess={handleUserConversion} />
+              </ModalSignup.Window>
+            </ModalSignup>
+          </div>
         )}
 
-        {/* Mobile carousel view */}
-        {isMobile && (
-          <MobileCarousel
-            completedDocuments={completedDocuments}
-            documents={documents}
-            firmLocation={firmLocation}
-            isFirmLocationSuccess={isFirmLocationSuccess}
-            // FIXED: Added missing props for authenticated users
-            applicationId={applicationId}
-            userSelections={userSelections}
-            userType={userType}
-            isLoading={isDocumentsLoading}
-            isError={isDocumentsError}
-          />
+        {/* Show VisaCheckModal only for authenticated users */}
+        {userType === "authenticated" && userId && applicationId && (
+          <VisaCheckModal userId={userId} applicationId={applicationId} />
         )}
-      </DashboardItems>
-
-      {/* Show signup button for anonymous users */}
-      {userType === "anonymous" && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: isMobile ? "-20px" : "20px",
-          }}
-        >
-          <ModalSignup>
-            <ModalSignup.Open opens="signUpForm">
-              <Ceper>
-                <UyeDevam>Üye Olarak Devam et</UyeDevam>
-              </Ceper>
-            </ModalSignup.Open>
-            <ModalSignup.Window name="signUpForm">
-              <SignupForm onSuccess={handleUserConversion} />
-            </ModalSignup.Window>
-          </ModalSignup>
-        </div>
-      )}
-
-      {/* Show VisaCheckModal only for authenticated users */}
-      {userType === "authenticated" && userId && applicationId && (
-        <VisaCheckModal userId={userId} applicationId={applicationId} />
-      )}
-    </DashboardContainer>
+      </DashboardContainer>
+    </>
   );
 };
 

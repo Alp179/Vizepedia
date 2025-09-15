@@ -14,7 +14,7 @@ import AppLayout from "./ui/AppLayout";
 import BlogLayout from "./ui/BlogLayout";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import { DarkModeProvider } from "./context/DarkModeContext";
-import Documents from "./pages/Documents";
+
 import ReadyDocumentDetail from "./pages/ReadyDocumentDetail";
 import PlannedDocumentDetail from "./pages/PlannedDocumentDetail";
 import WithUsDocumentDetail from "./pages/WithUsDocumentDetail";
@@ -79,8 +79,6 @@ function AppWithGA() {
 
       {/* PUBLIC Document Routes - Accessible by bots/new visitors */}
       <Route element={<DocumentLayout />}>
-        <Route path="documents/:id" element={<Documents />} />
-
         {/* Bot/New Visitor Routes (without ID) */}
         <Route path="ready-documents" element={<ReadyDocumentDetail />} />
         <Route path="planned-documents" element={<PlannedDocumentDetail />} />
@@ -93,7 +91,6 @@ function AppWithGA() {
           element={<PlannedDocumentDetail />}
         />
         <Route path="withus-documents/:id" element={<WithUsDocumentDetail />} />
-
       </Route>
 
       {/* Protected Routes for authenticated users only */}

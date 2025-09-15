@@ -18,6 +18,7 @@ import {
   ForContact,
   ForContactInfo,
 } from "./Kvkk";
+import SEO from "../components/SEO";
 
 const sectionsData = [
   {
@@ -313,58 +314,69 @@ export default function AboutPage() {
   };
 
   return (
-    <FullPage>
-      <ScrollIndicator ref={scrollIndicatorRef} />
-      <MainPageHeader />
-      <Main>
-        <Heading>Vizepedia – Hakkımızda</Heading>
-        <LastUpdate>Son Güncelleme: 10.06.2025</LastUpdate>
-        <SubText>
-          Vize başvuru süreçlerini kolaylaştıran, güvenilir dijital rehberiniz.
-          Vizepedia ile yurt dışı seyahat hayallerinizi gerçeğe dönüştürün.
-        </SubText>
+    <>
+      <SEO
+        title="Hakkımızda – Vizepedia"
+        description="Vizepedia’nın misyonu, vizyonu ve sunduğu hizmetler hakkında bilgi edinin. Vize başvuru süreçlerini kolaylaştıran rehberimiz."
+        keywords="hakkımızda, misyon, vizyon, vize rehberi, Vizepedia"
+        url="https://www.vizepedia.com/hakkimizda"
+      />
+      <FullPage>
+        <ScrollIndicator ref={scrollIndicatorRef} />
+        <MainPageHeader />
+        <Main>
+          <Heading>Vizepedia – Hakkımızda</Heading>
+          <LastUpdate>Son Güncelleme: 10.06.2025</LastUpdate>
+          <SubText>
+            Vize başvuru süreçlerini kolaylaştıran, güvenilir dijital
+            rehberiniz. Vizepedia ile yurt dışı seyahat hayallerinizi gerçeğe
+            dönüştürün.
+          </SubText>
 
-        <ContentContainer>
-          {sectionsData.map((section, index) => (
-            <FadeInSection
-              key={section.id}
-              ref={setSectionRef(index)}
-              className={visibleSections.includes(index) ? "visible" : ""}
-            >
-              <Section>
-                <SectionHeader>{section.title}</SectionHeader>
-                <SectionContent>
-                  {formatContent(section.content)}
-                </SectionContent>
-              </Section>
-            </FadeInSection>
-          ))}
-        </ContentContainer>
-
-        <FadeInSection
-          ref={setSectionRef(sectionsData.length)}
-          className={
-            visibleSections.includes(sectionsData.length) ? "visible" : ""
-          }
-        >
-          <ForContactContainer>
-            <ForContact>İletişim:</ForContact>
-            <ForContactInfo>
-              <a href="mailto:iletisim@vizepedia.com">iletisim@vizepedia.com</a>
-            </ForContactInfo>
-            <ForContactInfo>
-              <a
-                href="https://www.vizepedia.com"
-                target="_blank"
-                rel="noopener noreferrer"
+          <ContentContainer>
+            {sectionsData.map((section, index) => (
+              <FadeInSection
+                key={section.id}
+                ref={setSectionRef(index)}
+                className={visibleSections.includes(index) ? "visible" : ""}
               >
-                www.vizepedia.com
-              </a>
-            </ForContactInfo>
-          </ForContactContainer>
-        </FadeInSection>
-      </Main>
-      <Footer />
-    </FullPage>
+                <Section>
+                  <SectionHeader>{section.title}</SectionHeader>
+                  <SectionContent>
+                    {formatContent(section.content)}
+                  </SectionContent>
+                </Section>
+              </FadeInSection>
+            ))}
+          </ContentContainer>
+
+          <FadeInSection
+            ref={setSectionRef(sectionsData.length)}
+            className={
+              visibleSections.includes(sectionsData.length) ? "visible" : ""
+            }
+          >
+            <ForContactContainer>
+              <ForContact>İletişim:</ForContact>
+              <ForContactInfo>
+                <a href="mailto:iletisim@vizepedia.com">
+                  iletisim@vizepedia.com
+                </a>
+              </ForContactInfo>
+              <ForContactInfo>
+                <a
+                  href="https://www.vizepedia.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  www.vizepedia.com
+                </a>
+              </ForContactInfo>
+            </ForContactContainer>
+          </FadeInSection>
+        </Main>
+        <Footer />
+      </FullPage>
+    </>
   );
 }
