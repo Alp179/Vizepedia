@@ -19,7 +19,6 @@ Allow: /dashboard/
 Allow: /ready-documents
 Allow: /planned-documents
 Allow: /withus-documents
-Allow: /documents/
 
 # Block API endpoints and internal files
 Disallow: /api/

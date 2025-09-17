@@ -128,6 +128,16 @@ const StyledBlogLogo = styled.div`
         width: 130px;
       }
     `}
+    ${(props) =>
+      props.variant === "footer" &&
+      css`
+        width: 165px;
+        height: auto;
+        }
+        @media (max-height: 830px) {
+          width: 130px;
+        }
+      `}
       ${(props) =>
     props.variant === "dashdropdown" &&
     css`

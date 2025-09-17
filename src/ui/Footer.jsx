@@ -145,43 +145,23 @@ const Divider = styled.div`
   }
 `;
 
-// Content grid - 3 aşamalı responsive yapı
 const ContentGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 60px;
-  align-items: start;
-
-  /* 1024px altı: 2 üstte, 1 altta */
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 40px;
-    text-align: center;
-  }
-
-  /* 768px altı: Tek kolon */
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media (max-width: 800px) {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
   }
 `;
 
-// Logo section - Grid pozisyonu güncellendi
 const LogoSection = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 20px;
-
-  @media (max-width: 1024px) {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  @media (max-width: 768px) {
-    order: 1;
-  }
+  gap: 12px;
 `;
 
 const BrandText = styled.p`
@@ -191,22 +171,12 @@ const BrandText = styled.p`
   text-align: center;
 `;
 
-// Links section - Grid pozisyonu güncellendi
 const LinksSection = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 30px;
-
-  @media (max-width: 1024px) {
-    grid-column: span 2;
-    grid-row: 2;
-  }
-
-  @media (max-width: 768px) {
-    order: 3;
-    grid-column: span 1;
-  }
+  gap: 20px;
 `;
 
 const SectionTitle = styled.h3`
@@ -217,27 +187,12 @@ const SectionTitle = styled.h3`
   text-align: center;
 `;
 
-const NavigationSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-`;
+const NavigationSection = styled.div``;
 
 const NavLinks = styled.div`
   display: flex;
   justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-
-  @media (max-width: 768px) {
-    gap: 15px;
-  }
-
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 10px;
-  }
+  align-items: center;
 `;
 
 const NavLink = styled.button`
@@ -282,20 +237,15 @@ const NavLink = styled.button`
 const LegalSection = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 15px;
+  gap: 12px;
 `;
 
 const LegalLinks = styled.div`
   display: flex;
   justify-content: center;
-  gap: 20px;
+  align-items: center;
   flex-wrap: wrap;
-
-  @media (max-width: 480px) {
-    flex-direction: column;
-    gap: 10px;
-  }
+  max-width: 400px;
 `;
 
 const LegalLink = styled.button`
@@ -308,7 +258,6 @@ const LegalLink = styled.button`
   border-radius: 6px;
   transition: all 0.3s ease;
   white-space: nowrap;
-
   &:hover {
     color: rgba(255, 255, 255, 0.9);
     background: rgba(255, 255, 255, 0.05);
@@ -319,26 +268,12 @@ const LegalLink = styled.button`
 const ActionSection = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 25px;
-
-  @media (max-width: 1024px) {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  @media (max-width: 768px) {
-    order: 2;
-  }
+  gap: 12px;
 `;
 
-const ActionTitle = styled.h3`
-  color: #00ffa2;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0;
-  text-align: center;
-`;
+const ActionTitle = styled.h3``;
 
 const InviteButton = styled.button`
   background: #00ffa2;
@@ -506,31 +441,30 @@ function Footer() {
     navigate("/davetiye-olustur");
   };
 
+  const handlePrivacyPolicyClick = () => {
+    window.scrollTo(0, 0);
+    navigate("/gizlilik-politikasi");
+  };
 
-const handlePrivacyPolicyClick = () => {
-  window.scrollTo(0, 0);
-  navigate("/gizlilik-politikasi");
-};
+  const handleTermsClick = () => {
+    window.scrollTo(0, 0);
+    navigate("/kullanim-sartlari");
+  };
 
-const handleTermsClick = () => {
-  window.scrollTo(0, 0);
-  navigate("/kullanim-sartlari");
-};
+  const handleDisclaimerClick = () => {
+    window.scrollTo(0, 0);
+    navigate("/yasal-uyari");
+  };
 
-const handleDisclaimerClick = () => {
-  window.scrollTo(0, 0);
-  navigate("/yasal-uyari");
-};
+  const handleContactClick = () => {
+    window.scrollTo(0, 0);
+    navigate("/iletisim");
+  };
 
-const handleContactClick = () => {
-  window.scrollTo(0, 0);
-  navigate("/iletisim");
-};
-
-const handleSitemapClick = () => {
-  window.scrollTo(0, 0);
-  navigate("/site-haritasi");
-};
+  const handleSitemapClick = () => {
+    window.scrollTo(0, 0);
+    navigate("/site-haritasi");
+  };
 
   return (
     <FooterWrapper>
@@ -590,7 +524,7 @@ const handleSitemapClick = () => {
           {/* Logo Section */}
           <LogoSection>
             <Logo variant="footer" />
-            <BlogLogo variant="mainpage3" />
+            <BlogLogo variant="footer" />
             <BrandText>Güvenilir Vize Rehberiniz</BrandText>
           </LogoSection>
 

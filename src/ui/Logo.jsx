@@ -7,7 +7,7 @@ const StyledLogo = styled.div`
   cursor: pointer;
   position: relative;
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: scale(1.05);
   }
@@ -25,7 +25,6 @@ const StyledLogo = styled.div`
           width: 110px;
         }
       }
-      
     `}
 
   ${(props) =>
@@ -54,7 +53,7 @@ const StyledLogo = styled.div`
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        
+
         &:hover {
           transform: translate(-50%, -50%) scale(1.05);
         }
@@ -110,7 +109,7 @@ const StyledLogo = styled.div`
     props.variant === "footer" &&
     css`
       width: 154px;
-      height: 44px;
+      height: 44px!important;
     `}
     ${(props) =>
     props.variant === "overview" &&
@@ -144,18 +143,18 @@ const StyledLogo = styled.div`
       height: auto;
     `}
     ${(props) =>
-      props.variant === "mainpageham" &&
-      css`
-        width: 180px;
-        height: auto;
-        margin: 0 auto;
-        @media (max-width: 600px) {
-          width: 75%;
-        }
-        @media (max-height: 830px) {
-          width: 140px;
-        }
-      `}
+    props.variant === "mainpageham" &&
+    css`
+      width: 180px;
+      height: auto;
+      margin: 0 auto;
+      @media (max-width: 600px) {
+        width: 75%;
+      }
+      @media (max-height: 830px) {
+        width: 140px;
+      }
+    `}
       ${(props) =>
     props.variant === "dashmobile" &&
     css`
@@ -180,10 +179,10 @@ const StyledLogo = styled.div`
       }
     `}
     ${(props) =>
-      props.variant === "davetiye" &&
-      css`
-        width: 160px;
-      `}
+    props.variant === "davetiye" &&
+    css`
+      width: 160px;
+    `}
 `;
 
 const Img = styled.img`
@@ -194,27 +193,27 @@ const Img = styled.img`
   -webkit-user-select: none;
   -ms-user-select: none;
   transition: all 0.5s ease;
-  
+
   /* Logo efektleri */
-  ${props => props.isDarkMode
-    ? css`
-        filter: drop-shadow(0 0 1px rgba(0, 255, 162, 0));
-        
-        ${StyledLogo}:hover & {
-          filter: drop-shadow(0 0 5px rgba(0, 255, 162, 0.7)) brightness(1.2);
-          animation: pulseLight 2s infinite alternate;
-        }
-      `
-    : css`
-        filter: drop-shadow(0 0 1px rgba(0, 68, 102, 0));
-        
-        ${StyledLogo}:hover & {
-          filter: drop-shadow(0 0 5px rgba(0, 68, 102, 0.6)) brightness(1.1);
-          animation: pulseDark 2s infinite alternate;
-        }
-      `
-  }
-  
+  ${(props) =>
+    props.isDarkMode
+      ? css`
+          filter: drop-shadow(0 0 1px rgba(0, 255, 162, 0));
+
+          ${StyledLogo}:hover & {
+            filter: drop-shadow(0 0 5px rgba(0, 255, 162, 0.7)) brightness(1.2);
+            animation: pulseLight 2s infinite alternate;
+          }
+        `
+      : css`
+          filter: drop-shadow(0 0 1px rgba(0, 68, 102, 0));
+
+          ${StyledLogo}:hover & {
+            filter: drop-shadow(0 0 5px rgba(0, 68, 102, 0.6)) brightness(1.1);
+            animation: pulseDark 2s infinite alternate;
+          }
+        `}
+
   @keyframes pulseLight {
     0% {
       filter: drop-shadow(0 0 5px rgba(0, 255, 162, 0.7)) brightness(1.2);
@@ -226,7 +225,7 @@ const Img = styled.img`
       filter: drop-shadow(0 0 5px rgba(0, 255, 162, 0.7)) brightness(1.2);
     }
   }
-  
+
   @keyframes pulseDark {
     0% {
       filter: drop-shadow(0 0 5px rgba(0, 68, 102, 0.6)) brightness(1.1);
@@ -243,7 +242,7 @@ const Img = styled.img`
 function Logo({ variant }) {
   const navigate = useNavigate();
   const { isDarkMode } = useDarkMode();
-  
+
   const handleLogoClick = () => {
     navigate("/mainpage");
   };
@@ -253,9 +252,9 @@ function Logo({ variant }) {
     : "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/logo/Varl_k_20_8x.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJsb2dvL1Zhcmxfa18yMF84eC5wbmciLCJpYXQiOjE3MjA5ODIzNjUsImV4cCI6NzU2ODI3NTE2NX0.uo2NgeaGhKZjiNKp5qq4ikIZTlDCkRCZ21ENwcwldLE&t=2024-07-14T18%3A39%3A25.590Z";
 
   return (
-    <StyledLogo 
-      onClick={handleLogoClick} 
-      variant={variant} 
+    <StyledLogo
+      onClick={handleLogoClick}
+      variant={variant}
       isDarkMode={isDarkMode}
     >
       <Img src={src} alt="Logo" isDarkMode={isDarkMode} />
