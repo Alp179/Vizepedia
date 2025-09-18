@@ -68,7 +68,6 @@ function AppWithGA() {
       {/* MainPage as Default Landing Page */}
       <Route element={<MainPageLayout />}>
         <Route index element={<MainPage />} />
-        <Route path="mainpage" element={<MainPage />} />
       </Route>
 
       {/* Dashboard Routes - Public for bot/new visitor access */}

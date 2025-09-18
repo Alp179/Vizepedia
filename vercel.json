@@ -1,5 +1,18 @@
 {
   "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "vizepedia.com"
+        }
+      ],
+      "destination": "https://www.vizepedia.com/$1",
+      "permanent": true
+    }
+  ],
   "crons": [
     {
       "path": "/api/generate-sitemap",

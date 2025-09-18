@@ -206,7 +206,7 @@ function BlogHeader() {
 
   const handleLogoClick = () => {
     window.scrollTo(0, 0);
-    navigate("/mainpage");
+    navigate("");
   };
 
   const handleBlogLogoClick = () => {

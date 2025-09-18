@@ -244,7 +244,7 @@ function Logo({ variant }) {
   const { isDarkMode } = useDarkMode();
 
   const handleLogoClick = () => {
-    navigate("/mainpage");
+    navigate("");
   };
 
   const src = isDarkMode
