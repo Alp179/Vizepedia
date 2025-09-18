@@ -1,49 +1,72 @@
-// MainPage.jsx
-import { useState, useEffect, useRef } from "react";
+// MainPage.jsx - Complete Optimized Version
+import { useState, useEffect, useRef, memo, useMemo, lazy, Suspense } from "react";
 import styled from "styled-components";
 import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import { useLocation } from "react-router-dom";
 import SEO from "../components/SEO";
 
-import SlideShow from "../ui/SlideShow";
-import InvitationToolSection from "../ui/InvitationToolSection"; // Yeni komponent import
+// Lazy load heavy components to improve initial page load
+const SlideShow = lazy(() => import("../ui/SlideShow"));
+const InvitationToolSection = lazy(() => import("../ui/InvitationToolSection"));
+const CustomPremiumSections = lazy(() => import("../ui/CustomPremiumSections"));
+const CountriesMarquee = lazy(() => import("../ui/CountriesMarquee"));
+const FaqSectionComponent = lazy(() => import("../ui/FaqSectionComponent"));
+const HeroParallax = lazy(() => import("../ui/HeroParallax"));
 
-import CustomPremiumSections from "../ui/CustomPremiumSections";
-import CountriesMarquee from "../ui/CountriesMarquee";
-import FaqSectionComponent from "../ui/FaqSectionComponent";
-import HeroParallax from "../ui/HeroParallax";
+// Loading skeleton component for better UX during lazy loading
+const ComponentSkeleton = styled.div`
+  width: 100%;
+  height: ${props => props.height || '400px'};
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 14px;
+  
+  @keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+`;
 
-// Main container
+// Optimized styled components with performance improvements
 const MainContainer = styled.div`
   position: relative;
   width: 100%;
+  contain: layout; /* CSS containment for better performance */
 `;
 
-// Premium section container
 const PremiumSectionContainer = styled.div`
   position: relative;
   width: 100%;
   margin-bottom: 100px;
+  contain: layout style; /* CSS containment */
 
   @media (max-width: 768px) {
     margin-bottom: 80px;
   }
 `;
 
-// Fade In Animation for sections that come after premium section
+// Optimized FadeInSection with GPU acceleration
 const FadeInSection = styled.div`
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 1s ease-out, transform 1s ease-out;
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  will-change: opacity, transform;
 
   &.visible {
     opacity: 1;
     transform: translateY(0);
+    will-change: auto; /* Reset will-change after animation */
   }
 `;
 
-// Smooth Scroll Indicator
+// Optimized scroll indicator with transform3d for GPU acceleration
 const ScrollIndicator = styled.div`
   position: fixed;
   top: 0;
@@ -52,203 +75,226 @@ const ScrollIndicator = styled.div`
   height: 4px;
   background: linear-gradient(90deg, #6366f1, #10b981, #ec4899);
   transform-origin: 0 0;
-  transform: scaleX(0);
+  transform: translate3d(0, 0, 0) scaleX(0); /* GPU acceleration */
   z-index: 1000;
+  will-change: transform;
 
   @media (max-width: 480px) {
     height: 3px;
   }
 `;
 
-function MainPage() {
-  const [fadeInSections, setFadeInSections] = useState([]);
-  const premiumRef = useRef(null);
-  const afterPremiumRef = useRef(null);
-  const fadeInRefs = useRef([]);
-  const scrollIndicatorRef = useRef(null);
-
-  // Scroll progress indicator
+// Custom hook for optimized scroll progress tracking
+const useScrollProgress = () => {
+  const [progress, setProgress] = useState(0);
+  const rafRef = useRef();
+  
   useEffect(() => {
+    let ticking = false;
+    
     const handleScroll = () => {
-      const totalHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const progress = window.scrollY / totalHeight;
-
-      if (scrollIndicatorRef.current) {
-        scrollIndicatorRef.current.style.transform = `scaleX(${progress})`;
+      if (!ticking) {
+        rafRef.current = requestAnimationFrame(() => {
+          const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+          const scrollProgress = Math.min(window.scrollY / totalHeight, 1);
+          setProgress(scrollProgress);
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
+    // Use passive listener for better performance
     window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    // Cleanup
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
   }, []);
+  
+  return progress;
+};
 
-  // Inside your main page component:
+// FIXED: Intersection observer hook with correct visibility logic
+const useIntersectionObserver = (options = {}) => {
+  const [visibleElements, setVisibleElements] = useState(new Set());
+  const elementsRef = useRef(new Map());
+  const observerRef = useRef();
+  
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver((entries) => {
+      setVisibleElements(prev => {
+        const updates = new Set(prev);
+        
+        entries.forEach(entry => {
+          const index = elementsRef.current.get(entry.target);
+          if (entry.isIntersecting) {
+            // Element is visible - ADD it to visible set
+            updates.add(index);
+          } else {
+            // Element is not visible - REMOVE it from visible set
+            // BUT keep it visible once it's been shown (for fade-in animations)
+            // Don't remove it unless you want it to fade out when scrolling away
+            if (!options.keepVisible) {
+              updates.delete(index);
+            }
+          }
+        });
+        
+        return updates;
+      });
+    }, {
+      rootMargin: '50px', // Start animation 50px before entering viewport
+      threshold: 0.1,
+      ...options
+    });
+    
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [options.keepVisible]);
+  
+  const setElementRef = (index) => (element) => {
+    if (element && observerRef.current) {
+      elementsRef.current.set(element, index);
+      observerRef.current.observe(element);
+    }
+  };
+  
+  return [visibleElements, setElementRef];
+};
+
+// Main component
+function MainPage() {
+  const scrollProgress = useScrollProgress();
+  const [visibleSections, setElementRef] = useIntersectionObserver({ 
+    unobserveOnIntersect: true // One-time animations
+  });
+  const scrollIndicatorRef = useRef(null);
   const location = useLocation();
 
+  // Memoized SEO data to prevent unnecessary re-renders
+  const seoData = useMemo(() => ({
+    title: "Vizepedia – Vize Başvuru Rehberi ve Blog",
+    description: "Vizepedia, vize başvurularında gereken belgeleri ve seyahat ipuçlarını adım adım anlatan kapsamlı bir rehberdir.",
+    keywords: "vize, vize başvurusu, vize rehberi, seyahat rehberi, belgeler, Vizepedia",
+    url: "https://www.vizepedia.com/"
+  }), []);
+
+  // Optimized scroll indicator update
   useEffect(() => {
-    // Check if there's a hash in the URL when component mounts
+    if (scrollIndicatorRef.current) {
+      scrollIndicatorRef.current.style.transform = `translate3d(0, 0, 0) scaleX(${scrollProgress})`;
+    }
+  }, [scrollProgress]);
+
+  // Optimized FAQ section scrolling with better performance
+  useEffect(() => {
     if (location.hash === "#faq-section") {
-      // Small delay to ensure the page has fully rendered
+      // Use setTimeout to ensure DOM is ready
       const timer = setTimeout(() => {
         const faqSection = document.getElementById("faq-section");
-
         if (faqSection) {
-          // Header'ı bul ve yüksekliğini ölç
           const headerElement = document.querySelector("header");
           const headerHeight = headerElement ? headerElement.offsetHeight : 0;
-
-          // FAQ section'ın pozisyonunu al
-          const faqPosition = faqSection.getBoundingClientRect().top;
-          // Geçerli scroll pozisyonunu al
-          const scrollPosition = window.pageYOffset;
-          // Header yüksekliği + 50px ek boşluk bırak
-          const offsetPosition =
-            faqPosition + scrollPosition - headerHeight - 50;
-
-          // Smooth scroll ile git
+          const elementTop = faqSection.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementTop - headerHeight - 70;
+          
+          // Smooth scroll with proper timing
           window.scrollTo({
             top: offsetPosition,
             behavior: "smooth",
           });
         }
-      }, 100); // 100ms delay
-
+      }, 150); // Slightly longer delay to ensure all components are mounted
+      
       return () => clearTimeout(timer);
     }
   }, [location.hash]);
 
-  // Premium bölümü tamamlandığında çağrılacak fonksiyon
-  const handlePremiumComplete = () => {
-    // Aşağıya doğru yumuşak bir geçiş yap
-    if (afterPremiumRef.current) {
-      const yOffset = -50; // Header yüksekliği veya diğer offsetler için ayar
-      const y =
-        afterPremiumRef.current.getBoundingClientRect().top +
-        window.pageYOffset +
-        yOffset;
-
-      window.scrollTo({
-        top: y,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  // Fade-in efektli bölümleri görünürlüklerini takip et
-  useEffect(() => {
-    // Fade-in için IntersectionObserver
-    const options = {
-      root: null,
-      rootMargin: "0px",
-      threshold: 0.15,
-    };
-
-    const observers = [];
-
-    // Her fade-in bölümü için observer oluştur
-    fadeInRefs.current.forEach((ref, index) => {
-      if (!ref) return;
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Bölüm görünür olduğunda, state'e ekle
-            setFadeInSections((prev) => {
-              if (!prev.includes(index)) {
-                return [...prev, index];
-              }
-              return prev;
-            });
-            // Görünür olduktan sonra izlemeyi bırak
-            observer.unobserve(entry.target);
-          }
-        });
-      }, options);
-
-      observer.observe(ref);
-      observers.push(observer);
-    });
-
-    return () => {
-      // Tüm observer'ları temizle
-      observers.forEach((observer) => observer.disconnect());
-    };
-  }, []);
-
-  // Fade-in ref'lerini ayarla
-  const setFadeInRef = (index) => (el) => {
-    fadeInRefs.current[index] = el;
-  };
-
   return (
     <MainContainer>
-      <SEO
-        title="Vizepedia – Türkiye'nin Vize Rehberi"
-        description="Vize başvurusu süreçlerini kolaylaştıran, detaylı rehberler ve pratik ipuçları sunan Vizepedia ana sayfası."
-        keywords="vize, Vizepedia, vize rehberi, seyahat rehberi"
-        url="https://www.vizepedia.com/"
+      {/* SEO Component - Critical for AdSense */}
+      <SEO {...seoData} />
+      
+      {/* Scroll Progress Indicator */}
+      <ScrollIndicator 
+        ref={scrollIndicatorRef}
+        style={{ transform: `translate3d(0, 0, 0) scaleX(${scrollProgress})` }}
       />
 
-      {/* Scroll indicator */}
-      <ScrollIndicator ref={scrollIndicatorRef} />
+      {/* Hero Section - Critical above-the-fold content */}
+      <Suspense fallback={<ComponentSkeleton height="100vh">Hero yükleniyor...</ComponentSkeleton>}>
+        <HeroParallax />
+      </Suspense>
 
-      <HeroParallax />
-
-      {/* Premium Features Section */}
-      <PremiumSectionContainer ref={premiumRef}>
-        <CustomPremiumSections onComplete={handlePremiumComplete} />
+      {/* Premium Section - High priority for user engagement */}
+      <PremiumSectionContainer ref={setElementRef(0)}>
+        <Suspense fallback={<ComponentSkeleton>Premium bölüm yükleniyor...</ComponentSkeleton>}>
+          <CustomPremiumSections />
+        </Suspense>
       </PremiumSectionContainer>
 
-      {/* Marker for the section after premium */}
-      <div ref={afterPremiumRef}></div>
-
-      {/* Countries Section with Fade In */}
-      <FadeInSection
-        ref={setFadeInRef(0)}
-        className={fadeInSections.includes(0) ? "visible" : ""}
+      {/* Countries Marquee - Below fold, lazy loaded */}
+      <FadeInSection 
+        ref={setElementRef(1)}
+        className={visibleSections.has(1) ? 'visible' : ''}
       >
-        <CountriesMarquee />
+        <Suspense fallback={<ComponentSkeleton>Ülke listesi yükleniyor...</ComponentSkeleton>}>
+          <CountriesMarquee />
+        </Suspense>
       </FadeInSection>
 
-      {/* Invitation Tool Section - YENİ EKLENEN BÖLÜM */}
-      <FadeInSection
-        ref={setFadeInRef(1)}
-        className={fadeInSections.includes(1) ? "visible" : ""}
+      {/* SlideShow Section - Image-heavy, lazy loaded */}
+      <FadeInSection 
+        ref={setElementRef(2)}
+        className={visibleSections.has(2) ? 'visible' : ''}
       >
-        <InvitationToolSection />
+        <Suspense fallback={<ComponentSkeleton>Galeri yükleniyor...</ComponentSkeleton>}>
+          <SlideShow />
+        </Suspense>
       </FadeInSection>
 
-      {/* SlideShow with Fade In - Index güncellendi */}
-      <FadeInSection
-        ref={setFadeInRef(2)}
-        className={fadeInSections.includes(2) ? "visible" : ""}
+      {/* Invitation Tool Section - Interactive component */}
+      <FadeInSection 
+        ref={setElementRef(3)}
+        className={visibleSections.has(3) ? 'visible' : ''}
       >
-        <SlideShow />
+        <Suspense fallback={<ComponentSkeleton>Davetiye aracı yükleniyor...</ComponentSkeleton>}>
+          <InvitationToolSection />
+        </Suspense>
       </FadeInSection>
 
-      {/* FAQ Section with Fade In - Index güncellendi */}
-      <FadeInSection
-        ref={setFadeInRef(3)}
-        className={fadeInSections.includes(3) ? "visible" : ""}
+      {/* FAQ Section - Important for SEO and user support */}
+      <FadeInSection 
+        ref={setElementRef(4)}
+        className={visibleSections.has(4) ? 'visible' : ''}
+        id="faq-section"
       >
-        <FaqSectionComponent />
+        <Suspense fallback={<ComponentSkeleton>SSS bölümü yükleniyor...</ComponentSkeleton>}>
+          <FaqSectionComponent />
+        </Suspense>
       </FadeInSection>
 
-      {/* MailerLite Form with Fade In - Index güncellendi */}
-      <FadeInSection
-        ref={setFadeInRef(4)}
-        className={fadeInSections.includes(4) ? "visible" : ""}
+      {/* Newsletter Section - User engagement and retention */}
+      <FadeInSection 
+        ref={setElementRef(5)}
+        className={visibleSections.has(5) ? 'visible' : ''}
       >
         <MailerLiteForm />
       </FadeInSection>
 
-      {/* Footer */}
+      {/* Footer - Always loaded as it contains important links */}
       <Footer />
     </MainContainer>
   );
 }
 
-export default MainPage;
+// Memoize the component to prevent unnecessary re-renders
+export default memo(MainPage);

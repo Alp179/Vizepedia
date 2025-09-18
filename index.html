@@ -1,11 +1,126 @@
 <!DOCTYPE html>
 <html lang="tr">
   <head>
+    <!-- CRITICAL CSS - Must be FIRST for performance -->
+    <style id="critical-css">
+      /* Critical CSS for above-the-fold content - Prevents layout shift */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      #root {
+        min-height: 100vh;
+      }
+
+      /* Prevent layout shift during loading */
+      .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #004466, #00ffa2);
+      }
+
+      /* Header critical styles */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        background: transparent;
+      }
+
+      /* Loading skeletons prevent Cumulative Layout Shift (CLS) */
+      .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+      }
+
+      @keyframes skeleton-loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+
+      /* Scroll indicator */
+      .scroll-indicator {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #10b981, #ec4899);
+        transform-origin: 0 0;
+        z-index: 1000;
+        will-change: transform;
+      }
+
+      /* Prevent flash of unstyled content */
+      .fade-in-section {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      }
+
+      .fade-in-section.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 768px) {
+        .scroll-indicator {
+          height: 3px;
+        }
+      }
+
+      /* AdSense container styling */
+      .ad-container {
+        margin: 20px 0;
+        text-align: center;
+        min-height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Loading state for AdSense ads */
+      .adsbygoogle[data-adsbygoogle-status="unfilled"] {
+        background: #f8f9fa;
+        border: 1px dashed #dee2e6;
+        color: #6c757d;
+        font-size: 12px;
+      }
+    </style>
+
     <!-- Favicon (mevcut yapı korundu) -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- RESOURCE HINTS - Critical for performance -->
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
+    <link rel="dns-prefetch" href="//ibygzkntdaljyduuhivj.supabase.co">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+
+    <!-- Preconnect for critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- SEO Meta Tags -->
     <title>Vizepedia – Vize Başvuru Rehberi ve Blog</title>
@@ -20,10 +135,12 @@
 
     <!-- Canonical and Robots -->
     <link rel="canonical" href="https://www.vizepedia.com/" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 
-    <!-- Open Graph Tags -->
+    <!-- Enhanced Open Graph Tags -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Vizepedia" />
+    <meta property="og:locale" content="tr_TR" />
     <meta
       property="og:title"
       content="Vizepedia – Vize Başvuru Rehberi ve Blog"
@@ -33,10 +150,14 @@
       content="Vize başvurularında gereken belgeleri ve seyahat ipuçlarını adım adım anlatan kapsamlı bir rehber."
     />
     <meta property="og:url" content="https://www.vizepedia.com/" />
-    <meta property="og:image" content="/vite.svg" />
+    <meta property="og:image" content="https://www.vizepedia.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Vizepedia - Vize Başvuru Rehberi" />
 
-    <!-- Twitter Card Tags -->
+    <!-- Enhanced Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@vizepedia" />
     <meta
       name="twitter:title"
       content="Vizepedia – Vize Başvuru Rehberi ve Blog"
@@ -45,23 +166,128 @@
       name="twitter:description"
       content="Vize başvurularında gereken belgeleri ve seyahat ipuçlarını adım adım anlatan kapsamlı bir rehber."
     />
-    <meta name="twitter:image" content="/vite.svg" />
+    <meta name="twitter:image" content="https://www.vizepedia.com/og-image.png" />
 
-    <!-- Performance Optimizations -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Additional SEO Meta Tags -->
+    <meta name="author" content="Vizepedia" />
+    <meta name="copyright" content="© 2024 Vizepedia" />
+    <meta name="language" content="Turkish" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="theme-color" content="#004466" />
 
-    <!-- Google AdSense -->
+    <!-- Structured Data for Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Vizepedia",
+      "description": "Kapsamlı vize başvuru rehberi ve seyahat bilgileri platformu",
+      "url": "https://www.vizepedia.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.vizepedia.com/logo.png"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "iletisim@vizepedia.com",
+        "availableLanguage": ["Turkish"]
+      },
+      "sameAs": [
+        "https://www.vizepedia.com/hakkimizda",
+        "https://www.vizepedia.com/iletisim"
+      ],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.vizepedia.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Website Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Vizepedia",
+      "url": "https://www.vizepedia.com",
+      "description": "Vize başvuru rehberi ve seyahat bilgileri",
+      "inLanguage": "tr-TR",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Vizepedia"
+      }
+    }
+    </script>
+
+    <!-- Google AdSense - Optimized loading -->
     <script
       async
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9096433647543770"
       crossorigin="anonymous"
+      onload="(adsbygoogle = window.adsbygoogle || []).push({});"
     ></script>
+
+    <!-- Preload critical fonts (if you use custom fonts) -->
+    <!-- Uncomment and adjust if you have custom fonts -->
+    <!--
+    <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+    -->
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   </head>
   <body>
+    <!-- Main app container -->
     <div id="root"></div>
-    <!-- Modal için root div -->
+    
+    <!-- Modal container for React portals -->
     <div id="modal-root"></div>
+    
+    <!-- Loading indicator for slow connections -->
+    <noscript>
+      <div style="
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: #f8f9fa; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-family: sans-serif;
+      ">
+        <div style="text-align: center;">
+          <h2>JavaScript Gerekli</h2>
+          <p>Bu site JavaScript kullanmaktadır. Lütfen JavaScript'i etkinleştirin.</p>
+        </div>
+      </div>
+    </noscript>
+
+    <!-- Service Worker Registration (Optional - for PWA features) -->
+    <script>
+      // Register service worker for better caching (optional)
+      if ('serviceWorker' in navigator && 'production' === 'production') {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('SW registered: ', registration);
+            })
+            .catch(function(registrationError) {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+
+    <!-- Main React app -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
