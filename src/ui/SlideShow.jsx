@@ -284,7 +284,7 @@ function SlideShow() {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <LeftButton onClick={handlePrevClick}>
+        <LeftButton aria-label="sol-buton" onClick={handlePrevClick}>
           <FiChevronLeft />
         </LeftButton>
 
@@ -304,7 +304,7 @@ function SlideShow() {
           ))}
         </CardsWrapper>
 
-        <RightButton onClick={handleNextClick}>
+        <RightButton aria-label="sag-buton" onClick={handleNextClick}>
           <FiChevronRight />
         </RightButton>
       </SlideContainer>

@@ -84,10 +84,10 @@ const BlogLogo = styled.img`
     width: 120px;
   }
   @media (max-width: 870px) {
-    width: 100px!important;
+    width: 100px !important;
   }
   @media (max-width: 380px) {
-    width: 75px!important;
+    width: 75px !important;
   }
 `;
 
@@ -123,7 +123,7 @@ const Logo = styled.img`
 
 const StyledHeader = styled.header`
   position: fixed;
-  top: ${props => props.isVisible ? '0' : '-120px'};
+  top: ${(props) => (props.isVisible ? "0" : "-120px")};
   left: 0;
   width: 100%;
   padding: 20px;
@@ -167,10 +167,10 @@ function BlogHeader() {
 
   useEffect(() => {
     let timeoutId;
-    
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       // Eğer sayfa tepesindeyse header'ı her zaman göster
       if (currentScrollY < 50) {
         setIsVisible(true);
@@ -183,7 +183,7 @@ function BlogHeader() {
       else if (currentScrollY < lastScrollY) {
         setIsVisible(true);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
@@ -196,10 +196,10 @@ function BlogHeader() {
       }, 16); // ~60fps
     };
 
-    window.addEventListener('scroll', throttledScroll, { passive: true });
-    
+    window.addEventListener("scroll", throttledScroll, { passive: true });
+
     return () => {
-      window.removeEventListener('scroll', throttledScroll);
+      window.removeEventListener("scroll", throttledScroll);
       if (timeoutId) clearTimeout(timeoutId);
     };
   }, [lastScrollY]);
@@ -225,7 +225,12 @@ function BlogHeader() {
   return (
     <StyledHeader isVisible={isVisible}>
       <HeaderContents>
-        <Logo onClick={handleLogoClick} src={srcLogo} alt="vizepedia-logo" isDarkMode={isDarkMode} />
+        <Logo
+          onClick={handleLogoClick}
+          src={srcLogo}
+          alt="vizepedia-logo"
+          isDarkMode={isDarkMode}
+        />
         <BlogLogo
           onClick={handleBlogLogoClick}
           src={srcBlog}

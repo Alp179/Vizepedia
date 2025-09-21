@@ -595,7 +595,7 @@ function Footer() {
                 </SocialLink>
 
                 <SocialLink
-                  href="https://instagram.com"
+                  href="https://instagram.com/vizepediacom"
                   target="_blank"
                   rel="noreferrer"
                 >
