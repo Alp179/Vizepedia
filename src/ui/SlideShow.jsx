@@ -291,7 +291,7 @@ function SlideShow() {
         <CardsWrapper currentIndex={currentIndex}>
           {blogs.map((blog) => (
             <Card key={blog.id} onClick={() => handleCardClick(blog.slug)}>
-              <CardImage src={blog.cover_image || "default-image.jpg"} />
+              <CardImage src={blog.cover_image || "default-image.jpg"} alt="blog-image" />
               <CardDate>
                 {new Date(blog.created_at).toLocaleDateString()}
               </CardDate>
