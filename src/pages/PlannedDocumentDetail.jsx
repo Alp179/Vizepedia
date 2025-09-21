@@ -14,6 +14,16 @@ import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
+// Adding the required imports
+import SEO from "../components/SEO";
+import JsonLd from "../components/JsonLd";
+
+import {
+  summarize,
+  keywordize,
+  toSlug,
+  buildCanonical,
+} from "../components/seoHelpers";
 
 // Demo documents for "planla" stage - bot/new visitor data
 const DEMO_PLANNED_DOCUMENTS = [
@@ -477,7 +487,9 @@ const StyledButtonsContainer = styled(ButtonsContainer)`
 `;
 
 const PlannedDocumentDetail = () => {
-  const { id: paramApplicationId } = useParams();
+  // Tüm Hook'ları en üstte çağır
+  const { id: paramApplicationId, slug: slugParam } = useParams(); // Hem id hem slug alınıyor
+
   const [userId, setUserId] = useState(null);
   const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0);
   const navigate = useNavigate();
@@ -486,7 +498,6 @@ const PlannedDocumentDetail = () => {
     state: { completedDocuments },
     dispatch,
   } = useContext(DocumentsContext);
-
   // User type detection
   const { user, userType } = useUser();
   const isAnonymous =
@@ -630,6 +641,23 @@ const PlannedDocumentDetail = () => {
   if (!selectedDocument) {
     return <Spinner />;
   }
+
+  // Calculate SEO metadata
+
+  const base = "https://www.vizepedia.com";
+  const docName = selectedDocument?.docName || "Belge Detayı";
+  const slug = slugParam || toSlug(docName);
+  const urlPath = `/planned-documents/${slug}`;
+  const canonical = buildCanonical(base, urlPath);
+  const description = selectedDocument?.docDescription
+    ? summarize(selectedDocument.docDescription, 160)
+    : "Bu belge için planlama, gereklilikler ve hazırlanış adımları.";
+  const keywords = keywordize(
+    selectedDocument?.tags,
+    `${docName}, planlanan belge, vize belgesi, Vizepedia`
+  );
+  const image = selectedDocument?.docImage || "/vite.svg";
+  const isModal = false; // Since this is a page component, not a modal
 
   // Get completion status
   const getCompletionStatus = () => {
@@ -826,6 +854,61 @@ const PlannedDocumentDetail = () => {
 
   return (
     <>
+      <SEO
+        title={`${docName} – Planlama Rehberi | Vizepedia`}
+        description={description}
+        keywords={keywords}
+        image={image}
+        url={canonical}
+        noindex={isModal}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": selectedDocument.steps?.length ? "HowTo" : "Article",
+          headline: `${docName} – Planlama Rehberi`,
+          name: docName,
+          description: description,
+          image: image.startsWith("http") ? image : `${base}${image}`,
+          mainEntityOfPage: canonical,
+          ...(selectedDocument.steps?.length
+            ? {
+                step: selectedDocument.steps.map((s, i) => ({
+                  "@type": "HowToStep",
+                  position: i + 1,
+                  name: s.title || `Adım ${i + 1}`,
+                  text: summarize(s.text || s.content || "", 300),
+                })),
+              }
+            : {}),
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Ana Sayfa",
+              item: `${base}/`,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Planlanan Belgeler",
+              item: `${base}/planned-documents`,
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: docName,
+              item: canonical,
+            },
+          ],
+        }}
+      />
       <PageContainer>
         <NavigationButtons
           onPrevClick={() => handleNavigation("prev")}

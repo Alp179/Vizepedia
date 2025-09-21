@@ -14,6 +14,16 @@ import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
+// Adding the required imports
+import SEO from "../components/SEO";
+import JsonLd from "../components/JsonLd";
+
+import {
+  summarize,
+  keywordize,
+  toSlug,
+  buildCanonical,
+} from "../components/seoHelpers";
 
 // Demo documents for "bizimle" stage - bot/new visitor data
 const DEMO_WITHUS_DOCUMENTS = [
@@ -507,7 +517,9 @@ const StyledButtonsContainer = styled(ButtonsContainer)`
 `;
 
 const WithUsDocumentDetail = () => {
-  const { id: paramApplicationId } = useParams();
+  // Tüm Hook'ları en üstte çağır
+  const { id: paramApplicationId, slug: slugParam } = useParams();
+
   const [userId, setUserId] = useState(null);
   const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0);
   const navigate = useNavigate();
@@ -659,6 +671,24 @@ const WithUsDocumentDetail = () => {
   if (!selectedDocument) {
     return <Spinner />;
   }
+
+  // Calculate SEO metadata
+  const base = "https://www.vizepedia.com";
+  const docName = selectedDocument?.docName || "Belge Hizmeti";
+  const slug = slugParam || toSlug(docName);
+  const urlPath = `/withus-documents/${slug}`;
+  const canonical = buildCanonical(base, urlPath);
+  const description = selectedDocument?.docDescription
+    ? summarize(selectedDocument.docDescription, 160)
+    : selectedDocument?.benefits
+    ? summarize(selectedDocument.benefits, 160)
+    : "Belgenizi uzman ekibimizle hızlı ve eksiksiz hazırlayın.";
+  const keywords = keywordize(
+    selectedDocument?.tags,
+    `${docName}, belge hizmeti, profesyonel destek, Vizepedia`
+  );
+  const image = selectedDocument?.docImage || "/vite.svg";
+  const isModal = false; // Since this is a page component, not a modal
 
   // Get completion status
   const getCompletionStatus = () => {
@@ -855,6 +885,54 @@ const WithUsDocumentDetail = () => {
 
   return (
     <>
+      <SEO
+        title={`${docName} – Profesyonel Belge Hizmeti | Vizepedia`}
+        description={description}
+        keywords={keywords}
+        image={image}
+        url={canonical}
+        noindex={isModal}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: `${docName} – Belge Hizmeti`,
+          description: description,
+          provider: {
+            "@type": "Organization",
+            name: "Vizepedia",
+            url: base,
+          },
+          areaServed: "TR",
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Ana Sayfa",
+              item: `${base}/`,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Bizimle Belgeler",
+              item: `${base}/withus-documents`,
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: docName,
+              item: canonical,
+            },
+          ],
+        }}
+      />
       <PageContainer>
         <NavigationButtons
           onPrevClick={() => handleNavigation("prev")}

@@ -16,123 +16,154 @@ import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
+// Adding the required imports
+import SEO from "../components/SEO";
+import JsonLd from "../components/JsonLd";
+
+import {
+  summarize,
+  keywordize,
+  toSlug,
+  buildCanonical,
+} from "../components/seoHelpers";
 
 // Real demo data from your system
 const DEMO_DOCUMENTS = [
   {
     id: 70,
     docName: "Biyometrik Fotoğraf",
-    docDescription: "Uluslararası standartlara uygun, nötr yüz ifadesiyle çekilmiş ve arka fonu beyaz olan biyometrik fotoğraftır. Son 6 ay içinde çekilmiş olsa bile daha önceki bir Schengen vize başvurusunda kullanıldıysa yenisi gereklidir.",
+    docDescription:
+      "Uluslararası standartlara uygun, nötr yüz ifadesiyle çekilmiş ve arka fonu beyaz olan biyometrik fotoğraftır. Son 6 ay içinde çekilmiş olsa bile daha önceki bir Schengen vize başvurusunda kullanıldıysa yenisi gereklidir.",
     docImage: "https://i.imgur.com/JXQjue1.png",
     docType: "Kimlik Belgesi",
     docStage: "hazir",
     docSource: "Fotoğraf Stüdyosu",
     docSourceLink: null,
-    referenceLinks: "https://tuerkei.diplo.de/tr-tr/service/05-VisaEinreise/merkblatt-foto/2458222",
+    referenceLinks:
+      "https://tuerkei.diplo.de/tr-tr/service/05-VisaEinreise/merkblatt-foto/2458222",
     referenceName: "Almanya Konsolosluğu – Fotoğraf Kriterleri",
-    docImportant: "\n- Son 6 ay içinde çekilmiş olmalı.\n- 35x45 mm ölçülerinde.\n- Gözlük, şapka, filtre kullanılmamalı.",
+    docImportant:
+      "\n- Son 6 ay içinde çekilmiş olmalı.\n- 35x45 mm ölçülerinde.\n- Gözlük, şapka, filtre kullanılmamalı.",
     docWhere: "Fotoğraf stüdyolarında çekilir.",
     is_required: true,
-    order_index: 1
+    order_index: 1,
   },
   {
     id: 75,
     docName: "Kimlik Fotokopisi",
-    docDescription: "Başvuru sahibinin kimliğini doğrulamak amacıyla kullanılan resmi bir belgedir. Nüfus cüzdanının veya yeni tip Türkiye Cumhuriyeti kimlik kartının önlü arkalı fotokopisi sunulmalıdır.",
-    docImage: "https://cdn1.ntv.com.tr/gorsel/ASNCXnWfxUOSE9tPS9ti6Q.jpg?width=1000&mode=both&scale=both&v=1457001462520",
+    docDescription:
+      "Başvuru sahibinin kimliğini doğrulamak amacıyla kullanılan resmi bir belgedir. Nüfus cüzdanının veya yeni tip Türkiye Cumhuriyeti kimlik kartının önlü arkalı fotokopisi sunulmalıdır.",
+    docImage:
+      "https://cdn1.ntv.com.tr/gorsel/ASNCXnWfxUOSE9tPS9ti6Q.jpg?width=1000&mode=both&scale=both&v=1457001462520",
     docType: "Kimlik Belgesi",
     docStage: "hazir",
     docSource: "Başvuru Sahibi",
     docSourceLink: null,
     referenceLinks: "https://idata.com.tr/tr/",
     referenceName: "iDATA – Kimlik Belgeleri",
-    docImportant: "\n- Bilgiler okunaklı ve tam olmalı.\n- Yeni tip çipli kimlik önerilir.\n- Tüm kenarları görünür şekilde taranmalı.",
+    docImportant:
+      "\n- Bilgiler okunaklı ve tam olmalı.\n- Yeni tip çipli kimlik önerilir.\n- Tüm kenarları görünür şekilde taranmalı.",
     docWhere: "Kimlik kartınızdan veya fotokopi cihazından temin edilir.",
     is_required: true,
-    order_index: 2
+    order_index: 2,
   },
   {
     id: 67,
     docName: "Pasaport",
-    docDescription: "Geçerli, okunaklı ve yıpranmamış, uluslararası geçerliliği olan seyahat belgesi.",
-    docImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Turkish_Passport.svg/1024px-Turkish_Passport.svg.png",
+    docDescription:
+      "Geçerli, okunaklı ve yıpranmamış, uluslararası geçerliliği olan seyahat belgesi.",
+    docImage:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Turkish_Passport.svg/1024px-Turkish_Passport.svg.png",
     docType: "Seyahat Belgesi",
     docStage: "hazir",
     docSource: "Nüfus Müdürlüğü",
     docSourceLink: null,
     referenceLinks: "https://visa.vfsglobal.com/tur/tr/deu/what-to-submit",
     referenceName: "VFS Global – Gerekli Evraklar",
-    docImportant: "\n- Başvuru bitiş tarihinden sonra en az 6 ay geçerlilik süresi olmalı.\n- En az 2 boş vize sayfası bulunmalı.\n- Son 10 yıl içinde düzenlenmiş olmalı.",
+    docImportant:
+      "\n- Başvuru bitiş tarihinden sonra en az 6 ay geçerlilik süresi olmalı.\n- En az 2 boş vize sayfası bulunmalı.\n- Son 10 yıl içinde düzenlenmiş olmalı.",
     docWhere: "Nüfus ve Vatandaşlık İşleri Müdürlüklerinden alınır.",
     is_required: true,
-    order_index: 6
+    order_index: 6,
   },
   {
     id: 77,
     docName: "Nüfus Kayıt Örneği",
-    docDescription: "Nüfus kayıt örneği, başvuru sahibinin kendisiyle birlikte aile bireylerini de gösteren resmi belgedir. E-Devlet üzerinden vukuatlı (detaylı) olarak alınmalı ve belgenin alt kısmındaki Düşünceler bölümü mutlaka görünür olmalıdır.",
-    docImage: "https://online.fliphtml5.com/qatuj/hzjy/files/large/1.webp?1616318917&1616318917",
+    docDescription:
+      "Nüfus kayıt örneği, başvuru sahibinin kendisiyle birlikte aile bireylerini de gösteren resmi belgedir. E-Devlet üzerinden vukuatlı (detaylı) olarak alınmalı ve belgenin alt kısmındaki Düşünceler bölümü mutlaka görünür olmalıdır.",
+    docImage:
+      "https://online.fliphtml5.com/qatuj/hzjy/files/large/1.webp?1616318917&1616318917",
     docType: "Kimlik Belgesi",
     docStage: "hazir",
     docSource: "e-Devlet",
-    docSourceLink: "https://www.turkiye.gov.tr/nvi-nufus-kayit-ornegi-belgesi-sorgulama",
-    referenceLinks: "https://www.turkiye.gov.tr/nvi-nufus-kayit-ornegi-belgesi-sorgulama",
+    docSourceLink:
+      "https://www.turkiye.gov.tr/nvi-nufus-kayit-ornegi-belgesi-sorgulama",
+    referenceLinks:
+      "https://www.turkiye.gov.tr/nvi-nufus-kayit-ornegi-belgesi-sorgulama",
     referenceName: "e-Devlet – Nüfus Kayıt Örneği Sorgulama",
-    docImportant: "\n- Düşünceler bölümü görünür olmalı.\n- Başvuru sahibine ait olmalı.\n- Son 6 ay içinde alınmış olmalı.",
+    docImportant:
+      "\n- Düşünceler bölümü görünür olmalı.\n- Başvuru sahibine ait olmalı.\n- Son 6 ay içinde alınmış olmalı.",
     docWhere: "e-Devlet üzerinden alınabilir.",
     is_required: true,
-    order_index: 7
+    order_index: 7,
   },
   {
     id: 69,
     docName: "İkametgah Belgesi",
-    docDescription: "İkamet edilen adresin resmi kayıtlardaki karşılığını gösteren belgedir. Başvuru sahibinin güncel ve e-Devlet üzerinden alınmış ikamet bilgilerini içermelidir.",
-    docImage: "https://imgv2-2-f.scribdassets.com/img/document/674042573/original/98365b2eef/1?v=1",
+    docDescription:
+      "İkamet edilen adresin resmi kayıtlardaki karşılığını gösteren belgedir. Başvuru sahibinin güncel ve e-Devlet üzerinden alınmış ikamet bilgilerini içermelidir.",
+    docImage:
+      "https://imgv2-2-f.scribdassets.com/img/document/674042573/original/98365b2eef/1?v=1",
     docType: "İkamet Belgesi",
     docStage: "hazir",
     docSource: "e-Devlet",
-    docSourceLink: "https://www.turkiye.gov.tr/nvi-yerlesim-yeri-ve-diger-adres-belgesi-sorgulama",
+    docSourceLink:
+      "https://www.turkiye.gov.tr/nvi-yerlesim-yeri-ve-diger-adres-belgesi-sorgulama",
     referenceLinks: "https://idata.com.tr/tr/",
     referenceName: "iDATA – Belgeler Listesi",
-    docImportant: "\n- Son 6 ay içinde alınmış olmalı.\n- Başvuru sahibine ait olmalı.",
+    docImportant:
+      "\n- Son 6 ay içinde alınmış olmalı.\n- Başvuru sahibine ait olmalı.",
     docWhere: "e-Devlet üzerinden alınabilir.",
     is_required: true,
-    order_index: 9
+    order_index: 9,
   },
   {
     id: 88,
     docName: "Otel Rezervasyonu",
-    docDescription: "Seyahat süresince konaklama yapılacak yerleri gösteren otel veya konaklama rezervasyonudur. Tüm konaklama tarihleri başvuru formundaki tarihlerle uyumlu olmalıdır.",
-    docImage: "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/otel%20rez.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9vdGVsIHJlei5wbmciLCJpYXQiOjE3NDg3ODM3MTIsImV4cCI6MjQyMDcxNjUxMn0.q3i2Cl3BAsfQbn7ULYcv3UNgvJq15b0TJLJboJvg1XA",
+    docDescription:
+      "Seyahat süresince konaklama yapılacak yerleri gösteren otel veya konaklama rezervasyonudur. Tüm konaklama tarihleri başvuru formundaki tarihlerle uyumlu olmalıdır.",
+    docImage:
+      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/otel%20rez.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9vdGVsIHJlei5wbmciLCJpYXQiOjE3NDg3ODM3MTIsImV4cCI6MjQyMDcxNjUxMn0.q3i2Cl3BAsfQbn7ULYcv3UNgvJq15b0TJLJboJvg1XA",
     docType: "Konaklama Belgesi",
     docStage: "hazir",
     docSource: "Otel / Online Platform",
     docSourceLink: null,
     referenceLinks: "https://visa.vfsglobal.com/tur/tr/deu/what-to-submit",
     referenceName: "VFS Global – Konaklama Belgeleri",
-    docImportant: "\n- Konaklama tarihleri seyahati tam olarak kapsamalı.\n- Başvuru sahibinin adı rezervasyonda yer almalı.\n- Rezervasyon onaylı olmalı.",
+    docImportant:
+      "\n- Konaklama tarihleri seyahati tam olarak kapsamalı.\n- Başvuru sahibinin adı rezervasyonda yer almalı.\n- Rezervasyon onaylı olmalı.",
     docWhere: "Otel web siteleri veya online platformlardan alınabilir.",
     is_required: true,
-    order_index: 8
-  }
+    order_index: 8,
+  },
 ];
 
 // Demo user data for bot/new visitors
 const DEMO_USER_DATA = {
   id: 405,
   name: "Demo User",
-  email: "demo@vizepedia.com"
+  email: "demo@vizepedia.com",
 };
 
 const DEMO_COMPLETED_DOCUMENTS = {
   [DEMO_USER_DATA.id]: {
     "Biyometrik Fotoğraf": true,
     "Kimlik Fotokopisi": true,
-    "Pasaport": true,
+    Pasaport: true,
     "Otel Rezervasyonu": true,
-    "İkametgah Belgesi": true
+    "İkametgah Belgesi": true,
     // Others intentionally left incomplete
-  }
+  },
 };
 
 // Animasyon tanımlamaları
@@ -428,7 +459,9 @@ const ImageContainer = styled.div`
 `;
 
 const ReadyDocumentDetail = () => {
-  const { id: paramApplicationId } = useParams();
+  // Tüm Hook'ları en üstte çağır
+  const { id: paramApplicationId, slug: slugParam } = useParams();
+
   const [userId, setUserId] = useState(null);
   const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0);
   const navigate = useNavigate();
@@ -472,13 +505,15 @@ const ReadyDocumentDetail = () => {
       }
       return fetchUserSelectionsDash(userId, applicationId);
     },
-    enabled: !isBotOrNewVisitor && (isAnonymous || (!!userId && !!applicationId)),
+    enabled:
+      !isBotOrNewVisitor && (isAnonymous || (!!userId && !!applicationId)),
     staleTime: 5 * 60 * 1000,
   });
 
-  const documentNames = !isBotOrNewVisitor && userSelections
-    ? getDocumentsForSelections(userSelections)
-    : [];
+  const documentNames =
+    !isBotOrNewVisitor && userSelections
+      ? getDocumentsForSelections(userSelections)
+      : [];
 
   const { data: documents, isSuccess: isDocumentsSuccess } = useQuery({
     queryKey: ["documentDetails", documentNames],
@@ -513,7 +548,7 @@ const ReadyDocumentDetail = () => {
       // Always reset for bot/new visitors to ensure fresh state
       setSelectedDocument(null);
       setCurrentDocumentIndex(0);
-      
+
       // Set demo completed documents for bot/new visitors
       dispatch({
         type: "SET_COMPLETED_DOCUMENTS",
@@ -527,7 +562,10 @@ const ReadyDocumentDetail = () => {
       const initialDocument = readyDocuments[0];
 
       if (initialDocument) {
-        console.log("🎯 Bot/New Visitor: Setting initial document:", initialDocument.docName);
+        console.log(
+          "🎯 Bot/New Visitor: Setting initial document:",
+          initialDocument.docName
+        );
         setSelectedDocument(initialDocument);
         setCurrentDocumentIndex(0);
       }
@@ -539,12 +577,21 @@ const ReadyDocumentDetail = () => {
       const initialDocument = readyDocuments[0];
 
       if (initialDocument && !selectedDocument) {
-        console.log("🎯 Real User: Setting initial document:", initialDocument.docName);
+        console.log(
+          "🎯 Real User: Setting initial document:",
+          initialDocument.docName
+        );
         setSelectedDocument(initialDocument);
         setCurrentDocumentIndex(0);
       }
     }
-  }, [isBotOrNewVisitor, isDocumentsSuccess, documents, dispatch, setSelectedDocument]);
+  }, [
+    isBotOrNewVisitor,
+    isDocumentsSuccess,
+    documents,
+    dispatch,
+    setSelectedDocument,
+  ]);
 
   useEffect(() => {
     if (selectedDocument) {
@@ -565,14 +612,39 @@ const ReadyDocumentDetail = () => {
     return <Spinner />;
   }
 
+  // Calculate SEO metadata
+  const base = "https://www.vizepedia.com";
+  const docName = selectedDocument?.docName || "Hazır Belge";
+  const slug = slugParam || toSlug(docName);
+  const urlPath = `/ready-documents/${slug}`;
+  const canonical = buildCanonical(base, urlPath);
+  const description = selectedDocument?.docDescription
+    ? summarize(selectedDocument.docDescription, 160)
+    : "Hazır belge şablonu, doldurma ipuçları ve kritik alanlar.";
+  const keywords = keywordize(
+    selectedDocument?.tags,
+    `${docName}, hazır belge, şablon, Vizepedia`
+  );
+  const image = selectedDocument?.docImage || "/vite.svg";
+  const isModal = false; // Since this is a page component, not a modal
+
   // Get completion status
   const getCompletionStatus = () => {
     if (isBotOrNewVisitor) {
-      return DEMO_COMPLETED_DOCUMENTS[DEMO_USER_DATA.id]?.[selectedDocument?.docName] || false;
+      return (
+        DEMO_COMPLETED_DOCUMENTS[DEMO_USER_DATA.id]?.[
+          selectedDocument?.docName
+        ] || false
+      );
     } else if (isAnonymous) {
-      return completedDocuments[applicationId]?.[selectedDocument?.docName] || false;
+      return (
+        completedDocuments[applicationId]?.[selectedDocument?.docName] || false
+      );
     } else if (userSelections?.length > 0) {
-      return completedDocuments[userSelections[0].id]?.[selectedDocument?.docName] || false;
+      return (
+        completedDocuments[userSelections[0].id]?.[selectedDocument?.docName] ||
+        false
+      );
     }
     return false;
   };
@@ -587,16 +659,16 @@ const ReadyDocumentDetail = () => {
       if (isBotOrNewVisitor) {
         // Demo action for bot/new visitors - just show toast
         const newStatus = !isCompleted;
-        
+
         // Update demo completed documents in context
         const updatedDemoCompleted = {
           ...DEMO_COMPLETED_DOCUMENTS,
           [DEMO_USER_DATA.id]: {
             ...DEMO_COMPLETED_DOCUMENTS[DEMO_USER_DATA.id],
-            [selectedDocument.docName]: newStatus
-          }
+            [selectedDocument.docName]: newStatus,
+          },
         };
-        
+
         dispatch({
           type: "SET_COMPLETED_DOCUMENTS",
           payload: updatedDemoCompleted,
@@ -609,58 +681,75 @@ const ReadyDocumentDetail = () => {
 
       // Real action logic for authenticated/anonymous users
       if (isAnonymous) {
-        const correctApplicationId = AnonymousDataService.getConsistentApplicationId();
-        
+        const correctApplicationId =
+          AnonymousDataService.getConsistentApplicationId();
+
         console.log("🎯 Anonymous user action:");
         console.log("URL applicationId:", applicationId);
         console.log("Correct applicationId:", correctApplicationId);
-        
+
         if (isCompleted) {
-          AnonymousDataService.uncompleteDocument(correctApplicationId, selectedDocument.docName);
+          AnonymousDataService.uncompleteDocument(
+            correctApplicationId,
+            selectedDocument.docName
+          );
           dispatch({
             type: "UNCOMPLETE_DOCUMENT",
-            payload: { 
-              documentName: selectedDocument.docName, 
-              applicationId: correctApplicationId
+            payload: {
+              documentName: selectedDocument.docName,
+              applicationId: correctApplicationId,
             },
           });
         } else {
-          AnonymousDataService.completeDocument(correctApplicationId, selectedDocument.docName);
+          AnonymousDataService.completeDocument(
+            correctApplicationId,
+            selectedDocument.docName
+          );
           dispatch({
             type: "COMPLETE_DOCUMENT",
-            payload: { 
-              documentName: selectedDocument.docName, 
-              applicationId: correctApplicationId
+            payload: {
+              documentName: selectedDocument.docName,
+              applicationId: correctApplicationId,
             },
           });
         }
       } else {
         // Authenticated user logic
         if (!userId || !userSelections || userSelections.length === 0) return;
-        
+
         const realApplicationId = userSelections[0].id;
-        
+
         console.log("🔄 Using real application ID for authenticated user:");
         console.log("URL applicationId:", applicationId);
         console.log("Real applicationId:", realApplicationId);
-        
+
         if (isCompleted) {
-          await uncompleteDocument(userId, selectedDocument.docName, realApplicationId);
+          await uncompleteDocument(
+            userId,
+            selectedDocument.docName,
+            realApplicationId
+          );
           dispatch({
             type: "UNCOMPLETE_DOCUMENT",
-            payload: { 
-              documentName: selectedDocument.docName, 
-              applicationId: realApplicationId
+            payload: {
+              documentName: selectedDocument.docName,
+              applicationId: realApplicationId,
             },
           });
-          console.log("✅ Document uncompleted and context updated with real ID");
+          console.log(
+            "✅ Document uncompleted and context updated with real ID"
+          );
         } else {
-          await completeDocument(userId, selectedDocument.docName, realApplicationId);
+          await completeDocument(
+            userId,
+            selectedDocument.docName,
+            realApplicationId
+          );
           dispatch({
             type: "COMPLETE_DOCUMENT",
-            payload: { 
-              documentName: selectedDocument.docName, 
-              applicationId: realApplicationId
+            payload: {
+              documentName: selectedDocument.docName,
+              applicationId: realApplicationId,
             },
           });
           console.log("✅ Document completed and context updated with real ID");
@@ -690,7 +779,9 @@ const ReadyDocumentDetail = () => {
     const documentsToUse = isBotOrNewVisitor ? DEMO_DOCUMENTS : documents;
     if (!documentsToUse) return;
 
-    const readyDocuments = documentsToUse.filter((doc) => doc.docStage === "hazir");
+    const readyDocuments = documentsToUse.filter(
+      (doc) => doc.docStage === "hazir"
+    );
 
     console.log("🔄 Navigation Debug:");
     console.log("direction:", direction);
@@ -718,73 +809,121 @@ const ReadyDocumentDetail = () => {
     : [];
 
   return (
-    <PageContainer>
-      <NavigationButtons
-        onPrevClick={() => handleNavigation("prev")}
-        onNextClick={() => handleNavigation("next")}
-        isPrevDisabled={currentDocumentIndex === 0}
-        isNextDisabled={
-          !readyDocuments || currentDocumentIndex === readyDocuments.length - 1
-        }
+    <>
+      <SEO
+        title={`${docName} – Hazır Belge Şablonu | Vizepedia`}
+        description={description}
+        keywords={keywords}
+        image={image}
+        url={canonical}
+        noindex={isModal}
       />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "CreativeWork",
+          headline: `${docName} – Hazır Belge`,
+          name: docName,
+          description: description,
+          image: image.startsWith("http") ? image : `${base}${image}`,
+          mainEntityOfPage: canonical,
+        }}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Ana Sayfa",
+              item: `${base}/`,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Hazır Belgeler",
+              item: `${base}/ready-documents`,
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: docName,
+              item: canonical,
+            },
+          ],
+        }}
+      />
+      <PageContainer>
+        <NavigationButtons
+          onPrevClick={() => handleNavigation("prev")}
+          onNextClick={() => handleNavigation("next")}
+          isPrevDisabled={currentDocumentIndex === 0}
+          isNextDisabled={
+            !readyDocuments ||
+            currentDocumentIndex === readyDocuments.length - 1
+          }
+        />
 
-      <DocProgress>
-        {readyDocuments.map((_, index) => (
-          <ProgressDot key={index} active={index === currentDocumentIndex} />
-        ))}
-      </DocProgress>
+        <DocProgress>
+          {readyDocuments.map((_, index) => (
+            <ProgressDot key={index} active={index === currentDocumentIndex} />
+          ))}
+        </DocProgress>
 
-      <DocTitleCont>
-        <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
-        <MetaInfo>
-          {selectedDocument.docType && (
-            <MetaTag>{selectedDocument.docType}</MetaTag>
-          )}
-        </MetaInfo>
-      </DocTitleCont>
+        <DocTitleCont>
+          <DocumentTitle>{selectedDocument.docName}</DocumentTitle>
+          <MetaInfo>
+            {selectedDocument.docType && (
+              <MetaTag>{selectedDocument.docType}</MetaTag>
+            )}
+          </MetaInfo>
+        </DocTitleCont>
 
-      <InfoContainer>
-        <DocumentDescription>
-          <DescriptionLayout>
-            <MainText>{selectedDocument.docDescription}</MainText>
+        <InfoContainer>
+          <DocumentDescription>
+            <DescriptionLayout>
+              <MainText>{selectedDocument.docDescription}</MainText>
 
-            <ButtonsContainer>
-              {selectedDocument.docSourceLink && (
-                <SourceButton
-                  id="sourceButton"
-                  onClick={() =>
-                    window.open(
-                      selectedDocument.docSourceLink,
-                      "_blank",
-                      "noopener,noreferrer"
-                    )
-                  }
+              <ButtonsContainer>
+                {selectedDocument.docSourceLink && (
+                  <SourceButton
+                    id="sourceButton"
+                    onClick={() =>
+                      window.open(
+                        selectedDocument.docSourceLink,
+                        "_blank",
+                        "noopener,noreferrer"
+                      )
+                    }
+                  >
+                    <span>Bağlantı</span>
+                  </SourceButton>
+                )}
+
+                <ActionButton
+                  onClick={handleAction}
+                  isCompleted={isCompleted}
+                  className="action-button"
                 >
-                  <span>Bağlantı</span>
-                </SourceButton>
-              )}
+                  {isCompleted ? "Tamamlandı" : "Tamamla"}
+                </ActionButton>
+              </ButtonsContainer>
+            </DescriptionLayout>
+          </DocumentDescription>
 
-              <ActionButton
-                onClick={handleAction}
-                isCompleted={isCompleted}
-                className="action-button"
-              >
-                {isCompleted ? "Tamamlandı" : "Tamamla"}
-              </ActionButton>
-            </ButtonsContainer>
-          </DescriptionLayout>
-        </DocumentDescription>
-
-        <ImageContainer>
-          <ImageViewer
-            imageSrc={selectedDocument.docImage}
-            altText={selectedDocument.docName}
-            readyDocuments={readyDocuments}
-            currentIndex={currentDocumentIndex}
-          />
-        </ImageContainer>
-      </InfoContainer>
-    </PageContainer>
+          <ImageContainer>
+            <ImageViewer
+              imageSrc={selectedDocument.docImage}
+              altText={selectedDocument.docName}
+              readyDocuments={readyDocuments}
+              currentIndex={currentDocumentIndex}
+            />
+          </ImageContainer>
+        </InfoContainer>
+      </PageContainer>
+    </>
   );
 };
 
