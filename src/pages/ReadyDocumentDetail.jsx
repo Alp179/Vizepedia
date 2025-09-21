@@ -16,6 +16,7 @@ import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
+import supabase from "../services/supabase"; // ADDED: Import supabase
 // Adding the required imports
 import SEO from "../components/SEO";
 import JsonLd from "../components/JsonLd";
@@ -29,7 +30,7 @@ import {
   getPageFromSearch,
 } from "../utils/seoHelpers";
 
-// Real demo data from your system
+// Real demo data from your system (kept as fallback)
 const DEMO_DOCUMENTS = [
   {
     id: 70,
@@ -168,9 +169,25 @@ const DEMO_COMPLETED_DOCUMENTS = {
   },
 };
 
-// Animasyon tanımlamaları
+// NEW: Function to fetch ALL documents from Supabase for demo mode
+const fetchAllDocumentsForDemo = async () => {
+  console.log("🔄 Fetching all documents from Supabase for demo mode...");
+  
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*")
+    .order("id", { ascending: true });
 
-// Tekrar kullanılabilir stiller
+  if (error) {
+    console.error("❌ Error fetching documents for demo:", error);
+    throw new Error(error.message);
+  }
+
+  console.log("✅ Fetched all documents for demo:", data?.length, "documents");
+  return data || [];
+};
+
+// Styled components (keeping all existing styles)
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -537,7 +554,6 @@ const SideComponents = styled.div`
   }
 `;
 
-// Dikkat ve Temin Yeri bölümleri için özel stilizasyonlar
 const AttentionSection = styled(SectionContainer)`
   margin-top: 0;
   @media (max-width: 800px) {
@@ -559,11 +575,10 @@ const StyledButtonsContainer = styled(ButtonsContainer)`
 `;
 
 const ReadyDocumentDetail = () => {
-  // Tüm Hook'ları en üstte çağır
+  // All hooks at the top
   const params = useParams();
   const location = useLocation();
 
-  // Param ayrıştırmayı sağlamlaştır
   const looksLikeId = (v) =>
     !!v && (/^\d+$/.test(v) || v.startsWith("anonymous-"));
   const paramApplicationId = looksLikeId(params.id) ? params.id : undefined;
@@ -588,19 +603,17 @@ const ReadyDocumentDetail = () => {
 
   const applicationId = paramApplicationId || `anonymous-${Date.now()}`;
 
-  // SEO için URL ve sayfa bilgileri
+  // SEO setup
   const base = "https://www.vizepedia.com";
   const page = getPageFromSearch(location.search);
   const path = "/ready-documents";
   const canonical = buildPaginatedUrl(base, path, page);
 
-  // Toplam sayfa (elinizde varsa real pagination'dan okuyun; yoksa prev/next üretimini güvenli yapalım)
   const hasPrev = page > 1;
-  const hasNext = false; // Gerçek toplam sayfa sayınız varsa: page < totalPages
+  const hasNext = false;
   const prevUrl = hasPrev ? buildPaginatedUrl(base, path, page - 1) : undefined;
   const nextUrl = hasNext ? buildPaginatedUrl(base, path, page + 1) : undefined;
 
-  // Sayfa özel başlık/açıklama
   const title =
     page > 1
       ? `Hazır Belgeler – Sayfa ${page} | Vizepedia`
@@ -608,9 +621,22 @@ const ReadyDocumentDetail = () => {
   const description =
     "Vize başvurunuz için gerekli tüm hazır belgeleri keşfedin. Doldurma ipuçları ve kritik alanlarla eksiksiz başvuru yapın.";
 
-  // Bot/new visitor URL handling - redirect to clean URL
+  // NEW: Query to fetch all documents for demo mode
+  const { data: allDocumentsForDemo } = useQuery({
+    queryKey: ["allDocumentsForDemo"],
+    queryFn: fetchAllDocumentsForDemo,
+    enabled: isBotOrNewVisitor, // Only fetch when in demo mode
+    staleTime: 10 * 60 * 1000, // Cache for 10 minutes
+    onSuccess: (data) => {
+      console.log("✅ All documents for demo query success:", data?.length, "documents");
+    },
+    onError: (error) => {
+      console.error("❌ All documents for demo query error:", error);
+    },
+  });
+
+  // Bot/new visitor URL handling
   useEffect(() => {
-    // Sadece bot/new visitor için ID'yi gizle; gerçek kullanıcıda ID'yi KORU
     if (isBotOrNewVisitor && paramApplicationId) {
       if (slugParam)
         navigate(`/ready-documents/${slugParam}`, { replace: true });
@@ -644,11 +670,19 @@ const ReadyDocumentDetail = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  // NEW: Function to get documents to use
+  const getDocumentsToUse = () => {
+    if (isBotOrNewVisitor) {
+      // Use real documents from Supabase instead of hardcoded DEMO_DOCUMENTS
+      return allDocumentsForDemo || DEMO_DOCUMENTS; // Fallback to demo if Supabase fails
+    }
+    return documents; // Use regular documents for authenticated users
+  };
+
   // User detection
   useEffect(() => {
     if (isBotOrNewVisitor) {
       setUserId("demo-user");
-      // Set demo completed documents for bot/new visitors
       dispatch({
         type: "SET_COMPLETED_DOCUMENTS",
         payload: DEMO_COMPLETED_DOCUMENTS,
@@ -664,9 +698,9 @@ const ReadyDocumentDetail = () => {
     }
   }, [isBotOrNewVisitor, isAnonymous, dispatch]);
 
-  // Mount/yeniden yükleme: slug varsa ona git
+  // UPDATED: Document initialization with real documents
   useEffect(() => {
-    const docs = isBotOrNewVisitor ? DEMO_DOCUMENTS : documents;
+    const docs = getDocumentsToUse(); // CHANGED: Use real documents
     if (!docs) return;
 
     const readyDocs = docs.filter((d) => d.docStage === "hazir");
@@ -682,12 +716,11 @@ const ReadyDocumentDetail = () => {
         return;
       }
     }
-    // slug yoksa/ eşleşmezse ilk elemana düş
+    
     if (!selectedDocument) {
       const first = readyDocs[0];
       setSelectedDocument(first);
       setCurrentDocumentIndex(0);
-      // Yalnızca gerçek kullanıcı + id varsa URL'i slug'la güncelle
       if (paramApplicationId) {
         navigate(
           `/ready-documents/${paramApplicationId}/${toSlug(first.docName)}`,
@@ -698,6 +731,7 @@ const ReadyDocumentDetail = () => {
   }, [
     isBotOrNewVisitor,
     documents,
+    allDocumentsForDemo, // NEW: Added dependency
     slugParam,
     setSelectedDocument,
     selectedDocument,
@@ -705,9 +739,10 @@ const ReadyDocumentDetail = () => {
     navigate,
   ]);
 
+  // UPDATED: Current document index effect
   useEffect(() => {
     if (selectedDocument) {
-      const documentsToUse = isBotOrNewVisitor ? DEMO_DOCUMENTS : documents;
+      const documentsToUse = getDocumentsToUse(); // CHANGED: Use real documents
       if (documentsToUse) {
         const readyDocuments = documentsToUse.filter(
           (doc) => doc.docStage === "hazir"
@@ -718,7 +753,7 @@ const ReadyDocumentDetail = () => {
         setCurrentDocumentIndex(index);
       }
     }
-  }, [selectedDocument, documents, isBotOrNewVisitor]);
+  }, [selectedDocument, documents, allDocumentsForDemo, isBotOrNewVisitor]); // UPDATED: Added dependencies
 
   if (!selectedDocument) {
     return <Spinner />;
@@ -869,8 +904,9 @@ const ReadyDocumentDetail = () => {
     }
   };
 
+  // UPDATED: Navigation handler with real documents
   const handleNavigation = (direction) => {
-    const docsToUse = isBotOrNewVisitor ? DEMO_DOCUMENTS : documents;
+    const docsToUse = getDocumentsToUse(); // CHANGED: Use real documents
     if (!docsToUse) return;
 
     const readyDocs = docsToUse.filter((d) => d.docStage === "hazir");
@@ -894,7 +930,6 @@ const ReadyDocumentDetail = () => {
 
   const handleReferenceClick = () => {
     if (selectedDocument && selectedDocument.referenceLinks) {
-      // Link açma işlemi
       window.open(
         selectedDocument.referenceLinks,
         "_blank",
@@ -903,17 +938,19 @@ const ReadyDocumentDetail = () => {
     }
   };
 
-  // Get ready documents
-  const documentsToUse = isBotOrNewVisitor ? DEMO_DOCUMENTS : documents;
-  const readyDocuments = documentsToUse
-    ? documentsToUse.filter((doc) => doc.docStage === "hazir")
-    : [];
+  // UPDATED: Get ready documents with real documents
+  const readyDocuments = (() => {
+    const documentsToUse = getDocumentsToUse(); // CHANGED: Use real documents
+    return documentsToUse
+      ? documentsToUse.filter((doc) => doc.docStage === "hazir")
+      : [];
+  })();
 
-  // Sayfalama için gerekli bilgiler
-  const pageSize = 10; // Bir sayfada gösterilecek belge sayısı
-  const currentPageDocs = readyDocuments; // Tüm belgeleri göster (gerçek bir sayfalama yapısı kurmak için bu kısmı güncellemeniz gerekebilir)
+  // Pagination info
+  const pageSize = 10;
+  const currentPageDocs = readyDocuments;
 
-  // SEO için detay/liste ayrımı
+  // SEO for detail/list distinction
   const isDetail = !!selectedDocument;
   const seoTitle = isDetail
     ? `${docName} – Hazır Belge Şablonu | Vizepedia`

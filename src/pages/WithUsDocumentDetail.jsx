@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -14,7 +16,7 @@ import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
-// Adding the required imports
+import supabase from "../services/supabase"; // ADDED: Import supabase
 import SEO from "../components/SEO";
 import JsonLd from "../components/JsonLd";
 
@@ -27,7 +29,7 @@ import {
   getPageFromSearch,
 } from "../utils/seoHelpers";
 
-// Demo documents for "bizimle" stage - bot/new visitor data
+// Demo documents for fallback
 const DEMO_WITHUS_DOCUMENTS = [
   {
     id: 73,
@@ -55,65 +57,22 @@ const DEMO_WITHUS_DOCUMENTS = [
     docDescription:
       "Seyahat süresince yurt dışında geçerli, zorunlu seyahat sağlık sigortası poliçesi.",
     docImage:
-      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/sigorta.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9zaWdvcnRhLnBuZyIsImlhdCI6MTc0ODc4OTM0NSwiZXhwIjo3NDQ4MjEyMzk0NX0.k2Bv8LtHWxQ9eRzA5nY3jG4fKpE6sT7bC8wX1uH2fDo",
+      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/sigorta.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9zaWdvcnRhLnBuZyIsImlhdCI6MTc0ODc4OTIwNSwiZXhwIjo2NTQ4NzQxMjA1fQ.j2i7Wl6vZaRfDhkEWgA_M3WqHvJdHsDTmPV2e-8cDwE",
     docType: "Sigorta Belgesi",
     docStage: "bizimle",
     docSource: "Sigorta Şirketi",
     docSourceLink: null,
-    referenceLinks: "https://visa.vfsglobal.com/tur/tr/deu/what-to-submit",
-    referenceName: "VFS Global – Seyahat Sağlık Sigortası",
-    docImportant:
-      "\n- En az 30.000 Euro teminatlı olmalı.\n- Tüm seyahat süresini kapsamalı.\n- Başvuru sahibinin adı yer almalı.",
-    docWhere:
-      "Bankalar, mobil bankacılık sistemleri, sigorta acenteleri veya online sigorta platformlarından alınabilir.",
-    is_required: true,
-    order_index: 4,
-    estimatedCompletionTime: "Vizepedia ile",
-  },
-  {
-    id: 95,
-    docName: "Vize Başvuru Formu",
-    docDescription:
-      "Konsolosluk tarafından belirlenen resmi vize başvuru formu. Tüm bilgiler eksiksiz ve doğru olarak doldurulmalıdır.",
-    docImage:
-      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/vizeform.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by92aXplZm9ybS5wbmciLCJpYXQiOjE3NDg3ODkzODUsImV4cCI6NzQ0ODIxMjM5ODV9.X3bY2eK5qT8vF9jR6pS4wL1nH7cA9tGmE6uV5iO3xJz",
-    docType: "Başvuru Belgesi",
-    docStage: "bizimle",
-    docSource: "Konsolosluk",
-    docSourceLink: "https://visa.vfsglobal.com/tur/tr/deu/apply-visa",
-    referenceLinks: "https://visa.vfsglobal.com/tur/tr/deu/apply-visa",
-    referenceName: "VFS Global – Vize Başvuru Formu",
-    docImportant:
-      "\n- Tüm alanlar doldurulmalı.\n- İmza ve tarih atılmalı.\n- Fotokopi değil orijinal form kullanılmalı.",
-    docWhere:
-      "Konsolosluk web sitesinden indirilebilir veya VFS merkezlerinden alınabilir.",
-    is_required: true,
-    order_index: 1,
-    estimatedCompletionTime: "Vizepedia ile",
-  },
-  {
-    id: 96,
-    docName: "Davet Mektubu",
-    docDescription:
-      "Seyahat edilecek ülkede bulunan kişi, kurum veya şirket tarafından düzenlenen resmi davet mektubu.",
-    docImage:
-      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/davet.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9kYXZldC5wbmciLCJpYXQiOjE3NDg3ODk0MjUsImV4cCI6NzQ0ODIxMjQwMjV9.M9nP6bL5tR8aF2cX7jS3wK4hG1vQ9eY6uT5nI8rA3oZ",
-    docType: "Destek Belgesi",
-    docStage: "bizimle",
-    docSource: "Davet Eden Taraf",
-    docSourceLink: null,
     referenceLinks: "https://idata.com.tr/tr/",
-    referenceName: "iDATA – Davet Mektubu Örnekleri",
+    referenceName: "iDATA – Sigorta Rehberi",
     docImportant:
-      "\n- Davet edenin kimlik bilgileri yer almalı.\n- Seyahat tarihleri ve amacı belirtilmeli.\n- İmza ve kaşe bulunmalı.",
-    docWhere: "Seyahat edilecek ülkedeki davet eden tarafından hazırlanır.",
-    is_required: false,
-    order_index: 10,
+      "\n- Minimum 30.000 Euro teminat tutarı.\n- Seyahat tarihlerini tam kapsamalı.\n- Shengen ülkelerinde geçerli olmalı.",
+    docWhere: "Vizepedia ile hızlı ve güvenli temin edilir.",
+    is_required: true,
+    order_index: 9,
     estimatedCompletionTime: "Vizepedia ile",
   },
 ];
 
-// Demo user data for bot/new visitors
 const DEMO_USER_DATA = {
   id: 405,
   name: "Demo User",
@@ -122,15 +81,29 @@ const DEMO_USER_DATA = {
 
 const DEMO_COMPLETED_DOCUMENTS = {
   [DEMO_USER_DATA.id]: {
-    "Faaliyet Belgesi": false,
-    "Seyahat Sağlık Sigortası": true,
-    "Vize Başvuru Formu": false,
-    "Davet Mektubu": true,
-    // Mixed completion status for realistic demo
+    "Faaliyet Belgesi": true,
   },
 };
 
-// Tekrar kullanılabilir stiller
+// NEW: Function to fetch ALL documents from Supabase for demo mode
+const fetchAllDocumentsForDemo = async () => {
+  console.log("🔄 Fetching all documents from Supabase for demo mode...");
+  
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error("❌ Error fetching documents for demo:", error);
+    throw new Error(error.message);
+  }
+
+  console.log("✅ Fetched all documents for demo:", data?.length, "documents");
+  return data || [];
+};
+
+// Styled components
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -242,77 +215,6 @@ const MetaTag = styled.span`
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-`;
-
-const SourceButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  padding: 15px 20px;
-  background-color: #004466;
-  color: white;
-  border: 2px solid #00ffa2;
-  border-radius: 16px;
-  width: 120px;
-  height: 60px;
-  min-width: 150px;
-  transition: all 0.3s ease;
-  font-size: 18px;
-  position: relative;
-  overflow: hidden;
-
-  &:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    background-color: "#00ffa2";
-    transition: all 0.3s ease;
-    z-index: 0;
-  }
-
-  &:hover:before {
-    width: 100%;
-  }
-
-  svg {
-    margin-right: 8px;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-  }
-
-  span {
-    position: relative;
-    z-index: 1;
-  }
-
-  &:hover {
-    color: #004466;
-  }
-
-  @media (max-width: 680px) {
-    font-size: 16px;
-    padding: 12px 15px;
-    min-width: 100px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-`;
-
-const ButtonsContainer = styled.div`
-  display: flex;
-  gap: 15px;
-  margin-top: 5px;
-
-  @media (max-width: 680px) {
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
   }
 `;
 
@@ -497,7 +399,6 @@ const SideComponents = styled.div`
   }
 `;
 
-// Dikkat ve Temin Yeri bölümleri için özel stilizasyonlar
 const AttentionSection = styled(SectionContainer)`
   margin-top: 0;
   @media (max-width: 800px) {
@@ -512,18 +413,88 @@ const LocationSection = styled(SectionContainer)`
   }
 `;
 
+const ButtonsContainer = styled.div`
+  display: flex;
+  gap: 15px;
+  margin-top: 5px;
+  justify-content: center;
+
+  @media (max-width: 680px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+`;
+
 const StyledButtonsContainer = styled(ButtonsContainer)`
   @media (max-width: 800px) {
     order: 4;
   }
 `;
 
+const SourceButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  padding: 15px 20px;
+  background-color: #004466;
+  color: white;
+  border: 2px solid #00ffa2;
+  border-radius: 16px;
+  width: 120px;
+  height: 60px;
+  min-width: 150px;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  position: relative;
+  overflow: hidden;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: "#00ffa2";
+    transition: all 0.3s ease;
+    z-index: 0;
+  }
+
+  &:hover:before {
+    width: 100%;
+  }
+
+  svg {
+    margin-right: 8px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:hover {
+    color: #004466;
+  }
+
+  @media (max-width: 680px) {
+    font-size: 16px;
+    padding: 12px 15px;
+    min-width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+`;
+
 const WithUsDocumentDetail = () => {
-  // Tüm Hook'ları en üstte çağır
   const params = useParams();
   const location = useLocation();
 
-  // Param ayrıştırmayı sağlamlaştır
   const looksLikeId = (v) =>
     !!v && (/^\d+$/.test(v) || v.startsWith("anonymous-"));
   const paramApplicationId = looksLikeId(params.id) ? params.id : undefined;
@@ -539,7 +510,6 @@ const WithUsDocumentDetail = () => {
     dispatch,
   } = useContext(DocumentsContext);
 
-  // User type detection
   const { user, userType } = useUser();
   const isAnonymous =
     userType === "anonymous" ||
@@ -548,29 +518,29 @@ const WithUsDocumentDetail = () => {
 
   const applicationId = paramApplicationId || `anonymous-${Date.now()}`;
 
-  // SEO için URL ve sayfa bilgileri
+  // SEO setup
   const base = "https://www.vizepedia.com";
   const page = getPageFromSearch(location.search);
   const path = "/withus-documents";
   const canonical = buildPaginatedUrl(base, path, page);
 
-  // Toplam sayfa (elinizde varsa real pagination'dan okuyun; yoksa prev/next üretimini güvenli yapalım)
-  const hasPrev = page > 1;
-  const hasNext = false; // Gerçek toplam sayfa sayınız varsa: page < totalPages
-  const prevUrl = hasPrev ? buildPaginatedUrl(base, path, page - 1) : undefined;
-  const nextUrl = hasNext ? buildPaginatedUrl(base, path, page + 1) : undefined;
-
-  // Sayfa özel başlık/açıklama
   const title =
     page > 1
-      ? `Bizimle Hazırlanan Belgeler – Sayfa ${page} | Vizepedia`
-      : "Bizimle Hazırlanan Belgeler | Vizepedia";
+      ? `Bizimle Belgeler – Sayfa ${page} | Vizepedia`
+      : "Bizimle Belgeler | Vizepedia";
   const description =
-    "Vize başvurunuz için profesyonel destekle hazırlayacağımız belgeleri keşfedin. Hızlı, güvenilir ve eksiksiz belge hizmeti.";
+    "Uzman ekibimizle birlikte hazırlayabileceğiniz belgeleri keşfedin. Profesyonel destek alarak başvurunuzu güçlendirin.";
 
-  // Bot/new visitor URL handling - redirect to clean URL
+  // NEW: Query to fetch all documents for demo mode
+  const { data: allDocumentsForDemo } = useQuery({
+    queryKey: ["allDocumentsForDemo"],
+    queryFn: fetchAllDocumentsForDemo,
+    enabled: isBotOrNewVisitor,
+    staleTime: 10 * 60 * 1000,
+  });
+
+  // Bot/new visitor URL handling
   useEffect(() => {
-    // Sadece bot/new visitor için ID'yi gizle; gerçek kullanıcıda ID'yi KORU
     if (isBotOrNewVisitor && paramApplicationId) {
       if (slugParam)
         navigate(`/withus-documents/${slugParam}`, { replace: true });
@@ -578,7 +548,7 @@ const WithUsDocumentDetail = () => {
     }
   }, [isBotOrNewVisitor, paramApplicationId, slugParam, navigate]);
 
-  // Query for real users (not bot/new visitors)
+  // Query for real users
   const { data: userSelections } = useQuery({
     queryKey: ["userSelections", userId, applicationId, userType],
     queryFn: () => {
@@ -604,11 +574,18 @@ const WithUsDocumentDetail = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  // NEW: Function to get documents to use
+  const getDocumentsToUse = () => {
+    if (isBotOrNewVisitor) {
+      return allDocumentsForDemo || DEMO_WITHUS_DOCUMENTS;
+    }
+    return documents;
+  };
+
   // User detection
   useEffect(() => {
     if (isBotOrNewVisitor) {
       setUserId("demo-user");
-      // Set demo completed documents for bot/new visitors
       dispatch({
         type: "SET_COMPLETED_DOCUMENTS",
         payload: DEMO_COMPLETED_DOCUMENTS,
@@ -624,30 +601,29 @@ const WithUsDocumentDetail = () => {
     }
   }, [isBotOrNewVisitor, isAnonymous, dispatch]);
 
-  // Mount/yeniden yükleme: slug varsa ona git
+  // UPDATED: Document initialization with real documents
   useEffect(() => {
-    const docs = isBotOrNewVisitor ? DEMO_WITHUS_DOCUMENTS : documents;
+    const docs = getDocumentsToUse();
     if (!docs) return;
 
-    const withusDocs = docs.filter((d) => d.docStage === "bizimle");
-    if (!withusDocs.length) return;
+    const withUsDocs = docs.filter((d) => d.docStage === "bizimle");
+    if (!withUsDocs.length) return;
 
     if (slugParam) {
-      const match = withusDocs.find((d) => toSlug(d.docName) === slugParam);
+      const match = withUsDocs.find((d) => toSlug(d.docName) === slugParam);
       if (match) {
         setSelectedDocument(match);
         setCurrentDocumentIndex(
-          withusDocs.findIndex((d) => d.docName === match.docName)
+          withUsDocs.findIndex((d) => d.docName === match.docName)
         );
         return;
       }
     }
-    // slug yoksa/ eşleşmezse ilk elemana düş
+    
     if (!selectedDocument) {
-      const first = withusDocs[0];
+      const first = withUsDocs[0];
       setSelectedDocument(first);
       setCurrentDocumentIndex(0);
-      // Yalnızca gerçek kullanıcı + id varsa URL'i slug'la güncelle
       if (paramApplicationId) {
         navigate(
           `/withus-documents/${paramApplicationId}/${toSlug(first.docName)}`,
@@ -658,6 +634,7 @@ const WithUsDocumentDetail = () => {
   }, [
     isBotOrNewVisitor,
     documents,
+    allDocumentsForDemo,
     slugParam,
     setSelectedDocument,
     selectedDocument,
@@ -665,40 +642,37 @@ const WithUsDocumentDetail = () => {
     navigate,
   ]);
 
+  // UPDATED: Current document index effect
   useEffect(() => {
     if (selectedDocument) {
-      const documentsToUse = isBotOrNewVisitor
-        ? DEMO_WITHUS_DOCUMENTS
-        : documents;
+      const documentsToUse = getDocumentsToUse();
       if (documentsToUse) {
-        const withusDocuments = documentsToUse.filter(
+        const withUsDocuments = documentsToUse.filter(
           (doc) => doc.docStage === "bizimle"
         );
-        const index = withusDocuments.findIndex(
+        const index = withUsDocuments.findIndex(
           (doc) => doc.docName === selectedDocument.docName
         );
         setCurrentDocumentIndex(index);
       }
     }
-  }, [selectedDocument, documents, isBotOrNewVisitor]);
+  }, [selectedDocument, documents, allDocumentsForDemo, isBotOrNewVisitor]);
 
   if (!selectedDocument) {
     return <Spinner />;
   }
 
   // Calculate SEO metadata
-  const docName = selectedDocument?.docName || "Belge Hizmeti";
+  const docName = selectedDocument?.docName || "Bizimle Belge";
   const slug = slugParam || toSlug(docName);
   const urlPath = `/withus-documents/${slug}`;
   const docCanonical = buildCanonical(base, urlPath);
   const docDescription = selectedDocument?.docDescription
     ? summarize(selectedDocument.docDescription, 160)
-    : selectedDocument?.benefits
-    ? summarize(selectedDocument.benefits, 160)
-    : "Belgenizi uzman ekibimizle hızlı ve eksiksiz hazırlayın.";
+    : "Uzman ekibimizle birlikte belgenizi hazırlayın.";
   const docKeywords = keywordize(
-    selectedDocument?.tags || [], // Boş array fallback ekledik
-    `${docName}, belge hizmeti, profesyonel destek, Vizepedia`
+    selectedDocument?.tags || [],
+    `${docName}, bizimle belge, uzman destek, Vizepedia`
   );
 
   // Get completion status
@@ -730,10 +704,8 @@ const WithUsDocumentDetail = () => {
 
     try {
       if (isBotOrNewVisitor) {
-        // Demo action for bot/new visitors
         const newStatus = !isCompleted;
 
-        // Update demo completed documents in context
         const updatedDemoCompleted = {
           ...DEMO_COMPLETED_DOCUMENTS,
           [DEMO_USER_DATA.id]: {
@@ -747,12 +719,10 @@ const WithUsDocumentDetail = () => {
           payload: updatedDemoCompleted,
         });
 
-        // Navigate back to demo dashboard
         navigate("/dashboard");
         return;
       }
 
-      // Real action logic for authenticated/anonymous users
       if (isAnonymous) {
         const correctApplicationId =
           AnonymousDataService.getConsistentApplicationId();
@@ -783,7 +753,6 @@ const WithUsDocumentDetail = () => {
           });
         }
       } else {
-        // Authenticated user logic
         if (!userId || !userSelections || userSelections.length === 0) return;
 
         const realApplicationId = userSelections[0].id;
@@ -817,7 +786,6 @@ const WithUsDocumentDetail = () => {
         }
       }
 
-      // Navigation logic
       if (user && userType === "authenticated") {
         navigate("/dashboard");
       } else if (applicationId && !applicationId.startsWith("anonymous-")) {
@@ -831,19 +799,20 @@ const WithUsDocumentDetail = () => {
     }
   };
 
+  // UPDATED: Navigation handler with real documents
   const handleNavigation = (direction) => {
-    const docsToUse = isBotOrNewVisitor ? DEMO_WITHUS_DOCUMENTS : documents;
+    const docsToUse = getDocumentsToUse();
     if (!docsToUse) return;
 
-    const withusDocs = docsToUse.filter((d) => d.docStage === "bizimle");
+    const withUsDocs = docsToUse.filter((d) => d.docStage === "bizimle");
     let nextIndex = currentDocumentIndex;
 
     if (direction === "prev" && currentDocumentIndex > 0) nextIndex -= 1;
-    if (direction === "next" && currentDocumentIndex < withusDocs.length - 1)
+    if (direction === "next" && currentDocumentIndex < withUsDocs.length - 1)
       nextIndex += 1;
 
     if (nextIndex !== currentDocumentIndex) {
-      const nextDoc = withusDocs[nextIndex];
+      const nextDoc = withUsDocs[nextIndex];
       setSelectedDocument(nextDoc);
       setCurrentDocumentIndex(nextIndex);
       const nextSlug = toSlug(nextDoc.docName);
@@ -856,7 +825,6 @@ const WithUsDocumentDetail = () => {
 
   const handleReferenceClick = () => {
     if (selectedDocument && selectedDocument.referenceLinks) {
-      // Link açma işlemi
       window.open(
         selectedDocument.referenceLinks,
         "_blank",
@@ -865,20 +833,17 @@ const WithUsDocumentDetail = () => {
     }
   };
 
-  // Get withus documents
-  const documentsToUse = isBotOrNewVisitor ? DEMO_WITHUS_DOCUMENTS : documents;
-  const withusDocuments = documentsToUse
-    ? documentsToUse.filter((doc) => doc.docStage === "bizimle")
-    : [];
+  // UPDATED: Get withus documents with real documents
+  const withUsDocuments = (() => {
+    const documentsToUse = getDocumentsToUse();
+    return documentsToUse
+      ? documentsToUse.filter((doc) => doc.docStage === "bizimle")
+      : [];
+  })();
 
-  // Sayfalama için gerekli bilgiler
-  const pageSize = 10; // Bir sayfada gösterilecek belge sayısı
-  const currentPageDocs = withusDocuments; // Tüm belgeleri göster (gerçek bir sayfalama yapısı kurmak için bu kısmı güncellemeniz gerekebilir)
-
-  // SEO için detay/liste ayrımı
   const isDetail = !!selectedDocument;
   const seoTitle = isDetail
-    ? `${docName} – Profesyonel Belge Hizmeti | Vizepedia`
+    ? `${docName} – Bizimle Belge | Vizepedia`
     : title;
   const seoDesc = isDetail ? docDescription : description;
   const seoUrl = isDetail ? docCanonical : canonical;
@@ -890,95 +855,13 @@ const WithUsDocumentDetail = () => {
         description={seoDesc}
         keywords={docKeywords}
         url={seoUrl}
-        {...(!isDetail && { prevUrl })}
-        {...(!isDetail && { nextUrl })}
       />
-
-      {/* ItemList sadece liste görünümünde (slug yokken) */}
-      {!slugParam && (
-        <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            itemListElement: (currentPageDocs || []).map((doc, idx) => ({
-              "@type": "ListItem",
-              position: idx + 1 + (page - 1) * (pageSize || 0),
-              name: doc.docName,
-              url: `${base}${path}/${toSlug(doc.docName)}`,
-            })),
-          }}
-        />
-      )}
-
-      {/* Breadcrumb sadece liste için */}
-      {!selectedDocument && (
-        <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "Ana Sayfa",
-                item: `${base}/`,
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: "Bizimle Hazırlanan Belgeler",
-                item: `${base}${path}`,
-              },
-              ...(page > 1
-                ? [
-                    {
-                      "@type": "ListItem",
-                      position: 3,
-                      name: `Sayfa ${page}`,
-                      item: canonical,
-                    },
-                  ]
-                : []),
-            ],
-          }}
-        />
-      )}
-
-      {/* Breadcrumb sadece detay için */}
-      {selectedDocument && (
-        <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "Ana Sayfa",
-                item: `${base}/`,
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: "Bizimle Hazırlanan Belgeler",
-                item: `${base}/withus-documents`,
-              },
-              {
-                "@type": "ListItem",
-                position: 3,
-                name: docName,
-                item: docCanonical,
-              },
-            ],
-          }}
-        />
-      )}
 
       <JsonLd
         data={{
           "@context": "https://schema.org",
           "@type": "Service",
-          name: `${docName} – Belge Hizmeti`,
+          name: `${docName} – Bizimle Belge`,
           description: docDescription,
           provider: {
             "@type": "Organization",
@@ -995,13 +878,13 @@ const WithUsDocumentDetail = () => {
           onNextClick={() => handleNavigation("next")}
           isPrevDisabled={currentDocumentIndex === 0}
           isNextDisabled={
-            !withusDocuments ||
-            currentDocumentIndex === withusDocuments.length - 1
+            !withUsDocuments ||
+            currentDocumentIndex === withUsDocuments.length - 1
           }
         />
 
         <DocProgress>
-          {withusDocuments.map((_, index) => (
+          {withUsDocuments.map((_, index) => (
             <ProgressDot key={index} active={index === currentDocumentIndex} />
           ))}
         </DocProgress>
@@ -1022,7 +905,7 @@ const WithUsDocumentDetail = () => {
               <ImageViewer
                 imageSrc={selectedDocument.docImage}
                 altText={selectedDocument.docName}
-                readyDocuments={withusDocuments}
+                readyDocuments={withUsDocuments}
                 currentIndex={currentDocumentIndex}
               />
 
@@ -1108,7 +991,6 @@ const WithUsDocumentDetail = () => {
               <StyledButtonsContainer>
                 {selectedDocument.docSourceLink && (
                   <SourceButton
-                    id="sourceButton"
                     onClick={() =>
                       window.open(
                         selectedDocument.docSourceLink,
@@ -1124,7 +1006,6 @@ const WithUsDocumentDetail = () => {
                 <ActionButton
                   onClick={handleAction}
                   isCompleted={isCompleted}
-                  className="action-button"
                 >
                   {isCompleted ? "Tamamlandı" : "Tamamla"}
                 </ActionButton>

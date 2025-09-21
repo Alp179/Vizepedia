@@ -1,13 +1,34 @@
 import { useState, useLayoutEffect, useMemo } from "react";
 import styled from "styled-components";
+import { useQuery } from "@tanstack/react-query";
+import supabase from "../services/supabase";
 import Heading from "../ui/Heading";
 import Row from "../ui/Row";
 import AnimatedFlag from "../ui/AnimatedFlag";
 import StepIndicator from "../ui/StepIndicator";
 import FirmMap from "../ui/FirmMap";
 import MobileCarousel from "../ui/MobileCarousel";
+import Spinner from "../ui/Spinner";
 
-// Real user data from your system
+// Function to fetch ALL documents from Supabase
+const fetchAllDocuments = async () => {
+  console.log("🔄 Fetching all documents from Supabase...");
+  
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error("❌ Error fetching documents:", error);
+    throw new Error(error.message);
+  }
+
+  console.log("✅ Fetched all documents:", data?.length, "documents");
+  return data || [];
+};
+
+// Real user data from your system (demo data)
 const DEMO_USER_DATA = {
   id: 405,
   userId: "6c76fda7-555c-4b68-894c-7f0a985b2336",
@@ -23,128 +44,6 @@ const DEMO_USER_DATA = {
   has_filled_form: true,
   created_at: "2025-05-11T10:43:19.8535+00:00",
 };
-
-// Real documents data from your system
-const DEMO_DOCUMENTS = [
-  {
-    id: 1,
-    docName: "Biyometrik Fotoğraf",
-    description: "Biyometrik fotoğraf (3.5x4.5 cm, beyaz zemin)",
-    category: "Fotoğraf",
-    docStage: "hazir",
-    is_required: true,
-    order_index: 1,
-  },
-  {
-    id: 2,
-    docName: "Kimlik Fotokopisi",
-    description: "Kimlik kartının ön ve arka yüzünün renkli fotokopisi",
-    category: "Kimlik Belgeleri",
-    docStage: "hazir",
-    is_required: true,
-    order_index: 2,
-  },
-  {
-    id: 3,
-    docName: "Nüfus Kayıt Örneği",
-    description: "Nüfus müdürlüğünden alınmış güncel nüfus kayıt örneği",
-    category: "Kimlik Belgeleri",
-    docStage: "planla",
-    is_required: true,
-    order_index: 3,
-  },
-  {
-    id: 4,
-    docName: "Seyahat Sağlık Sigortası",
-    description: "Minimum 30.000 Euro teminatı olan seyahat sağlık sigortası",
-    category: "Sigorta",
-    docStage: "planla",
-    is_required: true,
-    order_index: 4,
-  },
-  {
-    id: 5,
-    docName: "İkametgah Belgesi",
-    description:
-      "Muhtarlıktan veya nüfus müdürlüğünden alınmış ikametgah belgesi",
-    category: "İkamet Belgeleri",
-    docStage: "planla",
-    is_required: true,
-    order_index: 5,
-  },
-  {
-    id: 6,
-    docName: "Pasaport",
-    description: "Geçerli pasaportunuzun tüm sayfalarının renkli fotokopisi",
-    category: "Kimlik Belgeleri",
-    docStage: "hazir",
-    is_required: true,
-    order_index: 6,
-  },
-  {
-    id: 7,
-    docName: "Malvarlık Belgeleri",
-    description: "Emlak, araç veya diğer malvarlık belgeleriniz",
-    category: "Mali Belgeler",
-    docStage: "bizimle",
-    is_required: true,
-    order_index: 7,
-  },
-  {
-    id: 8,
-    docName: "Faaliyet Belgesi",
-    description: "İş yerinizin faaliyet belgesinin fotokopisi",
-    category: "İş Belgeleri",
-    docStage: "bizimle",
-    is_required: true,
-    order_index: 8,
-  },
-  {
-    id: 9,
-    docName: "SGK İşe Giriş Belgesi",
-    description: "SGK'dan alınmış işe giriş belgeniz",
-    category: "İş Belgeleri",
-    docStage: "bizimle",
-    is_required: true,
-    order_index: 9,
-  },
-  {
-    id: 10,
-    docName: "Son 3 Aylık Maaş Bordrosu",
-    description: "Son 3 aya ait maaş bordrolarınız",
-    category: "Mali Belgeler",
-    docStage: "bizimle",
-    is_required: true,
-    order_index: 10,
-  },
-  {
-    id: 11,
-    docName: "Son 3 Aylık Banka Hesap Dökümü",
-    description: "Son 3 aya ait banka hesap dökümünüz",
-    category: "Mali Belgeler",
-    docStage: "bizimle",
-    is_required: true,
-    order_index: 11,
-  },
-  {
-    id: 12,
-    docName: "Uçak Rezervasyonu",
-    description: "Gidiş-dönüş uçak rezervasyon belgeniz",
-    category: "Seyahat Belgeleri",
-    docStage: "planla",
-    is_required: true,
-    order_index: 12,
-  },
-  {
-    id: 13,
-    docName: "Otel Rezervasyonu",
-    description: "Onaylanmış otel rezervasyon belgeniz",
-    category: "Seyahat Belgeleri",
-    docStage: "planla",
-    is_required: true,
-    order_index: 13,
-  },
-];
 
 // Real firm location data from your system
 const DEMO_FIRM_LOCATION = {
@@ -290,8 +189,45 @@ const DashboardItems = styled.div`
   }
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  width: 100%;
+`;
+
+const ErrorContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  width: 100%;
+  color: #e74c3c;
+  font-size: 16px;
+`;
+
 const StaticDashboardContent = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 710);
+
+  // Fetch all documents from Supabase
+  const {
+    data: allDocuments,
+    isLoading: isLoadingDocuments,
+    isError: isErrorDocuments,
+    error: documentsError,
+  } = useQuery({
+    queryKey: ["allDocuments"],
+    queryFn: fetchAllDocuments,
+    staleTime: 10 * 60 * 1000, // Cache for 10 minutes
+    retry: 3,
+    onSuccess: (data) => {
+      console.log("✅ All documents query success:", data?.length, "documents");
+    },
+    onError: (error) => {
+      console.error("❌ All documents query error:", error);
+    },
+  });
 
   useLayoutEffect(() => {
     const handleResize = () => {
@@ -353,6 +289,62 @@ const StaticDashboardContent = () => {
     return countryToCode[DEMO_USER_DATA.ans_country] || "de";
   }, []);
 
+  // Loading state
+  if (isLoadingDocuments) {
+    return (
+      <DashboardContainer>
+        <AnimatedFlag countryCode={countryCode} />
+        <CustomRow type="horizontal">
+          <CreatedAtContainer>
+            <span
+              role="img"
+              aria-label="calendar"
+              style={{
+                marginRight: "6px",
+                fontSize: isMobile ? "0.95rem" : "1.1rem",
+              }}
+            >
+              📆
+            </span>{" "}
+            {formattedDate}
+          </CreatedAtContainer>
+        </CustomRow>
+        <LoadingContainer>
+          <Spinner />
+        </LoadingContainer>
+      </DashboardContainer>
+    );
+  }
+
+  // Error state
+  if (isErrorDocuments) {
+    return (
+      <DashboardContainer>
+        <AnimatedFlag countryCode={countryCode} />
+        <CustomRow type="horizontal">
+          <CreatedAtContainer>
+            <span
+              role="img"
+              aria-label="calendar"
+              style={{
+                marginRight: "6px",
+                fontSize: isMobile ? "0.95rem" : "1.1rem",
+              }}
+            >
+              📆
+            </span>{" "}
+            {formattedDate}
+          </CreatedAtContainer>
+        </CustomRow>
+        <ErrorContainer>
+          Belgeleri yüklerken bir hata oluştu: {documentsError?.message}
+        </ErrorContainer>
+      </DashboardContainer>
+    );
+  }
+
+  console.log("📊 StaticDashboardContent - All documents from Supabase:", allDocuments?.length);
+
   return (
     <DashboardContainer>
       <AnimatedFlag countryCode={countryCode} />
@@ -377,16 +369,16 @@ const StaticDashboardContent = () => {
         {!isMobile && (
           <>
             <StepIndicatorWrapper>
-              <Heading as="h14">{DEMO_USER_DATA.ans_country}</Heading>
+              <Heading as="h14">{DEMO_USER_DATA.ans_country} - Tüm Belgeler</Heading>
 
               <StepIndicator
-                documents={DEMO_DOCUMENTS}
+                documents={allDocuments || []} // Pass ALL documents from Supabase
                 completedDocuments={DEMO_COMPLETED_DOCUMENTS}
                 applicationId={DEMO_USER_DATA.id}
                 userSelections={[DEMO_USER_DATA]}
                 userType="demo"
-                isLoading={false}
-                isError={false}
+                isLoading={isLoadingDocuments}
+                isError={isErrorDocuments}
               />
             </StepIndicatorWrapper>
 
@@ -402,14 +394,14 @@ const StaticDashboardContent = () => {
         {isMobile && (
           <MobileCarousel
             completedDocuments={DEMO_COMPLETED_DOCUMENTS}
-            documents={DEMO_DOCUMENTS}
+            documents={allDocuments || []} // Pass ALL documents from Supabase
             firmLocation={DEMO_FIRM_LOCATION}
             isFirmLocationSuccess={true}
             applicationId={DEMO_USER_DATA.id}
             userSelections={[DEMO_USER_DATA]}
             userType="demo"
-            isLoading={false}
-            isError={false}
+            isLoading={isLoadingDocuments}
+            isError={isErrorDocuments}
           />
         )}
       </DashboardItems>

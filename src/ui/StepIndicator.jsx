@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import styled, { keyframes, css } from "styled-components";
 import { AnonymousDataService } from "../utils/anonymousDataService";
+import { toSlug } from "../utils/seoHelpers";
 
 // Icon Components
 const IconRocket = () => (
@@ -95,7 +96,7 @@ const categoryColors = {
 const StepAndContinueContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 24px; 
+  gap: 24px;
   width: 100%;
   max-width: 900px;
   padding: 20px;
@@ -139,7 +140,7 @@ const StepAndContinueContainer = styled.div`
     gap: 20px;
     overflow: visible;
   }
-  
+
   @media (max-width: 345px) {
     width: 100%;
     padding: 12px 10px;
@@ -189,7 +190,7 @@ const CategoryHeader = styled.div`
     padding: 12px;
     gap: 8px;
   }
-  
+
   @media (max-width: 345px) {
     padding: 10px 8px;
     gap: 6px;
@@ -217,7 +218,7 @@ const CategoryIcon = styled.div`
     width: 28px;
     height: 28px;
   }
-  
+
   @media (max-width: 345px) {
     width: 22px;
     height: 22px;
@@ -243,7 +244,7 @@ const CategoryTitle = styled.h3`
   @media (max-width: 480px) {
     font-size: 15px;
   }
-  
+
   @media (max-width: 345px) {
     font-size: 13px;
   }
@@ -267,7 +268,7 @@ const CategoryDescription = styled.p`
     font-size: 12px;
     margin-top: 3px;
   }
-  
+
   @media (max-width: 345px) {
     font-size: 10px;
     margin-top: 2px;
@@ -279,7 +280,7 @@ const CategoryProgress = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  
+
   @media (max-width: 345px) {
     gap: 4px;
   }
@@ -294,11 +295,11 @@ const ChevronIcon = styled.div`
   align-items: center;
   justify-content: center;
   color: rgba(0, 0, 0, 0.5);
-  
+
   @media (max-width: 480px) {
     font-size: 14px;
   }
-  
+
   @media (max-width: 345px) {
     font-size: 12px;
     margin-left: 4px;
@@ -311,11 +312,11 @@ const ProgressBar = styled.div`
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 3px;
   overflow: hidden;
-  
+
   @media (max-width: 480px) {
     width: 50px;
   }
-  
+
   @media (max-width: 345px) {
     height: 4px;
     width: 40px;
@@ -329,7 +330,7 @@ const ProgressFill = styled.div`
   background-color: ${(props) => props.color || "#004466"};
   border-radius: 3px;
   transition: width 0.5s ease;
-  
+
   @media (max-width: 345px) {
     border-radius: 2px;
   }
@@ -339,15 +340,15 @@ const ProgressText = styled.span`
   font-size: 12px;
   font-weight: 500;
   color: rgba(0, 0, 0, 0.7);
-  
+
   @media (max-width: 768px) {
     font-size: 12px;
   }
-  
+
   @media (max-width: 480px) {
     font-size: 12px;
   }
-  
+
   @media (max-width: 345px) {
     font-size: 10px;
   }
@@ -366,13 +367,13 @@ const DocumentListContainer = styled.div`
   transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.3s ease-in-out, visibility 0.2s ease-in-out;
   margin-top: ${(props) => (props.isOpen ? "8px" : "0")};
-  
+
   @media (max-width: 480px) {
     padding-left: 6px;
     padding-right: 4px;
     width: 100%;
   }
-  
+
   @media (max-width: 345px) {
     gap: 8px;
     padding-left: 4px;
@@ -415,7 +416,7 @@ const DocsGrid = styled.div`
     padding: 8px 2px 8px 0;
     width: 100%;
   }
-  
+
   @media (max-width: 345px) {
     gap: 8px;
     padding: 8px 0 8px 0;
@@ -497,7 +498,7 @@ const DocumentItem = styled.div`
     width: 100%;
     margin-right: 0;
   }
-  
+
   @media (max-width: 345px) {
     padding: 10px;
     gap: 4px;
@@ -509,11 +510,11 @@ const DocumentHeader = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  
+
   @media (max-width: 480px) {
     gap: 10px;
   }
-  
+
   @media (max-width: 345px) {
     gap: 8px;
   }
@@ -550,7 +551,7 @@ const DocumentNumber = styled.div`
     height: 28px;
     font-size: 14px;
   }
-  
+
   @media (max-width: 345px) {
     width: 22px;
     height: 22px;
@@ -585,7 +586,7 @@ const DocumentTitle = styled.div`
     height: 38px;
     line-height: 1.35;
   }
-  
+
   @media (max-width: 345px) {
     font-size: 12px;
     height: 32px;
@@ -622,7 +623,7 @@ const SponsorBadge = styled.div`
     bottom: 14px;
     right: 14px;
   }
-  
+
   @media (max-width: 345px) {
     padding: 1px 4px;
     font-size: 9px;
@@ -681,11 +682,11 @@ const DocumentStatus = styled.div`
       height: 8px;
     }
   }
-  
+
   @media (max-width: 345px) {
     font-size: 11px;
     gap: 3px;
-    
+
     &:before {
       width: 6px;
       height: 6px;
@@ -771,7 +772,7 @@ const ContinueButton = styled.button`
     font-size: 14px;
     padding: 10px 16px;
   }
-  
+
   @media (max-width: 345px) {
     max-width: 180px;
     font-size: 13px;
@@ -791,14 +792,14 @@ const StepPageCont = styled.div`
 `;
 
 // UPDATED: Enhanced StepIndicator with Real Application ID Support
-const StepIndicator = ({ 
-  documents = [], 
-  completedDocuments = {}, 
+const StepIndicator = ({
+  documents = [],
+  completedDocuments = {},
   applicationId,
   userSelections = [], // ← Yeni prop eklendi
   userType = "anonymous", // ← Yeni prop eklendi
   isLoading = false,
-  isError = false 
+  isError = false,
 }) => {
   const navigate = useNavigate();
   const { setSelectedDocument } = useSelectedDocument();
@@ -849,56 +850,129 @@ const StepIndicator = ({
   if (isError || !documents) return <div>Error loading documents.</div>;
   if (!documents.length) return <div>No documents found.</div>;
 
+  // UPDATED: Enhanced handleContinue with proper demo navigation
   const handleContinue = () => {
     if (!documents || documents.length === 0 || currentStep === -1) return;
     const selectedDocument = documents[currentStep];
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
 
-      console.log("🔗 Continue button clicked:", selectedDocument.docStage, realApplicationId);
+      console.log(
+        "🔗 Continue button clicked:",
+        selectedDocument.docStage,
+        realApplicationId
+      );
+      console.log("🔗 Continue userType:", userType);
+      console.log("🔗 Continue applicationId:", applicationId);
 
-      // FIXED: Use original applicationId for URL (to maintain URL consistency)
-      const urlApplicationId = applicationId || realApplicationId;
+      // FIXED: Navigation logic based on user type with proper slug handling
+      if (userType === "demo" || applicationId === "demo") {
+        // Demo mode - navigate without ID but WITH document slug
+        console.log("🎯 Demo mode continue - with document slug");
 
-      if (selectedDocument.docStage === "hazir") {
-        navigate(`/ready-documents/${urlApplicationId}`);
-      } else if (selectedDocument.docStage === "planla") {
-        navigate(`/planned-documents/${urlApplicationId}`);
-      } else if (selectedDocument.docStage === "bizimle") {
-        navigate(`/withus-documents/${urlApplicationId}`);
+        const documentSlug = toSlug(selectedDocument.docName);
+        console.log("🔗 Document slug:", documentSlug);
+
+        if (selectedDocument.docStage === "hazir") {
+          const navigateUrl = `/ready-documents/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        } else if (selectedDocument.docStage === "planla") {
+          const navigateUrl = `/planned-documents/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        } else if (selectedDocument.docStage === "bizimle") {
+          const navigateUrl = `/withus-documents/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        }
+      } else {
+        // Regular mode - navigate with ID and slug
+        const urlApplicationId = applicationId || realApplicationId;
+        const documentSlug = toSlug(selectedDocument.docName);
+        console.log(
+          "🎯 Regular mode continue with ID and slug:",
+          urlApplicationId,
+          documentSlug
+        );
+
+        if (selectedDocument.docStage === "hazir") {
+          const navigateUrl = `/ready-documents/${urlApplicationId}/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        } else if (selectedDocument.docStage === "planla") {
+          const navigateUrl = `/planned-documents/${urlApplicationId}/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        } else if (selectedDocument.docStage === "bizimle") {
+          const navigateUrl = `/withus-documents/${urlApplicationId}/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        }
       }
     }
-  };
-
+  }; // UPDATED: Enhanced handleDocumentClick with proper demo navigation
   const handleDocumentClick = (index) => {
     const selectedDocument = documents[index];
-    
+
     console.log("📄 StepIndicator handleDocumentClick Debug:");
     console.log("Original applicationId:", applicationId);
     console.log("Real applicationId:", realApplicationId);
+    console.log("userType:", userType);
     console.log("index:", index);
     console.log("selectedDocument:", selectedDocument);
     console.log("selectedDocument.docStage:", selectedDocument?.docStage);
-    
+
     if (selectedDocument) {
       setSelectedDocument(selectedDocument);
 
-      // FIXED: Use original applicationId for URL (to maintain URL consistency)
-      const urlApplicationId = applicationId || realApplicationId;
+      // FIXED: Navigation logic based on user type with proper slug handling
+      if (userType === "demo" || applicationId === "demo") {
+        // Demo mode - navigate without ID but WITH document slug
+        console.log("🎯 Demo mode navigation - with document slug");
 
-      if (selectedDocument.docStage === "hazir") {
-        console.log("🔗 Navigate URL:", `/ready-documents/${urlApplicationId}`);
-        navigate(`/ready-documents/${urlApplicationId}`);
-      } else if (selectedDocument.docStage === "planla") {
-        console.log("🔗 Navigate URL:", `/planned-documents/${urlApplicationId}`);
-        navigate(`/planned-documents/${urlApplicationId}`);
-      } else if (selectedDocument.docStage === "bizimle"){
-        console.log("🔗 Navigate URL:", `/withus-documents/${urlApplicationId}`);
-        navigate(`/withus-documents/${urlApplicationId}`);
+        const documentSlug = toSlug(selectedDocument.docName);
+        console.log("🔗 Document slug:", documentSlug);
+
+        if (selectedDocument.docStage === "hazir") {
+          const navigateUrl = `/ready-documents/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        } else if (selectedDocument.docStage === "planla") {
+          const navigateUrl = `/planned-documents/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        } else if (selectedDocument.docStage === "bizimle") {
+          const navigateUrl = `/withus-documents/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        }
+      } else {
+        // Regular mode - navigate with ID and slug
+        const urlApplicationId = applicationId || realApplicationId;
+        const documentSlug = toSlug(selectedDocument.docName);
+        console.log(
+          "🎯 Regular mode navigation with ID and slug:",
+          urlApplicationId,
+          documentSlug
+        );
+
+        if (selectedDocument.docStage === "hazir") {
+          const navigateUrl = `/ready-documents/${urlApplicationId}/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        } else if (selectedDocument.docStage === "planla") {
+          const navigateUrl = `/planned-documents/${urlApplicationId}/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        } else if (selectedDocument.docStage === "bizimle") {
+          const navigateUrl = `/withus-documents/${urlApplicationId}/${documentSlug}`;
+          console.log("🔗 Navigate URL:", navigateUrl);
+          navigate(navigateUrl);
+        }
       }
     }
   };
-
   // docStage değerine göre dökümanları gruplandırma
   const groupedDocuments = documents.reduce((acc, doc, index) => {
     const stage = doc.docStage || "planla";
@@ -916,15 +990,15 @@ const StepIndicator = ({
       (doc) => completedDocuments[realApplicationId]?.[doc.docName] // ← Real ID kullanıyoruz
     ).length;
     const progress = Math.round((completedCount / docs.length) * 100);
-    
+
     console.log(`📊 Category progress for ${docs[0]?.docStage}:`, {
       completedCount,
       totalCount: docs.length,
       progress,
       realApplicationId,
-      completedDocs: completedDocuments[realApplicationId]
+      completedDocs: completedDocuments[realApplicationId],
     });
-    
+
     return progress;
   };
 
