@@ -78,18 +78,41 @@ function AppWithGA() {
 
       {/* PUBLIC Document Routes - Accessible by bots/new visitors */}
       <Route element={<DocumentLayout />}>
-        {/* Bot/New Visitor Routes (without ID) */}
+        {/* Ready */}
         <Route path="ready-documents" element={<ReadyDocumentDetail />} />
-        <Route path="planned-documents" element={<PlannedDocumentDetail />} />
-        <Route path="withus-documents" element={<WithUsDocumentDetail />} />
-
-        {/* Regular Routes (with ID) for authenticated/anonymous users */}
         <Route path="ready-documents/:id" element={<ReadyDocumentDetail />} />
+        <Route path="ready-documents/:slug" element={<ReadyDocumentDetail />} />
+        <Route
+          path="ready-documents/:id/:slug"
+          element={<ReadyDocumentDetail />}
+        />
+
+        {/* Planned */}
+        <Route path="planned-documents" element={<PlannedDocumentDetail />} />
         <Route
           path="planned-documents/:id"
           element={<PlannedDocumentDetail />}
         />
+        <Route
+          path="planned-documents/:slug"
+          element={<PlannedDocumentDetail />}
+        />
+        <Route
+          path="planned-documents/:id/:slug"
+          element={<PlannedDocumentDetail />}
+        />
+
+        {/* WithUs */}
+        <Route path="withus-documents" element={<WithUsDocumentDetail />} />
         <Route path="withus-documents/:id" element={<WithUsDocumentDetail />} />
+        <Route
+          path="withus-documents/:slug"
+          element={<WithUsDocumentDetail />}
+        />
+        <Route
+          path="withus-documents/:id/:slug"
+          element={<WithUsDocumentDetail />}
+        />
       </Route>
 
       {/* Protected Routes for authenticated users only */}

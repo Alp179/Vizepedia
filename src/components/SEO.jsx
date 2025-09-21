@@ -8,6 +8,8 @@ export default function SEO({
   image = "/vite.svg",
   url,
   noindex = false,
+  prevUrl,
+  nextUrl,
 }) {
   const robots = noindex ? "noindex,nofollow" : "index,follow";
   return (
@@ -17,6 +19,8 @@ export default function SEO({
       {keywords && <meta name="keywords" content={keywords} />}
       <meta name="robots" content={robots} />
       <link rel="canonical" href={url} />
+      {prevUrl && <link rel="prev" href={prevUrl} />}
+      {nextUrl && <link rel="next" href={nextUrl} />}
 
       <meta property="og:type" content="website" />
       {title && <meta property="og:title" content={title} />}
@@ -39,4 +43,6 @@ SEO.propTypes = {
   image: PropTypes.string,
   url: PropTypes.string.isRequired,
   noindex: PropTypes.bool,
+  prevUrl: PropTypes.string,
+  nextUrl: PropTypes.string,
 };

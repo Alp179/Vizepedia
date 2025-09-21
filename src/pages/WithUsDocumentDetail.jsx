@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import { DocumentsContext } from "../context/DocumentsContext";
@@ -23,7 +23,9 @@ import {
   keywordize,
   toSlug,
   buildCanonical,
-} from "../components/seoHelpers";
+  buildPaginatedUrl,
+  getPageFromSearch,
+} from "../utils/seoHelpers";
 
 // Demo documents for "bizimle" stage - bot/new visitor data
 const DEMO_WITHUS_DOCUMENTS = [
@@ -268,7 +270,7 @@ const SourceButton = styled.button`
     left: 0;
     width: 0%;
     height: 100%;
-    background-color: #00ffa2;
+    background-color: "#00ffa2";
     transition: all 0.3s ease;
     z-index: 0;
   }
@@ -518,7 +520,15 @@ const StyledButtonsContainer = styled(ButtonsContainer)`
 
 const WithUsDocumentDetail = () => {
   // Tüm Hook'ları en üstte çağır
-  const { id: paramApplicationId, slug: slugParam } = useParams();
+  const params = useParams();
+  const location = useLocation();
+
+  // Param ayrıştırmayı sağlamlaştır
+  const looksLikeId = (v) =>
+    !!v && (/^\d+$/.test(v) || v.startsWith("anonymous-"));
+  const paramApplicationId = looksLikeId(params.id) ? params.id : undefined;
+  const slugParam =
+    params.slug || (!paramApplicationId ? params.id : undefined);
 
   const [userId, setUserId] = useState(null);
   const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0);
@@ -538,21 +548,35 @@ const WithUsDocumentDetail = () => {
 
   const applicationId = paramApplicationId || `anonymous-${Date.now()}`;
 
+  // SEO için URL ve sayfa bilgileri
+  const base = "https://www.vizepedia.com";
+  const page = getPageFromSearch(location.search);
+  const path = "/withus-documents";
+  const canonical = buildPaginatedUrl(base, path, page);
+
+  // Toplam sayfa (elinizde varsa real pagination'dan okuyun; yoksa prev/next üretimini güvenli yapalım)
+  const hasPrev = page > 1;
+  const hasNext = false; // Gerçek toplam sayfa sayınız varsa: page < totalPages
+  const prevUrl = hasPrev ? buildPaginatedUrl(base, path, page - 1) : undefined;
+  const nextUrl = hasNext ? buildPaginatedUrl(base, path, page + 1) : undefined;
+
+  // Sayfa özel başlık/açıklama
+  const title =
+    page > 1
+      ? `Bizimle Hazırlanan Belgeler – Sayfa ${page} | Vizepedia`
+      : "Bizimle Hazırlanan Belgeler | Vizepedia";
+  const description =
+    "Vize başvurunuz için profesyonel destekle hazırlayacağımız belgeleri keşfedin. Hızlı, güvenilir ve eksiksiz belge hizmeti.";
+
   // Bot/new visitor URL handling - redirect to clean URL
   useEffect(() => {
+    // Sadece bot/new visitor için ID'yi gizle; gerçek kullanıcıda ID'yi KORU
     if (isBotOrNewVisitor && paramApplicationId) {
-      // Redirect to clean URL without ID for bots/new visitors
-      navigate("/withus-documents", { replace: true });
+      if (slugParam)
+        navigate(`/withus-documents/${slugParam}`, { replace: true });
+      else navigate("/withus-documents", { replace: true });
     }
-  }, [isBotOrNewVisitor, paramApplicationId, navigate]);
-
-  console.log("🔍 WithUsDocumentDetail Debug:");
-  console.log("paramApplicationId:", paramApplicationId);
-  console.log("applicationId:", applicationId);
-  console.log("userType:", userType);
-  console.log("user:", user ? "authenticated" : "none");
-  console.log("isAnonymous:", isAnonymous);
-  console.log("isBotOrNewVisitor:", isBotOrNewVisitor);
+  }, [isBotOrNewVisitor, paramApplicationId, slugParam, navigate]);
 
   // Query for real users (not bot/new visitors)
   const { data: userSelections } = useQuery({
@@ -573,7 +597,7 @@ const WithUsDocumentDetail = () => {
       ? getDocumentsForSelections(userSelections)
       : [];
 
-  const { data: documents, isSuccess: isDocumentsSuccess } = useQuery({
+  const { data: documents } = useQuery({
     queryKey: ["documentDetails", documentNames],
     queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !isBotOrNewVisitor && !!documentNames.length,
@@ -600,56 +624,45 @@ const WithUsDocumentDetail = () => {
     }
   }, [isBotOrNewVisitor, isAnonymous, dispatch]);
 
-  // Document initialization - Force re-initialization when navigating
+  // Mount/yeniden yükleme: slug varsa ona git
   useEffect(() => {
-    if (isBotOrNewVisitor) {
-      // Always reset for bot/new visitors to ensure fresh state
-      setSelectedDocument(null);
-      setCurrentDocumentIndex(0);
+    const docs = isBotOrNewVisitor ? DEMO_WITHUS_DOCUMENTS : documents;
+    if (!docs) return;
 
-      // Set demo completed documents for bot/new visitors
-      dispatch({
-        type: "SET_COMPLETED_DOCUMENTS",
-        payload: DEMO_COMPLETED_DOCUMENTS,
-      });
+    const withusDocs = docs.filter((d) => d.docStage === "bizimle");
+    if (!withusDocs.length) return;
 
-      // Use demo documents for bot/new visitors
-      const withusDocuments = DEMO_WITHUS_DOCUMENTS.filter(
-        (doc) => doc.docStage === "bizimle"
-      );
-      const initialDocument = withusDocuments[0];
-
-      if (initialDocument) {
-        console.log(
-          "🎯 Bot/New Visitor: Setting initial withus document:",
-          initialDocument.docName
+    if (slugParam) {
+      const match = withusDocs.find((d) => toSlug(d.docName) === slugParam);
+      if (match) {
+        setSelectedDocument(match);
+        setCurrentDocumentIndex(
+          withusDocs.findIndex((d) => d.docName === match.docName)
         );
-        setSelectedDocument(initialDocument);
-        setCurrentDocumentIndex(0);
+        return;
       }
-    } else if (isDocumentsSuccess && documents) {
-      // Real documents for authenticated/anonymous users
-      const withusDocuments = documents.filter(
-        (doc) => doc.docStage === "bizimle"
-      );
-      const initialDocument = withusDocuments[0];
-
-      if (initialDocument && !selectedDocument) {
-        console.log(
-          "🎯 Real User: Setting initial withus document:",
-          initialDocument.docName
+    }
+    // slug yoksa/ eşleşmezse ilk elemana düş
+    if (!selectedDocument) {
+      const first = withusDocs[0];
+      setSelectedDocument(first);
+      setCurrentDocumentIndex(0);
+      // Yalnızca gerçek kullanıcı + id varsa URL'i slug'la güncelle
+      if (paramApplicationId) {
+        navigate(
+          `/withus-documents/${paramApplicationId}/${toSlug(first.docName)}`,
+          { replace: true }
         );
-        setSelectedDocument(initialDocument);
-        setCurrentDocumentIndex(0);
       }
     }
   }, [
     isBotOrNewVisitor,
-    isDocumentsSuccess,
     documents,
-    dispatch,
+    slugParam,
     setSelectedDocument,
     selectedDocument,
+    paramApplicationId,
+    navigate,
   ]);
 
   useEffect(() => {
@@ -674,22 +687,19 @@ const WithUsDocumentDetail = () => {
   }
 
   // Calculate SEO metadata
-  const base = "https://www.vizepedia.com";
   const docName = selectedDocument?.docName || "Belge Hizmeti";
   const slug = slugParam || toSlug(docName);
   const urlPath = `/withus-documents/${slug}`;
-  const canonical = buildCanonical(base, urlPath);
-  const description = selectedDocument?.docDescription
+  const docCanonical = buildCanonical(base, urlPath);
+  const docDescription = selectedDocument?.docDescription
     ? summarize(selectedDocument.docDescription, 160)
     : selectedDocument?.benefits
     ? summarize(selectedDocument.benefits, 160)
     : "Belgenizi uzman ekibimizle hızlı ve eksiksiz hazırlayın.";
-  const keywords = keywordize(
-    selectedDocument?.tags,
+  const docKeywords = keywordize(
+    selectedDocument?.tags || [], // Boş array fallback ekledik
     `${docName}, belge hizmeti, profesyonel destek, Vizepedia`
   );
-  const image = selectedDocument?.docImage || "/vite.svg";
-  const isModal = false; // Since this is a page component, not a modal
 
   // Get completion status
   const getCompletionStatus = () => {
@@ -747,10 +757,6 @@ const WithUsDocumentDetail = () => {
         const correctApplicationId =
           AnonymousDataService.getConsistentApplicationId();
 
-        console.log("🎯 Anonymous user action:");
-        console.log("URL applicationId:", applicationId);
-        console.log("Correct applicationId:", correctApplicationId);
-
         if (isCompleted) {
           AnonymousDataService.uncompleteDocument(
             correctApplicationId,
@@ -782,10 +788,6 @@ const WithUsDocumentDetail = () => {
 
         const realApplicationId = userSelections[0].id;
 
-        console.log("🔄 Using real application ID for authenticated user:");
-        console.log("URL applicationId:", applicationId);
-        console.log("Real applicationId:", realApplicationId);
-
         if (isCompleted) {
           await uncompleteDocument(
             userId,
@@ -799,9 +801,6 @@ const WithUsDocumentDetail = () => {
               applicationId: realApplicationId,
             },
           });
-          console.log(
-            "✅ Document uncompleted and context updated with real ID"
-          );
         } else {
           await completeDocument(
             userId,
@@ -815,16 +814,10 @@ const WithUsDocumentDetail = () => {
               applicationId: realApplicationId,
             },
           });
-          console.log("✅ Document completed and context updated with real ID");
         }
       }
 
       // Navigation logic
-      console.log("🔄 Navigation after document action:");
-      console.log("applicationId:", applicationId);
-      console.log("user:", user);
-      console.log("userType:", userType);
-
       if (user && userType === "authenticated") {
         navigate("/dashboard");
       } else if (applicationId && !applicationId.startsWith("anonymous-")) {
@@ -839,31 +832,25 @@ const WithUsDocumentDetail = () => {
   };
 
   const handleNavigation = (direction) => {
-    const documentsToUse = isBotOrNewVisitor
-      ? DEMO_WITHUS_DOCUMENTS
-      : documents;
-    if (!documentsToUse) return;
+    const docsToUse = isBotOrNewVisitor ? DEMO_WITHUS_DOCUMENTS : documents;
+    if (!docsToUse) return;
 
-    const withusDocuments = documentsToUse.filter(
-      (doc) => doc.docStage === "bizimle"
-    );
+    const withusDocs = docsToUse.filter((d) => d.docStage === "bizimle");
+    let nextIndex = currentDocumentIndex;
 
-    console.log("🔄 Navigation Debug:");
-    console.log("direction:", direction);
-    console.log("currentIndex:", currentDocumentIndex);
-    console.log("withusDocuments length:", withusDocuments.length);
+    if (direction === "prev" && currentDocumentIndex > 0) nextIndex -= 1;
+    if (direction === "next" && currentDocumentIndex < withusDocs.length - 1)
+      nextIndex += 1;
 
-    if (direction === "prev" && currentDocumentIndex > 0) {
-      const nextDoc = withusDocuments[currentDocumentIndex - 1];
-      console.log("Going to previous:", nextDoc.docName);
+    if (nextIndex !== currentDocumentIndex) {
+      const nextDoc = withusDocs[nextIndex];
       setSelectedDocument(nextDoc);
-    } else if (
-      direction === "next" &&
-      currentDocumentIndex < withusDocuments.length - 1
-    ) {
-      const nextDoc = withusDocuments[currentDocumentIndex + 1];
-      console.log("Going to next:", nextDoc.docName);
-      setSelectedDocument(nextDoc);
+      setCurrentDocumentIndex(nextIndex);
+      const nextSlug = toSlug(nextDoc.docName);
+      const nextUrl = paramApplicationId
+        ? `/withus-documents/${paramApplicationId}/${nextSlug}`
+        : `/withus-documents/${nextSlug}`;
+      navigate(nextUrl, { replace: true });
     }
   };
 
@@ -884,22 +871,115 @@ const WithUsDocumentDetail = () => {
     ? documentsToUse.filter((doc) => doc.docStage === "bizimle")
     : [];
 
+  // Sayfalama için gerekli bilgiler
+  const pageSize = 10; // Bir sayfada gösterilecek belge sayısı
+  const currentPageDocs = withusDocuments; // Tüm belgeleri göster (gerçek bir sayfalama yapısı kurmak için bu kısmı güncellemeniz gerekebilir)
+
+  // SEO için detay/liste ayrımı
+  const isDetail = !!selectedDocument;
+  const seoTitle = isDetail
+    ? `${docName} – Profesyonel Belge Hizmeti | Vizepedia`
+    : title;
+  const seoDesc = isDetail ? docDescription : description;
+  const seoUrl = isDetail ? docCanonical : canonical;
+
   return (
     <>
       <SEO
-        title={`${docName} – Profesyonel Belge Hizmeti | Vizepedia`}
-        description={description}
-        keywords={keywords}
-        image={image}
-        url={canonical}
-        noindex={isModal}
+        title={seoTitle}
+        description={seoDesc}
+        keywords={docKeywords}
+        url={seoUrl}
+        {...(!isDetail && { prevUrl })}
+        {...(!isDetail && { nextUrl })}
       />
+
+      {/* ItemList sadece liste görünümünde (slug yokken) */}
+      {!slugParam && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: (currentPageDocs || []).map((doc, idx) => ({
+              "@type": "ListItem",
+              position: idx + 1 + (page - 1) * (pageSize || 0),
+              name: doc.docName,
+              url: `${base}${path}/${toSlug(doc.docName)}`,
+            })),
+          }}
+        />
+      )}
+
+      {/* Breadcrumb sadece liste için */}
+      {!selectedDocument && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Ana Sayfa",
+                item: `${base}/`,
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Bizimle Hazırlanan Belgeler",
+                item: `${base}${path}`,
+              },
+              ...(page > 1
+                ? [
+                    {
+                      "@type": "ListItem",
+                      position: 3,
+                      name: `Sayfa ${page}`,
+                      item: canonical,
+                    },
+                  ]
+                : []),
+            ],
+          }}
+        />
+      )}
+
+      {/* Breadcrumb sadece detay için */}
+      {selectedDocument && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Ana Sayfa",
+                item: `${base}/`,
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Bizimle Hazırlanan Belgeler",
+                item: `${base}/withus-documents`,
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: docName,
+                item: docCanonical,
+              },
+            ],
+          }}
+        />
+      )}
+
       <JsonLd
         data={{
           "@context": "https://schema.org",
           "@type": "Service",
           name: `${docName} – Belge Hizmeti`,
-          description: description,
+          description: docDescription,
           provider: {
             "@type": "Organization",
             name: "Vizepedia",
@@ -908,32 +988,7 @@ const WithUsDocumentDetail = () => {
           areaServed: "TR",
         }}
       />
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            {
-              "@type": "ListItem",
-              position: 1,
-              name: "Ana Sayfa",
-              item: `${base}/`,
-            },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: "Bizimle Belgeler",
-              item: `${base}/withus-documents`,
-            },
-            {
-              "@type": "ListItem",
-              position: 3,
-              name: docName,
-              item: canonical,
-            },
-          ],
-        }}
-      />
+
       <PageContainer>
         <NavigationButtons
           onPrevClick={() => handleNavigation("prev")}
@@ -973,7 +1028,6 @@ const WithUsDocumentDetail = () => {
 
               {selectedDocument.referenceName && (
                 <SourceSectionContainer
-                  color="#8e44ad"
                   isLink={!!selectedDocument.referenceLinks}
                   onClick={
                     selectedDocument.referenceLinks
@@ -1012,7 +1066,7 @@ const WithUsDocumentDetail = () => {
                   <SectionHeading>Dikkat</SectionHeading>
                   <SectionContent>
                     {selectedDocument.docImportant
-                      .split("\\n-")
+                      .split("\n-")
                       .map((item, index) =>
                         index === 0 ? (
                           <p key={index}>{item}</p>
@@ -1045,7 +1099,7 @@ const WithUsDocumentDetail = () => {
               )}
 
               {selectedDocument.docWhere && (
-                <LocationSection color="#3498db">
+                <LocationSection>
                   <SectionHeading>Temin yeri</SectionHeading>
                   <SectionContent>{selectedDocument.docWhere}</SectionContent>
                 </LocationSection>

@@ -35,3 +35,16 @@ export function buildCanonical(base, path) {
   // path zaten / ile başlıyorsa tekrar ekleme
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+export function buildPaginatedUrl(base, path, page) {
+  const canonical = buildCanonical(base, path);
+  const p = Number(page || 1);
+  if (!p || p <= 1) return canonical;
+  return `${canonical}?page=${p}`;
+}
+
+export function getPageFromSearch(search) {
+  const params = new URLSearchParams(search || "");
+  const p = Number(params.get("page") || "1");
+  return Number.isFinite(p) && p > 0 ? p : 1;
+}

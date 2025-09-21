@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import { DocumentsContext } from "../context/DocumentsContext";
@@ -25,7 +25,9 @@ import {
   keywordize,
   toSlug,
   buildCanonical,
-} from "../components/seoHelpers";
+  buildPaginatedUrl,
+  getPageFromSearch,
+} from "../utils/seoHelpers";
 
 // Real demo data from your system
 const DEMO_DOCUMENTS = [
@@ -167,16 +169,6 @@ const DEMO_COMPLETED_DOCUMENTS = {
 };
 
 // Animasyon tanımlamaları
-const fadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
 
 // Tekrar kullanılabilir stiller
 const PageContainer = styled.div`
@@ -202,30 +194,30 @@ const PageContainer = styled.div`
 
 const InfoContainer = styled.div`
   flex: 1;
-  padding: 30px;
+  padding: 16px;
   border-radius: 20px;
   display: flex;
-  flex-direction: row;
   max-width: 1000px;
   margin: 0 auto;
   justify-content: space-between;
   color: #333;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
 
-  @media (max-width: 800px) {
-    flex-direction: column;
-    padding: 20px;
+  @media (max-width: 680px) {
+    padding: 0px;
     margin-bottom: 20px;
+  }
+  @media (max-width: 600px) {
+    flex-flow: column;
   }
 `;
 
 const DocTitleCont = styled.div`
-  margin: 0 0 20px 0;
+  margin: 0 0 20px 32px;
   text-align: center;
+  @media (max-width: 600px) {
+    margin-left: 16px;
+  }
 `;
 
 const DocumentTitle = styled.h1`
@@ -246,20 +238,31 @@ const DocumentTitle = styled.h1`
 `;
 
 const DocumentDescription = styled.div`
+  margin-top: 20px;
   color: var(--color-grey-53);
   font-size: 18px;
-  width: 60%;
   line-height: 1.6;
   padding: 16px;
+  border-radius: 12px;
   display: flex;
-  flex-direction: column;
+  gap: 25px;
+  flex-direction: row-reverse;
 
   @media (max-width: 800px) {
-    width: 100%;
+    flex-flow: column;
+    gap: 15px;
+    margin-top: 10px;
+  }
+`;
+
+const DescriptionLayout = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 18px;
+
+  @media (max-width: 800px) {
     order: 1;
-    text-align: center;
-    padding: 12px;
-    margin-top: 0;
   }
 `;
 
@@ -267,29 +270,84 @@ const MetaTag = styled.span`
   display: inline-flex;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.2);
-  color: #004466;
+  color: #00ffa2;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
   margin-right: 12px;
   font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+`;
+
+const SourceButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  padding: 15px 20px;
+  background-color: #004466;
+  color: white;
+  border: 2px solid #00ffa2;
+  border-radius: 16px;
+  width: 120px;
+  height: 60px;
+  min-width: 150px;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  position: relative;
+  overflow: hidden;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: "#00ffa2";
+    transition: all 0.3s ease;
+    z-index: 0;
+  }
+
+  &:hover:before {
+    width: 100%;
+  }
 
   svg {
-    margin-right: 5px;
-    color: #00ffa2;
+    margin-right: 8px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:hover {
+    color: #004466;
+  }
+
+  @media (max-width: 680px) {
+    font-size: 16px;
+    padding: 12px 15px;
+    min-width: 100px;
+    margin-left: auto;
+    margin-right: auto;
   }
 `;
 
 const ButtonsContainer = styled.div`
   display: flex;
   gap: 15px;
-  margin-top: 20px;
+  margin-top: 5px;
 
   @media (max-width: 680px) {
     flex-direction: column;
@@ -333,72 +391,77 @@ const ActionButton = styled.button`
   }
 `;
 
-const SourceButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  padding: 15px 20px;
-  background-color: #004466;
-  color: white;
-  border: 2px solid #00ffa2;
-  border-radius: 16px;
-  width: 120px;
-  height: 60px;
-  min-width: 150px;
-  transition: all 0.3s ease;
-  font-size: 18px;
-  position: relative;
-  overflow: hidden;
-
-  &:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    background-color: #00ffa2;
-    transition: all 0.3s ease;
-    z-index: 0;
-  }
-
-  &:hover:before {
-    width: 100%;
-  }
-
-  svg {
-    margin-right: 8px;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-  }
-
-  span {
-    position: relative;
-    z-index: 1;
-  }
-
-  &:hover {
-    color: #004466;
-  }
-
-  @media (max-width: 680px) {
-    font-size: 16px;
-    padding: 12px 15px;
-    min-width: 100px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-`;
-
 const MetaInfo = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 15px;
   justify-content: center;
-  animation: ${fadeIn} 0.5s ease-in-out;
+`;
+
+const SectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 25px;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: ${(props) => (props.isLink ? "pointer" : "default")};
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    ${(props) =>
+      props.isLink &&
+      `
+      background-color: rgba(142, 68, 173, 0.05);
+    `}
+  }
+`;
+
+const SourceSectionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  margin-bottom: 20px;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background-color: rgba(142, 68, 173, 0.05);
+  }
+
+  @media (max-width: 800px) {
+    order: 6;
+  }
+`;
+
+const SectionHeading = styled.h3`
+  font-size: 20px;
+  color: var(--color-grey-52);
+  margin-bottom: 12px;
+  font-weight: 600;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+`;
+
+const SectionContent = styled.div`
+  color: var(--color-grey-53);
+  font-size: 16px;
+  line-height: 1.6;
 `;
 
 const DocProgress = styled.div`
@@ -408,11 +471,13 @@ const DocProgress = styled.div`
   background: rgba(255, 255, 255, 0.2);
   padding: 10px;
   border-radius: 30px;
-  margin: 0 auto 15px;
+  margin: 0 auto 10px;
   width: fit-content;
   z-index: 10;
 
   @media (max-width: 680px) {
+    position: static;
+    transform: none;
     margin: 10px auto;
   }
 `;
@@ -434,33 +499,76 @@ const ProgressDot = styled.div`
     `}
 `;
 
-const DescriptionLayout = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
 const MainText = styled.div`
-  flex: 1;
-  margin-bottom: 20px;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: ${(props) => (props.isLink ? "pointer" : "default")};
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    ${(props) =>
+      props.isLink &&
+      `
+      background-color: rgba(142, 68, 173, 0.05);
+    `}
+  }
+
+  @media (max-width: 800px) {
+    order: 1;
+    margin-top: 0;
+  }
 `;
 
-const ImageContainer = styled.div`
-  width: 35%;
+const SideComponents = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 40%;
+  flex-direction: column;
+  gap: 20px;
 
   @media (max-width: 800px) {
     width: 100%;
+    order: 5;
+  }
+`;
+
+// Dikkat ve Temin Yeri bölümleri için özel stilizasyonlar
+const AttentionSection = styled(SectionContainer)`
+  margin-top: 0;
+  @media (max-width: 800px) {
     order: 2;
-    margin: 20px auto;
+  }
+`;
+
+const LocationSection = styled(SectionContainer)`
+  margin-top: 18px;
+  @media (max-width: 800px) {
+    order: 3;
+  }
+`;
+
+const StyledButtonsContainer = styled(ButtonsContainer)`
+  @media (max-width: 800px) {
+    order: 4;
   }
 `;
 
 const ReadyDocumentDetail = () => {
   // Tüm Hook'ları en üstte çağır
-  const { id: paramApplicationId, slug: slugParam } = useParams();
+  const params = useParams();
+  const location = useLocation();
+
+  // Param ayrıştırmayı sağlamlaştır
+  const looksLikeId = (v) =>
+    !!v && (/^\d+$/.test(v) || v.startsWith("anonymous-"));
+  const paramApplicationId = looksLikeId(params.id) ? params.id : undefined;
+  const slugParam =
+    params.slug || (!paramApplicationId ? params.id : undefined);
 
   const [userId, setUserId] = useState(null);
   const [currentDocumentIndex, setCurrentDocumentIndex] = useState(0);
@@ -480,21 +588,35 @@ const ReadyDocumentDetail = () => {
 
   const applicationId = paramApplicationId || `anonymous-${Date.now()}`;
 
+  // SEO için URL ve sayfa bilgileri
+  const base = "https://www.vizepedia.com";
+  const page = getPageFromSearch(location.search);
+  const path = "/ready-documents";
+  const canonical = buildPaginatedUrl(base, path, page);
+
+  // Toplam sayfa (elinizde varsa real pagination'dan okuyun; yoksa prev/next üretimini güvenli yapalım)
+  const hasPrev = page > 1;
+  const hasNext = false; // Gerçek toplam sayfa sayınız varsa: page < totalPages
+  const prevUrl = hasPrev ? buildPaginatedUrl(base, path, page - 1) : undefined;
+  const nextUrl = hasNext ? buildPaginatedUrl(base, path, page + 1) : undefined;
+
+  // Sayfa özel başlık/açıklama
+  const title =
+    page > 1
+      ? `Hazır Belgeler – Sayfa ${page} | Vizepedia`
+      : "Hazır Belgeler | Vizepedia";
+  const description =
+    "Vize başvurunuz için gerekli tüm hazır belgeleri keşfedin. Doldurma ipuçları ve kritik alanlarla eksiksiz başvuru yapın.";
+
   // Bot/new visitor URL handling - redirect to clean URL
   useEffect(() => {
+    // Sadece bot/new visitor için ID'yi gizle; gerçek kullanıcıda ID'yi KORU
     if (isBotOrNewVisitor && paramApplicationId) {
-      // Redirect to clean URL without ID for bots/new visitors
-      navigate("/ready-documents", { replace: true });
+      if (slugParam)
+        navigate(`/ready-documents/${slugParam}`, { replace: true });
+      else navigate("/ready-documents", { replace: true });
     }
-  }, [isBotOrNewVisitor, paramApplicationId, navigate]);
-
-  console.log("🔍 ReadyDocumentDetail Debug:");
-  console.log("paramApplicationId:", paramApplicationId);
-  console.log("applicationId:", applicationId);
-  console.log("userType:", userType);
-  console.log("user:", user ? "authenticated" : "none");
-  console.log("isAnonymous:", isAnonymous);
-  console.log("isBotOrNewVisitor:", isBotOrNewVisitor);
+  }, [isBotOrNewVisitor, paramApplicationId, slugParam, navigate]);
 
   // Query for real users (not bot/new visitors)
   const { data: userSelections } = useQuery({
@@ -515,7 +637,7 @@ const ReadyDocumentDetail = () => {
       ? getDocumentsForSelections(userSelections)
       : [];
 
-  const { data: documents, isSuccess: isDocumentsSuccess } = useQuery({
+  const { data: documents } = useQuery({
     queryKey: ["documentDetails", documentNames],
     queryFn: () => fetchDocumentDetails(documentNames),
     enabled: !isBotOrNewVisitor && !!documentNames.length,
@@ -542,56 +664,45 @@ const ReadyDocumentDetail = () => {
     }
   }, [isBotOrNewVisitor, isAnonymous, dispatch]);
 
-  // Document initialization - Force re-initialization when navigating
+  // Mount/yeniden yükleme: slug varsa ona git
   useEffect(() => {
-    if (isBotOrNewVisitor) {
-      // Always reset for bot/new visitors to ensure fresh state
-      setSelectedDocument(null);
-      setCurrentDocumentIndex(0);
+    const docs = isBotOrNewVisitor ? DEMO_DOCUMENTS : documents;
+    if (!docs) return;
 
-      // Set demo completed documents for bot/new visitors
-      dispatch({
-        type: "SET_COMPLETED_DOCUMENTS",
-        payload: DEMO_COMPLETED_DOCUMENTS,
-      });
+    const readyDocs = docs.filter((d) => d.docStage === "hazir");
+    if (!readyDocs.length) return;
 
-      // Use demo documents for bot/new visitors
-      const readyDocuments = DEMO_DOCUMENTS.filter(
-        (doc) => doc.docStage === "hazir"
-      );
-      const initialDocument = readyDocuments[0];
-
-      if (initialDocument) {
-        console.log(
-          "🎯 Bot/New Visitor: Setting initial document:",
-          initialDocument.docName
+    if (slugParam) {
+      const match = readyDocs.find((d) => toSlug(d.docName) === slugParam);
+      if (match) {
+        setSelectedDocument(match);
+        setCurrentDocumentIndex(
+          readyDocs.findIndex((d) => d.docName === match.docName)
         );
-        setSelectedDocument(initialDocument);
-        setCurrentDocumentIndex(0);
+        return;
       }
-    } else if (isDocumentsSuccess && documents) {
-      // Real documents for authenticated/anonymous users
-      const readyDocuments = documents.filter(
-        (doc) => doc.docStage === "hazir"
-      );
-      const initialDocument = readyDocuments[0];
-
-      if (initialDocument && !selectedDocument) {
-        console.log(
-          "🎯 Real User: Setting initial document:",
-          initialDocument.docName
+    }
+    // slug yoksa/ eşleşmezse ilk elemana düş
+    if (!selectedDocument) {
+      const first = readyDocs[0];
+      setSelectedDocument(first);
+      setCurrentDocumentIndex(0);
+      // Yalnızca gerçek kullanıcı + id varsa URL'i slug'la güncelle
+      if (paramApplicationId) {
+        navigate(
+          `/ready-documents/${paramApplicationId}/${toSlug(first.docName)}`,
+          { replace: true }
         );
-        setSelectedDocument(initialDocument);
-        setCurrentDocumentIndex(0);
       }
     }
   }, [
     isBotOrNewVisitor,
-    isDocumentsSuccess,
     documents,
-    dispatch,
+    slugParam,
     setSelectedDocument,
     selectedDocument,
+    paramApplicationId,
+    navigate,
   ]);
 
   useEffect(() => {
@@ -614,20 +725,19 @@ const ReadyDocumentDetail = () => {
   }
 
   // Calculate SEO metadata
-  const base = "https://www.vizepedia.com";
   const docName = selectedDocument?.docName || "Hazır Belge";
   const slug = slugParam || toSlug(docName);
   const urlPath = `/ready-documents/${slug}`;
-  const canonical = buildCanonical(base, urlPath);
-  const description = selectedDocument?.docDescription
+  const docCanonical = buildCanonical(base, urlPath);
+  const docDescription = selectedDocument?.docDescription
     ? summarize(selectedDocument.docDescription, 160)
-    : "Hazır belge şablonu, doldurma ipuçları ve kritik alanlar.";
-  const keywords = keywordize(
-    selectedDocument?.tags,
+    : selectedDocument?.benefits
+    ? summarize(selectedDocument.benefits, 160)
+    : "Belgenizi uzman ekibimizle hızlı ve eksiksiz hazırlayın.";
+  const docKeywords = keywordize(
+    selectedDocument?.tags || [], // Boş array fallback ekledik
     `${docName}, hazır belge, şablon, Vizepedia`
   );
-  const image = selectedDocument?.docImage || "/vite.svg";
-  const isModal = false; // Since this is a page component, not a modal
 
   // Get completion status
   const getCompletionStatus = () => {
@@ -658,7 +768,7 @@ const ReadyDocumentDetail = () => {
 
     try {
       if (isBotOrNewVisitor) {
-        // Demo action for bot/new visitors - just show toast
+        // Demo action for bot/new visitors
         const newStatus = !isCompleted;
 
         // Update demo completed documents in context
@@ -684,10 +794,6 @@ const ReadyDocumentDetail = () => {
       if (isAnonymous) {
         const correctApplicationId =
           AnonymousDataService.getConsistentApplicationId();
-
-        console.log("🎯 Anonymous user action:");
-        console.log("URL applicationId:", applicationId);
-        console.log("Correct applicationId:", correctApplicationId);
 
         if (isCompleted) {
           AnonymousDataService.uncompleteDocument(
@@ -720,10 +826,6 @@ const ReadyDocumentDetail = () => {
 
         const realApplicationId = userSelections[0].id;
 
-        console.log("🔄 Using real application ID for authenticated user:");
-        console.log("URL applicationId:", applicationId);
-        console.log("Real applicationId:", realApplicationId);
-
         if (isCompleted) {
           await uncompleteDocument(
             userId,
@@ -737,9 +839,6 @@ const ReadyDocumentDetail = () => {
               applicationId: realApplicationId,
             },
           });
-          console.log(
-            "✅ Document uncompleted and context updated with real ID"
-          );
         } else {
           await completeDocument(
             userId,
@@ -753,16 +852,10 @@ const ReadyDocumentDetail = () => {
               applicationId: realApplicationId,
             },
           });
-          console.log("✅ Document completed and context updated with real ID");
         }
       }
 
       // Navigation logic
-      console.log("🔄 Navigation after document action:");
-      console.log("applicationId:", applicationId);
-      console.log("user:", user);
-      console.log("userType:", userType);
-
       if (user && userType === "authenticated") {
         navigate("/dashboard");
       } else if (applicationId && !applicationId.startsWith("anonymous-")) {
@@ -777,29 +870,36 @@ const ReadyDocumentDetail = () => {
   };
 
   const handleNavigation = (direction) => {
-    const documentsToUse = isBotOrNewVisitor ? DEMO_DOCUMENTS : documents;
-    if (!documentsToUse) return;
+    const docsToUse = isBotOrNewVisitor ? DEMO_DOCUMENTS : documents;
+    if (!docsToUse) return;
 
-    const readyDocuments = documentsToUse.filter(
-      (doc) => doc.docStage === "hazir"
-    );
+    const readyDocs = docsToUse.filter((d) => d.docStage === "hazir");
+    let nextIndex = currentDocumentIndex;
 
-    console.log("🔄 Navigation Debug:");
-    console.log("direction:", direction);
-    console.log("currentIndex:", currentDocumentIndex);
-    console.log("readyDocuments length:", readyDocuments.length);
+    if (direction === "prev" && currentDocumentIndex > 0) nextIndex -= 1;
+    if (direction === "next" && currentDocumentIndex < readyDocs.length - 1)
+      nextIndex += 1;
 
-    if (direction === "prev" && currentDocumentIndex > 0) {
-      const nextDoc = readyDocuments[currentDocumentIndex - 1];
-      console.log("Going to previous:", nextDoc.docName);
+    if (nextIndex !== currentDocumentIndex) {
+      const nextDoc = readyDocs[nextIndex];
       setSelectedDocument(nextDoc);
-    } else if (
-      direction === "next" &&
-      currentDocumentIndex < readyDocuments.length - 1
-    ) {
-      const nextDoc = readyDocuments[currentDocumentIndex + 1];
-      console.log("Going to next:", nextDoc.docName);
-      setSelectedDocument(nextDoc);
+      setCurrentDocumentIndex(nextIndex);
+      const nextSlug = toSlug(nextDoc.docName);
+      const nextUrl = paramApplicationId
+        ? `/ready-documents/${paramApplicationId}/${nextSlug}`
+        : `/ready-documents/${nextSlug}`;
+      navigate(nextUrl, { replace: true });
+    }
+  };
+
+  const handleReferenceClick = () => {
+    if (selectedDocument && selectedDocument.referenceLinks) {
+      // Link açma işlemi
+      window.open(
+        selectedDocument.referenceLinks,
+        "_blank",
+        "noopener,noreferrer"
+      );
     }
   };
 
@@ -809,53 +909,124 @@ const ReadyDocumentDetail = () => {
     ? documentsToUse.filter((doc) => doc.docStage === "hazir")
     : [];
 
+  // Sayfalama için gerekli bilgiler
+  const pageSize = 10; // Bir sayfada gösterilecek belge sayısı
+  const currentPageDocs = readyDocuments; // Tüm belgeleri göster (gerçek bir sayfalama yapısı kurmak için bu kısmı güncellemeniz gerekebilir)
+
+  // SEO için detay/liste ayrımı
+  const isDetail = !!selectedDocument;
+  const seoTitle = isDetail
+    ? `${docName} – Hazır Belge Şablonu | Vizepedia`
+    : title;
+  const seoDesc = isDetail ? docDescription : description;
+  const seoUrl = isDetail ? docCanonical : canonical;
+
   return (
     <>
       <SEO
-        title={`${docName} – Hazır Belge Şablonu | Vizepedia`}
-        description={description}
-        keywords={keywords}
-        image={image}
-        url={canonical}
-        noindex={isModal}
+        title={seoTitle}
+        description={seoDesc}
+        keywords={docKeywords}
+        url={seoUrl}
+        {...(!isDetail && { prevUrl })}
+        {...(!isDetail && { nextUrl })}
       />
+
+      {/* ItemList sadece liste görünümünde (slug yokken) */}
+      {!slugParam && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: (currentPageDocs || []).map((doc, idx) => ({
+              "@type": "ListItem",
+              position: idx + 1 + (page - 1) * (pageSize || 0),
+              name: doc.docName,
+              url: `${base}${path}/${toSlug(doc.docName)}`,
+            })),
+          }}
+        />
+      )}
+
+      {/* Breadcrumb sadece liste için */}
+      {!selectedDocument && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Ana Sayfa",
+                item: `${base}/`,
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Hazır Belgeler",
+                item: `${base}${path}`,
+              },
+              ...(page > 1
+                ? [
+                    {
+                      "@type": "ListItem",
+                      position: 3,
+                      name: `Sayfa ${page}`,
+                      item: canonical,
+                    },
+                  ]
+                : []),
+            ],
+          }}
+        />
+      )}
+
+      {/* Breadcrumb sadece detay için */}
+      {selectedDocument && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Ana Sayfa",
+                item: `${base}/`,
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Hazır Belgeler",
+                item: `${base}/ready-documents`,
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: docName,
+                item: docCanonical,
+              },
+            ],
+          }}
+        />
+      )}
+
       <JsonLd
         data={{
           "@context": "https://schema.org",
-          "@type": "CreativeWork",
-          headline: `${docName} – Hazır Belge`,
-          name: docName,
-          description: description,
-          image: image.startsWith("http") ? image : `${base}${image}`,
-          mainEntityOfPage: canonical,
+          "@type": "Service",
+          name: `${docName} – Hazır Belge`,
+          description: docDescription,
+          provider: {
+            "@type": "Organization",
+            name: "Vizepedia",
+            url: base,
+          },
+          areaServed: "TR",
         }}
       />
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            {
-              "@type": "ListItem",
-              position: 1,
-              name: "Ana Sayfa",
-              item: `${base}/`,
-            },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: "Hazır Belgeler",
-              item: `${base}/ready-documents`,
-            },
-            {
-              "@type": "ListItem",
-              position: 3,
-              name: docName,
-              item: canonical,
-            },
-          ],
-        }}
-      />
+
       <PageContainer>
         <NavigationButtons
           onPrevClick={() => handleNavigation("prev")}
@@ -884,10 +1055,94 @@ const ReadyDocumentDetail = () => {
 
         <InfoContainer>
           <DocumentDescription>
+            <SideComponents>
+              <ImageViewer
+                imageSrc={selectedDocument.docImage}
+                altText={selectedDocument.docName}
+                readyDocuments={readyDocuments}
+                currentIndex={currentDocumentIndex}
+              />
+
+              {selectedDocument.referenceName && (
+                <SourceSectionContainer
+                  isLink={!!selectedDocument.referenceLinks}
+                  onClick={
+                    selectedDocument.referenceLinks
+                      ? handleReferenceClick
+                      : undefined
+                  }
+                >
+                  <SectionHeading>
+                    Kaynak
+                    {selectedDocument.referenceLinks && (
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          backgroundColor: "rgba(142, 68, 173, 0.1)",
+                          padding: "2px 6px",
+                          borderRadius: "4px",
+                          color: "#8e44ad",
+                        }}
+                      >
+                        Bağlantıya git
+                      </span>
+                    )}
+                  </SectionHeading>
+                  <SectionContent>
+                    {selectedDocument.referenceName}
+                  </SectionContent>
+                </SourceSectionContainer>
+              )}
+            </SideComponents>
+
             <DescriptionLayout>
               <MainText>{selectedDocument.docDescription}</MainText>
 
-              <ButtonsContainer>
+              {selectedDocument.docImportant && (
+                <AttentionSection>
+                  <SectionHeading>Dikkat</SectionHeading>
+                  <SectionContent>
+                    {selectedDocument.docImportant
+                      .split("\n-")
+                      .map((item, index) =>
+                        index === 0 ? (
+                          <p key={index}>{item}</p>
+                        ) : (
+                          <div
+                            key={index}
+                            style={{
+                              display: "flex",
+                              alignItems: "flex-start",
+                              marginTop: "8px",
+                            }}
+                          >
+                            <span
+                              style={{
+                                display: "inline-block",
+                                width: "6px",
+                                height: "6px",
+                                borderRadius: "50%",
+                                backgroundColor: "#e74c3c",
+                                marginRight: "8px",
+                                marginTop: "8px",
+                              }}
+                            ></span>
+                            <span>{item.trim()}</span>
+                          </div>
+                        )
+                      )}
+                  </SectionContent>
+                </AttentionSection>
+              )}
+
+              {selectedDocument.docWhere && (
+                <LocationSection>
+                  <SectionHeading>Temin yeri</SectionHeading>
+                  <SectionContent>{selectedDocument.docWhere}</SectionContent>
+                </LocationSection>
+              )}
+
+              <StyledButtonsContainer>
                 {selectedDocument.docSourceLink && (
                   <SourceButton
                     id="sourceButton"
@@ -910,18 +1165,9 @@ const ReadyDocumentDetail = () => {
                 >
                   {isCompleted ? "Tamamlandı" : "Tamamla"}
                 </ActionButton>
-              </ButtonsContainer>
+              </StyledButtonsContainer>
             </DescriptionLayout>
           </DocumentDescription>
-
-          <ImageContainer>
-            <ImageViewer
-              imageSrc={selectedDocument.docImage}
-              altText={selectedDocument.docName}
-              readyDocuments={readyDocuments}
-              currentIndex={currentDocumentIndex}
-            />
-          </ImageContainer>
         </InfoContainer>
       </PageContainer>
     </>
