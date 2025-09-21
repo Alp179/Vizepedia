@@ -59,33 +59,46 @@ const HeroSection = styled.div`
   display: flex;
   align-items: flex-end;
 
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(to top, var(--color-grey-909), transparent);
+    z-index: 1;
+  }
+
   @media (max-width: 768px) {
     height: 65vh;
     min-height: 420px;
   }
 `;
 
-// Hero görseli için yeni stil (LCP optimizasyonu)
-const HeroFigure = styled.figure`
+// Hero görseli için eski çalışan koddaki gibi background-image kullanımı
+const HeroImage = styled.div`
   position: absolute;
-  inset: 0;
-  margin: 0;
-  overflow: hidden;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(${(props) => props.src});
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.85);
+  transition: transform 0.8s ease;
+  transform: scale(1.03);
+  animation: ${fadeIn} 1.2s ease-out;
+
   &::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.15);
-  }
-  img {
-    position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    filter: brightness(0.85);
-    transform: scale(1.03);
-    animation: ${fadeIn} 1.2s ease-out;
+    background: rgba(0, 0, 0, 0.15);
   }
 `;
 
@@ -840,70 +853,8 @@ function BlogDetail() {
       <ReadingProgress progress={readingProgress} />
 
       <HeroSection>
-        {/* Hero görseli için LCP optimizasyonu */}
-        <HeroFigure>
-          {blog.cover_image ? (
-            <img
-              src={blog.cover_image}
-              alt={blog.alt || `${blog.title} kapak görseli`}
-              width="1600"
-              height="900"
-              loading="eager"
-              decoding="async"
-              srcSet={`
-                ${blog.cover_image}?w=640 640w,
-                ${blog.cover_image}?w=960 960w,
-                ${blog.cover_image}?w=1280 1280w,
-                ${blog.cover_image}?w=1600 1600w
-              `}
-              sizes="(max-width: 768px) 100vw, 100vw"
-              onError={(e) => {
-                console.error("Resim yüklenemedi:", e);
-                console.log("Hatalı URL:", e.target.src);
-                console.log("Orijinal cover_image değeri:", blog.cover_image);
-                e.target.onerror = null;
-                e.target.style.display = "none";
-                // Yedek resmi göster
-                const fallback = document.createElement("div");
-                fallback.style.cssText = `
-                  position: absolute;
-                  inset: 0;
-                  width: 100%;
-                  height: 100%;
-                  background-color: #333;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  color: white;
-                  font-size: 1.2rem;
-                `;
-                fallback.textContent = "Görsel yüklenemedi";
-                e.target.parentNode.appendChild(fallback);
-              }}
-              onLoad={() => {
-                console.log("Resim başarıyla yüklendi:", blog.cover_image);
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-                backgroundColor: "#333",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                fontSize: "1.2rem",
-              }}
-            >
-              Görsel bulunamadı
-            </div>
-          )}
-        </HeroFigure>
-
+        {/* Hero görseli için eski çalışan koddaki gibi background-image kullanımı */}
+        <HeroImage src={blog.cover_image} alt="hero-image" />
         <HeroContent>
           {/* Breadcrumbs */}
           <Crumbs aria-label="breadcrumb">
