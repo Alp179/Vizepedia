@@ -4,3 +4,4 @@ King of the visa taptaptaptaptaptaptaptaptaptaptaptapkonfiraknonstopprealtapreal
 
 YAĞLI YAĞLI OHHHHHsssHh
 ksksksksk
+lo lo
