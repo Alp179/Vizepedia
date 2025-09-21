@@ -649,6 +649,7 @@ const WithUsDocumentDetail = () => {
     documents,
     dispatch,
     setSelectedDocument,
+    selectedDocument,
   ]);
 
   useEffect(() => {

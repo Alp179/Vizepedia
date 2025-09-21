@@ -591,6 +591,7 @@ const ReadyDocumentDetail = () => {
     documents,
     dispatch,
     setSelectedDocument,
+    selectedDocument,
   ]);
 
   useEffect(() => {
