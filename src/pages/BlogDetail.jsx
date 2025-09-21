@@ -1,19 +1,20 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   fetchBlogBySlug,
   fetchRelatedBlogsByCategory,
   fetchRecentBlogs,
-} from "../services/apiBlogs"; // Yeni import
+} from "../services/apiBlogs";
 import Spinner from "../ui/Spinner";
 import Footer from "../ui/Footer";
 import styled, { keyframes } from "styled-components";
 import SidebarBlogList from "../ui/SidebarBlogList";
 import BlogContentSection from "../ui/BlogContentSection";
 import BlogSources from "../ui/BlogSources";
-import RecentBlogs from "../ui/RecentBlogs"; // Yeni import
+import RecentBlogs from "../ui/RecentBlogs";
 import SEO from "../components/SEO";
+import JsonLd from "../components/JsonLd";
 
 // Animasyonlar
 const fadeIn = keyframes`
@@ -58,45 +59,33 @@ const HeroSection = styled.div`
   display: flex;
   align-items: flex-end;
 
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 70%;
-    background: linear-gradient(to top, var(--color-grey-909), transparent);
-    z-index: 1;
-  }
-
   @media (max-width: 768px) {
     height: 65vh;
     min-height: 420px;
   }
 `;
 
-const HeroImage = styled.div`
+// Hero görseli için yeni stil (LCP optimizasyonu)
+const HeroFigure = styled.figure`
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(${(props) => props.src});
-  background-size: cover;
-  background-position: center;
-  filter: brightness(0.85);
-  transition: transform 0.8s ease;
-  transform: scale(1.03);
-  animation: ${fadeIn} 1.2s ease-out;
-
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
   &::after {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.15);
+  }
+  img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.15);
+    object-fit: cover;
+    filter: brightness(0.85);
+    transform: scale(1.03);
+    animation: ${fadeIn} 1.2s ease-out;
   }
 `;
 
@@ -118,6 +107,24 @@ const HeroContent = styled.div`
   @media (max-width: 480px) {
     padding: 0 2.5rem;
     padding-bottom: 2.5rem;
+  }
+`;
+
+// Breadcrumbs için stil
+const Crumbs = styled.nav`
+  position: relative;
+  z-index: 2;
+  margin-bottom: 1rem;
+  color: #fff;
+  opacity: 0.9;
+  a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  span.sep {
+    margin: 0 0.5rem;
+    opacity: 0.7;
   }
 `;
 
@@ -365,6 +372,120 @@ const ReadingProgress = styled.div`
   transition: width 0.2s ease;
 `;
 
+// İç linkler için stil
+const TagsContainer = styled.div`
+  margin-top: 2rem;
+  strong {
+    font-weight: 600;
+    margin-right: 8px;
+  }
+`;
+
+const CategoryLinkContainer = styled.div`
+  margin-top: 2rem;
+  a {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-brand-600);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    &:hover {
+      color: var(--color-brand-700);
+      text-decoration: underline;
+    }
+  }
+`;
+
+// Önceki/Sonraki yazı navigasyonu
+const PrevNextNav = styled.div`
+  margin-top: 3rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+
+  a {
+    flex: 1;
+    max-width: 48%;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.8rem;
+    color: var(--color-grey-600);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-3px);
+    }
+
+    &.prev {
+      text-align: left;
+    }
+
+    &.next {
+      text-align: right;
+    }
+
+    span {
+      display: block;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
+
+    strong {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+
+    a {
+      max-width: 100%;
+    }
+  }
+`;
+
+// FAQ Bölümü
+const FaqSection = styled.div`
+  margin-top: 3rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-grey-600);
+  }
+
+  .faq-item {
+    margin-bottom: 1.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      color: var(--color-grey-600);
+    }
+
+    p {
+      line-height: 1.6;
+      color: var(--color-grey-500);
+    }
+  }
+`;
+
 function BlogDetail() {
   const { slug } = useParams();
   const [scrollVisible, setScrollVisible] = useState(false);
@@ -472,6 +593,10 @@ function BlogDetail() {
   } = useQuery({
     queryKey: ["blog", slug],
     queryFn: () => fetchBlogBySlug(slug),
+    onSuccess: (data) => {
+      console.log("Blog verisi:", data);
+      console.log("Cover image:", data?.cover_image);
+    },
   });
 
   // Blog içeriği yüklendiğinde başlıkları çıkar
@@ -512,55 +637,287 @@ function BlogDetail() {
 
   if (isError)
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          background: "var(--color-grey-909)",
-          color: "var(--color-grey-600)",
-          fontSize: "1.5rem",
-          padding: "3rem",
-          textAlign: "center",
-        }}
-      >
-        Blog içeriği yüklenirken bir hata oluştu. Lütfen daha sonra tekrar
-        deneyin.
-      </div>
+      <>
+        <SEO title="İçerik bulunamadı – Vizepedia" robots="noindex,follow" />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            background: "var(--color-grey-909)",
+            color: "var(--color-grey-600)",
+            fontSize: "1.5rem",
+            padding: "3rem",
+            textAlign: "center",
+          }}
+        >
+          Blog içeriği yüklenirken bir hata oluştu. Lütfen daha sonra tekrar
+          deneyin.
+        </div>
+      </>
     );
 
   const readingTime = calculateReadingTime(blog);
 
+  // SEO için gerekli verileri hazırla
+  const plain = (html = "") =>
+    html
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  const bodyText = plain(
+    `${blog.section1_content || ""} ${blog.section2_content || ""} ${
+      blog.section3_content || ""
+    }`
+  );
+  const wordCount = bodyText.split(/\s+/).filter(Boolean).length;
+  const timeRequired = `PT${Math.max(1, Math.ceil(wordCount / 200))}M`; // ISO8601 süre
+  const published = new Date(blog.created_at).toISOString();
+  const modified = new Date(blog.updated_at || blog.created_at).toISOString();
+  const tags = Array.isArray(blog.tags)
+    ? blog.tags
+    : blog.tags?.split(",") || [];
+
+  // Örnek FAQ verisi (gerçekte blog.faq olarak API'den gelmeli)
+  const faqItems = blog.faq || [
+    {
+      q: "X vizesi kaç günde çıkar?",
+      a: "Genelde 7–15 gün içinde sonuçlanır.",
+    },
+    {
+      q: "Vize başvurusu için ne kadar önceden hazırlanmalıyım?",
+      a: "En az 1 ay önceden başvurmanız önerilir.",
+    },
+    {
+      q: "Vize reddedilirse ne yapmalıyım?",
+      a: "Red nedenlerini analiz edip eksikleri tamamlayarak tekrar başvurabilirsiniz.",
+    },
+  ];
+
   return (
     <PageContainer>
       {blog && (
-        // BlogDetail.jsx içinde SEO bileşeninin kullanıldığı kısım:
+        <>
+          {/* SEO bileşeni - gelişmiş meta veriler */}
+          <SEO
+            title={`${blog.title} – Vizepedia`}
+            description={blog.excerpt ?? bodyText.slice(0, 150)}
+            keywords={
+              Array.isArray(blog.tags)
+                ? blog.tags.join(", ")
+                : blog.tags || "vize rehberi, Vizepedia"
+            }
+            image={blog.cover_image || "/vite.svg"}
+            url={`https://www.vizepedia.com/blog/${slug}`}
+            canonical={`https://www.vizepedia.com/blog/${slug}`}
+            robots="index,follow,max-image-preview:large"
+            openGraph={{
+              type: "article",
+              images: [
+                {
+                  url: blog.cover_image,
+                  width: 1600,
+                  height: 900,
+                  alt: blog.alt || `${blog.title} kapak görseli`,
+                },
+              ],
+              article: {
+                publishedTime: published,
+                modifiedTime: modified,
+                section: blog.category,
+                tags,
+              },
+            }}
+            twitter={{
+              card: "summary_large_image",
+              imageAlt: blog.alt || `${blog.title} kapak görseli`,
+            }}
+          >
+            {/* Hero görseli preload */}
+            {blog.cover_image && (
+              <link
+                rel="preload"
+                as="image"
+                href={blog.cover_image}
+                imageSrcSet={`
+                  ${blog.cover_image}?w=640 640w,
+                  ${blog.cover_image}?w=960 960w,
+                  ${blog.cover_image}?w=1280 1280w,
+                  ${blog.cover_image}?w=1600 1600w
+                `}
+                imageSizes="(max-width: 768px) 100vw, 100vw"
+              />
+            )}
+          </SEO>
 
-        <SEO
-          title={`${blog.title} – Vizepedia`}
-          description={
-            blog.excerpt ??
-            (blog.section1_content
-              ? blog.section1_content.replace(/<[^>]*>/g, "").slice(0, 150)
-              : "Vize başvuruları ve seyahat ipuçları hakkında güncel blog yazıları.")
-          }
-          keywords={
-            Array.isArray(blog.tags)
-              ? blog.tags.join(", ")
-              : typeof blog.tags === "string"
-              ? blog.tags
-              : "vize rehberi, blog, Vizepedia"
-          }
-          image={blog.cover_image || "/vite.svg"}
-          url={`https://www.vizepedia.com/blog/${slug}`}
-        />
+          {/* Breadcrumbs JSON-LD */}
+          <JsonLd
+            data={{
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: "Ana Sayfa",
+                  item: "https://www.vizepedia.com/",
+                },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: "Blog",
+                  item: "https://www.vizepedia.com/blog",
+                },
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: blog.category,
+                  item: `https://www.vizepedia.com/blog/kategori/${encodeURIComponent(
+                    blog.category
+                  )}`,
+                },
+                {
+                  "@type": "ListItem",
+                  position: 4,
+                  name: blog.title,
+                  item: `https://www.vizepedia.com/blog/${slug}`,
+                },
+              ],
+            }}
+          />
+
+          {/* Article/BlogPosting JSON-LD */}
+          <JsonLd
+            data={{
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              mainEntityOfPage: {
+                "@type": "WebPage",
+                "@id": `https://www.vizepedia.com/blog/${slug}`,
+              },
+              headline: blog.title,
+              description: blog.excerpt || bodyText.slice(0, 160),
+              image: [blog.cover_image].filter(Boolean),
+              datePublished: published,
+              dateModified: modified,
+              author: {
+                "@type": "Person",
+                name: blog.author || "Vizepedia Editör",
+              },
+              publisher: {
+                "@type": "Organization",
+                name: "Vizepedia",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "https://www.vizepedia.com/logo-512.png",
+                },
+              },
+              articleSection: blog.category,
+              keywords: tags,
+              wordCount: wordCount,
+              timeRequired: timeRequired,
+            }}
+          />
+
+          {/* FAQ JSON-LD */}
+          {faqItems.length > 0 && (
+            <JsonLd
+              data={{
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: faqItems.map((item) => ({
+                  "@type": "Question",
+                  name: item.q,
+                  acceptedAnswer: { "@type": "Answer", text: item.a },
+                })),
+              }}
+            />
+          )}
+        </>
       )}
+
       <ReadingProgress progress={readingProgress} />
 
       <HeroSection>
-        <HeroImage src={blog.cover_image} alt="hero-image" />
+        {/* Hero görseli için LCP optimizasyonu */}
+        <HeroFigure>
+          {blog.cover_image ? (
+            <img
+              src={blog.cover_image}
+              alt={blog.alt || `${blog.title} kapak görseli`}
+              width="1600"
+              height="900"
+              loading="eager"
+              decoding="async"
+              srcSet={`
+                ${blog.cover_image}?w=640 640w,
+                ${blog.cover_image}?w=960 960w,
+                ${blog.cover_image}?w=1280 1280w,
+                ${blog.cover_image}?w=1600 1600w
+              `}
+              sizes="(max-width: 768px) 100vw, 100vw"
+              onError={(e) => {
+                console.error("Resim yüklenemedi:", e);
+                console.log("Hatalı URL:", e.target.src);
+                console.log("Orijinal cover_image değeri:", blog.cover_image);
+                e.target.onerror = null;
+                e.target.style.display = "none";
+                // Yedek resmi göster
+                const fallback = document.createElement("div");
+                fallback.style.cssText = `
+                  position: absolute;
+                  inset: 0;
+                  width: 100%;
+                  height: 100%;
+                  background-color: #333;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: white;
+                  font-size: 1.2rem;
+                `;
+                fallback.textContent = "Görsel yüklenemedi";
+                e.target.parentNode.appendChild(fallback);
+              }}
+              onLoad={() => {
+                console.log("Resim başarıyla yüklendi:", blog.cover_image);
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "#333",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                fontSize: "1.2rem",
+              }}
+            >
+              Görsel bulunamadı
+            </div>
+          )}
+        </HeroFigure>
+
         <HeroContent>
+          {/* Breadcrumbs */}
+          <Crumbs aria-label="breadcrumb">
+            <Link to="/">Ana Sayfa</Link>
+            <span className="sep">/</span>
+            <Link to="/blog">Blog</Link>
+            <span className="sep">/</span>
+            <Link to={`/blog/kategori/${encodeURIComponent(blog.category)}`}>
+              {blog.category}
+            </Link>
+            <span className="sep">/</span>
+            <span aria-current="page">{blog.title}</span>
+          </Crumbs>
+
           <Category>{blog.category}</Category>
           <Title>{blog.title}</Title>
           <BlogMeta>
@@ -613,7 +970,82 @@ function BlogDetail() {
             activeHeading={activeHeading}
             setActiveHeading={setActiveHeading}
             hideTableOfContents={false}
+            // Analytics event handlers
+            onCopy={() => {
+              // Kopyalama olayı analizi
+              if (typeof window !== "undefined" && window.gtag) {
+                window.gtag("event", "copy_content", {
+                  event_category: "engagement",
+                  event_label: blog.title,
+                });
+              }
+            }}
+            onTocClick={(headingId) => {
+              // TOC tıklama analizi
+              if (typeof window !== "undefined" && window.gtag) {
+                window.gtag("event", "toc_click", {
+                  event_category: "navigation",
+                  event_label: headingId,
+                });
+              }
+            }}
+            onSourceClick={(sourceUrl) => {
+              // Kaynak tıklama analizi
+              if (typeof window !== "undefined" && window.gtag) {
+                window.gtag("event", "source_click", {
+                  event_category: "outbound",
+                  event_label: sourceUrl,
+                });
+              }
+            }}
           />
+
+          {/* Önceki/Sonraki yazı navigasyonu */}
+          <PrevNextNav>
+            {/* API'den önceki/sonraki yazıları alabilirsiniz */}
+            {/* Şimdilik boş bırakıyorum */}
+          </PrevNextNav>
+
+          {/* Etiketler - İç linkleme */}
+          {Array.isArray(tags) && tags.length > 0 && (
+            <TagsContainer>
+              <strong>Etiketler: </strong>
+              {tags.map((t, i) => (
+                <Link
+                  key={i}
+                  to={`/blog/etiket/${encodeURIComponent(t.trim())}`}
+                  style={{ marginRight: 8 }}
+                >
+                  #{t.trim()}
+                </Link>
+              ))}
+            </TagsContainer>
+          )}
+
+          {/* Kategoriye dönüş linki */}
+          <CategoryLinkContainer>
+            <Link
+              to={`/blog/kategori/${encodeURIComponent(blog.category)}`}
+              aria-label={`${blog.category} kategorisindeki yazılar`}
+            >
+              ← {blog.category} kategorisindeki tüm yazılar
+            </Link>
+          </CategoryLinkContainer>
+
+          {/* FAQ Bölümü */}
+          {faqItems.length > 0 && (
+            <FaqSection>
+              <h2>Sıkça Sorulan Sorular</h2>
+              <div className="faq-items">
+                {faqItems.map((item, index) => (
+                  <div key={index} className="faq-item">
+                    <h3>{item.q}</h3>
+                    <p>{item.a}</p>
+                  </div>
+                ))}
+              </div>
+            </FaqSection>
+          )}
 
           {/* Mobile'da Kaynaklar - Blog içeriğinden hemen sonra */}
           <MobileSourcesContainer>

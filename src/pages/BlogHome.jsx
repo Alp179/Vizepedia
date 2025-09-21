@@ -5,11 +5,17 @@ import { fetchAllBlogs } from "../services/apiBlogs";
 import styled from "styled-components";
 import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
-import SlideShow from "../ui/SlideShow";
+import { lazy, Suspense } from "react";
 import VectorOk from "../ui/VectorOk";
 import BlogCardsMain from "../ui/BlogCardsMain";
-import SearchBar from "../ui/SearchBar"; // Yeni SearchBar komponentini import ediyoruz
+import SearchBar from "../ui/SearchBar";
 import SEO from "../components/SEO";
+import JsonLd from "../components/JsonLd";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useMemo } from "react";
+
+// Lazy load SlideShow
+const SlideShow = lazy(() => import("../ui/SlideShow"));
 
 // BlogContainer ve diğer stiller
 const BlogContainer = styled.div`
@@ -54,7 +60,7 @@ const BlogHeaders = styled.div`
 `;
 
 const HeaderveOk = styled.div`
-  margin: 0 auto 30px; /* Reduced bottom margin to bring SearchBar closer */
+  margin: 0 auto 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -69,10 +75,9 @@ const HeaderveOk = styled.div`
 `;
 
 const BlogHeader = styled.h1`
-  /* Keep original text color but enhance with shadows */
   text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5), 0px 0px 10px rgba(0, 0, 0, 0.3);
   font-weight: 100;
-  color: var(--color-grey-916); /* Restore original color */
+  color: var(--color-grey-916);
   margin-left: auto;
   margin-right: auto;
   text-align: center;
@@ -81,8 +86,6 @@ const BlogHeader = styled.h1`
   line-height: 1.1;
   letter-spacing: -0.5px;
   position: relative;
-
-  /* Optional: add a very subtle outline to increase edge definition */
   -webkit-text-stroke: 0.2px rgba(0, 0, 0, 0.2);
 
   @media (max-width: 1300px) {
@@ -118,15 +121,23 @@ const BlogHeader = styled.h1`
   }
 `;
 
-// For the "Seyahat Edin" text - keep original strong styling with subtle enhancements
+const BlogSubheader = styled.h2`
+  font-weight: 700;
+  text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5), 0px 0px 12px rgba(0, 0, 0, 0.3);
+  color: var(--color-grey-916);
+  text-align: center;
+  margin: 0 auto 10px;
+  font-size: 42px;
+  @media (max-width: 660px) {
+    font-size: 28px;
+  }
+`;
+
 const StrongText = styled.strong`
   font-weight: 700;
   position: relative;
-
-  /* Add just enough shadow to make it stand out without changing its appearance */
   text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5), 0px 0px 12px rgba(0, 0, 0, 0.3);
 
-  /* Optional: add a semi-transparent background to increase contrast with gradient behind */
   &:after {
     content: "";
     position: absolute;
@@ -142,7 +153,6 @@ const StrongText = styled.strong`
   }
 `;
 
-// Yükleme göstergesi
 const LoadingSpinner = styled.div`
   display: flex;
   justify-content: center;
@@ -169,7 +179,6 @@ const LoadingSpinner = styled.div`
   }
 `;
 
-// Hata mesajı bileşeni
 const ErrorMessage = styled.div`
   text-align: center;
   padding: 40px;
@@ -188,6 +197,10 @@ const ErrorMessage = styled.div`
 `;
 
 function BlogHome() {
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  const q = useMemo(() => new URLSearchParams(search).get("q") || "", [search]);
+
   const {
     data: blogs,
     isLoading,
@@ -195,14 +208,27 @@ function BlogHome() {
   } = useQuery({
     queryKey: ["allBlogs"],
     queryFn: fetchAllBlogs,
+    staleTime: 60_000,
   });
 
-  // Yükleme durumunda iskelet göster
+  const filtered = useMemo(() => {
+    if (!blogs) return [];
+    const needle = q.trim().toLowerCase();
+    if (!needle) return blogs;
+    return blogs.filter((b) =>
+      [b.title, b.summary, b.tags?.join(" ")]
+        .filter(Boolean)
+        .some((t) => t.toLowerCase().includes(needle))
+    );
+  }, [blogs, q]);
+
+  // Determine which list to use for ItemList schema
+  const listForSchema = q ? filtered : blogs;
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
-  // Hata durumunda hata mesajı göster
   if (isError) {
     return (
       <ErrorMessage>
@@ -221,28 +247,82 @@ function BlogHome() {
         description="Vize başvurusu süreçleri, seyahat ipuçları ve güncel vize haberlerini bulabileceğiniz Vizepedia blog sayfası."
         keywords="blog, vize blog, seyahat ipuçları, vize haberleri, Vizepedia"
         url="https://www.vizepedia.com/blog"
+        noindex={Boolean(q)} // q varsa noindex
       />
+
+      {/* WebSite + SearchAction */}
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          url: "https://www.vizepedia.com/",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://www.vizepedia.com/blog?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        }}
+      />
+
+      {/* Blog schema */}
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          name: "Vizepedia Blog",
+          url: "https://www.vizepedia.com/blog",
+          description:
+            "Vize başvuruları, seyahat ipuçları ve güncel vize haberleri.",
+        }}
+      />
+
+      {/* ItemList schema - sadece arama yokken göster */}
+      {!q && Array.isArray(listForSchema) && listForSchema.length > 0 && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: listForSchema.map((post, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              url: `https://www.vizepedia.com/blog/${post.slug}`,
+              name: post.title,
+            })),
+          }}
+        />
+      )}
+
       <BlogContainer>
         <HeaderveOk>
           <BlogHeaders>
             <BlogHeader>Başlayın Keşfedin Vize Alın</BlogHeader>
-            <BlogHeader>
+            <BlogSubheader>
               <StrongText>Seyahat Edin</StrongText>
-            </BlogHeader>
+            </BlogSubheader>
           </BlogHeaders>
-          <VectorOk variant="blogpage" />
+          <VectorOk variant="blogpage" aria-hidden="true" />
 
-          {/* SearchBar komponenti VectorOk'tan sonra, başlığın hemen altında yer alıyor */}
-          <SearchBar />
+          <SearchBar
+            initialValue={q}
+            onSearch={(value) => {
+              const params = new URLSearchParams(search);
+              if (value) params.set("q", value);
+              else params.delete("q");
+              navigate(`/blog?${params.toString()}`, { replace: false });
+            }}
+            ariaLabel="Bloglarda ara"
+          />
         </HeaderveOk>
 
-        {/* BlogCardsMain komponenti blog verilerini props olarak alıyor */}
-        <BlogCardsMain blogs={blogs} />
+        <BlogCardsMain blogs={filtered} />
       </BlogContainer>
 
       <Divider />
 
-      <SlideShow />
+      {/* Lazy loaded SlideShow */}
+      <Suspense fallback={null}>
+        <SlideShow />
+      </Suspense>
 
       <MailerLiteForm />
 

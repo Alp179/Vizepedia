@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 
-import { useState, useRef, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
-import styled, { keyframes } from 'styled-components';
-import { searchBlogs } from '../services/apiBlogs';
-import { FiX, FiClock, FiTag } from 'react-icons/fi';
+import { useState, useRef, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import styled, { keyframes } from "styled-components";
+import { searchBlogs } from "../services/apiBlogs";
+import { FiX, FiClock, FiTag } from "react-icons/fi";
 
 // Animasyon tanımları
 const fadeIn = keyframes`
@@ -27,19 +28,18 @@ const SearchContainer = styled.div`
   z-index: 100;
 
   @media (max-width: 910px) {
-    margin-top: 100px; 
+    margin-top: 100px;
   }
-  
+
   @media (max-width: 768px) {
     max-width: 100%;
-    
   }
   @media (max-width: 550px) {
     margin-top: 60px;
-  } 
+  }
 `;
 
-// Input wrapper için geliştirilmiş stil
+// Input wrapper
 const SearchInputWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -50,19 +50,19 @@ const SearchInputWrapper = styled.div`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   overflow: hidden;
-  
+
   &:focus-within {
     box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
     border-color: var(--color-grey-400, #9ca3af);
     transform: translateY(-2px);
   }
-  
+
   &:hover {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   }
 `;
 
-// Geliştirilmiş input alanı
+// Input alanı
 const SearchInput = styled.input`
   width: 100%;
   padding: 16px 20px;
@@ -74,12 +74,12 @@ const SearchInput = styled.input`
   outline: none;
   font-weight: 400;
   letter-spacing: 0.2px;
-  
+
   &::placeholder {
     color: var(--color-grey-400, #9ca3af);
     transition: color 0.2s ease;
   }
-  
+
   &:focus::placeholder {
     color: var(--color-grey-500, #6b7280);
   }
@@ -90,9 +90,18 @@ const SearchInput = styled.input`
   }
 `;
 
-// Custom SVG Search Icon
+// Arama ikonu
 const SearchIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="var(--color-grey-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="var(--color-grey-600)"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    width="18"
+    height="18"
+  >
     <circle cx="11" cy="11" r="8"></circle>
     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
   </svg>
@@ -113,12 +122,12 @@ const SearchButton = styled.button`
   margin-right: 4px;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  
+
   &:hover {
     background: var(--color-grey-800, #1f2937);
     transform: scale(1.05);
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -129,8 +138,8 @@ const SearchButton = styled.button`
   }
 `;
 
-// Temizleme butonu
-const ClearButton = styled.button`
+// Temizleme butonu (type="button" ile)
+const ClearButton = styled.button.attrs({ type: "button" })`
   background: transparent;
   border: none;
   color: var(--color-grey-500, #6b7280);
@@ -146,12 +155,12 @@ const ClearButton = styled.button`
   justify-content: center;
   transition: all 0.2s ease;
   padding: 0;
-  
+
   &:hover {
     color: var(--color-grey-700, #374151);
     transform: translateY(-50%) scale(1.1);
   }
-  
+
   &:active {
     transform: translateY(-50%) scale(0.9);
   }
@@ -169,33 +178,33 @@ const ResultsContainer = styled.div`
   right: 0;
   background-color: var(--color-grey-912);
   border-radius: 16px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
   max-height: 450px;
   overflow-y: auto;
   z-index: 1000;
-  display: ${props => (props.show ? 'block' : 'none')};
+  display: ${(props) => (props.show ? "block" : "none")};
   animation: ${fadeIn} 0.3s ease;
   border: 1px solid var(--color-grey-100, #f3f4f6);
-  
-  /* Kaydırma çubuğu stili */
+
   &::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: var(--color-grey-50, #f9fafb);
     border-radius: 10px;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: var(--color-grey-300, #d1d5db);
     border-radius: 10px;
   }
-  
+
   &::-webkit-scrollbar-thumb:hover {
     background: var(--color-grey-400, #9ca3af);
   }
-  
+
   @media (max-width: 550px) {
     max-height: 350px;
     border-radius: 12px;
@@ -209,37 +218,38 @@ const ResultItem = styled(Link)`
   border-bottom: 1px solid var(--color-grey-100, #f3f4f6);
   text-decoration: none;
   transition: background-color 0.2s ease;
-  
+
   &:hover {
     background-color: var(--color-grey-50, #f9fafb);
   }
-  
+
   &:last-child {
     border-bottom: none;
   }
-  
+
   &:active {
     background-color: var(--color-grey-100, #f3f4f6);
   }
-  
+
   @media (max-width: 550px) {
     padding: 12px;
   }
 `;
 
-// Geliştirilmiş sonuç resmi
+// Sonuç resmi
 const ResultImage = styled.div`
   width: 70px;
   height: 70px;
   border-radius: 10px;
-  background-image: url(${props => props.src || '/default-blog-image.jpg'});
+  background-image: url(${(props) => props.src || "/default-blog-image.jpg"});
   background-size: cover;
   background-position: center;
   margin-right: 16px;
   flex-shrink: 0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   border: 2px solid white;
-  
+
   @media (max-width: 550px) {
     width: 60px;
     height: 60px;
@@ -250,7 +260,7 @@ const ResultImage = styled.div`
 // Sonuç bilgileri
 const ResultInfo = styled.div`
   flex: 1;
-  min-width: 0; /* Taşmaları önlemek için gerekli */
+  min-width: 0;
 `;
 
 // Sonuç başlığı
@@ -263,7 +273,7 @@ const ResultTitle = styled.h4`
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.3;
-  
+
   @media (max-width: 550px) {
     font-size: 15px;
   }
@@ -277,7 +287,7 @@ const ResultMeta = styled.div`
   color: var(--color-grey-500, #6b7280);
   margin-bottom: 6px;
   flex-wrap: wrap;
-  
+
   @media (max-width: 550px) {
     font-size: 12px;
   }
@@ -293,11 +303,11 @@ const ResultCategory = styled.span`
   border-radius: 12px;
   font-weight: 500;
   font-size: 12px;
-  
+
   svg {
     margin-right: 4px;
   }
-  
+
   @media (max-width: 550px) {
     padding: 2px 6px;
     font-size: 11px;
@@ -308,7 +318,7 @@ const ResultCategory = styled.span`
 const ResultDate = styled.span`
   display: inline-flex;
   align-items: center;
-  
+
   svg {
     margin-right: 4px;
   }
@@ -325,7 +335,7 @@ const ResultContent = styled.p`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   line-height: 1.4;
-  
+
   @media (max-width: 550px) {
     font-size: 12px;
     -webkit-line-clamp: 1;
@@ -338,7 +348,7 @@ const SkeletonLoader = styled.div`
   display: flex;
   align-items: flex-start;
   border-bottom: 1px solid var(--color-grey-100, #f3f4f6);
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -350,10 +360,15 @@ const SkeletonImage = styled.div`
   border-radius: 10px;
   margin-right: 16px;
   flex-shrink: 0;
-  background: linear-gradient(90deg, var(--color-grey-100, #f3f4f6) 25%, var(--color-grey-200, #e5e7eb) 50%, var(--color-grey-100, #f3f4f6) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-grey-100, #f3f4f6) 25%,
+    var(--color-grey-200, #e5e7eb) 50%,
+    var(--color-grey-100, #f3f4f6) 75%
+  );
   background-size: 200% 100%;
   animation: ${shimmer} 1.5s infinite linear;
-  
+
   @media (max-width: 550px) {
     width: 60px;
     height: 60px;
@@ -361,13 +376,18 @@ const SkeletonImage = styled.div`
 `;
 
 const SkeletonText = styled.div`
-  height: ${props => props.height || '16px'};
-  width: ${props => props.width || '100%'};
+  height: ${(props) => props.height || "16px"};
+  width: ${(props) => props.width || "100%"};
   border-radius: 4px;
-  background: linear-gradient(90deg, var(--color-grey-100, #f3f4f6) 25%, var(--color-grey-200, #e5e7eb) 50%, var(--color-grey-100, #f3f4f6) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-grey-100, #f3f4f6) 25%,
+    var(--color-grey-200, #e5e7eb) 50%,
+    var(--color-grey-100, #f3f4f6) 75%
+  );
   background-size: 200% 100%;
   animation: ${shimmer} 1.5s infinite linear;
-  margin-bottom: ${props => props.mb || '10px'};
+  margin-bottom: ${(props) => props.mb || "10px"};
 `;
 
 const SkeletonContent = styled.div`
@@ -378,13 +398,13 @@ const NoResults = styled.div`
   padding: 24px;
   text-align: center;
   color: var(--color-grey-500, #6b7280);
-  
+
   svg {
     margin: 0 auto 12px;
     display: block;
     color: var(--color-grey-400, #9ca3af);
   }
-  
+
   strong {
     display: block;
     font-size: 16px;
@@ -393,28 +413,36 @@ const NoResults = styled.div`
   }
 `;
 
-// Highlight text (search term'i vurgulama)
+// RegExp güvenli kaçış
+function escapeRegExp(str = "") {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Highlight text (search term'i vurgulama) – güvenli
 const HighlightText = ({ text, highlight }) => {
   if (!highlight.trim() || !text) {
     return <span>{text}</span>;
   }
-  
+
   // HTML etiketlerini temizle
-  const cleanText = text.replace(/<[^>]*>/g, '');
-  
-  const regex = new RegExp(`(${highlight})`, 'gi');
+  const cleanText = text.replace(/<[^>]*>/g, "");
+
+  const regex = new RegExp(`(${escapeRegExp(highlight)})`, "gi");
   const parts = cleanText.split(regex);
-  
+
   return (
     <>
-      {parts.map((part, i) => 
+      {parts.map((part, i) =>
         regex.test(part) ? (
-          <mark key={i} style={{ 
-            backgroundColor: 'rgba(251, 191, 36, 0.2)', 
-            padding: '0 2px',
-            borderRadius: '2px',
-            color: 'inherit'
-          }}>
+          <mark
+            key={i}
+            style={{
+              backgroundColor: "rgba(251, 191, 36, 0.2)",
+              padding: "0 2px",
+              borderRadius: "2px",
+              color: "inherit",
+            }}
+          >
             {part}
           </mark>
         ) : (
@@ -425,14 +453,40 @@ const HighlightText = ({ text, highlight }) => {
   );
 };
 
-// SearchBar komponenti
-function SearchBar() {
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+/// SearchBar komponenti
+function SearchBar({
+  initialValue = "",
+  onSearch,
+  ariaLabel = "Bloglarda ara",
+}) {
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const searchContainerRef = useRef(null);
   const inputRef = useRef(null);
+  const resultsId = "blog-search-results";
+
+  // Seçenek ID'si oluşturma
+  const optionId = (i, id) => `blog-option-${id}-${i}`;
+
+  // Body scroll lock - sonuçlar açıkken
+  useEffect(() => {
+    document.body.style.overflow = isSearchOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSearchOpen]);
+
+  // dışarıdan gelen initialValue'yu al
+  useEffect(() => {
+    setQuery(initialValue || "");
+    setDebouncedQuery(
+      (initialValue || "").trim().length >= 2 ? initialValue : ""
+    );
+  }, [initialValue]);
 
   // Debounce mekanizması
   useEffect(() => {
@@ -441,106 +495,138 @@ function SearchBar() {
         setDebouncedQuery(query);
         setIsSearchOpen(true);
       } else {
-        setDebouncedQuery('');
+        setDebouncedQuery("");
       }
-    }, 350); // Biraz daha uzun debounce süresi
-
-    return () => {
-      clearTimeout(timerId);
-    };
+    }, 350);
+    return () => clearTimeout(timerId);
   }, [query]);
 
   // Dışarıya tıklandığında sonuçları kapat
   useEffect(() => {
     function handleClickOutside(event) {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target)
+      ) {
         setIsSearchOpen(false);
         setIsFocused(false);
       }
     }
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Enter tuşuna basıldığında odaklanma
+  // Klavye kısayolları
   useEffect(() => {
     function handleKeyDown(e) {
-      // Control+K veya Command+K tuş kombinasyonunu yakala
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      // Ctrl/Cmd+K focus
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
         inputRef.current?.focus();
         setIsFocused(true);
       }
+      // Escape: kapat/temizle
+      if (e.key === "Escape") {
+        setIsSearchOpen(false);
+        setIsFocused(false);
+      }
     }
-    
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Arama sorgusu - hatalara karşı daha güçlü
+  // Arama sorgusu
   const {
     data: searchResults,
     isLoading,
     isError,
-    error
+    error,
   } = useQuery({
-    queryKey: ['blogSearch', debouncedQuery],
+    queryKey: ["blogSearch", debouncedQuery],
     queryFn: () => searchBlogs(debouncedQuery),
     enabled: debouncedQuery.length >= 2,
-    staleTime: 60000, // 1 dakika önbellek
+    staleTime: 60000,
     keepPreviousData: false,
-    retry: 1, // Hata durumunda 1 kez daha dene
-    refetchOnWindowFocus: false, // Gereksiz yeniden yüklemeleri önle
-    onError: (err) => console.error('Arama hatası:', err)
+    retry: 1,
+    refetchOnWindowFocus: false,
+    onError: (err) => console.error("Arama hatası:", err),
   });
 
-  function handleSearch() {
-    if (query.trim().length >= 2) {
-      setIsSearchOpen(true);
+  // Sonuçların olup olmadığını kontrol et (hook'tan SONRA)
+  const hasResults = Array.isArray(searchResults) && searchResults.length > 0;
+
+  // Arama sonuçları değiştiğinde aktif indeksi sıfırla (useQuery'den SONRA)
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [searchResults]);
+
+  // Aktif indeksi değiştiğinde input'a aria-activedescendant güncelle (useQuery'den SONRA)
+  useEffect(() => {
+    if (inputRef.current && activeIndex >= 0 && hasResults) {
+      inputRef.current.setAttribute(
+        "aria-activedescendant",
+        optionId(activeIndex, searchResults[activeIndex]?.id)
+      );
+    } else if (inputRef.current) {
+      inputRef.current.removeAttribute("aria-activedescendant");
     }
+  }, [activeIndex, hasResults, searchResults, optionId]);
+
+  function handleSearch(e) {
+    if (e) e.preventDefault();
+    const val = query.trim();
+    if (!val) return;
+
+    // Analytics sinyali gönder
+    window.gtag?.("event", "search", { search_term: val });
+
+    // açılır menüyü göster
+    if (val.length >= 2) setIsSearchOpen(true);
+    // dışarı bildir (URL senk. için)
+    onSearch?.(val);
   }
 
   function clearSearch() {
-    setQuery('');
-    setDebouncedQuery('');
+    setQuery("");
+    setDebouncedQuery("");
     inputRef.current?.focus();
+    onSearch?.("");
   }
 
   function formatDate(dateString) {
-    if (!dateString) return '';
-    
+    if (!dateString) return "";
     const date = new Date(dateString);
-    
-    // Geçerli bir tarih değilse boş döndür
-    if (isNaN(date.getTime())) return '';
-    
-    return new Intl.DateTimeFormat('tr-TR', { 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric' 
+    if (isNaN(date.getTime())) return "";
+    return new Intl.DateTimeFormat("tr-TR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     }).format(date);
   }
 
-  // Özet içerik oluştur (HTML etiketlerini kaldırarak)
   function createExcerpt(content, maxLength = 120) {
-    if (!content) return '';
-    // HTML etiketlerini kaldır
-    const textOnly = content.replace(/<[^>]*>/g, '');
+    if (!content) return "";
+    const textOnly = content.replace(/<[^>]*>/g, "");
     if (textOnly.length <= maxLength) return textOnly;
-    return textOnly.substring(0, maxLength) + '...';
+    return textOnly.substring(0, maxLength) + "...";
   }
 
-  // Görüntülenecek sonuç sayısı
   const showResults = Boolean(isSearchOpen && debouncedQuery.length >= 2);
 
   return (
-    <SearchContainer ref={searchContainerRef}>
-      <SearchInputWrapper isFocused={isFocused}>
+    <SearchContainer
+      ref={searchContainerRef}
+      role="search"
+      aria-label="Blog içi arama"
+    >
+      <SearchInputWrapper
+        isFocused={isFocused}
+        as="form"
+        onSubmit={handleSearch}
+        role="combobox"
+        aria-haspopup="listbox"
+        aria-owns={resultsId}
+      >
         <SearchInput
           ref={inputRef}
           type="text"
@@ -552,22 +638,62 @@ function SearchBar() {
             if (query.trim().length >= 2) setIsSearchOpen(true);
           }}
           onBlur={() => setIsFocused(false)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              // Aktif öğe varsa ona git, yoksa normal arama yap
+              if (activeIndex >= 0 && hasResults) {
+                e.preventDefault();
+                const blog = searchResults[activeIndex];
+                navigate(`/blog/${blog.slug}`);
+              } else {
+                handleSearch(e);
+              }
+            }
+
+            // Ok tuşları ile gezinme
+            if (!showResults || !hasResults) return;
+
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              setActiveIndex((prev) => (prev + 1) % searchResults.length);
+            }
+
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              setActiveIndex((prev) =>
+                prev <= 0 ? searchResults.length - 1 : prev - 1
+              );
+            }
+          }}
+          aria-label={ariaLabel}
+          autoComplete="off"
+          aria-expanded={showResults}
+          aria-controls={resultsId}
+          aria-autocomplete="list"
         />
         {query && (
           <ClearButton onClick={clearSearch} aria-label="Aramayı temizle">
             <FiX size={18} />
           </ClearButton>
         )}
-        <SearchButton onClick={handleSearch} aria-label="Ara">
+        <SearchButton type="submit" aria-label="Ara">
           <SearchIcon />
         </SearchButton>
       </SearchInputWrapper>
-      
-      {/* NoResults component also uses the search icon */}
-      <ResultsContainer show={showResults}>
+
+      <ResultsContainer
+        show={showResults}
+        id={resultsId}
+        role="listbox"
+        aria-live="polite"
+        aria-busy={isLoading}
+        aria-activedescendant={
+          activeIndex >= 0
+            ? optionId(activeIndex, searchResults[activeIndex]?.id)
+            : undefined
+        }
+      >
         {isLoading ? (
-          // Yükleme durumu için iskelet
           <>
             {[1, 2, 3].map((i) => (
               <SkeletonLoader key={i}>
@@ -585,17 +711,38 @@ function SearchBar() {
           <NoResults>
             <SearchIcon />
             <strong>Arama sırasında bir hata oluştu</strong>
-            <p>{error?.message || 'Lütfen tekrar deneyin veya yöneticinize başvurun'}</p>
+            <p>
+              {error?.message ||
+                "Lütfen tekrar deneyin veya yöneticinize başvurun"}
+            </p>
           </NoResults>
         ) : !searchResults || searchResults.length === 0 ? (
           <NoResults>
             <SearchIcon />
             <strong>Sonuç bulunamadı</strong>
-            <p>Farklı anahtar kelimeler deneyin veya daha genel terimler arayın</p>
+            <p>
+              Farklı anahtar kelimeler deneyin veya daha genel terimler arayın
+            </p>
           </NoResults>
         ) : (
-          searchResults.map((blog) => (
-            <ResultItem key={blog.id} to={`/blog/${blog.slug}`} onClick={() => setIsSearchOpen(false)}>
+          searchResults.map((blog, i) => (
+            <ResultItem
+              key={blog.id}
+              to={`/blog/${blog.slug}`}
+              onClick={() => {
+                setIsSearchOpen(false);
+                // Analytics sinyali gönder
+                window.gtag?.("event", "select_content", {
+                  content_type: "blog_result",
+                  item_id: blog.id,
+                });
+              }}
+              role="option"
+              id={optionId(i, blog.id)}
+              aria-selected={activeIndex === i}
+              onMouseEnter={() => setActiveIndex(i)}
+              prefetch="intent"
+            >
               <ResultImage src={blog.cover_image} />
               <ResultInfo>
                 <ResultTitle>
@@ -612,9 +759,9 @@ function SearchBar() {
                   </ResultDate>
                 </ResultMeta>
                 <ResultContent>
-                  <HighlightText 
-                    text={createExcerpt(blog.content)} 
-                    highlight={debouncedQuery} 
+                  <HighlightText
+                    text={createExcerpt(blog.content)}
+                    highlight={debouncedQuery}
                   />
                 </ResultContent>
               </ResultInfo>
