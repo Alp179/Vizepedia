@@ -641,7 +641,7 @@ const CustomPremiumSections = ({ onComplete }) => {
       description:
         "Vizepedia, size ücretsiz bir hizmet sunarak, vize başvuru sürecindeki danışmanlık giderlerinden tasarruf etmenize yardımcı olur ve seyahat bütçenizi optimize eder.",
       image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa//image7.png",
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image7.webp",
       bgColor: "#090909",
       accent: "#6366F1",
       textPositioning: "right",
@@ -653,7 +653,7 @@ const CustomPremiumSections = ({ onComplete }) => {
       description:
         "Vizepedia, vize başvuru sürecine ilişkin bilgilere kolay ve hızlı bir şekilde erişimenizi sağlayarak, süreç yönetimini daha verimli hale getirir. Böylece, süreci daha rahat ve keyifli bir deneyime dönüştürebilirsiniz.",
       image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa//image.png",
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image.webp",
       bgColor: "#090909",
       accent: "#10B981",
       textPositioning: "left",
@@ -665,7 +665,7 @@ const CustomPremiumSections = ({ onComplete }) => {
       description:
         "Vizepedia, kullanıcıların ihtiyaçlarına göre tasarlanmış kullanıcı dostu bir arayüz sunarak, vize başvuru süreci boyunca rahat ve sorunsuz bir deneyim yaşamanıza yardımcı olur.",
       image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa//image1.png",
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image1.webp",
       bgColor: "#090909",
       accent: "#EC4899",
       textPositioning: "right",
@@ -677,7 +677,7 @@ const CustomPremiumSections = ({ onComplete }) => {
       description:
         "Vizepedia, vize başvuru süreçlerindeki değişiklikleri ve güncellemeleri yakından takip ederek, size her zaman en güncel ve doğru bilgileri sunar. Bu sayede, güncel bilgilere güvenerek başvurularınızı gerçekleştirin.",
       image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa//image2.png",
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image2.webp",
       bgColor: "#090909",
       accent: "#3B82F6",
       textPositioning: "left",
@@ -689,7 +689,7 @@ const CustomPremiumSections = ({ onComplete }) => {
       description:
         "Vizepedia, seyahat planlarınıza özel olarak hazırlanmış belge listeleriyle, vize başvuru sürecinizi profesyonel ve sistematik bir şekilde yönetmenize imkan tanır.",
       image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa//image3.png",
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image3.webp",
       bgColor: "#090909",
       accent: "#F59E0B",
       textPositioning: "right",
@@ -701,7 +701,7 @@ const CustomPremiumSections = ({ onComplete }) => {
       description:
         "Vizepedia, vize başvuru sürecinde her adımda size rehberlik eder ve sürecinizi kolayca takip etmenize imkan tanır. Kontrol hep sizde!",
       image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa//image5.png",
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image5.webp",
       bgColor: "#090909",
       accent: "#8B5CF6",
       textPositioning: "left",
