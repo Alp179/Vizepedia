@@ -4,27 +4,15 @@
   ],
   "redirects": [
     {
-      "source": "http://vizepedia.com/(.*)",
-      "destination": "https://www.vizepedia.com/$1",
-      "permanent": true,
-      "statusCode": 301
-    },
-    {
-      "source": "https://vizepedia.com/(.*)", 
-      "destination": "https://www.vizepedia.com/$1",
-      "permanent": true,
-      "statusCode": 301
-    }
-  ],
-  "headers": [
-    {
       "source": "/(.*)",
-      "headers": [
+      "has": [
         {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=31536000; includeSubDomains"
+          "type": "host",
+          "value": "vizepedia.com"
         }
-      ]
+      ],
+      "destination": "https://www.vizepedia.com/$1",
+      "permanent": true
     }
   ],
   "crons": [
