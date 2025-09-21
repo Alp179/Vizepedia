@@ -226,7 +226,7 @@ function BlogLogo({ variant }) {
       variant={variant}
       isDarkMode={isDarkMode}
     >
-      <Img src={src} alt="Blog-Logo" isDarkMode={isDarkMode} />
+      <Img src={src} alt="vizepedia-blog-logo" isDarkMode={isDarkMode} />
     </StyledBlogLogo>
   );
 }

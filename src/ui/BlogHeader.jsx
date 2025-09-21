@@ -225,10 +225,11 @@ function BlogHeader() {
   return (
     <StyledHeader isVisible={isVisible}>
       <HeaderContents>
-        <Logo onClick={handleLogoClick} src={srcLogo} isDarkMode={isDarkMode} />
+        <Logo onClick={handleLogoClick} src={srcLogo} alt="vizepedia-logo" isDarkMode={isDarkMode} />
         <BlogLogo
           onClick={handleBlogLogoClick}
           src={srcBlog}
+          alt="vizepedia-blog-logo"
           isDarkMode={isDarkMode}
         />
 
