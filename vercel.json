@@ -1,24 +1,24 @@
 {
-  "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/:path*/",
-      "destination": "/:path*",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ],
-  "headers": [
+  "redirects": [
     {
       "source": "/(.*)",
-      "headers": [
-        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains; preload" }
-      ]
+      "has": [
+        {
+          "type": "host",
+          "value": "vizepedia.com"
+        }
+      ],
+      "destination": "https://www.vizepedia.com/$1",
+      "permanent": true
     }
   ],
   "crons": [
-    { "path": "/api/generate-sitemap", "schedule": "0 3 * * *" }
+    {
+      "path": "/api/generate-sitemap",
+      "schedule": "0 3 * * *"
+    }
   ]
 }
