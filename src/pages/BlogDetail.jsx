@@ -559,7 +559,7 @@ function BlogDetail() {
       <ReadingProgress progress={readingProgress} />
 
       <HeroSection>
-        <HeroImage src={blog.cover_image} />
+        <HeroImage src={blog.cover_image} alt="hero-image" />
         <HeroContent>
           <Category>{blog.category}</Category>
           <Title>{blog.title}</Title>

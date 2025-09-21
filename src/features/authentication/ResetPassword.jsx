@@ -182,7 +182,7 @@ function ResetPassword() {
       <ResetPasswordContainer>
         <ResetPasswordCard>
           <Logo>
-            <img src="/logo.png" alt="Vizepedia Logo" />
+            <img src="/logo.png" alt="vizepedia-logo" />
           </Logo>
           <Title>Şifre Sıfırlama</Title>
           <Description>Bağlantı doğrulanıyor, lütfen bekleyin...</Description>
@@ -200,7 +200,7 @@ function ResetPassword() {
       <ResetPasswordContainer>
         <ResetPasswordCard>
           <Logo>
-            <img src="/logo.png" alt="Vizepedia Logo" />
+            <img src="/logo.png" alt="vizepedia-logo" />
           </Logo>
           <Title>Şifre Sıfırlama Hatası</Title>
           <Description>{error}</Description>
@@ -222,7 +222,7 @@ function ResetPassword() {
     <ResetPasswordContainer>
       <ResetPasswordCard>
         <Logo>
-          <img src="/logo.png" alt="Vizepedia Logo" />
+          <img src="/logo.png" alt="vizepedia-logo" />
         </Logo>
         <Title>Yeni Şifre Belirle</Title>
         <Description>Hesabınız için güçlü bir şifre oluşturun.</Description>

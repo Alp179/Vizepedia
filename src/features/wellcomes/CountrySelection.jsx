@@ -393,7 +393,7 @@ const CountrySelection = ({ selectedCountry, onCountryChange }) => {
           onClick={toggleDropdown}
         >
           <DropdownButton>
-            <img src={schengenFlag} alt="Schengen flag" />
+            <img src={schengenFlag} alt="schengen-flag" />
             <div style={{ marginTop: "px", alignItems: "center" }}>
               <span>
                 {schengenSelected ? selectedCountry : "Schengen Ülkeleri"}
