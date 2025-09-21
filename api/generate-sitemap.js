@@ -29,7 +29,6 @@ export default async function handler(req, res) {
       supabase
         .from("blogs")
         .select("slug, updated_at")
-        .eq('published', true) // Only fetch published posts if you have this field
         .order('updated_at', { ascending: false })
         .limit(100), // Limit to 100 most recent posts
       
