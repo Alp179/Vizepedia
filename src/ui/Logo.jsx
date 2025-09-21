@@ -257,7 +257,7 @@ function Logo({ variant }) {
       variant={variant}
       isDarkMode={isDarkMode}
     >
-      <Img src={src} alt="Logo" isDarkMode={isDarkMode} />
+      <Img src={src} alt="vizepedia-logo" isDarkMode={isDarkMode} />
     </StyledLogo>
   );
 }
