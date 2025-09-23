@@ -27,6 +27,7 @@ import { VisaApplicationProvider } from "./context/VisaApplicationContext";
 import MainPageLayout from "./ui/MainPageLayout";
 import BlogHome from "./pages/BlogHome";
 import BlogDetail from "./pages/BlogDetail";
+import BlogCategory from "./pages/BlogCategory"; // Yeni eklendi
 import Kvkk from "./pages/Kvkk";
 import { fetchLatestApplication } from "./utils/userSelectionsFetch";
 import { getCurrentUser } from "./services/apiAuth";
@@ -130,6 +131,7 @@ function AppWithGA() {
       <Route element={<BlogLayout />}>
         <Route path="blog" element={<BlogHome />} />
         <Route path="blog/:slug" element={<BlogDetail />} />
+        <Route path="blog/kategori/:category" element={<BlogCategory />} /> {/* Yeni eklendi */}
       </Route>
 
       {/* Login, Sign-Up ve ResetPassword Routes */}

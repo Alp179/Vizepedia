@@ -256,7 +256,12 @@ const filtered = useMemo(() => {
 
   // Eğer arama parametresi varsa, BlogSearchResults bileşenini göster
 if (q) {
-  return <BlogSearchResults blogs={filtered} query={q} />;
+  // En güncel blogları tarihe göre sırala
+  const latestBlogs = [...blogs].sort((a, b) => 
+    new Date(b.created_at) - new Date(a.created_at)
+  );
+  
+  return <BlogSearchResults blogs={filtered} query={q} latestBlogs={latestBlogs} />;
 }
 
   // Normal blog ana sayfası
