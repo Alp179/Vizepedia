@@ -181,7 +181,7 @@ function MainPage() {
 
   // Memoized SEO data to prevent unnecessary re-renders
   const seoData = useMemo(() => ({
-    title: "Vizepedia – Vize Başvuru Rehberi ve Blog",
+    title: "Vizepedia – Türkiye'nin Vize Başvuru Rehberi",
     description: "Vizepedia, vize başvurularında gereken belgeleri ve seyahat ipuçlarını adım adım anlatan kapsamlı bir rehberdir.",
     keywords: "vize, vize başvurusu, vize rehberi, seyahat rehberi, belgeler, Vizepedia",
     url: "https://www.vizepedia.com/"

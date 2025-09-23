@@ -13,11 +13,12 @@ import SEO from "../components/SEO";
 import JsonLd from "../components/JsonLd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useMemo } from "react";
+import BlogSearchResults from "./BlogSearchResults"; // Yeni eklenen
 
 // Lazy load SlideShow
 const SlideShow = lazy(() => import("../ui/SlideShow"));
 
-// BlogContainer ve diğer stiller
+// BlogContainer ve diğer stiller (mevcut kodunuzdaki gibi kalacak)
 const BlogContainer = styled.div`
   width: 100%;
   max-width: 1300px;
@@ -211,16 +212,29 @@ function BlogHome() {
     staleTime: 60_000,
   });
 
-  const filtered = useMemo(() => {
-    if (!blogs) return [];
-    const needle = q.trim().toLowerCase();
-    if (!needle) return blogs;
-    return blogs.filter((b) =>
-      [b.title, b.summary, b.tags?.join(" ")]
-        .filter(Boolean)
-        .some((t) => t.toLowerCase().includes(needle))
-    );
-  }, [blogs, q]);
+  // BlogHome.jsx içindeki filtered useMemo bölümünü güncelleyin
+
+const filtered = useMemo(() => {
+  if (!blogs) return [];
+  const needle = q.trim().toLowerCase();
+  if (!needle) return blogs;
+
+  return blogs.filter((b) => {
+    // Tags alanını güvenli bir şekilde işle
+    const tagsText = Array.isArray(b.tags) 
+      ? b.tags.join(" ") 
+      : (typeof b.tags === 'string' ? b.tags : '');
+    
+    // Aranacak alanları birleştir
+    const searchableText = [
+      b.title || '',
+      b.summary || '',
+      tagsText
+    ].join(' ').toLowerCase();
+    
+    return searchableText.includes(needle);
+  });
+}, [blogs, q]);
 
   // Determine which list to use for ItemList schema
   const listForSchema = q ? filtered : blogs;
@@ -240,6 +254,12 @@ function BlogHome() {
     );
   }
 
+  // Eğer arama parametresi varsa, BlogSearchResults bileşenini göster
+if (q) {
+  return <BlogSearchResults blogs={filtered} query={q} />;
+}
+
+  // Normal blog ana sayfası
   return (
     <>
       <SEO
