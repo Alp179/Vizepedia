@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import supabase from "../services/supabase";
 import MainPageHeader from "../ui/MainPageHeader";
 import Footer from "../ui/Footer";
 import {
@@ -12,7 +14,55 @@ import {
 } from "./Kvkk";
 import styled from "styled-components";
 
-// Styled components for sitemap
+// Helper function to convert document names to URL-friendly slugs
+function toSlug(text) {
+  if (!text) return "";
+
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\wığüşöçİĞÜŞÖÇ-]+/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+/, "")
+    .replace(/-+$/, "");
+}
+
+// Function to fetch all documents and blog categories
+const fetchSitemapData = async () => {
+  // Fetch all documents
+  const { data: documents, error: docsError } = await supabase
+    .from("documents")
+    .select("docName, docStage")
+    .order("docName", { ascending: true });
+
+  if (docsError) {
+    console.error("Error fetching documents:", docsError);
+    throw new Error(docsError.message);
+  }
+
+  // Fetch blog categories
+  const { data: blogs, error: blogsError } = await supabase
+    .from("blogs")
+    .select("category")
+    .not("category", "is", null);
+
+  if (blogsError) {
+    console.error("Error fetching blog categories:", blogsError);
+    throw new Error(blogsError.message);
+  }
+
+  // Get unique categories
+  const categories = [...new Set(blogs.map(blog => blog.category))];
+
+  return {
+    documents: documents || [],
+    categories: categories || []
+  };
+};
+
+// Styled components
 const SitemapContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -47,10 +97,30 @@ const LinkList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
 `;
 
 const LinkItem = styled.li`
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   
   &:last-child {
     margin-bottom: 0;
@@ -60,9 +130,9 @@ const LinkItem = styled.li`
 const SitemapLink = styled.a`
   color: #3B82F6;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   display: block;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
   transition: all 0.2s;
   
@@ -76,10 +146,30 @@ const SitemapLink = styled.a`
 const PopularBadge = styled.span`
   background: #DBEAFE;
   color: #1E40AF;
-  font-size: 11px;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-left: 6px;
+  font-weight: 500;
+`;
+
+const NewBadge = styled.span`
+  background: #DCFCE7;
+  color: #166534;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-left: 6px;
+  font-weight: 500;
+`;
+
+const CountBadge = styled.span`
+  background: #F3F4F6;
+  color: #6B7280;
+  font-size: 12px;
   padding: 2px 6px;
   border-radius: 4px;
-  margin-left: 8px;
+  margin-left: auto;
   font-weight: 500;
 `;
 
@@ -114,69 +204,136 @@ const StatLabel = styled.div`
   opacity: 0.9;
 `;
 
-// Actual sitemap data based on your App.jsx routes
-const sitemapData = [
-  {
-    title: "Ana Sayfalar",
-    links: [
-      { name: "Ana Sayfa", url: "/", popular: true },
-      { name: "Vize Rehberi Başla", url: "/dashboard", popular: true },
-      { name: "Site Haritası", url: "/site-haritasi" }
-    ]
-  },
-  {
-    title: "Belge Yönetimi",
-    links: [
-      { name: "Hazır Belgeler", url: "/ready-documents", popular: true },
-      { name: "Planlanacak Belgeler", url: "/planned-documents" },
-      { name: "Bizimle Belgeler", url: "/withus-documents" }
-    ]
-  },
-  {
-    title: "Blog ve İçerikler",
-    links: [
-      { name: "Blog Ana Sayfa ve Blog Yazılarımız", url: "/blog", popular: true },
-    ]
-  },
-  {
-    title: "Araçlar",
-    links: [
-      { name: "Davetiye Oluştur", url: "/davetiye-olustur", popular: true }
-    ]
-  },
-  {
-    title: "Kullanıcı İşlemleri",
-    links: [
-      { name: "Giriş Yap", url: "/login" },
-      { name: "Kayıt Ol", url: "/sign-up" },
-      { name: "Şifre Sıfırla", url: "/reset-password" },
-      { name: "Hesap Ayarları", url: "/account" }
-    ]
-  },
-  {
-    title: "Kurumsal ve Yasal",
-    links: [
-      { name: "Hakkımızda", url: "/hakkimizda", popular: true },
-      { name: "İletişim", url: "/iletisim", popular: true },
-      { name: "Gizlilik Politikası", url: "/gizlilik-politikasi" },
-      { name: "KVKK Aydınlatma Metni", url: "/kisisel-verilerin-korunmasi" },
-      { name: "Kullanım Şartları", url: "/kullanim-sartlari" },
-      { name: "Yasal Uyarı", url: "/yasal-uyari" },
-      { name: "Çerez Politikası", url: "/cerez-politikasi" }
-    ]
-  }
-];
-
-// Calculate stats
-const totalLinks = sitemapData.reduce((total, section) => total + section.links.length, 0);
-const popularCount = sitemapData.reduce((total, section) => 
-  total + section.links.filter(link => link.popular).length, 0);
+const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #6B7280;
+`;
 
 export default function SiteHaritasi() {
   const [visibleSections, setVisibleSections] = useState([]);
   const sectionRefs = useRef([]);
   const scrollIndicatorRef = useRef(null);
-  
+
+  // Fetch dynamic data
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["sitemapData"],
+    queryFn: fetchSitemapData,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  // Static sitemap data
+  const staticSitemapData = [
+    {
+      title: "Ana Sayfalar",
+      links: [
+        { name: "Ana Sayfa", url: "/", popular: true },
+        { name: "Vize Rehberi Başla", url: "/dashboard", popular: true },
+        { name: "Site Haritası", url: "/site-haritasi" }
+      ]
+    },
+    {
+      title: "Belge Yönetimi",
+      links: [
+        { name: "Hazır Belgeler", url: "/ready-documents", popular: true },
+        { name: "Planlanacak Belgeler", url: "/planned-documents" },
+        { name: "Bizimle Belgeler", url: "/withus-documents" }
+      ]
+    },
+    {
+      title: "Araçlar",
+      links: [
+        { name: "Davetiye Oluştur", url: "/davetiye-olustur", popular: true }
+      ]
+    },
+    {
+      title: "Kullanıcı İşlemleri",
+      links: [
+        { name: "Giriş Yap", url: "/login" },
+        { name: "Kayıt Ol", url: "/sign-up" },
+        { name: "Şifre Sıfırla", url: "/reset-password" },
+        { name: "Hesap Ayarları", url: "/account" }
+      ]
+    },
+    {
+      title: "Kurumsal ve Yasal",
+      links: [
+        { name: "Hakkımızda", url: "/hakkimizda", popular: true },
+        { name: "İletişim", url: "/iletisim", popular: true },
+        { name: "Gizlilik Politikası", url: "/gizlilik-politikasi" },
+        { name: "KVKK Aydınlatma Metni", url: "/kisisel-verilerin-korunmasi" },
+        { name: "Kullanım Şartları", url: "/kullanim-sartlari" },
+        { name: "Yasal Uyarı", url: "/yasal-uyari" },
+        { name: "Çerez Politikası", url: "/cerez-politikasi" }
+      ]
+    }
+  ];
+
+  // Generate dynamic sitemap data
+  const generateDynamicSitemapData = () => {
+    if (!data) return staticSitemapData;
+
+    const { documents, categories } = data;
+
+    // Group documents by stage
+    const documentsByStage = {
+      hazir: documents.filter(doc => doc.docStage === "hazir"),
+      planla: documents.filter(doc => doc.docStage === "planla"),
+      bizimle: documents.filter(doc => doc.docStage === "bizimle")
+    };
+
+    const dynamicSections = [
+      // Blog categories
+      {
+        title: `Blog Kategorileri`,
+        links: [
+          { name: "Blog Ana Sayfa", url: "/blog", popular: true },
+          ...categories.map(category => ({
+            name: `${category} Kategorisi`,
+            url: `/blog/kategori/${encodeURIComponent(category)}`,
+            new: true
+          }))
+        ]
+      },
+      // Hazır belgeler
+      {
+        title: `Hazır Belge Sayfaları`,
+        links: documentsByStage.hazir.map(doc => ({
+          name: doc.docName,
+          url: `/ready-documents/${toSlug(doc.docName)}`,
+          popular: ["Biyometrik Fotoğraf", "Kimlik Fotokopisi", "Pasaport"].includes(doc.docName)
+        }))
+      },
+      // Planlanacak belgeler
+      {
+        title: `Planlanacak Belge Sayfaları`,
+        links: documentsByStage.planla.map(doc => ({
+          name: doc.docName,
+          url: `/planned-documents/${toSlug(doc.docName)}`
+        }))
+      },
+      // Bizimle belgeler
+      {
+        title: `Bizimle Belge Sayfaları`,
+        links: documentsByStage.bizimle.map(doc => ({
+          name: doc.docName,
+          url: `/withus-documents/${toSlug(doc.docName)}`
+        }))
+      }
+    ];
+
+    return [...staticSitemapData, ...dynamicSections];
+  };
+
+  const sitemapData = generateDynamicSitemapData();
+
+  // Calculate stats
+  const totalLinks = sitemapData.reduce((total, section) => total + section.links.length, 0);
+  const popularCount = sitemapData.reduce((total, section) => 
+    total + section.links.filter(link => link.popular).length, 0);
+
   // Set up scroll progress indicator
   useEffect(() => {
     const handleScroll = () => {
@@ -228,12 +385,16 @@ export default function SiteHaritasi() {
     return () => {
       observers.forEach(observer => observer.disconnect());
     };
-  }, []);
+  }, [sitemapData.length]);
   
   // Set section refs
   const setSectionRef = (index) => (el) => {
     sectionRefs.current[index] = el;
   };
+
+  if (error) {
+    console.error("Sitemap data fetch error:", error);
+  }
 
   return (
     <FullPage>
@@ -241,10 +402,10 @@ export default function SiteHaritasi() {
       <MainPageHeader />
       <Main>
         <Heading>Vizepedia – Site Haritası</Heading>
-        <LastUpdate>Son Güncelleme: 8 Eylül 2025</LastUpdate>
+        <LastUpdate>Son Güncelleme: 24 Eylül 2025</LastUpdate>
         <SubText>
-          Vizepedia platformundaki tüm sayfalar ve bölümler. Aradığınız içeriği 
-          kolayca bulabilir, vize başvuru sürecinizi organize edebilirsiniz.
+          Vizepedia platformundaki tüm sayfalar ve bölümler. {data?.documents?.length || 48} belge sayfası, 
+          blog kategorileri ve tüm özellikler dahil olmak üzere aradığınız içeriği kolayca bulabilirsiniz.
         </SubText>
         
         {/* Site Statistics */}
@@ -255,24 +416,30 @@ export default function SiteHaritasi() {
             </h3>
             <StatsGrid>
               <StatItem>
-                <StatNumber>{totalLinks}</StatNumber>
+                <StatNumber>{isLoading ? "..." : totalLinks}</StatNumber>
                 <StatLabel>Toplam Sayfa</StatLabel>
+              </StatItem>
+              <StatItem>
+                <StatNumber>{data?.documents?.length || 48}</StatNumber>
+                <StatLabel>Belge Sayfası</StatLabel>
+              </StatItem>
+              <StatItem>
+                <StatNumber>{data?.categories?.length || 4}</StatNumber>
+                <StatLabel>Blog Kategorisi</StatLabel>
               </StatItem>
               <StatItem>
                 <StatNumber>{popularCount}</StatNumber>
                 <StatLabel>Popüler Sayfa</StatLabel>
               </StatItem>
-              <StatItem>
-                <StatNumber>{sitemapData.length}</StatNumber>
-                <StatLabel>Ana Kategori</StatLabel>
-              </StatItem>
-              <StatItem>
-                <StatNumber>25+</StatNumber>
-                <StatLabel>Ülke Rehberi</StatLabel>
-              </StatItem>
             </StatsGrid>
           </SitemapStats>
         </FadeInSection>
+        
+        {isLoading && (
+          <LoadingContainer>
+            Sayfa içerikleri yükleniyor...
+          </LoadingContainer>
+        )}
         
         {/* Sitemap Sections */}
         <SitemapContainer>
@@ -283,13 +450,17 @@ export default function SiteHaritasi() {
               className={visibleSections.includes(sectionIndex) ? 'visible' : ''}
             >
               <SitemapSection>
-                <SectionTitle>{section.title}</SectionTitle>
+                <SectionTitle>
+                  {section.title}
+                  <CountBadge>{section.links.length}</CountBadge>
+                </SectionTitle>
                 <LinkList>
                   {section.links.map((link, linkIndex) => (
                     <LinkItem key={linkIndex}>
                       <SitemapLink href={link.url}>
                         {link.name}
                         {link.popular && <PopularBadge>Popüler</PopularBadge>}
+                        {link.new && <NewBadge>Yeni</NewBadge>}
                       </SitemapLink>
                     </LinkItem>
                   ))}
