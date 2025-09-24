@@ -181,15 +181,28 @@ export default async function handler(req, res) {
 
     console.log("📄 Adding document pages...");
     // Add document pages
+    console.log("📄 Adding document pages...");
+    console.log(`📊 Documents available:`, documents ? documents.length : 0);
+    
     if (documents && documents.length > 0) {
+      console.log("📄 Sample documents:");
+      documents.slice(0, 3).forEach((doc, idx) => {
+        console.log(`  [${idx}] Name: "${doc.docName}", Stage: "${doc.docStage}", ID: ${doc.id}`);
+      });
+
+      let addedDocumentCount = 0;
+      
       for (const document of documents) {
         const slug = toSlug(document.docName);
         const lastmod = document.updated_at || document.created_at || today;
 
-        console.log(`  Processing document: ${document.docName} → slug: ${slug}, stage: ${document.docStage}`);
+        console.log(`📄 Processing document: "${document.docName}"`);
+        console.log(`  → Generated slug: "${slug}"`);
+        console.log(`  → Document stage: "${document.docStage}"`);
+        console.log(`  → Document ID: ${document.id}`);
 
-        // Only add if we have a valid slug
-        if (slug) {
+        // Only add if we have a valid slug AND docName
+        if (slug && document.docName && document.docName.trim() !== '') {
           let basePath = "";
           let priority = "0.6";
 
@@ -208,13 +221,13 @@ export default async function handler(req, res) {
               priority = "0.6";
               break;
             default:
-              console.log(`  ⚠️ Skipping document with unknown stage: ${document.docStage}`);
+              console.log(`  ⚠️ Skipping document with unknown/invalid stage: "${document.docStage}"`);
               continue;
           }
 
           const documentDate = dayjs(lastmod).format("YYYY-MM-DD");
           const documentUrl = `${baseUrl}${basePath}/${slug}`;
-          console.log(`  ✅ Adding: ${documentUrl}`);
+          console.log(`  ✅ Adding document URL: ${documentUrl}`);
 
           sitemap += `  <url>\n`;
           sitemap += `    <loc>${documentUrl}</loc>\n`;
@@ -222,12 +235,21 @@ export default async function handler(req, res) {
           sitemap += `    <changefreq>monthly</changefreq>\n`;
           sitemap += `    <priority>${priority}</priority>\n`;
           sitemap += `  </url>\n`;
+          
+          addedDocumentCount++;
         } else {
-          console.log(`  ⚠️ Skipping document with empty slug: ${document.docName}`);
+          console.log(`  ❌ Skipping document with invalid data:`);
+          console.log(`    - docName: "${document.docName}"`);
+          console.log(`    - slug: "${slug}"`);
+          console.log(`    - docStage: "${document.docStage}"`);
         }
       }
+      
+      console.log(`📄 Total documents added to sitemap: ${addedDocumentCount}`);
     } else {
-      console.log("⚠️ No documents found!");
+      console.log("❌ No documents found in database!");
+      console.log("📊 Debug - documents variable type:", typeof documents);
+      console.log("📊 Debug - documents value:", documents);
     }
 
     sitemap += "</urlset>\n";
