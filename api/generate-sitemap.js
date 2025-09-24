@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 // In-memory cache for sitemap
 let cachedSitemap = null;
 let cacheTime = 0;
-const CACHE_DURATION = 3600000; // 1 hour in milliseconds
+const CACHE_DURATION = 600000; // 1 hour in milliseconds
 
 // Helper function to convert document names to URL-friendly slugs
 function toSlug(text) {
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
   // Return cached version if still fresh
   if (cachedSitemap && now - cacheTime < CACHE_DURATION) {
     res.setHeader("Content-Type", "application/xml; charset=utf-8");
-    res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=3600");
+    res.setHeader("Cache-Control", "public, max-age=600, s-maxage=600, must-revalidate");
     res.setHeader("X-Cache", "HIT");
     return res.status(200).send(cachedSitemap);
   }
