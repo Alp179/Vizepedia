@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     const documentsPromise = Promise.race([
       supabase
         .from("documents")
-        .select("docName, docStage, updated_at, created_at")
+        .select("docName, docStage, created_at") // REMOVED updated_at since it doesn't exist
         .order("id", { ascending: true }),
 
       // Timeout after 3 seconds
@@ -194,7 +194,7 @@ export default async function handler(req, res) {
       
       for (const document of documents) {
         const slug = toSlug(document.docName);
-        const lastmod = document.updated_at || document.created_at || today;
+        const lastmod = document.created_at || today; // REMOVED updated_at reference
 
         console.log(`📄 Processing document: "${document.docName}"`);
         console.log(`  → Generated slug: "${slug}"`);
