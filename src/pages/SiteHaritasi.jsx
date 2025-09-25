@@ -22,11 +22,24 @@ function toSlug(text) {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, "-")
-    .replace(/[^\wığüşöçİĞÜŞÖÇ-]+/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-+/, "")
-    .replace(/-+$/, "");
+    // Convert Turkish characters to ASCII equivalents
+    .replace(/ğ/g, "g")
+    .replace(/ü/g, "u")
+    .replace(/ş/g, "s")
+    .replace(/ı/g, "i")
+    .replace(/ö/g, "o")
+    .replace(/ç/g, "c")
+    .replace(/Ğ/g, "G")
+    .replace(/Ü/g, "U")
+    .replace(/Ş/g, "S")
+    .replace(/İ/g, "I")
+    .replace(/Ö/g, "O")
+    .replace(/Ç/g, "C")
+    .replace(/\s+/g, "-") // Replace spaces with -
+    .replace(/[^\w-]+/g, "") // Remove non-word chars except dashes
+    .replace(/-+/g, "-") // Replace multiple - with single -
+    .replace(/^-+/, "") // Trim - from start of text
+    .replace(/-+$/, ""); // Trim - from end of text
 }
 
 // Function to fetch all documents and blog categories
