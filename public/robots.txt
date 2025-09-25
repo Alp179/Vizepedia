@@ -20,6 +20,10 @@ Allow: /ready-documents
 Allow: /planned-documents
 Allow: /withus-documents
 
+# Block search result pages and query parameters
+Disallow: /blog?*
+Disallow: /blog/*?*
+
 # Block API endpoints and internal files
 Disallow: /api/
 Disallow: /_next/
