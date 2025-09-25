@@ -1,94 +1,62 @@
 import { createClient } from "@supabase/supabase-js";
 import dayjs from "dayjs";
 
-// In-memory cache for sitemap
-let cachedSitemap = null;
-let cacheTime = 0;
-const CACHE_DURATION = 300000; // 5 minutes for debugging
+// Helper function to convert document names to URL-friendly slugs
+function toSlug(s) {
+  if (!s) return "";
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // aksan temizle
+    .replace(/[^a-z0-9\s-]/g, "") // özel karakterleri at
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
 
 export default async function handler(req, res) {
-  const now = Date.now();
-
-  // TEMPORARILY DISABLE CACHE FOR DEBUGGING
-  // if (cachedSitemap && now - cacheTime < CACHE_DURATION) {
-  //   res.setHeader("Content-Type", "application/xml; charset=utf-8");
-  //   res.setHeader("Cache-Control", "public, max-age=300, s-maxage=300");
-  //   res.setHeader("X-Cache", "HIT");
-  //   return res.status(200).send(cachedSitemap);
-  // }
-
   try {
+    console.log("🔍 Starting sitemap generation...");
+
     // Initialize Supabase client
     const supabase = createClient(
       "https://ibygzkntdaljyduuhivj.supabase.co",
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
-    console.log("🔍 Starting sitemap generation...");
+    // Fetch blog posts with categories
+    console.log("📝 Fetching blog posts...");
+    const { data: posts, error: postsError } = await supabase
+      .from("blogs")
+      .select("slug, category, updated_at")
+      .order("updated_at", { ascending: false })
+      .limit(100);
 
-    // Fetch blog posts with timeout and error handling - INCLUDE CATEGORY
-    const postsPromise = Promise.race([
-      supabase
-        .from("blogs")
-        .select("slug, category, updated_at") // ← ADD CATEGORY HERE
-        .order("updated_at", { ascending: false })
-        .limit(100), // Limit to 100 most recent posts
-
-      // Timeout after 3 seconds
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Posts timeout")), 3000)
-      ),
-    ]);
-
-    // Fetch documents with timeout and error handling
-    const documentsPromise = Promise.race([
-      supabase
-        .from("documents")
-        .select("docName, docStage, created_at") // REMOVED updated_at since it doesn't exist
-        .order("id", { ascending: true }),
-
-      // Timeout after 3 seconds
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Documents timeout")), 3000)
-      ),
-    ]);
-
-    // Fetch both in parallel
-    const [postsResult, documentsResult] = await Promise.allSettled([
-      postsPromise,
-      documentsPromise,
-    ]);
-
-    // Handle posts result
-    let posts = [];
-    if (postsResult.status === "fulfilled" && !postsResult.value.error) {
-      posts = postsResult.value.data || [];
-      console.log("✅ Posts fetched:", posts.length);
-      console.log("📝 First few posts:", posts.slice(0, 3).map(p => ({ slug: p.slug, category: p.category })));
-    } else {
-      console.error("❌ Error fetching posts:", postsResult.reason || postsResult.value?.error);
+    if (postsError) {
+      console.error("❌ Error fetching posts:", postsError);
     }
 
-    // Handle documents result
-    let documents = [];
-    if (
-      documentsResult.status === "fulfilled" &&
-      !documentsResult.value.error
-    ) {
-      documents = documentsResult.value.data || [];
-      console.log("✅ Documents fetched:", documents.length);
-      console.log("📄 First few documents:", documents.slice(0, 3).map(d => ({ 
-        docName: d.docName, 
-        docStage: d.docStage,
-        slug: toSlug(d.docName)
-      })));
-    } else {
-      console.error("❌ Error fetching documents:", documentsResult.reason || documentsResult.value?.error);
+    // Fetch documents
+    console.log("📄 Fetching documents...");
+    const { data: documents, error: documentsError } = await supabase
+      .from("documents")
+      .select("docName, docStage, created_at")
+      .order("id", { ascending: true });
+
+    if (documentsError) {
+      console.error("❌ Error fetching documents:", documentsError);
     }
+
+    // Use fallback data if queries fail
+    const safePosts = posts || [];
+    const safeDocuments = documents || [];
+
+    console.log(`✅ Posts fetched: ${safePosts.length}`);
+    console.log(`✅ Documents fetched: ${safeDocuments.length}`);
 
     // Extract unique categories from blog posts
-    const categories = [...new Set(posts.filter(post => post.category).map(post => post.category))];
-    console.log("🏷️ Unique blog categories found:", categories.length, categories);
+    const categories = [...new Set(safePosts.filter(post => post.category).map(post => post.category))];
+    console.log(`🏷️ Unique blog categories: ${categories.length}`, categories);
 
     const baseUrl = "https://www.vizepedia.com";
     const today = dayjs().format("YYYY-MM-DD");
@@ -132,62 +100,61 @@ export default async function handler(req, res) {
     // Add blog category pages
     if (categories && categories.length > 0) {
       for (const category of categories) {
-        // Properly encode the category for URL
-        const encodedCategory = encodeURIComponent(category);
-        console.log(`  Adding category: ${category} → ${encodedCategory}`);
-        
-        sitemap += `  <url>\n`;
-        sitemap += `    <loc>${baseUrl}/blog/kategori/${encodedCategory}</loc>\n`;
-        sitemap += `    <lastmod>${today}</lastmod>\n`;
-        sitemap += `    <changefreq>weekly</changefreq>\n`;
-        sitemap += `    <priority>0.7</priority>\n`;
-        sitemap += `  </url>\n`;
+        try {
+          const encodedCategory = encodeURIComponent(category);
+          console.log(`  Adding category: ${category} → ${encodedCategory}`);
+          
+          sitemap += `  <url>\n`;
+          sitemap += `    <loc>${baseUrl}/blog/kategori/${encodedCategory}</loc>\n`;
+          sitemap += `    <lastmod>${today}</lastmod>\n`;
+          sitemap += `    <changefreq>weekly</changefreq>\n`;
+          sitemap += `    <priority>0.7</priority>\n`;
+          sitemap += `  </url>\n`;
+        } catch (err) {
+          console.error(`Error adding category ${category}:`, err);
+        }
       }
-    } else {
-      console.log("⚠️ No blog categories found!");
     }
 
     console.log("📝 Adding blog posts...");
     // Add blog posts
-    if (posts && posts.length > 0) {
-      for (const post of posts) {
-        const postDate = post.updated_at
-          ? dayjs(post.updated_at).format("YYYY-MM-DD")
-          : today;
+    if (safePosts && safePosts.length > 0) {
+      for (const post of safePosts) {
+        try {
+          const postDate = post.updated_at
+            ? dayjs(post.updated_at).format("YYYY-MM-DD")
+            : today;
 
-        sitemap += `  <url>\n`;
-        sitemap += `    <loc>${baseUrl}/blog/${post.slug}</loc>\n`;
-        sitemap += `    <lastmod>${postDate}</lastmod>\n`;
-        sitemap += `    <changefreq>monthly</changefreq>\n`;
-        sitemap += `    <priority>0.7</priority>\n`;
-        sitemap += `  </url>\n`;
+          sitemap += `  <url>\n`;
+          sitemap += `    <loc>${baseUrl}/blog/${post.slug}</loc>\n`;
+          sitemap += `    <lastmod>${postDate}</lastmod>\n`;
+          sitemap += `    <changefreq>monthly</changefreq>\n`;
+          sitemap += `    <priority>0.7</priority>\n`;
+          sitemap += `  </url>\n`;
+        } catch (err) {
+          console.error(`Error adding blog post ${post.slug}:`, err);
+        }
       }
     }
 
     console.log("📄 Adding document pages...");
-    // Add document pages
-    console.log("📄 Adding document pages...");
-    console.log(`📊 Documents available:`, documents ? documents.length : 0);
+    let addedDocumentCount = 0;
     
-    if (documents && documents.length > 0) {
-      console.log("📄 Sample documents:");
-      documents.slice(0, 3).forEach((doc, idx) => {
-        console.log(`  [${idx}] Name: "${doc.docName}", Stage: "${doc.docStage}", ID: ${doc.id}`);
-      });
+    if (safeDocuments && safeDocuments.length > 0) {
+      for (const document of safeDocuments) {
+        try {
+          if (!document.docName || !document.docStage) {
+            console.log(`Skipping document with missing data:`, document);
+            continue;
+          }
 
-      let addedDocumentCount = 0;
-      
-      for (const document of documents) {
-        const slug = toSlug(document.docName);
-        const lastmod = document.created_at || today; // REMOVED updated_at reference
+          const slug = toSlug(document.docName);
+          if (!slug) {
+            console.log(`Skipping document with empty slug: ${document.docName}`);
+            continue;
+          }
 
-        console.log(`📄 Processing document: "${document.docName}"`);
-        console.log(`  → Generated slug: "${slug}"`);
-        console.log(`  → Document stage: "${document.docStage}"`);
-        console.log(`  → Document ID: ${document.id}`);
-
-        // Only add if we have a valid slug AND docName
-        if (slug && document.docName && document.docName.trim() !== '') {
+          const lastmod = document.created_at || today;
           let basePath = "";
           let priority = "0.6";
 
@@ -206,13 +173,12 @@ export default async function handler(req, res) {
               priority = "0.6";
               break;
             default:
-              console.log(`  ⚠️ Skipping document with unknown/invalid stage: "${document.docStage}"`);
+              console.log(`Unknown document stage: ${document.docStage}, skipping ${document.docName}`);
               continue;
           }
 
           const documentDate = dayjs(lastmod).format("YYYY-MM-DD");
           const documentUrl = `${baseUrl}${basePath}/${slug}`;
-          console.log(`  ✅ Adding document URL: ${documentUrl}`);
 
           sitemap += `  <url>\n`;
           sitemap += `    <loc>${documentUrl}</loc>\n`;
@@ -222,57 +188,63 @@ export default async function handler(req, res) {
           sitemap += `  </url>\n`;
           
           addedDocumentCount++;
-        } else {
-          console.log(`  ❌ Skipping document with invalid data:`);
-          console.log(`    - docName: "${document.docName}"`);
-          console.log(`    - slug: "${slug}"`);
-          console.log(`    - docStage: "${document.docStage}"`);
+
+          if (addedDocumentCount <= 5) {
+            console.log(`  ✅ Added: ${documentUrl}`);
+          }
+        } catch (err) {
+          console.error(`Error processing document ${document.docName}:`, err);
         }
       }
-      
-      console.log(`📄 Total documents added to sitemap: ${addedDocumentCount}`);
-    } else {
-      console.log("❌ No documents found in database!");
-      console.log("📊 Debug - documents variable type:", typeof documents);
-      console.log("📊 Debug - documents value:", documents);
     }
 
     sitemap += "</urlset>\n";
 
     console.log("✅ Sitemap generation complete!");
-    console.log(`📊 Final counts: Static(${staticRoutes.length}) + Categories(${categories.length}) + Posts(${posts.length}) + Documents(${documents.length})`);
+    console.log(`📊 Final counts: Static(${staticRoutes.length}) + Categories(${categories.length}) + Posts(${safePosts.length}) + Documents(${addedDocumentCount})`);
 
-    // Cache the result
-    cachedSitemap = sitemap;
-    cacheTime = now;
-
-    // Set response headers with debug info
+    // Set response headers
     res.setHeader("Content-Type", "application/xml; charset=utf-8");
-    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // NO CACHE FOR DEBUGGING
-    res.setHeader("X-Cache", "DEBUG-MISS");
+    res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=3600");
     res.setHeader("X-Generated-At", new Date().toISOString());
-    res.setHeader("X-Documents-Count", documents.length.toString());
-    res.setHeader("X-Posts-Count", posts.length.toString());
+    res.setHeader("X-Documents-Count", addedDocumentCount.toString());
+    res.setHeader("X-Posts-Count", safePosts.length.toString());
     res.setHeader("X-Categories-Count", categories.length.toString());
 
-    res.status(200).send(sitemap);
+    return res.status(200).send(sitemap);
+
   } catch (error) {
     console.error("❌ Sitemap generation error:", error);
     
-    // Return a simple fallback
+    // Return minimal working sitemap
+    const baseUrl = "https://www.vizepedia.com";
+    const today = dayjs().format("YYYY-MM-DD");
+
     const fallbackSitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.vizepedia.com/</loc>
-    <lastmod>${dayjs().format("YYYY-MM-DD")}</lastmod>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/dashboard</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${baseUrl}/blog</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>`;
 
     res.setHeader("Content-Type", "application/xml; charset=utf-8");
-    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Cache-Control", "public, max-age=300, s-maxage=300");
     res.setHeader("X-Cache", "ERROR-FALLBACK");
-    res.status(200).send(fallbackSitemap);
+    return res.status(200).send(fallbackSitemap);
   }
 }
