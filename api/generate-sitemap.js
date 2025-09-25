@@ -6,34 +6,6 @@ let cachedSitemap = null;
 let cacheTime = 0;
 const CACHE_DURATION = 300000; // 5 minutes for debugging
 
-// Helper function to convert document names to URL-friendly slugs
-function toSlug(text) {
-  if (!text) return "";
-
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    // Convert Turkish characters to ASCII equivalents
-    .replace(/ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/ş/g, "s")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ç/g, "c")
-    .replace(/Ğ/g, "G")
-    .replace(/Ü/g, "U")
-    .replace(/Ş/g, "S")
-    .replace(/İ/g, "I")
-    .replace(/Ö/g, "O")
-    .replace(/Ç/g, "C")
-    .replace(/\s+/g, "-") // Replace spaces with -
-    .replace(/[^\w-]+/g, "") // Remove non-word chars except dashes
-    .replace(/-+/g, "-") // Replace multiple - with single -
-    .replace(/^-+/, "") // Trim - from start of text
-    .replace(/-+$/, ""); // Trim - from end of text
-}
-
 export default async function handler(req, res) {
   const now = Date.now();
 
