@@ -1,34 +1,6 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ],
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "vizepedia.com"
-        }
-      ],
-      "destination": "https://www.vizepedia.com/$1",
-      "permanent": true
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Forwarded-Proto",
-          "value": "https"
-        },
-        {
-          "key": "X-Forwarded-Host",
-          "value": "www.vizepedia.com"
-        }
-      ]
-    }
+    { "source": "/(.*)", "destination": "/api/redirect" }
   ],
   "crons": [
     {
