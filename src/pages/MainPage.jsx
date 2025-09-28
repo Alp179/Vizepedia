@@ -195,7 +195,7 @@ function MainPage() {
   const scrollIndicatorRef = useRef(null);
   const location = useLocation();
 
-  // Memoized SEO data to prevent unnecessary re-renders
+  // Memoized SEO data to prevent unnecessary re-renders (REMOVED faqData)
   const seoData = useMemo(
     () => ({
       title: "Vizepedia – Türkiye'nin Vize Başvuru Rehberi",
@@ -225,7 +225,7 @@ function MainPage() {
     []
   );
 
-  // Structured data for the main page
+  // Structured data for the main page (REMOVED FAQ structured data)
   const structuredData = useMemo(
     () => ({
       "@context": "https://schema.org",
@@ -275,27 +275,7 @@ function MainPage() {
     []
   );
 
-  // FAQ structured data for main page
-  const faqData = useMemo(
-    () => [
-      {
-        question: "Vizepedia nedir?",
-        answer:
-          "Vizepedia, vize başvurularında gereken belgeleri ve seyahat ipuçlarını adım adım anlatan kapsamlı bir rehberdir. Schengen, Amerika, İngiltere ve diğer ülkeler için vize başvuru süreçlerini kolayca yönetmenizi sağlar.",
-      },
-      {
-        question: "Vize başvurusu için hangi belgeler gerekli?",
-        answer:
-          "Vize başvurusu için gereken belgeler ülkeye ve vize türüne göre değişir. Genellikle pasaport, biyometrik fotoğraf, başvuru formu, finansal belgeler ve seyahat sağlık sigortası gereklidir.",
-      },
-      {
-        question: "Vize başvurusu ne kadar sürer?",
-        answer:
-          "Vize başvuru süresi ülkeye ve vize türüne göre değişmekle birlikte genellikle 15 ila 30 iş günü arasında sürer. Bazı ülkeler için express hizmetler mevcuttur.",
-      },
-    ],
-    []
-  );
+  // REMOVED: FAQ structured data for main page - let FaqSectionComponent handle it
 
   // Optimized scroll indicator update
   useEffect(() => {
@@ -331,7 +311,7 @@ function MainPage() {
 
   return (
     <MainContainer>
-      {/* SEO Component with comprehensive structured data */}
+      {/* SEO Component with comprehensive structured data (REMOVED faqData prop) */}
       <SEO
         title={seoData.title}
         description={seoData.description}
@@ -340,7 +320,6 @@ function MainPage() {
         image={seoData.image}
         websiteData={structuredData}
         breadcrumbs={breadcrumbData}
-        faqData={faqData}
         openGraphType="website"
         twitterCard="summary_large_image"
       />
@@ -417,6 +396,7 @@ function MainPage() {
       </FadeInSection>
 
       {/* FAQ Section - Important for SEO and user support */}
+      {/* This component will handle its own FAQ structured data */}
       <FadeInSection
         ref={setElementRef(4)}
         className={visibleSections.has(4) ? "visible" : ""}
