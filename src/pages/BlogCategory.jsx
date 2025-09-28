@@ -59,16 +59,16 @@ const CategoryTitle = styled.h1`
     font-size: 28px;
   }
   @media (max-width: 435px) {
-    font-size: 24px;
+    font-size: 28px;
   }
   @media (max-width: 390px) {
-    font-size: 22px;
+    font-size: 28px;
   }
   @media (max-width: 365px) {
-    font-size: 20px;
+    font-size: 24px;
   }
   @media (max-width: 320px) {
-    font-size: 18px;
+    font-size: 24px;
   }
 
   &::after {
@@ -85,11 +85,14 @@ const CategoryTitle = styled.h1`
 `;
 
 const CategoryDescription = styled.p`
-  font-size: 1.2rem;
+  font-size: 20px;
   color: var(--color-grey-600);
   max-width: 800px;
   margin: 2rem auto 0;
   line-height: 1.6;
+  @media (max-width: 450px) {
+  font-size: 16px;
+  }
 `;
 
 const PostCountInfo = styled.div`
@@ -105,7 +108,7 @@ const PostCountBadge = styled.span`
   background: rgba(255, 255, 255, 0.05);
   color: var(--color-grey-600);
   border-radius: 20px;
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: 500;
   border: 1px solid rgba(255, 255, 255, 0.1);
   
@@ -126,12 +129,12 @@ const CategoryNavigation = styled.div`
 const CategoryTag = styled(Link)`
   display: inline-block;
   padding: 0.6rem 1.2rem;
-  background: ${props => props.active ? 'var(--color-brand-600)' : 'rgba(255, 255, 255, 0.05)'};
+  background: ${props => props.active ? '#004466' : 'rgba(255, 255, 255, 0.05)'};
   color: ${props => props.active ? 'white' : 'var(--color-grey-600)'};
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 30px;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   font-weight: 500;
   transition: all 0.3s ease;
   
@@ -152,12 +155,12 @@ const SortContainer = styled.div`
 `;
 
 const SortSelect = styled.select`
-  padding: 0.7rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.05);
   color: var(--color-grey-600);
-  font-size: 0.9rem;
+  font-size: 1rem;
   
   &:focus {
     outline: none;
@@ -189,11 +192,12 @@ const NoResults = styled.div`
 const BackToBlog = styled.div`
   text-align: center;
   margin-top: 2rem;
+  font-size: 16px;
   
   a {
     display: inline-block;
     padding: 0.8rem 1.5rem;
-    background: var(--color-brand-600);
+    background: #004466;
     color: white;
     border-radius: 30px;
     text-decoration: none;

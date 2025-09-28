@@ -186,7 +186,7 @@ const SortSelect = styled.select`
 
 // En güncel bloglar bölümü için güncellenmiş stiller
 const LatestBlogsSection = styled.div`
-  margin-top: 3rem;
+  margin-top: 100px;
   margin-bottom:100px;
   padding: 2.5rem;
   background: linear-gradient(135deg, rgba(0, 68, 102, 0.1), rgba(0, 51, 85, 0.05));
