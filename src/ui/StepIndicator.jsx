@@ -5,8 +5,10 @@ import { useSelectedDocument } from "../context/SelectedDocumentContext";
 import styled, { keyframes, css } from "styled-components";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { toSlug } from "../utils/seoHelpers";
+import JsonLd from "../components/JsonLd"; // YENİ: JSON-LD import
+import SEO from "../components/SEO"; // YENİ: SEO import
 
-// Icon Components
+// Icon Components (değişiklik yok)
 const IconRocket = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +66,7 @@ const IconPuzzle = () => (
   </svg>
 );
 
-// Kategorilere göre stil tanımlamaları
+// Kategorilere göre stil tanımlamaları (değişiklik yok)
 const categoryColors = {
   hazir: {
     background: "#e6fff2",
@@ -73,6 +75,7 @@ const categoryColors = {
     icon: <IconRocket />,
     title: "Hemen Hazır",
     description: "Bu belgeler hazır durumda ve incelenmeyi bekliyor.",
+    seoKeywords: ["hazır belgeler", "vize belgeleri", "tamamlanmış belgeler"],
   },
   planla: {
     background: "#fff5e6",
@@ -81,6 +84,7 @@ const categoryColors = {
     icon: <IconCalendar />,
     title: "Planla ve Topla",
     description: "Bu belgeleri hazırlamak için planlama yapmanız gerekiyor.",
+    seoKeywords: ["vize planlama", "belge hazırlama", "vize takibi"],
   },
   bizimle: {
     background: "#e6f0ff",
@@ -89,10 +93,11 @@ const categoryColors = {
     icon: <IconPuzzle />,
     title: "Bizimle Kolay",
     description: "Bu belgeler için bizimle iletişime geçmeniz gerekiyor.",
+    seoKeywords: ["vize danışmanlık", "profesyonel vize", "vize hizmeti"],
   },
 };
 
-// Ana konteyner
+// Styled components (değişiklik yok)
 const StepAndContinueContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -149,7 +154,7 @@ const StepAndContinueContainer = styled.div`
   }
 `;
 
-// Kategori başlığı için konteyner
+// Diğer styled components (değişiklik yok)
 const CategoryContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -354,7 +359,7 @@ const ProgressText = styled.span`
   }
 `;
 
-// Belge öğesi listesi konteyneri
+// DocumentListContainer (değişiklik yok)
 const DocumentListContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -423,7 +428,7 @@ const DocsGrid = styled.div`
   }
 `;
 
-// Belge öğesi
+// DocumentItem (değişiklik yok)
 const DocumentItem = styled.div`
   display: flex;
   flex-direction: column;
@@ -791,6 +796,81 @@ const StepPageCont = styled.div`
   }
 `;
 
+// YENİ: SEO Optimizasyonu için HowTo yapısal verisi oluşturma fonksiyonu
+const generateHowToStructuredData = (documents, realApplicationId) => {
+  const steps = documents
+    .map((doc) => ({
+      "@type": "HowToStep",
+      name: doc.docName,
+      text: doc.docDescription || `${doc.docName} için vize başvuru adımı`,
+      url: `https://www.vizepedia.com/ready-documents/${realApplicationId}/${toSlug(
+        doc.docName
+      )}`,
+      image: doc.docImage
+        ? [
+            {
+              "@type": "ImageObject",
+              url: doc.docImage,
+              caption: doc.docName,
+            },
+          ]
+        : undefined,
+    }))
+    .filter((step) => step.url && step.name);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "Vize Başvuru Adımları",
+    description:
+      "Vize başvurusu için gerekli tüm adımları takip edin. Belgelerinizi hazırlayın ve başvurunuzu tamamlayın.",
+    totalTime: "PT30M",
+    estimatedCost: {
+      "@type": "MonetaryAmount",
+      currency: "TRY",
+      value: "100",
+    },
+    supply: [
+      {
+        "@type": "HowToSupply",
+        name: "Vize Başvuru Formu",
+        description: "Vize başvurusu için gereken form",
+      },
+    ],
+    tool: [
+      {
+        "@type": "HowToTool",
+        name: "Vizepedia Kontrol Paneli",
+        description:
+          "Vize başvuru adımlarınızı takip edebileceğiniz kontrol paneli",
+      },
+    ],
+    step: steps,
+  };
+};
+
+// YENİ: Breadcrumb yapısal verisi oluşturma fonksiyonu
+const generateBreadcrumbStructuredData = (realApplicationId) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Ana Sayfa",
+        item: "https://www.vizepedia.com/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Vize Kontrol Paneli",
+        item: `https://www.vizepedia.com/dashboard/${realApplicationId}`,
+      },
+    ],
+  };
+};
+
 // UPDATED: Enhanced StepIndicator with Real Application ID Support
 const StepIndicator = ({
   documents = [],
@@ -849,6 +929,14 @@ const StepIndicator = ({
   if (isLoading) return <div>Loading documents...</div>;
   if (isError || !documents) return <div>Error loading documents.</div>;
   if (!documents.length) return <div>No documents found.</div>;
+
+  // YENİ: Yapısal verileri oluştur
+  const howToStructuredData = generateHowToStructuredData(
+    documents,
+    realApplicationId
+  );
+  const breadcrumbStructuredData =
+    generateBreadcrumbStructuredData(realApplicationId);
 
   // UPDATED: Enhanced handleContinue with proper demo navigation
   const handleContinue = () => {
@@ -1004,6 +1092,24 @@ const StepIndicator = ({
 
   return (
     <StepPageCont>
+      {/* YENİ: SEO ve Yapısal Veriler */}
+      <SEO
+        title="Vize Başvuru Adımları – Vizepedia Kontrol Paneli"
+        description="Vize başvurusu için gerekli adımları takip edin. Belgelerinizi hazırlayın ve başvurunuzu tamamlayın."
+        keywords={[
+          "vize başvuru adımları",
+          "vize kontrol paneli",
+          "vize takibi",
+          "belge hazırlama",
+          "vize başvurusu nasıl yapılır",
+          ...Object.values(categoryColors).flatMap((cat) => cat.seoKeywords),
+        ]}
+        url={`https://www.vizepedia.com/dashboard/${realApplicationId}`}
+      />
+
+      <JsonLd data={howToStructuredData} />
+      <JsonLd data={breadcrumbStructuredData} />
+
       <StepAndContinueContainer>
         {/* Kategorileri sırayla göster */}
         {categoryOrder.map((category) => {

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useLayoutEffect, useMemo } from "react";
 import styled from "styled-components";
 import { useQuery } from "@tanstack/react-query";
@@ -9,11 +10,13 @@ import StepIndicator from "../ui/StepIndicator";
 import FirmMap from "../ui/FirmMap";
 import MobileCarousel from "../ui/MobileCarousel";
 import Spinner from "../ui/Spinner";
+import JsonLd from "../components/JsonLd"; // YENİ: JSON-LD import
+import SEO from "../components/SEO"; // YENİ: SEO import
 
 // Function to fetch ALL documents from Supabase
 const fetchAllDocuments = async () => {
   console.log("🔄 Fetching all documents from Supabase...");
-  
+
   const { data, error } = await supabase
     .from("documents")
     .select("*")
@@ -50,8 +53,8 @@ const DEMO_FIRM_LOCATION = {
   id: 1,
   country: "Almanya",
   firm_name: "iDATA",
-  created_at: "2024-07-19T09:27:16.169042+00:00",
   firmAdress: `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3010.108123359664!2d29.036280976129724!3d41.02289037134854!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab866f5561b29%3A0xce4c1a88b59559d2!2siDATA%20%C4%B0stanbul%20Altunizade!5e0!3m2!1str!2str!4v1721569966672!5m2!1str!2str" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`,
+  created_at: "2024-07-19T09:27:16.169042+00:00",
   firm_url: "https://www.idata.com.tr/de/tr/office",
   visa_fee: "80",
   service_fee: "25",
@@ -68,6 +71,54 @@ const DEMO_COMPLETED_DOCUMENTS = {
     "Otel Rezervasyonu": true,
     // Other documents intentionally left incomplete for realistic demo
   },
+};
+
+// YENİ: Yapısal veri oluşturma fonksiyonları
+const generateWebPageStructuredData = (country) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `${country} Vize Başvuru Kontrol Paneli - Vizepedia`,
+    description: `${country} için vize başvuru adımlarınızı takip edin. Belgelerinizi hazırlayın ve başvurunuzu tamamlayın.`,
+    url: "https://www.vizepedia.com/dashboard",
+    mainEntity: {
+      "@type": "Service",
+      name: `${country} Vize Başvuru Hizmeti`,
+      provider: {
+        "@type": "Organization",
+        name: "Vizepedia",
+        url: "https://www.vizepedia.com",
+      },
+      serviceType: "Vize Başvuru Danışmanlığı",
+    },
+    about: {
+      "@type": "Country",
+      name: country,
+    },
+  };
+};
+
+const generateOrganizationStructuredData = () => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Vizepedia",
+    url: "https://www.vizepedia.com",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://www.vizepedia.com/logo.png",
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+90-XXX-XXX-XXXX",
+      contactType: "customer service",
+    },
+    sameAs: [
+      "https://facebook.com/vizepedia",
+      "https://instagram.com/vizepediacom",
+      "https://youtube.com/vizepedia",
+    ],
+  };
 };
 
 // Styled components (same as original Dashboard)
@@ -289,6 +340,26 @@ const StaticDashboardContent = () => {
     return countryToCode[DEMO_USER_DATA.ans_country] || "de";
   }, []);
 
+  // YENİ: SEO optimize edilmiş meta veriler
+  const seoData = useMemo(
+    () => ({
+      title: `${DEMO_USER_DATA.ans_country} Vize Başvuru Kontrol Paneli - Vizepedia`,
+      description: `${DEMO_USER_DATA.ans_country} için vize başvuru adımlarınızı takip edin. Belgelerinizi hazırlayın ve başvurunuzu tamamlayın. Vizepedia ile kolay vize başvurusu.`,
+      keywords: [
+        `${DEMO_USER_DATA.ans_country} vizesi`,
+        `${DEMO_USER_DATA.ans_country} vize başvurusu`,
+        "vize kontrol paneli",
+        "vize takip",
+        "belge hazırlama",
+        "vize başvuru adımları",
+        "vize danışmanlık",
+        "online vize başvurusu",
+      ],
+      url: "https://www.vizepedia.com/dashboard",
+    }),
+    [DEMO_USER_DATA.ans_country]
+  );
+
   // Loading state
   if (isLoadingDocuments) {
     return (
@@ -343,10 +414,31 @@ const StaticDashboardContent = () => {
     );
   }
 
-  console.log("📊 StaticDashboardContent - All documents from Supabase:", allDocuments?.length);
+  console.log(
+    "📊 StaticDashboardContent - All documents from Supabase:",
+    allDocuments?.length
+  );
+
+  // YENİ: Yapısal veriler
+  const webPageStructuredData = generateWebPageStructuredData(
+    DEMO_USER_DATA.ans_country,
+    DEMO_FIRM_LOCATION.firm_name
+  );
+  const organizationStructuredData = generateOrganizationStructuredData();
 
   return (
     <DashboardContainer>
+      {/* YENİ: SEO ve Yapısal Veriler */}
+      <SEO
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        url={seoData.url}
+      />
+
+      <JsonLd data={webPageStructuredData} />
+      <JsonLd data={organizationStructuredData} />
+
       <AnimatedFlag countryCode={countryCode} />
 
       <CustomRow type="horizontal">
@@ -369,7 +461,9 @@ const StaticDashboardContent = () => {
         {!isMobile && (
           <>
             <StepIndicatorWrapper>
-              <Heading as="h14">{DEMO_USER_DATA.ans_country} - Tüm Belgeler</Heading>
+              <Heading as="h14">
+                {DEMO_USER_DATA.ans_country} - Tüm Belgeler
+              </Heading>
 
               <StepIndicator
                 documents={allDocuments || []} // Pass ALL documents from Supabase

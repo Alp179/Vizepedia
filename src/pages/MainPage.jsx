@@ -1,4 +1,3 @@
-// MainPage.jsx - Complete Optimized Version
 import {
   useState,
   useEffect,
@@ -13,6 +12,7 @@ import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import { useLocation } from "react-router-dom";
 import SEO from "../components/SEO";
+import JsonLd from "../components/JsonLd";
 
 // Lazy load heavy components to improve initial page load
 const SlideShow = lazy(() => import("../ui/SlideShow"));
@@ -200,11 +200,100 @@ function MainPage() {
     () => ({
       title: "Vizepedia – Türkiye'nin Vize Başvuru Rehberi",
       description:
-        "Vizepedia, vize başvurularında gereken belgeleri ve seyahat ipuçlarını adım adım anlatan kapsamlı bir rehberdir.",
-      keywords:
-        "vize, vize başvurusu, vize rehberi, seyahat rehberi, belgeler, Vizepedia",
-      url: "https://www.vizepedia.com/", // Changed: Now uses full URL instead of just "/"
+        "Vizepedia, vize başvurularında gereken belgeleri ve seyahat ipuçlarını adım adım anlatan kapsamlı bir rehberdir. Schengen, Amerika, İngiltere ve diğer ülkeler için vize başvuru süreçleri.",
+      keywords: [
+        "vize",
+        "vize başvurusu",
+        "vize rehberi",
+        "seyahat rehberi",
+        "belgeler",
+        "Vizepedia",
+        "Schengen vizesi",
+        "Amerika vizesi",
+        "İngiltere vizesi",
+        "vize türleri",
+        "vize başvuru formu",
+        "vize randevu",
+        "vize harç ücreti",
+        "vize gerekli belgeler",
+        "vize süresi",
+        "vize başvuru takibi",
+      ],
+      url: "https://www.vizepedia.com/",
+      image: "https://www.vizepedia.com/og-image.jpg",
     }),
+    []
+  );
+
+  // Structured data for the main page
+  const structuredData = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Vizepedia",
+      url: "https://www.vizepedia.com",
+      description: "Türkiye'nin Vize Başvuru Rehberi",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://www.vizepedia.com/ara?q={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Vizepedia",
+        url: "https://www.vizepedia.com",
+        logo: {
+          "@type": "ImageObject",
+          url: "https://www.vizepedia.com/logo.png",
+          width: 512,
+          height: 512,
+        },
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: "+90-XXX-XXX-XXXX",
+          contactType: "customer service",
+        },
+        sameAs: [
+          "https://facebook.com/vizepedia",
+          "https://instagram.com/vizepediacom",
+          "https://youtube.com/vizepedia",
+          "https://twitter.com/vizepedia",
+        ],
+      },
+    }),
+    []
+  );
+
+  // Breadcrumb structured data
+  const breadcrumbData = useMemo(
+    () => [
+      {
+        name: "Ana Sayfa",
+        url: "https://www.vizepedia.com/",
+      },
+    ],
+    []
+  );
+
+  // FAQ structured data for main page
+  const faqData = useMemo(
+    () => [
+      {
+        question: "Vizepedia nedir?",
+        answer:
+          "Vizepedia, vize başvurularında gereken belgeleri ve seyahat ipuçlarını adım adım anlatan kapsamlı bir rehberdir. Schengen, Amerika, İngiltere ve diğer ülkeler için vize başvuru süreçlerini kolayca yönetmenizi sağlar.",
+      },
+      {
+        question: "Vize başvurusu için hangi belgeler gerekli?",
+        answer:
+          "Vize başvurusu için gereken belgeler ülkeye ve vize türüne göre değişir. Genellikle pasaport, biyometrik fotoğraf, başvuru formu, finansal belgeler ve seyahat sağlık sigortası gereklidir.",
+      },
+      {
+        question: "Vize başvurusu ne kadar sürer?",
+        answer:
+          "Vize başvuru süresi ülkeye ve vize türüne göre değişmekle birlikte genellikle 15 ila 30 iş günü arasında sürer. Bazı ülkeler için express hizmetler mevcuttur.",
+      },
+    ],
     []
   );
 
@@ -242,14 +331,22 @@ function MainPage() {
 
   return (
     <MainContainer>
-      {/* SEO Component - Critical for AdSense */}
+      {/* SEO Component with comprehensive structured data */}
       <SEO
         title={seoData.title}
         description={seoData.description}
         keywords={seoData.keywords}
         url={seoData.url}
-        noindex={false}
+        image={seoData.image}
+        websiteData={structuredData}
+        breadcrumbs={breadcrumbData}
+        faqData={faqData}
+        openGraphType="website"
+        twitterCard="summary_large_image"
       />
+
+      {/* Structured Data as JSON-LD */}
+      <JsonLd data={structuredData} />
 
       {/* Scroll Progress Indicator */}
       <ScrollIndicator

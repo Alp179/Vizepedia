@@ -141,7 +141,7 @@ const FlagSkeleton = styled.div`
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
-  
+
   @keyframes loading {
     0% {
       background-position: 200% 0;
@@ -294,45 +294,111 @@ export const Header = () => {
   };
 
   // Memoized icons to prevent re-renders
-  const IconRocket = useMemo(() => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
-      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
-      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
-      <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
-    </svg>
-  ), []);
+  const IconRocket = useMemo(
+    () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+      </svg>
+    ),
+    []
+  );
 
-  const IconContinue = useMemo(() => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-  ), []);
+  const IconContinue = useMemo(
+    () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    ),
+    []
+  );
 
   return (
     <HeaderContainer>
-      <HeaderTitle>
-        Düşlerinizdeki Seyahatin İlk Adımı <br />
-      </HeaderTitle>
+      {/* SEO-optimized H1 with semantic structure */}
+      <HeaderTitle>Dünyanın Her Yerine Vize Alın</HeaderTitle>
+
+      {/* SEO-optimized description with keywords */}
       <HeaderDescription>
-        Avrupa&apos;dan Amerika&apos;ya tüm vize başvurularınızın süreç yönetimi tek yerde
+        Schengen, Amerika, İngiltere ve 150+ ülke için vize başvurunuzu adım
+        adım tamamlayın. Gerekli belgeler, randevu ve başvuru süreci tek bir
+        platformda.
       </HeaderDescription>
+
+      {/* Internal links for SEO */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "20px",
+          margin: "20px 0",
+          flexWrap: "wrap",
+        }}
+      >
+        <a
+          href="/ready-documents/schengen-vizesi"
+          style={{
+            color: "#00ffa2",
+            textDecoration: "none",
+            fontSize: "14px",
+            fontWeight: "500",
+          }}
+        >
+          Schengen Vizesi
+        </a>
+        <a
+          href="/ready-documents/amerika-vizesi"
+          style={{
+            color: "#00ffa2",
+            textDecoration: "none",
+            fontSize: "14px",
+            fontWeight: "500",
+          }}
+        >
+          Amerika Vizesi
+        </a>
+        <a
+          href="/ready-documents/ingiltere-vizesi"
+          style={{
+            color: "#00ffa2",
+            textDecoration: "none",
+            fontSize: "14px",
+            fontWeight: "500",
+          }}
+        >
+          İngiltere Vizesi
+        </a>
+        <a
+          href="/blog"
+          style={{
+            color: "#00ffa2",
+            textDecoration: "none",
+            fontSize: "14px",
+            fontWeight: "500",
+          }}
+        >
+          Vize Rehberi
+        </a>
+      </div>
+
       <ButtonWrapper>
         <StyledCeper>
           <StyledHeroButton onClick={handleButtonClick}>
@@ -386,17 +452,21 @@ export const CountryCard = ({ country, translate }) => {
 
   // Try multiple flag sources for reliability
   const flagSources = useMemo(() => {
-    if (!country.code) return null;
-    const code = country.code.toUpperCase();
+    // Check if country and country.code exist
+    if (!country || !country.code) return null;
+
+    const code = country.code;
+    if (typeof code !== "string") return null;
+
     return {
       // High-quality raster option
       png: `https://flagcdn.com/w320/${code.toLowerCase()}.png`,
       // Fallback to your original SVG source
       svg: `https://purecatamphetamine.github.io/country-flag-icons/3x2/${code}.svg`,
       // Alternative SVG source
-      svgAlt: `https://flagcdn.com/${code.toLowerCase()}.svg`
+      svgAlt: `https://flagcdn.com/${code.toLowerCase()}.svg`,
     };
-  }, [country.code]);
+  }, [country]);
 
   // Try to load PNG first (fastest)
   const handleImageLoad = () => {
@@ -416,8 +486,8 @@ export const CountryCard = ({ country, translate }) => {
 
     try {
       const response = await fetch(flagSources.svg);
-      if (!response.ok) throw new Error('SVG fetch failed');
-      
+      if (!response.ok) throw new Error("SVG fetch failed");
+
       const svgText = await response.text();
       const modifiedSvg = svgText.replace(
         "<svg",
@@ -448,17 +518,17 @@ export const CountryCard = ({ country, translate }) => {
         y: -20,
         transition: { duration: 0.3 },
       }}
-      key={country.name}
+      key={country?.name || "unknown"}
     >
       <FlagContainer>
         {/* Show skeleton while loading */}
         {!loaded && !svgLoaded && <FlagSkeleton />}
-        
+
         {/* Try PNG first */}
         {flagSources && !imageError && (
           <FlagImage
             src={flagSources.png}
-            alt={`${country.name} flag`}
+            alt={`${country?.name || "Ülke"} bayrağı`}
             onLoad={handleImageLoad}
             onError={handleImageError}
             style={{
@@ -468,46 +538,52 @@ export const CountryCard = ({ country, translate }) => {
             decoding="async"
           />
         )}
-        
+
         {/* SVG fallback container */}
-        <div 
+        <div
           ref={flagRef}
           style={{
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
+            width: "100%",
+            height: "100%",
             opacity: svgLoaded ? 1 : 0,
-            transition: 'opacity 0.3s ease'
+            transition: "opacity 0.3s ease",
           }}
         />
-        
+
         {/* Final fallback */}
         {imageError && !svgLoaded && (
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            background: `linear-gradient(135deg, 
-              ${country.name.length % 2 === 0 ? '#4A90E2, #7B68EE' : '#50C878, #32CD32'})`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '1.2rem',
-            fontWeight: '600',
-            textAlign: 'center',
-            padding: '1rem'
-          }}>
-            {country.name}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: `linear-gradient(135deg, 
+              ${
+                (country?.name?.length || 0) % 2 === 0
+                  ? "#4A90E2, #7B68EE"
+                  : "#50C878, #32CD32"
+              })`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "white",
+              fontSize: "1.2rem",
+              fontWeight: "600",
+              textAlign: "center",
+              padding: "1rem",
+            }}
+          >
+            {country?.name || "Ülke"}
           </div>
         )}
       </FlagContainer>
       <CountryOverlay>
-        <CountryName>{country.name}</CountryName>
+        <CountryName>{country?.name || "Ülke"}</CountryName>
       </CountryOverlay>
     </CountryCardContainer>
   );
@@ -515,45 +591,256 @@ export const CountryCard = ({ country, translate }) => {
 
 // OPTIMIZED: Memoized country data to prevent re-computations
 const DEFAULT_COUNTRIES = [
-  { name: "Amerika Birleşik Devletleri", code: "US" },
-  { name: "Birleşik Krallık", code: "GB" },
-  { name: "Almanya", code: "DE" },
-  { name: "Fransa", code: "FR" },
-  { name: "İtalya", code: "IT" },
-  { name: "İspanya", code: "ES" },
-  { name: "Hollanda", code: "NL" },
-  { name: "Belçika", code: "BE" },
-  { name: "Lüksemburg", code: "LU" },
-  { name: "İsveç", code: "SE" },
-  { name: "Finlandiya", code: "FI" },
-  { name: "Danimarka", code: "DK" },
-  { name: "Avusturya", code: "AT" },
-  { name: "Çek Cumhuriyeti", code: "CZ" },
-  { name: "Estonya", code: "EE" },
-  { name: "Macaristan", code: "HU" },
-  { name: "Letonya", code: "LV" },
-  { name: "Litvanya", code: "LT" },
-  { name: "Malta", code: "MT" },
-  { name: "Polonya", code: "PL" },
-  { name: "Portekiz", code: "PT" },
-  { name: "Slovakya", code: "SK" },
-  { name: "Slovenya", code: "SI" },
-  { name: "Yunanistan", code: "GR" },
-  { name: "İsviçre", code: "CH" },
-  { name: "Norveç", code: "NO" },
-  { name: "İzlanda", code: "IS" },
-  { name: "Lihtenştayn", code: "LI" },
+  {
+    name: "Amerika Birleşik Devletleri",
+    code: "US",
+    keywords: ["amerika vizesi", "ABD vizesi", "amerika turist vizesi"],
+  },
+  {
+    name: "Birleşik Krallık",
+    code: "GB",
+    keywords: ["ingiltere vizesi", "İngiltere turist vizesi", "UK vizesi"],
+  },
+  {
+    name: "Almanya",
+    code: "DE",
+    keywords: [
+      "almanya vizesi",
+      "Almanya turist vizesi",
+      "Almanya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Fransa",
+    code: "FR",
+    keywords: [
+      "fransa vizesi",
+      "Fransa turist vizesi",
+      "Fransa Schengen vizesi",
+    ],
+  },
+  {
+    name: "İtalya",
+    code: "IT",
+    keywords: [
+      "italya vizesi",
+      "İtalya turist vizesi",
+      "İtalya Schengen vizesi",
+    ],
+  },
+  {
+    name: "İspanya",
+    code: "ES",
+    keywords: [
+      "ispanya vizesi",
+      "İspanya turist vizesi",
+      "İspanya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Hollanda",
+    code: "NL",
+    keywords: [
+      "hollanda vizesi",
+      "Hollanda turist vizesi",
+      "Hollanda Schengen vizesi",
+    ],
+  },
+  {
+    name: "Belçika",
+    code: "BE",
+    keywords: [
+      "belçika vizesi",
+      "Belçika turist vizesi",
+      "Belçika Schengen vizesi",
+    ],
+  },
+  {
+    name: "Lüksemburg",
+    code: "LU",
+    keywords: [
+      "lüksemburg vizesi",
+      "Lüksemburg turist vizesi",
+      "Lüksemburg Schengen vizesi",
+    ],
+  },
+  {
+    name: "İsveç",
+    code: "SE",
+    keywords: ["isveç vizesi", "İsveç turist vizesi", "İsveç Schengen vizesi"],
+  },
+  {
+    name: "Finlandiya",
+    code: "FI",
+    keywords: [
+      "finlandiya vizesi",
+      "Finlandiya turist vizesi",
+      "Finlandiya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Danimarka",
+    code: "DK",
+    keywords: [
+      "danimarka vizesi",
+      "Danimarka turist vizesi",
+      "Danimarka Schengen vizesi",
+    ],
+  },
+  {
+    name: "Avusturya",
+    code: "AT",
+    keywords: [
+      "avusturya vizesi",
+      "Avusturya turist vizesi",
+      "Avusturya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Çek Cumhuriyeti",
+    code: "CZ",
+    keywords: [
+      "çek cumhuriyeti vizesi",
+      "Çekya turist vizesi",
+      "Çekya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Estonya",
+    code: "EE",
+    keywords: [
+      "estonya vizesi",
+      "Estonya turist vizesi",
+      "Estonya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Macaristan",
+    code: "HU",
+    keywords: [
+      "macaristan vizesi",
+      "Macaristan turist vizesi",
+      "Macaristan Schengen vizesi",
+    ],
+  },
+  {
+    name: "Letonya",
+    code: "LV",
+    keywords: [
+      "letonya vizesi",
+      "Letonya turist vizesi",
+      "Letonya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Litvanya",
+    code: "LT",
+    keywords: [
+      "litvanya vizesi",
+      "Litvanya turist vizesi",
+      "Litvanya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Malta",
+    code: "MT",
+    keywords: ["malta vizesi", "Malta turist vizesi", "Malta Schengen vizesi"],
+  },
+  {
+    name: "Polonya",
+    code: "PL",
+    keywords: [
+      "polonya vizesi",
+      "Polonya turist vizesi",
+      "Polonya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Portekiz",
+    code: "PT",
+    keywords: [
+      "portekiz vizesi",
+      "Portekiz turist vizesi",
+      "Portekiz Schengen vizesi",
+    ],
+  },
+  {
+    name: "Slovakya",
+    code: "SK",
+    keywords: [
+      "slovakya vizesi",
+      "Slovakya turist vizesi",
+      "Slovakya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Slovenya",
+    code: "SI",
+    keywords: [
+      "slovenya vizesi",
+      "Slovenya turist vizesi",
+      "Slovenya Schengen vizesi",
+    ],
+  },
+  {
+    name: "Yunanistan",
+    code: "GR",
+    keywords: [
+      "yunanistan vizesi",
+      "Yunanistan turist vizesi",
+      "Yunanistan Schengen vizesi",
+    ],
+  },
+  {
+    name: "İsviçre",
+    code: "CH",
+    keywords: [
+      "isviçre vizesi",
+      "İsviçre turist vizesi",
+      "İsviçre Schengen vizesi",
+    ],
+  },
+  {
+    name: "Norveç",
+    code: "NO",
+    keywords: [
+      "norveç vizesi",
+      "Norveç turist vizesi",
+      "Norveç Schengen vizesi",
+    ],
+  },
+  {
+    name: "İzlanda",
+    code: "IS",
+    keywords: [
+      "izlanda vizesi",
+      "İzlanda turist vizesi",
+      "İzlanda Schengen vizesi",
+    ],
+  },
+  {
+    name: "Lihtenştayn",
+    code: "LI",
+    keywords: [
+      "lihtenştayn vizesi",
+      "Lihtenştayn turist vizesi",
+      "Lihtenştayn Schengen vizesi",
+    ],
+  },
 ];
 
 export const HeroParallax = ({ countries = [] }) => {
   const usedCountries = countries.length > 0 ? countries : DEFAULT_COUNTRIES;
-  
+
   // OPTIMIZED: Memoize country rows to prevent re-computation on scroll
-  const [firstRow, secondRow, thirdRow] = useMemo(() => [
-    usedCountries.slice(0, 8),
-    usedCountries.slice(8, 16),
-    usedCountries.slice(16, 28),
-  ], [usedCountries]);
+  const [firstRow, secondRow, thirdRow] = useMemo(
+    () => [
+      usedCountries.slice(0, 8),
+      usedCountries.slice(8, 16),
+      usedCountries.slice(16, 28),
+    ],
+    [usedCountries]
+  );
 
   const ref = useRef(null);
 
@@ -563,11 +850,14 @@ export const HeroParallax = ({ countries = [] }) => {
   });
 
   // OPTIMIZED: Slightly less aggressive spring config for better performance
-  const springConfig = useMemo(() => ({
-    stiffness: 200, // Reduced from 300
-    damping: 25,    // Reduced from 30
-    bounce: 0       // Removed bounce for smoother performance
-  }), []);
+  const springConfig = useMemo(
+    () => ({
+      stiffness: 200, // Reduced from 300
+      damping: 25, // Reduced from 30
+      bounce: 0, // Removed bounce for smoother performance
+    }),
+    []
+  );
 
   const translateX = useSpring(
     useTransform(scrollYProgress, [0, 1], [0, 1000]),
@@ -616,7 +906,7 @@ export const HeroParallax = ({ countries = [] }) => {
             <CountryCard
               country={country}
               translate={translateX}
-              key={country.code}
+              key={country?.code || country?.name || "unknown"}
             />
           ))}
         </RowContainer>
@@ -625,7 +915,7 @@ export const HeroParallax = ({ countries = [] }) => {
             <CountryCard
               country={country}
               translate={translateXReverse}
-              key={country.code}
+              key={country?.code || country?.name || "unknown"}
             />
           ))}
         </RowContainer>
@@ -634,7 +924,7 @@ export const HeroParallax = ({ countries = [] }) => {
             <CountryCard
               country={country}
               translate={translateX}
-              key={country.code}
+              key={country?.code || country?.name || "unknown"}
             />
           ))}
         </RowContainer>

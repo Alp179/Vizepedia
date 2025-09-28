@@ -220,17 +220,17 @@ function BlogHome() {
 
     return blogs.filter((b) => {
       // Tags alanını güvenli bir şekilde işle
-      const tagsText = Array.isArray(b.tags) 
-        ? b.tags.join(" ") 
-        : (typeof b.tags === 'string' ? b.tags : '');
-      
+      const tagsText = Array.isArray(b.tags)
+        ? b.tags.join(" ")
+        : typeof b.tags === "string"
+        ? b.tags
+        : "";
+
       // Aranacak alanları birleştir
-      const searchableText = [
-        b.title || '',
-        b.summary || '',
-        tagsText
-      ].join(' ').toLowerCase();
-      
+      const searchableText = [b.title || "", b.summary || "", tagsText]
+        .join(" ")
+        .toLowerCase();
+
       return searchableText.includes(needle);
     });
   }, [blogs, q]);
@@ -256,11 +256,13 @@ function BlogHome() {
   // Eğer arama parametresi varsa, BlogSearchResults bileşenini göster
   if (q) {
     // En güncel blogları tarihe göre sırala
-    const latestBlogs = [...blogs].sort((a, b) => 
-      new Date(b.created_at) - new Date(a.created_at)
+    const latestBlogs = [...blogs].sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
     );
-    
-    return <BlogSearchResults blogs={filtered} query={q} latestBlogs={latestBlogs} />;
+
+    return (
+      <BlogSearchResults blogs={filtered} query={q} latestBlogs={latestBlogs} />
+    );
   }
 
   // Normal blog ana sayfası
