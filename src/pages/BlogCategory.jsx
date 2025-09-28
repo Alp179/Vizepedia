@@ -211,7 +211,8 @@ const BackToBlog = styled.div`
 `;
 
 const RelatedCategories = styled.div`
-  margin-top: 3rem;
+  margin-top: 100px;
+  margin-bottom: 100px;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.03);
   border-radius: 16px;
@@ -223,21 +224,19 @@ const RelatedCategories = styled.div`
 
 const RelatedTitle = styled.h3`
   font-size: 1.5rem;
-  color: var(--color-grey-916);
+  color: var(--color-grey-600);
   margin-bottom: 1.5rem;
   text-align: center;
 `;
 
 const RelatedCategoriesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 800px;
-  
+  display: flex;
+  gap: 2rem;
+  justify-content:center;
+  flex-wrap: wrap;
+
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    max-width: 100%;
+    gap: 1.5rem;
   }
 `;
 
@@ -249,6 +248,7 @@ const RelatedCategoryCard = styled(Link)`
   border: 1px solid rgba(255, 255, 255, 0.1);
   text-decoration: none;
   color: inherit;
+  min-width: 100px;
   transition: all 0.3s ease;
   
   &:hover {
@@ -260,7 +260,7 @@ const RelatedCategoryCard = styled(Link)`
 const RelatedCategoryName = styled.h4`
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--color-grey-916);
+  color: var(--color-grey-600);
   margin-bottom: 0.5rem;
 `;
 
