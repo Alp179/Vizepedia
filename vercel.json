@@ -15,6 +15,17 @@
       "permanent": true
     }
   ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Forwarded-Proto",
+          "value": "https"
+        }
+      ]
+    }
+  ],
   "crons": [
     {
       "path": "/api/generate-sitemap",
