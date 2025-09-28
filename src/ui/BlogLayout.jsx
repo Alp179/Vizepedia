@@ -68,6 +68,7 @@ const StyledBlogLayout = styled.div`
 `;
 
 function BlogLayout() {
+  console.log("BlogLayout rendered");
   return (
     <BackgroundColor>
       <StyledBlogLayout />

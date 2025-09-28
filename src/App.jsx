@@ -127,11 +127,11 @@ function AppWithGA() {
         <Route path="account" element={<Account />} />
       </Route>
 
-      {/* Blog Routes */}
-      <Route element={<BlogLayout />}>
-        <Route path="blog" element={<BlogHome />} />
-        <Route path="blog/:slug" element={<BlogDetail />} />
-        <Route path="blog/kategori/:category" element={<BlogCategory />} /> {/* Yeni eklendi */}
+      {/* Blog Routes - Updated structure */}
+      <Route path="blog" element={<BlogLayout />}>
+        <Route index element={<BlogHome />} />
+        <Route path=":slug" element={<BlogDetail />} />
+        <Route path="kategori/:category" element={<BlogCategory />} />
       </Route>
 
       {/* Login, Sign-Up ve ResetPassword Routes */}

@@ -198,6 +198,7 @@ const ErrorMessage = styled.div`
 `;
 
 function BlogHome() {
+  console.log("BlogHome rendered");
   const navigate = useNavigate();
   const { search } = useLocation();
   const q = useMemo(() => new URLSearchParams(search).get("q") || "", [search]);
