@@ -418,7 +418,8 @@ function Footer() {
 
   const handleAboutUsClick = () => {
     window.scrollTo(0, 0);
-    navigate("/hakkimizda");
+    // Ensure canonical URL is used
+    window.location.href = 'https://www.vizepedia.com/hakkimizda';
   };
 
   const handleBlogClick = () => {

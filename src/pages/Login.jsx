@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import LoginForm from "../features/authentication/LoginForm";
 import Logo from "../ui/Logo";
+import SEO from "../components/SEO";
 
 const LoginLayout = styled.main`
   min-height: 100vh;
@@ -19,17 +20,26 @@ const Container = styled.div`
     gap: 20px;
     margin-top: 45px;
   }
-  
 `;
 
 function Login() {
   return (
-    <LoginLayout>
-      <Container>
-        <Logo variant="login" />
-        <LoginForm />
-      </Container>
-    </LoginLayout>
+    <>
+      <SEO
+        title="Giriş Yap – Vizepedia"
+        description="Vizepedia hesabınıza giriş yapın."
+        keywords="giriş, login, hesap"
+        url="https://www.vizepedia.com/login"
+        image="/logo.png"
+        noindex={true}
+      />
+      <LoginLayout>
+        <Container>
+          <Logo variant="login" />
+          <LoginForm />
+        </Container>
+      </LoginLayout>
+    </>
   );
 }
 

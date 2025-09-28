@@ -13,12 +13,12 @@ import SEO from "../components/SEO";
 import JsonLd from "../components/JsonLd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useMemo } from "react";
-import BlogSearchResults from "./BlogSearchResults"; // Yeni eklenen
+import BlogSearchResults from "./BlogSearchResults";
 
 // Lazy load SlideShow
 const SlideShow = lazy(() => import("../ui/SlideShow"));
 
-// BlogContainer ve diğer stiller (mevcut kodunuzdaki gibi kalacak)
+// All your existing styled components remain the same...
 const BlogContainer = styled.div`
   width: 100%;
   max-width: 1300px;
@@ -212,29 +212,27 @@ function BlogHome() {
     staleTime: 60_000,
   });
 
-  // BlogHome.jsx içindeki filtered useMemo bölümünü güncelleyin
+  const filtered = useMemo(() => {
+    if (!blogs) return [];
+    const needle = q.trim().toLowerCase();
+    if (!needle) return blogs;
 
-const filtered = useMemo(() => {
-  if (!blogs) return [];
-  const needle = q.trim().toLowerCase();
-  if (!needle) return blogs;
-
-  return blogs.filter((b) => {
-    // Tags alanını güvenli bir şekilde işle
-    const tagsText = Array.isArray(b.tags) 
-      ? b.tags.join(" ") 
-      : (typeof b.tags === 'string' ? b.tags : '');
-    
-    // Aranacak alanları birleştir
-    const searchableText = [
-      b.title || '',
-      b.summary || '',
-      tagsText
-    ].join(' ').toLowerCase();
-    
-    return searchableText.includes(needle);
-  });
-}, [blogs, q]);
+    return blogs.filter((b) => {
+      // Tags alanını güvenli bir şekilde işle
+      const tagsText = Array.isArray(b.tags) 
+        ? b.tags.join(" ") 
+        : (typeof b.tags === 'string' ? b.tags : '');
+      
+      // Aranacak alanları birleştir
+      const searchableText = [
+        b.title || '',
+        b.summary || '',
+        tagsText
+      ].join(' ').toLowerCase();
+      
+      return searchableText.includes(needle);
+    });
+  }, [blogs, q]);
 
   // Determine which list to use for ItemList schema
   const listForSchema = q ? filtered : blogs;
@@ -255,24 +253,26 @@ const filtered = useMemo(() => {
   }
 
   // Eğer arama parametresi varsa, BlogSearchResults bileşenini göster
-if (q) {
-  // En güncel blogları tarihe göre sırala
-  const latestBlogs = [...blogs].sort((a, b) => 
-    new Date(b.created_at) - new Date(a.created_at)
-  );
-  
-  return <BlogSearchResults blogs={filtered} query={q} latestBlogs={latestBlogs} />;
-}
+  if (q) {
+    // En güncel blogları tarihe göre sırala
+    const latestBlogs = [...blogs].sort((a, b) => 
+      new Date(b.created_at) - new Date(a.created_at)
+    );
+    
+    return <BlogSearchResults blogs={filtered} query={q} latestBlogs={latestBlogs} />;
+  }
 
   // Normal blog ana sayfası
   return (
     <>
+      {/* UPDATED SEO COMPONENT - Always uses canonical /blog URL */}
       <SEO
         title="Vizepedia Blog – Güncel Vize Rehberi Yazıları"
         description="Vize başvurusu süreçleri, seyahat ipuçları ve güncel vize haberlerini bulabileceğiniz Vizepedia blog sayfası."
         keywords="blog, vize blog, seyahat ipuçları, vize haberleri, Vizepedia"
         url="https://www.vizepedia.com/blog"
         noindex={Boolean(q)} // q varsa noindex
+        image="/logo.png"
       />
 
       {/* WebSite + SearchAction */}

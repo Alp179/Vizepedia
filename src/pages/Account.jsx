@@ -460,9 +460,11 @@ function AccountPage() {
     <PageContainer>
       <SEO
         title="Hesabım – Vizepedia"
-        description="Hesap ayarlarınızı yönetin."
+        description="Hesap ayarlarınızı yönetin. E-posta ve şifre güncelleme, hesap pasifleştirme seçenekleri."
+        keywords="hesap ayarları, profil, güvenlik, Vizepedia"
         url="https://www.vizepedia.com/account"
-        noindex
+        image="logo.png"
+        noindex={true}
       />
       <ContentWrapper>
         <PageHeader>
