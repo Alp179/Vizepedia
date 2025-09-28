@@ -137,6 +137,7 @@ const BlogSubheader = styled.h2`
 const StrongText = styled.strong`
   font-weight: 700;
   position: relative;
+  font-size: 72px;
   text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5), 0px 0px 12px rgba(0, 0, 0, 0.3);
 
   &:after {
@@ -151,6 +152,38 @@ const StrongText = styled.strong`
     background-color: rgba(255, 255, 255, 0.05);
     box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.05);
     pointer-events: none;
+  }
+
+  @media (max-width: 1300px) {
+    font-size: 60px;
+  }
+  @media (max-width: 910px) {
+    font-size: 52px;
+  }
+  @media (max-width: 810px) {
+    font-size: 42px;
+    margin-bottom: 10px;
+  }
+  @media (max-width: 660px) {
+    font-size: 36px;
+  }
+  @media (max-width: 550px) {
+    font-size: 32px;
+  }
+  @media (max-width: 485px) {
+    font-size: 28px;
+  }
+  @media (max-width: 435px) {
+    font-size: 24px;
+  }
+  @media (max-width: 390px) {
+    font-size: 22px;
+  }
+  @media (max-width: 365px) {
+    font-size: 20px;
+  }
+  @media (max-width: 320px) {
+    font-size: 18px;
   }
 `;
 

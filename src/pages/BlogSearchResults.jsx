@@ -141,11 +141,12 @@ const ResultCount = styled.p`
 const BackToBlog = styled.div`
   text-align: center;
   margin-top: 2rem;
+  font-size: 16px;
   
   a {
     display: inline-block;
     padding: 0.8rem 1.5rem;
-    background: var(--color-brand-600);
+    background: #004466;
     color: white;
     border-radius: 30px;
     text-decoration: none;
@@ -335,7 +336,7 @@ const LatestBlogDate = styled.div`
 `;
 
 const LatestBlogCategory = styled.span`
-  background: linear-gradient(135deg, var(--color-brand-600), var(--color-brand-700));
+  background: #004466;
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 20px;
