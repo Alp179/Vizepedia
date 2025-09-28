@@ -351,7 +351,8 @@ function MainPage() {
             <ComponentSkeleton>Premium bölüm yükleniyor...</ComponentSkeleton>
           }
         >
-          <CustomPremiumSections />
+          {/* FIXED: Added overrideTitle prop to prevent child component from changing the page title */}
+          <CustomPremiumSections overrideTitle={true} />
         </Suspense>
       </PremiumSectionContainer>
 
@@ -407,7 +408,8 @@ function MainPage() {
             <ComponentSkeleton>SSS bölümü yükleniyor...</ComponentSkeleton>
           }
         >
-          <FaqSectionComponent />
+          {/* FIXED: Added overrideTitle prop to prevent child component from changing the page title */}
+          <FaqSectionComponent overrideTitle={true} />
         </Suspense>
       </FadeInSection>
 

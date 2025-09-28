@@ -2,8 +2,9 @@ import { FaqSection, FaqTitle, FaqSubtitle, Faq } from "../ui/FaqComponents";
 import GroupedCountryList from "../ui/GroupedCountryList";
 import SEO from "../components/SEO";
 import JsonLd from "../components/JsonLd";
+import PropTypes from "prop-types";
 
-function FaqSectionComponent() {
+function FaqSectionComponent({ overrideTitle }) {
   // SEO-optimized FAQ data with structured content
   const faqData = [
     {
@@ -92,20 +93,24 @@ function FaqSectionComponent() {
   return (
     <>
       {/* SEO Component with comprehensive optimization */}
-      <SEO
-        title={seoData.title}
-        description={seoData.description}
-        keywords={seoData.keywords}
-        url={seoData.url}
-        image={seoData.image}
-        faqData={faqData}
-        breadcrumbs={breadcrumbData}
-        openGraphType="website"
-        twitterCard="summary_large_image"
-      />
-
-      {/* Structured Data as JSON-LD */}
-      <JsonLd data={faqStructuredData} />
+      {/* FIXED: overrideTitle prop'unu SEO bileşenine ilet */}
+      {/* FIXED: Only render SEO component if overrideTitle is not true */}
+      {!overrideTitle && (
+        <>
+          <SEO
+            title={seoData.title}
+            description={seoData.description}
+            keywords={seoData.keywords}
+            url={seoData.url}
+            image={seoData.image}
+            faqData={faqData}
+            breadcrumbs={breadcrumbData}
+            openGraphType="website"
+            twitterCard="summary_large_image"
+          />
+          <JsonLd data={faqStructuredData} />
+        </>
+      )}
 
       <FaqSection id="faq-section">
         <FaqTitle>Sıkça Sorulan Sorular</FaqTitle>
@@ -304,5 +309,7 @@ function FaqSectionComponent() {
     </>
   );
 }
-
+FaqSectionComponent.propTypes = {
+  overrideTitle: PropTypes.bool,
+};
 export default FaqSectionComponent;

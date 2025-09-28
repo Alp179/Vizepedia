@@ -334,13 +334,12 @@ export const Header = () => {
   return (
     <HeaderContainer>
       {/* SEO-optimized H1 with semantic structure */}
-      <HeaderTitle>Dünyanın Her Yerine Vize Alın</HeaderTitle>
+      <HeaderTitle>Düşlerinizdeki Seyahatin İlk Adımı</HeaderTitle>
 
       {/* SEO-optimized description with keywords */}
       <HeaderDescription>
-        Schengen, Amerika, İngiltere ve 150+ ülke için vize başvurunuzu adım
-        adım tamamlayın. Gerekli belgeler, randevu ve başvuru süreci tek bir
-        platformda.
+        Avrupa&apos;dan Amerika&apos;ya tüm vize başvurularınızın süreç yönetimi
+        tek yerde
       </HeaderDescription>
 
       {/* Internal links for SEO */}
