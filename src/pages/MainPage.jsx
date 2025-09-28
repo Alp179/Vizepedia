@@ -256,8 +256,6 @@ function MainPage() {
         sameAs: [
           "https://facebook.com/vizepedia",
           "https://instagram.com/vizepediacom",
-          "https://youtube.com/vizepedia",
-          "https://twitter.com/vizepedia",
         ],
       },
     }),

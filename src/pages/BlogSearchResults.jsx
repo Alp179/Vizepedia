@@ -6,6 +6,7 @@ import JsonLd from "../components/JsonLd";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import SearchBar from "../ui/SearchBar";
+import Footer from "../ui/Footer";
 
 const SearchResultsContainer = styled.div`
   width: 100%;
@@ -58,16 +59,16 @@ const SearchHeader = styled.h1`
     font-size: 28px;
   }
   @media (max-width: 435px) {
-    font-size: 24px;
+    font-size: 28px;
   }
   @media (max-width: 390px) {
-    font-size: 22px;
+    font-size: 28px;
   }
   @media (max-width: 365px) {
-    font-size: 20px;
+    font-size: 24px;
   }
   @media (max-width: 320px) {
-    font-size: 18px;
+    font-size: 24px;
   }
 `;
 
@@ -128,10 +129,13 @@ const NoResults = styled.div`
 
 const ResultCount = styled.p`
   text-align: center;
-  font-size: 1.1rem;
+  font-size: 2rem;
   color: var(--color-grey-500);
   margin-bottom: 2rem;
   font-weight: 500;
+  @media (max-width: 320px) {
+  font-size: 16px;
+  }
 `;
 
 const BackToBlog = styled.div`
@@ -166,12 +170,12 @@ const SortContainer = styled.div`
 `;
 
 const SortSelect = styled.select`
-  padding: 0.7rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.05);
   color: var(--color-grey-600);
-  font-size: 0.9rem;
+  font-size: 1rem;
   
   &:focus {
     outline: none;
@@ -182,6 +186,7 @@ const SortSelect = styled.select`
 // En güncel bloglar bölümü için güncellenmiş stiller
 const LatestBlogsSection = styled.div`
   margin-top: 3rem;
+  margin-bottom:100px;
   padding: 2.5rem;
   background: linear-gradient(135deg, rgba(0, 68, 102, 0.1), rgba(0, 51, 85, 0.05));
   border-radius: 16px;
@@ -193,7 +198,7 @@ const LatestBlogsSection = styled.div`
 const LatestBlogsTitle = styled.h3`
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--color-grey-916);
+  color: var(--color-grey-600);
   margin-bottom: 2rem;
   text-align: center;
   position: relative;
@@ -212,12 +217,12 @@ const LatestBlogsTitle = styled.h3`
 `;
 
 const LatestBlogsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  display: flex;
   gap: 2rem;
-  
+  justify-content:center;
+  flex-wrap: wrap;
+
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
     gap: 1.5rem;
   }
 `;
@@ -233,6 +238,8 @@ const LatestBlogCard = styled(Link)`
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
   height: 100%;
+  min-width: 240px;
+  max-width: 300px;
   position: relative;
   
   &::before {
@@ -286,7 +293,7 @@ const LatestBlogContent = styled.div`
 const LatestBlogTitle = styled.h4`
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--color-grey-916);
+  color: var(--color-grey-600);
   margin-bottom: 0.8rem;
   line-height: 1.4;
   display: -webkit-box;
@@ -596,6 +603,7 @@ function BlogSearchResults({ blogs, query, latestBlogs }) {
           </LatestBlogsContainer>
         </LatestBlogsSection>
       )}
+      <Footer />
     </>
   );
 }

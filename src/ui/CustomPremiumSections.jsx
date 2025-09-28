@@ -637,12 +637,12 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
       bgColor: "#090909",
       accent: "#6366F1",
       textPositioning: "right",
-      keywords: [
-        "ücretsiz vize danışmanlığı",
-        "vize başvurusu",
-        "vize tasarrufu",
-        "Vizepedia ücretsiz",
-      ],
+      // keywords: [
+      //   "ücretsiz vize danışmanlığı",
+      //   "vize başvurusu",
+      //   "vize tasarrufu",
+      //   "Vizepedia ücretsiz",
+      // ],
     },
     {
       id: "time",
@@ -655,12 +655,12 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
       bgColor: "#090909",
       accent: "#10B981",
       textPositioning: "left",
-      keywords: [
-        "zaman tasarrufu",
-        "hızlı vize başvurusu",
-        "verimli süreç",
-        "vize yönetimi",
-      ],
+      // keywords: [
+      //   "zaman tasarrufu",
+      //   "hızlı vize başvurusu",
+      //   "verimli süreç",
+      //   "vize yönetimi",
+      // ],
     },
     {
       id: "interface",
@@ -673,12 +673,12 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
       bgColor: "#090909",
       accent: "#EC4899",
       textPositioning: "right",
-      keywords: [
-        "kullanıcı dostu arayüz",
-        "kolay kullanım",
-        "vize arayüzü",
-        "basit vize başvurusu",
-      ],
+      // keywords: [
+      //   "kullanıcı dostu arayüz",
+      //   "kolay kullanım",
+      //   "vize arayüzü",
+      //   "basit vize başvurusu",
+      // ],
     },
     {
       id: "updated",
@@ -691,12 +691,12 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
       bgColor: "#090909",
       accent: "#3B82F6",
       textPositioning: "left",
-      keywords: [
-        "güncel vize bilgileri",
-        "doğru vize rehberi",
-        "vize güncellemeleri",
-        "güncel vize politikaları",
-      ],
+      // keywords: [
+      //   "güncel vize bilgileri",
+      //   "doğru vize rehberi",
+      //   "vize güncellemeleri",
+      //   "güncel vize politikaları",
+      // ],
     },
     {
       id: "documents",
@@ -709,12 +709,12 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
       bgColor: "#090909",
       accent: "#F59E0B",
       textPositioning: "right",
-      keywords: [
-        "vize belgeleri",
-        "belge listeleri",
-        "gerekli evraklar",
-        "vize evrakları",
-      ],
+      // keywords: [
+      //   "vize belgeleri",
+      //   "belge listeleri",
+      //   "gerekli evraklar",
+      //   "vize evrakları",
+      // ],
     },
     {
       id: "process",
@@ -727,12 +727,12 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
       bgColor: "#090909",
       accent: "#8B5CF6",
       textPositioning: "left",
-      keywords: [
-        "vize takibi",
-        "başvuru süreci",
-        "vize durumu",
-        "başvuru takibi",
-      ],
+      // keywords: [
+      //   "vize takibi",
+      //   "başvuru süreci",
+      //   "vize durumu",
+      //   "başvuru takibi",
+      // ],
     },
   ];
 
@@ -741,16 +741,16 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
     title: "Premium Özellikler – Vizepedia",
     description:
       "Vizepedia'nın premium özellikleri: ücretsiz vize danışmanlığı, zaman tasarrufu, kullanıcı dostu arayüz, güncel bilgiler ve süreç takibi.",
-    keywords: [
-      "vize premium özellikleri",
-      "ücretsiz vize danışmanlığı",
-      "zaman tasarrufu",
-      "kullanıcı dostu arayüz",
-      "güncel vize bilgileri",
-      "vize belge listeleri",
-      "vize süreç takibi",
-      "Vizepedia özellikleri",
-    ],
+    // keywords: [
+    //   "vize premium özellikleri",
+    //   "ücretsiz vize danışmanlığı",
+    //   "zaman tasarrufu",
+    //   "kullanıcı dostu arayüz",
+    //   "güncel vize bilgileri",
+    //   "vize belge listeleri",
+    //   "vize süreç takibi",
+    //   "Vizepedia özellikleri",
+    // ],
     url: "https://www.vizepedia.com/#premium-features",
     image: "https://www.vizepedia.com/og-image.jpg",
   };
@@ -766,7 +766,7 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
       name: section.title,
       description: section.description,
       image: section.image,
-      keywords: section.keywords,
+      // keywords: section.keywords,
     })),
   };
 
@@ -1090,7 +1090,8 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
                     </Description>
 
                     {/* SEO-optimized internal links */}
-                    <div
+                    {/* Commented out the keywords section */}
+                    {/* <div
                       style={{
                         marginTop: "20px",
                         display: "flex",
@@ -1130,7 +1131,7 @@ const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
                           {keyword}
                         </a>
                       ))}
-                    </div>
+                    </div> */}
                   </ContentPanel>
 
                   {/* 3D Model Display */}

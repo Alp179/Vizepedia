@@ -226,7 +226,6 @@ export default function SEO({
             sameAs: organizationData.sameAs || [
               "https://facebook.com/vizepedia",
               "https://instagram.com/vizepediacom",
-              "https://youtube.com/vizepedia",
             ],
           })}
         </script>

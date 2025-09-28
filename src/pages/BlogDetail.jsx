@@ -465,40 +465,6 @@ const PrevNextNav = styled.div`
   }
 `;
 
-// FAQ Bölümü
-const FaqSection = styled.div`
-  margin-top: 3rem;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    color: var(--color-grey-600);
-  }
-
-  .faq-item {
-    margin-bottom: 1.5rem;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    h3 {
-      font-size: 1.2rem;
-      margin-bottom: 0.8rem;
-      color: var(--color-grey-600);
-    }
-
-    p {
-      line-height: 1.6;
-      color: var(--color-grey-500);
-    }
-  }
-`;
-
 function BlogDetail() {
   const { slug } = useParams();
   const [scrollVisible, setScrollVisible] = useState(false);
@@ -698,22 +664,6 @@ function BlogDetail() {
     ? blog.tags
     : blog.tags?.split(",") || [];
 
-  // Örnek FAQ verisi (gerçekte blog.faq olarak API'den gelmeli)
-  const faqItems = blog.faq || [
-    {
-      q: "X vizesi kaç günde çıkar?",
-      a: "Genelde 7–15 gün içinde sonuçlanır.",
-    },
-    {
-      q: "Vize başvurusu için ne kadar önceden hazırlanmalıyım?",
-      a: "En az 1 ay önceden başvurmanız önerilir.",
-    },
-    {
-      q: "Vize reddedilirse ne yapmalıyım?",
-      a: "Red nedenlerini analiz edip eksikleri tamamlayarak tekrar başvurabilirsiniz.",
-    },
-  ];
-
   return (
     <PageContainer>
       {blog && (
@@ -817,21 +767,6 @@ function BlogDetail() {
           timeRequired: timeRequired,
         }}
       />
-
-      {/* FAQ JSON-LD */}
-      {faqItems.length > 0 && (
-        <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: faqItems.map((item) => ({
-              "@type": "Question",
-              name: item.q,
-              acceptedAnswer: { "@type": "Answer", text: item.a },
-            })),
-          }}
-        />
-      )}
 
       <HeroSection>
         {/* Hero görseli için eski çalışan koddaki gibi background-image kullanımı */}
@@ -963,21 +898,6 @@ function BlogDetail() {
               ← {blog.category} kategorisindeki tüm yazılar
             </Link>
           </CategoryLinkContainer>
-
-          {/* FAQ Bölümü */}
-          {faqItems.length > 0 && (
-            <FaqSection>
-              <h2>Sıkça Sorulan Sorular</h2>
-              <div className="faq-items">
-                {faqItems.map((item, index) => (
-                  <div key={index} className="faq-item">
-                    <h3>{item.q}</h3>
-                    <p>{item.a}</p>
-                  </div>
-                ))}
-              </div>
-            </FaqSection>
-          )}
 
           {/* Mobile'da Kaynaklar - Blog içeriğinden hemen sonra */}
           <MobileSourcesContainer>

@@ -9,7 +9,7 @@ import { AnonymousDataService } from "../utils/anonymousDataService";
 // All your existing styled components remain exactly the same...
 const ParallaxContainer = styled.div`
   height: 230vh;
-  padding: 6rem 0 3rem 0;
+  padding: 0rem 0 3rem 0;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -352,7 +352,7 @@ export const Header = () => {
           flexWrap: "wrap",
         }}
       >
-        <a
+        {/* <a
           href="/ready-documents/schengen-vizesi"
           style={{
             color: "#00ffa2",
@@ -362,8 +362,8 @@ export const Header = () => {
           }}
         >
           Schengen Vizesi
-        </a>
-        <a
+        </a> */}
+        {/* <a
           href="/ready-documents/amerika-vizesi"
           style={{
             color: "#00ffa2",
@@ -373,8 +373,8 @@ export const Header = () => {
           }}
         >
           Amerika Vizesi
-        </a>
-        <a
+        </a> */}
+        {/* <a
           href="/ready-documents/ingiltere-vizesi"
           style={{
             color: "#00ffa2",
@@ -384,8 +384,8 @@ export const Header = () => {
           }}
         >
           İngiltere Vizesi
-        </a>
-        <a
+        </a> */}
+        {/* <a
           href="/blog"
           style={{
             color: "#00ffa2",
@@ -395,7 +395,7 @@ export const Header = () => {
           }}
         >
           Vize Rehberi
-        </a>
+        </a> */}
       </div>
 
       <ButtonWrapper>

@@ -413,7 +413,7 @@ function Footer() {
 
   const handleMainPageClick = () => {
     window.scrollTo(0, 0);
-    navigate("/mainpage");
+    navigate("/");
   };
 
   const handleAboutUsClick = () => {
@@ -586,7 +586,7 @@ function Footer() {
               <SocialTitle>Takip Et</SocialTitle>
               <SocialLinks>
                 <SocialLink
-                  href="https://facebook.com"
+                  href="https://facebook.com/vizepedia"
                   target="_blank"
                   rel="noreferrer"
                 >
