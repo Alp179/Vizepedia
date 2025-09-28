@@ -74,11 +74,11 @@ export default async function handler(req, res) {
       { path: "/site-haritasi", priority: "0.5", changefreq: "monthly", lastmod: today },
       { path: "/hakkimizda", priority: "0.7", changefreq: "monthly", lastmod: today },
       { path: "/iletisim", priority: "0.7", changefreq: "monthly", lastmod: today },
-      { path: "/gizlilik-politikasi", priority: "0.6", changefreq: "quarterly", lastmod: today },
-      { path: "/kisisel-verilerin-korunmasi", priority: "0.6", changefreq: "quarterly", lastmod: today },
-      { path: "/kullanim-sartlari", priority: "0.6", changefreq: "quarterly", lastmod: today },
-      { path: "/yasal-uyari", priority: "0.5", changefreq: "quarterly", lastmod: today },
-      { path: "/cerez-politikasi", priority: "0.5", changefreq: "quarterly", lastmod: today },
+      { path: "/gizlilik-politikasi", priority: "0.6", changefreq: "yearly", lastmod: today },
+      { path: "/kisisel-verilerin-korunmasi", priority: "0.6", changefreq: "yearly", lastmod: today },
+      { path: "/kullanim-sartlari", priority: "0.6", changefreq: "yearly", lastmod: today },
+      { path: "/yasal-uyari", priority: "0.5", changefreq: "yearly", lastmod: today },
+      { path: "/cerez-politikasi", priority: "0.5", changefreq: "yearly", lastmod: today },
     ];
 
     // Build sitemap XML
