@@ -1,7 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect, useRef } from "react";
 import styled, { keyframes, ThemeProvider } from "styled-components";
-import { useDarkMode } from "../context/DarkModeContext"; // Dark mode context'i import ediyoruz
+import { useDarkMode } from "../context/DarkModeContext";
+import SEO from "../components/SEO";
+import JsonLd from "../components/JsonLd";
 
 // Theme
 const theme = {
@@ -388,12 +390,97 @@ const ModelCard = styled.div`
         : "0 10px 25px rgba(0, 0, 0, 0.08)"};
   }
 `;
-// Scroll Arrow - Pozisyonu güncellendi
-const ScrollArrow = styled.div`
+
+// Model Display Component
+const ModelDisplay = ({ image, accentColor, isDarkMode }) => {
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        position: "relative",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        color: accentColor,
+        padding: "8%", // Görselin boyutunu artırmak için padding azaltıldı
+      }}
+    >
+      <img
+        src={image}
+        alt="Feature visualization"
+        style={{
+          width: "96%", // %20 artırıldı (80% → 96%)
+          height: "96%", // %20 artırıldı (80% → 96%)
+          objectFit: "contain", // İçeriği bozmadan sığdır
+          objectPosition: "center", // Merkeze hizala
+          borderRadius: "18px", // Görsele yuvarlatılmış köşeler eklendi
+          filter: `drop-shadow(0 0 20px ${accentColor}${
+            isDarkMode ? "66" : "40"
+          })`,
+        }}
+      />
+    </div>
+  );
+};
+
+// Background Dots Component
+const BackgroundDots = styled.div`
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: ${(props) =>
+    props.isDarkMode
+      ? "radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px)"
+      : "radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px)"};
+  background-size: 30px 30px;
+  opacity: 0.3;
+  z-index: 0;
+
+  @media (max-width: 480px) {
+    background-size: 20px 20px;
+  }
+`;
+
+// Background Glow Component
+const BackgroundGlow = styled.div`
+  position: absolute;
+  width: ${(props) => props.size || "50vw"};
+  height: ${(props) => props.size || "50vw"};
+  border-radius: 50%;
+  background: ${(props) =>
+    props.isDarkMode
+      ? `radial-gradient(circle, ${
+          props.color || "rgba(255, 255, 255, 0.1)"
+        }, transparent 70%)`
+      : `radial-gradient(circle, ${
+          props.lightColor || "rgba(0, 0, 0, 0.03)"
+        }, transparent 70%)`};
+  top: ${(props) => props.top || "0"};
+  left: ${(props) => props.left || "0"};
+  right: ${(props) => props.right || "auto"};
+  bottom: ${(props) => props.bottom || "auto"};
+  opacity: ${(props) => props.opacity || 0.3};
+  filter: blur(${(props) => props.blur || "50px"});
+  pointer-events: none;
+  z-index: 1;
+
+  @media (max-width: 480px) {
+    filter: blur(${(props) => props.mobileBlur || props.blur || "30px"});
+  }
+`;
+
+// Scroll Arrow Component - FIXED: position absolute olarak değiştirildi
+const ScrollArrow = styled.div`
+  position: absolute; /* FIXED: fixed yerine absolute */
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
   z-index: 10;
   opacity: ${(props) => (props.hidden ? 0 : 1)};
   transition: opacity 0.5s ease, transform 0.3s ease;
@@ -430,55 +517,7 @@ const ScrollArrow = styled.div`
   }
 `;
 
-// Background Effects - Dark/Light mode için güncellendi
-const BackgroundGlow = styled.div`
-  position: absolute;
-  width: ${(props) => props.size || "50vw"};
-  height: ${(props) => props.size || "50vw"};
-  border-radius: 50%;
-  background: ${(props) =>
-    props.isDarkMode
-      ? `radial-gradient(circle, ${
-          props.color || "rgba(255, 255, 255, 0.1)"
-        }, transparent 70%)`
-      : `radial-gradient(circle, ${
-          props.lightColor || "rgba(0, 0, 0, 0.03)"
-        }, transparent 70%)`};
-  top: ${(props) => props.top || "0"};
-  left: ${(props) => props.left || "0"};
-  right: ${(props) => props.right || "auto"};
-  bottom: ${(props) => props.bottom || "auto"};
-  opacity: ${(props) => props.opacity || 0.3};
-  filter: blur(${(props) => props.blur || "50px"});
-  pointer-events: none;
-  z-index: 1;
-
-  @media (max-width: 480px) {
-    filter: blur(${(props) => props.mobileBlur || props.blur || "30px"});
-  }
-`;
-
-// Background Dots - Dark/Light mode için güncellendi
-const BackgroundDots = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: ${(props) =>
-    props.isDarkMode
-      ? "radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px)"
-      : "radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px)"};
-  background-size: 30px 30px;
-  opacity: 0.3;
-  z-index: 0;
-
-  @media (max-width: 480px) {
-    background-size: 20px 20px;
-  }
-`;
-
-// Swipe Indicator - Tıklanabilir olarak güncellendi
+// Swipe Indicator Component
 const SwipeIndicator = styled.div`
   position: absolute;
   bottom: 1.8rem;
@@ -504,19 +543,6 @@ const SwipeIndicator = styled.div`
     transform: translateX(-50%) translateY(3px);
   }
 
-  @media (max-width: 768px) {
-    display: flex;
-    bottom: 0.8rem;
-    font-size: 1.4rem; // Büyütüldü
-  }
-
-  @media (max-width: 480px) {
-    bottom: 0.6rem;
-    font-size: 1.5rem; // Büyütüldü
-    padding: 8px 20px; // Tıklama alanı genişletildi
-    z-index: 50; // Üstte görünmesi için z-index eklendi
-  }
-
   svg {
     width: 22px; // Büyütüldü
     height: 22px; // Büyütüldü
@@ -529,40 +555,21 @@ const SwipeIndicator = styled.div`
       height: 20px; // %16 küçültüldü (24px - (24px * 0.16) ≈ 20px)
     }
   }
+
+  @media (max-width: 768px) {
+    display: flex;
+    bottom: 0.8rem;
+    font-size: 1.4rem; // Büyütüldü
+  }
+
+  @media (max-width: 480px) {
+    bottom: 0.6rem;
+    font-size: 1.5rem; // Büyütüldü
+    padding: 8px 20px; // Tıklama alanı genişletildi
+    z-index: 50; // Üstte görünmesi için z-index eklendi
+  }
 `;
 
-// Model Display Component - Dark/Light mode için güncellendi ve mobil için boyut küçültüldü
-const ModelDisplay = ({ image, accentColor, isDarkMode }) => {
-  return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        position: "relative",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        color: accentColor,
-        padding: "8%", // Görselin boyutunu artırmak için padding azaltıldı
-      }}
-    >
-      <img
-        src={image}
-        alt="Feature visualization"
-        style={{
-          width: "96%", // %20 artırıldı (80% → 96%)
-          height: "96%", // %20 artırıldı (80% → 96%)
-          objectFit: "contain", // İçeriği bozmadan sığdır
-          objectPosition: "center", // Merkeze hizala
-          borderRadius: "18px", // Görsele yuvarlatılmış köşeler eklendi
-          filter: `drop-shadow(0 0 20px ${accentColor}${
-            isDarkMode ? "66" : "40"
-          })`,
-        }}
-      />
-    </div>
-  );
-};
 // Light mode için renk ayarlamaları
 const getLightModeColors = (accent) => {
   const colors = {
@@ -607,7 +614,7 @@ const getLightModeColors = (accent) => {
   return colors[accent] || { bg: "#f8f9fa", text: "#333", accent: accent };
 };
 
-const CustomPremiumSections = ({ onComplete }) => {
+const CustomPremiumSections = ({ onComplete, overrideTitle }) => {
   const { isDarkMode } = useDarkMode(); // Dark mode durumunu alıyoruz
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
@@ -617,6 +624,151 @@ const CustomPremiumSections = ({ onComplete }) => {
   const containerRef = useRef(null);
   const sectionsRef = useRef([]);
   const observerRef = useRef(null);
+  // SEO-optimized sections data
+  const sections = [
+    {
+      id: "free",
+      title: "Tamamen Ücretsiz",
+      subtitle: "Vize danışmanlık giderlerinden tasarruf",
+      description:
+        "Vizepedia, size ücretsiz bir hizmet sunarak, vize başvuru sürecindeki danışmanlık giderlerinden tasarruf etmenize yardımcı olur ve seyahat bütçenizi optimize eder. Profesyonel vize danışmanlığı hizmetlerini ücretsiz olarak sunarak, vize başvuru sürecinizi kolaylaştırırız.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image7.webp",
+      bgColor: "#090909",
+      accent: "#6366F1",
+      textPositioning: "right",
+      keywords: [
+        "ücretsiz vize danışmanlığı",
+        "vize başvurusu",
+        "vize tasarrufu",
+        "Vizepedia ücretsiz",
+      ],
+    },
+    {
+      id: "time",
+      title: "Zaman Tasarrufu",
+      subtitle: "Verimli süreç yönetimi",
+      description:
+        "Vizepedia, vize başvuru sürecine ilişkin bilgilere kolay ve hızlı bir şekilde erişimenizi sağlayarak, süreç yönetimini daha verimli hale getirir. Zamanınızı koruyarak, vize başvurunuzu dakikalar içinde tamamlayın ve seyahatinize odaklanın.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image.webp",
+      bgColor: "#090909",
+      accent: "#10B981",
+      textPositioning: "left",
+      keywords: [
+        "zaman tasarrufu",
+        "hızlı vize başvurusu",
+        "verimli süreç",
+        "vize yönetimi",
+      ],
+    },
+    {
+      id: "interface",
+      title: "Ferah Arayüz",
+      subtitle: "Kullanıcı dostu deneyim",
+      description:
+        "Vizepedia, kullanıcıların ihtiyaçlarına göre tasarlanmış kullanıcı dostu bir arayüz sunarak, vize başvuru süreci boyunca rahat ve sorunsuz bir deneyim yaşamanıza yardımcı olur. Kolay navigasyon ve anlaşılır adımlarla vize başvurunuzu tamamlayın.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image1.webp",
+      bgColor: "#090909",
+      accent: "#EC4899",
+      textPositioning: "right",
+      keywords: [
+        "kullanıcı dostu arayüz",
+        "kolay kullanım",
+        "vize arayüzü",
+        "basit vize başvurusu",
+      ],
+    },
+    {
+      id: "updated",
+      title: "Güncel ve Doğru",
+      subtitle: "Her zaman güncel bilgiler",
+      description:
+        "Vizepedia, vize başvuru süreçlerindeki değişiklikleri ve güncellemeleri yakından takip ederek, size her zaman en güncel ve doğru bilgileri sunar. Güncel vize politikaları ve başvuru kurallarıyla her zaman güncel kalın.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image2.webp",
+      bgColor: "#090909",
+      accent: "#3B82F6",
+      textPositioning: "left",
+      keywords: [
+        "güncel vize bilgileri",
+        "doğru vize rehberi",
+        "vize güncellemeleri",
+        "güncel vize politikaları",
+      ],
+    },
+    {
+      id: "documents",
+      title: "En Uygun Belgeler",
+      subtitle: "Özel belge listeleri",
+      description:
+        "Vizepedia, seyahat planlarınıza özel olarak hazırlanmış belge listeleriyle, vize başvuru sürecinizi profesyonel ve sistematik bir şekilde yönetmenize imkan tanır. Her ülke ve vize türü için özel belge listeleri sunarız.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image3.webp",
+      bgColor: "#090909",
+      accent: "#F59E0B",
+      textPositioning: "right",
+      keywords: [
+        "vize belgeleri",
+        "belge listeleri",
+        "gerekli evraklar",
+        "vize evrakları",
+      ],
+    },
+    {
+      id: "process",
+      title: "Süreç Takibi",
+      subtitle: "Kolay süreç takibi",
+      description:
+        "Vizepedia, vize başvuru sürecinde her adımda size rehberlik eder ve sürecinizi kolayca takip etmenize imkan tanır. Başvurunuzun durumunu anlık olarak takip edin ve kontrol hep sizde olsun.",
+      image:
+        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image5.webp",
+      bgColor: "#090909",
+      accent: "#8B5CF6",
+      textPositioning: "left",
+      keywords: [
+        "vize takibi",
+        "başvuru süreci",
+        "vize durumu",
+        "başvuru takibi",
+      ],
+    },
+  ];
+
+  // SEO data for the premium sections
+  const seoData = {
+    title: "Premium Özellikler – Vizepedia",
+    description:
+      "Vizepedia'nın premium özellikleri: ücretsiz vize danışmanlığı, zaman tasarrufu, kullanıcı dostu arayüz, güncel bilgiler ve süreç takibi.",
+    keywords: [
+      "vize premium özellikleri",
+      "ücretsiz vize danışmanlığı",
+      "zaman tasarrufu",
+      "kullanıcı dostu arayüz",
+      "güncel vize bilgileri",
+      "vize belge listeleri",
+      "vize süreç takibi",
+      "Vizepedia özellikleri",
+    ],
+    url: "https://www.vizepedia.com/#premium-features",
+    image: "https://www.vizepedia.com/og-image.jpg",
+  };
+
+  // Structured data for the premium sections
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPageElement",
+    name: "Vizepedia Premium Özellikleri",
+    description: "Vizepedia'nın sunduğu premium özellikler ve avantajlar",
+    mainEntity: sections.map((section) => ({
+      "@type": "Feature",
+      name: section.title,
+      description: section.description,
+      image: section.image,
+      keywords: section.keywords,
+    })),
+  };
 
   // Mobil cihaz tespiti
   useEffect(() => {
@@ -631,82 +783,6 @@ const CustomPremiumSections = ({ onComplete }) => {
       window.removeEventListener("resize", checkIfMobile);
     };
   }, []);
-
-  // Feature data
-  const sections = [
-    {
-      id: "free",
-      title: "Tamamen Ücretsiz",
-      subtitle: "Vize danışmanlık giderlerinden tasarruf",
-      description:
-        "Vizepedia, size ücretsiz bir hizmet sunarak, vize başvuru sürecindeki danışmanlık giderlerinden tasarruf etmenize yardımcı olur ve seyahat bütçenizi optimize eder.",
-      image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image7.webp",
-      bgColor: "#090909",
-      accent: "#6366F1",
-      textPositioning: "right",
-    },
-    {
-      id: "time",
-      title: "Zaman Tasarrufu",
-      subtitle: "Verimli süreç yönetimi",
-      description:
-        "Vizepedia, vize başvuru sürecine ilişkin bilgilere kolay ve hızlı bir şekilde erişimenizi sağlayarak, süreç yönetimini daha verimli hale getirir. Böylece, süreci daha rahat ve keyifli bir deneyime dönüştürebilirsiniz.",
-      image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image.webp",
-      bgColor: "#090909",
-      accent: "#10B981",
-      textPositioning: "left",
-    },
-    {
-      id: "interface",
-      title: "Ferah Arayüz",
-      subtitle: "Kullanıcı dostu deneyim",
-      description:
-        "Vizepedia, kullanıcıların ihtiyaçlarına göre tasarlanmış kullanıcı dostu bir arayüz sunarak, vize başvuru süreci boyunca rahat ve sorunsuz bir deneyim yaşamanıza yardımcı olur.",
-      image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image1.webp",
-      bgColor: "#090909",
-      accent: "#EC4899",
-      textPositioning: "right",
-    },
-    {
-      id: "updated",
-      title: "Güncel ve Doğru",
-      subtitle: "Her zaman güncel bilgiler",
-      description:
-        "Vizepedia, vize başvuru süreçlerindeki değişiklikleri ve güncellemeleri yakından takip ederek, size her zaman en güncel ve doğru bilgileri sunar. Bu sayede, güncel bilgilere güvenerek başvurularınızı gerçekleştirin.",
-      image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image2.webp",
-      bgColor: "#090909",
-      accent: "#3B82F6",
-      textPositioning: "left",
-    },
-    {
-      id: "documents",
-      title: "En Uygun Belgeler",
-      subtitle: "Özel belge listeleri",
-      description:
-        "Vizepedia, seyahat planlarınıza özel olarak hazırlanmış belge listeleriyle, vize başvuru sürecinizi profesyonel ve sistematik bir şekilde yönetmenize imkan tanır.",
-      image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image3.webp",
-      bgColor: "#090909",
-      accent: "#F59E0B",
-      textPositioning: "right",
-    },
-    {
-      id: "process",
-      title: "Süreç Takibi",
-      subtitle: "Kolay süreç takibi",
-      description:
-        "Vizepedia, vize başvuru sürecinde her adımda size rehberlik eder ve sürecinizi kolayca takip etmenize imkan tanır. Kontrol hep sizde!",
-      image:
-        "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/public/anasayfa/image5.webp",
-      bgColor: "#090909",
-      accent: "#8B5CF6",
-      textPositioning: "left",
-    },
-  ];
 
   // Kullanıcının görüş alanına giren bölümleri izleyen Intersection Observer
   useEffect(() => {
@@ -907,134 +983,194 @@ const CustomPremiumSections = ({ onComplete }) => {
   }, [currentSectionIndex, onComplete, sections.length]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <RootContainer
-        ref={containerRef}
-        onTouchStart={isMobile ? handleTouchStart : undefined}
-        onTouchMove={isMobile ? handleTouchMove : undefined}
-        onTouchEnd={isMobile ? handleTouchEnd : undefined}
-      >
-        <SectionsContainer>
-          {sections.map((section, index) => {
-            const { translateY, opacity } = getTransformValues(index);
-            const addRef = (el) => {
-              sectionsRef.current[index] = el;
-            };
-            const lightColors = getLightModeColors(section.accent);
+    <>
+      {/* FIXED: Only render SEO component if overrideTitle is not true */}
+      {!overrideTitle && (
+        <>
+          <SEO
+            title={seoData.title}
+            description={seoData.description}
+            keywords={seoData.keywords}
+            url={seoData.url}
+            image={seoData.image}
+            structuredData={structuredData}
+            openGraphType="website"
+            twitterCard="summary_large_image"
+          />
+          <JsonLd data={structuredData} />
+        </>
+      )}
 
-            return (
-              <Section
-                key={section.id}
-                ref={addRef}
-                data-index={index}
-                bgColor={section.bgColor}
-                lightBgColor={lightColors.bg}
-                isDarkMode={isDarkMode}
-              >
-                {/* Background Effects */}
-                <BackgroundDots isDarkMode={isDarkMode} />
+      <ThemeProvider theme={theme}>
+        <RootContainer
+          ref={containerRef}
+          onTouchStart={isMobile ? handleTouchStart : undefined}
+          onTouchMove={isMobile ? handleTouchMove : undefined}
+          onTouchEnd={isMobile ? handleTouchEnd : undefined}
+        >
+          <SectionsContainer>
+            {sections.map((section, index) => {
+              const { translateY, opacity } = getTransformValues(index);
+              const addRef = (el) => {
+                sectionsRef.current[index] = el;
+              };
+              const lightColors = getLightModeColors(section.accent);
 
-                <BackgroundGlow
-                  color={`${section.accent}40`}
-                  lightColor={`${lightColors.accent}15`}
-                  top="10%"
-                  right="10%"
-                  size="40vw"
-                  blur="70px"
-                  mobileBlur="40px"
-                  opacity="0.4"
+              return (
+                <Section
+                  key={section.id}
+                  ref={addRef}
+                  data-index={index}
+                  bgColor={section.bgColor}
+                  lightBgColor={lightColors.bg}
                   isDarkMode={isDarkMode}
-                />
-
-                <BackgroundGlow
-                  color={`${section.accent}30`}
-                  lightColor={`${lightColors.accent}10`}
-                  bottom="10%"
-                  left="10%"
-                  size="35vw"
-                  blur="60px"
-                  mobileBlur="35px"
-                  opacity="0.3"
-                  isDarkMode={isDarkMode}
-                />
-
-                {/* Text Content */}
-                {/* Text Content - ikonlar kaldırıldı */}
-                <ContentPanel
-                  position={section.textPositioning}
-                  translateY={translateY}
-                  visible={opacity > 0}
-                  isMobile={isMobile}
                 >
-                  {/* IconWrapper kaldırıldı */}
+                  {/* Background Effects */}
+                  <BackgroundDots isDarkMode={isDarkMode} />
 
-                  <Title
-                    gradientStart="#fff"
-                    lightGradientStart="#000"
-                    gradientMid={section.accent}
-                    gradientEnd="#f5f5f5"
-                    lightGradientEnd="#333"
+                  <BackgroundGlow
+                    color={`${section.accent}40`}
+                    lightColor={`${lightColors.accent}15`}
+                    top="10%"
+                    right="10%"
+                    size="40vw"
+                    blur="70px"
+                    mobileBlur="40px"
+                    opacity="0.4"
                     isDarkMode={isDarkMode}
-                  >
-                    {section.title}
-                  </Title>
+                  />
 
-                  <Subtitle
-                    color={`${section.accent}DD`}
-                    lightColor={lightColors.accent}
+                  <BackgroundGlow
+                    color={`${section.accent}30`}
+                    lightColor={`${lightColors.accent}10`}
+                    bottom="10%"
+                    left="10%"
+                    size="35vw"
+                    blur="60px"
+                    mobileBlur="35px"
+                    opacity="0.3"
                     isDarkMode={isDarkMode}
-                  >
-                    {section.subtitle}
-                  </Subtitle>
+                  />
 
-                  <Description
-                    isDarkMode={isDarkMode}
-                    color="rgba(255, 255, 255, 0.8)"
-                    lightColor="rgba(0, 0, 0, 0.7)"
+                  {/* Text Content */}
+                  {/* Text Content - ikonlar kaldırıldı */}
+                  <ContentPanel
+                    position={section.textPositioning}
+                    translateY={translateY}
+                    visible={opacity > 0}
+                    isMobile={isMobile}
                   >
-                    {section.description}
-                  </Description>
-                </ContentPanel>
+                    {/* IconWrapper kaldırıldı */}
 
-                {/* 3D Model Display */}
-                <ThreeDFrame
-                  position={
-                    section.textPositioning === "left" ? "right" : "left"
-                  }
-                  translateY={translateY}
-                  visible={opacity > 0}
-                  transform={
-                    index === currentSectionIndex
-                      ? `rotateY(${
-                          section.textPositioning === "left"
-                            ? "15deg"
-                            : "-15deg"
-                        })`
-                      : ""
-                  }
-                  isMobile={isMobile}
-                >
-                  <ModelFrame>
-                    <ModelCard
-                      gradient={`linear-gradient(135deg, ${section.accent}15, ${section.accent}05)`}
-                      lightGradient={`linear-gradient(135deg, ${lightColors.accent}10, ${lightColors.accent}01)`}
-                      shine={`radial-gradient(circle at 70% 30%, ${section.accent}40, transparent 50%)`}
-                      lightShine={`radial-gradient(circle at 70% 30%, ${lightColors.accent}20, transparent 50%)`}
+                    <Title
+                      gradientStart="#fff"
+                      lightGradientStart="#000"
+                      gradientMid={section.accent}
+                      gradientEnd="#f5f5f5"
+                      lightGradientEnd="#333"
                       isDarkMode={isDarkMode}
                     >
-                      <ModelDisplay
-                        image={section.image}
-                        accentColor={
-                          isDarkMode ? section.accent : lightColors.accent
-                        }
-                        isDarkMode={isDarkMode}
-                      />
-                    </ModelCard>
-                  </ModelFrame>
-                </ThreeDFrame>
+                      {section.title}
+                    </Title>
 
-                {/* Scroll Arrow - Son section'da gizle */}
-                {index === currentSectionIndex && !isMobile && (
+                    <Subtitle
+                      color={`${section.accent}DD`}
+                      lightColor={lightColors.accent}
+                      isDarkMode={isDarkMode}
+                    >
+                      {section.subtitle}
+                    </Subtitle>
+
+                    <Description
+                      isDarkMode={isDarkMode}
+                      color="rgba(255, 255, 255, 0.8)"
+                      lightColor="rgba(0, 0, 0, 0.7)"
+                    >
+                      {section.description}
+                    </Description>
+
+                    {/* SEO-optimized internal links */}
+                    <div
+                      style={{
+                        marginTop: "20px",
+                        display: "flex",
+                        gap: "10px",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      {section.keywords.slice(0, 3).map((keyword, i) => (
+                        <a
+                          key={i}
+                          href={`/blog/${keyword.replace(/\s+/g, "-")}`}
+                          style={{
+                            color: isDarkMode
+                              ? section.accent
+                              : lightColors.accent,
+                            textDecoration: "none",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                            padding: "4px 8px",
+                            borderRadius: "12px",
+                            backgroundColor: isDarkMode
+                              ? `${section.accent}20`
+                              : `${lightColors.accent}10`,
+                            transition: "all 0.3s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.target.style.backgroundColor = isDarkMode
+                              ? `${section.accent}30`
+                              : `${lightColors.accent}20`;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.target.style.backgroundColor = isDarkMode
+                              ? `${section.accent}20`
+                              : `${lightColors.accent}10`;
+                          }}
+                        >
+                          {keyword}
+                        </a>
+                      ))}
+                    </div>
+                  </ContentPanel>
+
+                  {/* 3D Model Display */}
+                  <ThreeDFrame
+                    position={
+                      section.textPositioning === "left" ? "right" : "left"
+                    }
+                    translateY={translateY}
+                    visible={opacity > 0}
+                    transform={
+                      index === currentSectionIndex
+                        ? `rotateY(${
+                            section.textPositioning === "left"
+                              ? "15deg"
+                              : "-15deg"
+                          })`
+                        : ""
+                    }
+                    isMobile={isMobile}
+                  >
+                    <ModelFrame>
+                      <ModelCard
+                        gradient={`linear-gradient(135deg, ${section.accent}15, ${section.accent}05)`}
+                        lightGradient={`linear-gradient(135deg, ${lightColors.accent}10, ${lightColors.accent}01)`}
+                        shine={`radial-gradient(circle at 70% 30%, ${section.accent}40, transparent 50%)`}
+                        lightShine={`radial-gradient(circle at 70% 30%, ${lightColors.accent}20, transparent 50%)`}
+                        isDarkMode={isDarkMode}
+                      >
+                        <ModelDisplay
+                          image={section.image}
+                          accentColor={
+                            isDarkMode ? section.accent : lightColors.accent
+                          }
+                          isDarkMode={isDarkMode}
+                        />
+                      </ModelCard>
+                    </ModelFrame>
+                  </ThreeDFrame>
+
+                  {/* Scroll Arrow - Son section'da gizle */}
                   <ScrollArrow
                     onClick={scrollToNextSection}
                     hidden={index === sections.length - 1}
@@ -1044,39 +1180,42 @@ const CustomPremiumSections = ({ onComplete }) => {
                       <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
                     </svg>
                   </ScrollArrow>
-                )}
 
-                {/* Swipe indicator - Sadece mobilde görünür ve tıklanabilir */}
-                {index === currentSectionIndex && isMobile && (
-                  <SwipeIndicator
-                    hidden={index === sections.length - 1}
-                    isDarkMode={isDarkMode}
-                    onClick={scrollToNextSection} // Tıklama ile kaydırma eklendi
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" transform="rotate(90 12 12)" />
-                    </svg>
-                    <span>Kaydır</span>
-                  </SwipeIndicator>
-                )}
-              </Section>
-            );
-          })}
-        </SectionsContainer>
+                  {/* Swipe indicator - Sadece mobilde görünür ve tıklanabilir */}
+                  {isMobile && (
+                    <SwipeIndicator
+                      hidden={index === sections.length - 1}
+                      isDarkMode={isDarkMode}
+                      onClick={scrollToNextSection} // Tıklama ile kaydırma eklendi
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M8 5v14l11-7z" transform="rotate(90 12 12)" />
+                      </svg>
+                      <span>Kaydır</span>
+                    </SwipeIndicator>
+                  )}
+                </Section>
+              );
+            })}
+          </SectionsContainer>
 
-        {/* Progress Indicator */}
-        <ProgressIndicator visible={isVisible}>
-          {sections.map((_, index) => (
-            <Dot
-              key={index}
-              active={index === currentSectionIndex}
-              onClick={() => scrollToSection(index)}
-              isDarkMode={isDarkMode}
-            />
-          ))}
-        </ProgressIndicator>
-      </RootContainer>
-    </ThemeProvider>
+          {/* Progress Indicator */}
+          <ProgressIndicator visible={isVisible}>
+            {sections.map((_, index) => (
+              <Dot
+                key={index}
+                active={index === currentSectionIndex}
+                onClick={() => scrollToSection(index)}
+                isDarkMode={isDarkMode}
+              />
+            ))}
+          </ProgressIndicator>
+        </RootContainer>
+      </ThemeProvider>
+    </>
   );
 };
 
