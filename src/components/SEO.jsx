@@ -16,7 +16,7 @@ export default function SEO({
   articleData,
   organizationData,
   websiteData,
-  locale = "tr_TR",
+  locale = "tr", // DÜZELTME 1: "tr_TR" yerine "tr" kullan
   author = "Vizepedia",
   publishedTime,
   modifiedTime,
@@ -61,26 +61,23 @@ export default function SEO({
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="theme-color" content={themeColor} />
       <meta name="msapplication-TileColor" content={themeColor} />
-
       {/* Language and Region */}
       <html lang={locale} />
       <meta httpEquiv="content-language" content={locale} />
-      <link rel="alternate" hrefLang={locale} href={canonicalUrl} />
-
-      {/* Canonical URL */}
+      {/* DÜZELTME 2: Doğru hreflang formatı */}
+      <link rel="alternate" hrefLang="tr" href={canonicalUrl} />
+      <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
+      {/* Canonical URL - Her sayfa için benzersiz */}
       <link rel="canonical" href={canonicalUrl} />
-
       {/* Pagination */}
       {prevUrl && <link rel="prev" href={prevUrl} />}
       {nextUrl && <link rel="next" href={nextUrl} />}
-
       {/* Favicon and App Icons */}
       <link rel="icon" href="/favicon.ico" sizes="any" />
       <link rel="icon" href="/icon.svg" type="image/svg+xml" />
       <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       <link rel="manifest" href="/manifest.json" />
-
-      {/* Open Graph Tags */}
+      {/* Open Graph Tags - locale için tr_TR kullanılabilir */}
       <meta property="og:type" content={openGraphType} />
       {title && <meta property="og:title" content={title} />}
       {description && <meta property="og:description" content={description} />}
@@ -90,8 +87,8 @@ export default function SEO({
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content={title || "Vizepedia"} />
       <meta property="og:site_name" content={siteName} />
-      <meta property="og:locale" content={locale} />
-
+      <meta property="og:locale" content="tr_TR" />{" "}
+      {/* Open Graph için tr_TR kullanılabilir */}
       {/* Additional Open Graph Tags for Different Content Types */}
       {openGraphType === "article" && (
         <>
@@ -110,7 +107,6 @@ export default function SEO({
             ))}
         </>
       )}
-
       {/* Twitter Card Tags */}
       <meta name="twitter:card" content={twitterCard} />
       {title && <meta name="twitter:title" content={title} />}
@@ -120,7 +116,6 @@ export default function SEO({
       {twitterCreator && (
         <meta name="twitter:creator" content={twitterCreator} />
       )}
-
       {/* Additional SEO Meta Tags */}
       <meta name="referrer" content="no-referrer-when-downgrade" />
       <meta name="format-detection" content="telephone=no" />
@@ -130,14 +125,12 @@ export default function SEO({
         content={appleStatusBarStyle}
       />
       <meta name="apple-mobile-web-app-title" content={siteName} />
-
       {/* Structured Data (JSON-LD) */}
       {structuredData && (
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
       )}
-
       {/* Breadcrumb Structured Data */}
       {breadcrumbs && (
         <script type="application/ld+json">
@@ -153,7 +146,6 @@ export default function SEO({
           })}
         </script>
       )}
-
       {/* FAQ Structured Data */}
       {faqData && faqData.length > 0 && (
         <script type="application/ld+json">
@@ -171,7 +163,6 @@ export default function SEO({
           })}
         </script>
       )}
-
       {/* Article Structured Data */}
       {articleData && (
         <script type="application/ld+json">
@@ -208,7 +199,6 @@ export default function SEO({
           })}
         </script>
       )}
-
       {/* Organization Structured Data */}
       {organizationData && (
         <script type="application/ld+json">
@@ -230,7 +220,6 @@ export default function SEO({
           })}
         </script>
       )}
-
       {/* Website Structured Data */}
       {websiteData && (
         <script type="application/ld+json">
