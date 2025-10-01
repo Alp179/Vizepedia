@@ -38,8 +38,8 @@ export default async function handler(req, res) {
     <lastBuildDate>${currentDate}</lastBuildDate>
     <atom:link href="${baseUrl}/api/rss" rel="self" type="application/rss+xml" />
     <image>
-      <url>${baseUrl}/vite.svg</url>
-      <title>Vizepedia</title>
+      <url>${baseUrl}/logo.png</url>
+      <title>Vizepedia Blog</title>
       <link>${baseUrl}/blog</link>
       <width>144</width>
       <height>144</height>
@@ -104,13 +104,12 @@ export default async function handler(req, res) {
       <category><![CDATA[${tag}]]></category>`;
     });
 
-    // Kapak görseli varsa media:content ile ekle (daha zengin görünüm)
+    // Kapak görseli varsa enclosure ekle (RSS 2.0 standardı)
     if (post.cover_image) {
+      // Enclosure için length attribute gerekli (tahmini boyut)
+      // Gerçek boyutu almak için HTTP request gerekir, bu yüzden tahmini kullanıyoruz
       rss += `
-      <enclosure url="${post.cover_image}" type="image/jpeg" />
-      <media:content url="${post.cover_image}" medium="image" type="image/jpeg">
-        <media:title><![CDATA[${post.title}]]></media:title>
-      </media:content>`;
+      <enclosure url="${post.cover_image}" type="image/jpeg" length="500000" />`;
     }
 
     rss += `
