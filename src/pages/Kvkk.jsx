@@ -490,7 +490,8 @@ export default function Kvkk() {
         title="KVKK Aydınlatma Metni – Vizepedia"
         description="Vizepedia’nın KVKK aydınlatma metni ve gizlilik politikası. Kişisel verilerin korunması ve işlenmesi hakkında ayrıntılı bilgi."
         keywords="KVKK, kişisel verilerin korunması, aydınlatma metni, gizlilik, Vizepedia"
-        url="https://www.vizepedia.com/kisisel-verilerin-korunmasi"
+        url="/kisisel-verilerin-korunmasi"
+        noindex={false}
       />
       <FullPage>
         <ScrollIndicator ref={scrollIndicatorRef} />

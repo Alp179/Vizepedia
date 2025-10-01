@@ -270,8 +270,9 @@ export default function Iletisim() {
       <SEO
         title="İletişim – Vizepedia"
         description="Vizepedia ile iletişime geçmek için e-posta, yasal başvuru, teknik destek ve öneri kanallarımızı kullanın. Yanıt süreleri ve iletişim bilgileri burada."
-        keywords="iletişim, destek, Vizepedia, iletişim bilgileri"
-        url="https://www.vizepedia.com/iletisim"
+        keywords="iletişim, destek, Vizepedia, iletişim bilgileri, contact"
+        url="/iletisim"
+        noindex={false}
       />
       <FullPage>
         <ScrollIndicator ref={scrollIndicatorRef} />

@@ -80,7 +80,8 @@ function Davetiye() {
         title="Vize Davetiyesi Oluştur – Vizepedia"
         description="Vize davetiyesi oluşturma aracımız ile davetiye metninizi adım adım hazırlayın. Seyahat planlarınıza uygun ve resmi formatta davetiye oluşturun."
         keywords="vize davetiyesi, davetiye oluşturma, vize başvurusu, Vizepedia"
-        url="https://www.vizepedia.com/davetiye-olustur"
+        url="/davetiye-olustur"
+        noindex={false}
       />
       <Fullpage>
         {/* AnimatedFlag'i en üstte yerleştir */}

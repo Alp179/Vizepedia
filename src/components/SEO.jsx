@@ -16,7 +16,7 @@ export default function SEO({
   articleData,
   organizationData,
   websiteData,
-  locale = "tr", // DÜZELTME 1: "tr_TR" yerine "tr" kullan
+  locale = "tr",
   author = "Vizepedia",
   publishedTime,
   modifiedTime,
@@ -24,6 +24,8 @@ export default function SEO({
   tags,
   wordCount,
   readingTime,
+  estimatedReadingTime,
+  articleBody,
   twitterCard = "summary_large_image",
   twitterSite = "@vizepedia",
   twitterCreator = "@vizepedia",
@@ -32,27 +34,77 @@ export default function SEO({
   themeColor = "#004466",
   appleStatusBarStyle = "default",
 }) {
-  const robots = noindex ? "noindex,nofollow" : "index,follow";
+  // ============================================
+  // URL NORMALIZATION - SINGLE SOURCE OF TRUTH
+  // ============================================
+  const BASE_URL = "https://www.vizepedia.com";
 
-  // Ensure image URL is absolute
-  const absoluteImageUrl = image?.startsWith("http")
-    ? image
-    : `https://www.vizepedia.com${image}`;
+  const normalizeUrl = (rawUrl) => {
+    // If no URL provided, use current page pathname
+    if (!rawUrl) {
+      if (typeof window !== "undefined") {
+        const pathname = window.location.pathname;
+        return `${BASE_URL}${pathname}`;
+      }
+      return BASE_URL;
+    }
 
-  // Ensure canonical URL is absolute and uses HTTPS www version
-  const canonicalUrl = url?.startsWith("http")
-    ? url
-    : `https://www.vizepedia.com${url || ""}`;
+    // Already absolute and has www - return as is
+    if (rawUrl.startsWith(BASE_URL)) {
+      return rawUrl;
+    }
 
-  // Generate keywords string
+    // Absolute without www - fix it
+    if (rawUrl.startsWith("https://vizepedia.com")) {
+      return rawUrl.replace("https://vizepedia.com", BASE_URL);
+    }
+
+    // Has http instead of https - fix it
+    if (rawUrl.startsWith("http://")) {
+      return rawUrl
+        .replace("http://", "https://")
+        .replace("vizepedia.com", "www.vizepedia.com");
+    }
+
+    // Relative URL - make it absolute
+    const cleanPath = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
+    return `${BASE_URL}${cleanPath}`;
+  };
+
+  const canonicalUrl = normalizeUrl(url);
+
+  // ============================================
+  // IMAGE URL NORMALIZATION
+  // ============================================
+  const normalizeImageUrl = (rawImage) => {
+    if (!rawImage) return `${BASE_URL}/logo.png`;
+    if (rawImage.startsWith("http")) return rawImage;
+    const cleanPath = rawImage.startsWith("/") ? rawImage : `/${rawImage}`;
+    return `${BASE_URL}${cleanPath}`;
+  };
+
+  const absoluteImageUrl = normalizeImageUrl(image);
+
+  // ============================================
+  // KEYWORDS NORMALIZATION
+  // ============================================
   const keywordsString = Array.isArray(keywords)
     ? keywords.join(", ")
     : keywords ||
       "vize, vize başvurusu, vize rehberi, seyahat rehberi, belgeler, Vizepedia";
 
+  // ============================================
+  // ROBOTS META
+  // ============================================
+  const robots = noindex
+    ? "noindex,nofollow"
+    : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1";
+
   return (
     <Helmet>
-      {/* Basic Meta Tags */}
+      {/* ============================================ */}
+      {/* BASIC META TAGS */}
+      {/* ============================================ */}
       {title && <title>{title}</title>}
       {description && <meta name="description" content={description} />}
       <meta name="keywords" content={keywordsString} />
@@ -61,23 +113,37 @@ export default function SEO({
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="theme-color" content={themeColor} />
       <meta name="msapplication-TileColor" content={themeColor} />
-      {/* Language and Region */}
+
+      {/* ============================================ */}
+      {/* LANGUAGE & REGION */}
+      {/* ============================================ */}
       <html lang={locale} />
       <meta httpEquiv="content-language" content={locale} />
-      {/* DÜZELTME 2: Doğru hreflang formatı */}
       <link rel="alternate" hrefLang="tr" href={canonicalUrl} />
       <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
-      {/* Canonical URL - Her sayfa için benzersiz */}
+
+      {/* ============================================ */}
+      {/* CANONICAL URL - UNIQUE FOR EVERY PAGE */}
+      {/* ============================================ */}
       <link rel="canonical" href={canonicalUrl} />
-      {/* Pagination */}
-      {prevUrl && <link rel="prev" href={prevUrl} />}
-      {nextUrl && <link rel="next" href={nextUrl} />}
-      {/* Favicon and App Icons */}
+
+      {/* ============================================ */}
+      {/* PAGINATION */}
+      {/* ============================================ */}
+      {prevUrl && <link rel="prev" href={normalizeUrl(prevUrl)} />}
+      {nextUrl && <link rel="next" href={normalizeUrl(nextUrl)} />}
+
+      {/* ============================================ */}
+      {/* FAVICON & APP ICONS */}
+      {/* ============================================ */}
       <link rel="icon" href="/favicon.ico" sizes="any" />
       <link rel="icon" href="/icon.svg" type="image/svg+xml" />
       <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       <link rel="manifest" href="/manifest.json" />
-      {/* Open Graph Tags - locale için tr_TR kullanılabilir */}
+
+      {/* ============================================ */}
+      {/* OPEN GRAPH TAGS */}
+      {/* ============================================ */}
       <meta property="og:type" content={openGraphType} />
       {title && <meta property="og:title" content={title} />}
       {description && <meta property="og:description" content={description} />}
@@ -87,16 +153,27 @@ export default function SEO({
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content={title || "Vizepedia"} />
       <meta property="og:site_name" content={siteName} />
-      <meta property="og:locale" content="tr_TR" />{" "}
-      {/* Open Graph için tr_TR kullanılabilir */}
-      {/* Additional Open Graph Tags for Different Content Types */}
+      <meta property="og:locale" content="tr_TR" />
+
+      {/* ============================================ */}
+      {/* ARTICLE-SPECIFIC OG TAGS */}
+      {/* ============================================ */}
       {openGraphType === "article" && (
         <>
           {publishedTime && (
-            <meta property="article:published_time" content={publishedTime} />
+            <>
+              <meta
+                property="article:published_time"
+                content={publishedTime}
+              />
+              <meta name="publish_date" content={publishedTime} />
+            </>
           )}
           {modifiedTime && (
-            <meta property="article:modified_time" content={modifiedTime} />
+            <>
+              <meta property="article:modified_time" content={modifiedTime} />
+              <meta name="last-modified" content={modifiedTime} />
+            </>
           )}
           {author && <meta property="article:author" content={author} />}
           {section && <meta property="article:section" content={section} />}
@@ -107,16 +184,38 @@ export default function SEO({
             ))}
         </>
       )}
-      {/* Twitter Card Tags */}
+
+      {/* ============================================ */}
+      {/* TWITTER CARD TAGS */}
+      {/* ============================================ */}
       <meta name="twitter:card" content={twitterCard} />
       {title && <meta name="twitter:title" content={title} />}
-      {description && <meta name="twitter:description" content={description} />}
+      {description && (
+        <meta name="twitter:description" content={description} />
+      )}
       <meta name="twitter:image" content={absoluteImageUrl} />
       {twitterSite && <meta name="twitter:site" content={twitterSite} />}
       {twitterCreator && (
         <meta name="twitter:creator" content={twitterCreator} />
       )}
-      {/* Additional SEO Meta Tags */}
+
+      {/* Twitter Reading Labels (article only) */}
+      {openGraphType === "article" && estimatedReadingTime && (
+        <>
+          <meta name="twitter:label1" content="Okuma süresi" />
+          <meta name="twitter:data1" content={estimatedReadingTime} />
+          {author && (
+            <>
+              <meta name="twitter:label2" content="Yazar" />
+              <meta name="twitter:data2" content={author} />
+            </>
+          )}
+        </>
+      )}
+
+      {/* ============================================ */}
+      {/* ADDITIONAL SEO META TAGS */}
+      {/* ============================================ */}
       <meta name="referrer" content="no-referrer-when-downgrade" />
       <meta name="format-detection" content="telephone=no" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -125,13 +224,24 @@ export default function SEO({
         content={appleStatusBarStyle}
       />
       <meta name="apple-mobile-web-app-title" content={siteName} />
-      {/* Structured Data (JSON-LD) */}
+
+      {/* News/Article specific tags */}
+      {openGraphType === "article" && (
+        <>
+          <meta name="news_keywords" content={keywordsString} />
+          <meta property="og:see_also" content={canonicalUrl} />
+        </>
+      )}
+
+      {/* ============================================ */}
+      {/* STRUCTURED DATA (JSON-LD) */}
+      {/* ============================================ */}
       {structuredData && (
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
       )}
-      {/* Breadcrumb Structured Data */}
+
       {breadcrumbs && (
         <script type="application/ld+json">
           {JSON.stringify({
@@ -141,12 +251,12 @@ export default function SEO({
               "@type": "ListItem",
               position: index + 1,
               name: item.name,
-              item: item.url,
+              item: normalizeUrl(item.url),
             })),
           })}
         </script>
       )}
-      {/* FAQ Structured Data */}
+
       {faqData && faqData.length > 0 && (
         <script type="application/ld+json">
           {JSON.stringify({
@@ -163,85 +273,104 @@ export default function SEO({
           })}
         </script>
       )}
-      {/* Article Structured Data */}
+
       {articleData && (
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Article",
+            "@type": "BlogPosting",
             mainEntityOfPage: {
               "@type": "WebPage",
               "@id": canonicalUrl,
             },
             headline: articleData.headline || title,
             description: articleData.description || description,
-            image: articleData.image || absoluteImageUrl,
+            image: {
+              "@type": "ImageObject",
+              url: normalizeImageUrl(articleData.image || image),
+              width: 1200,
+              height: 630,
+            },
             datePublished: articleData.datePublished || publishedTime,
             dateModified: articleData.dateModified || modifiedTime,
             author: {
               "@type": "Person",
               name: articleData.author || author,
+              url: `${BASE_URL}/yazar/${(articleData.author || author)
+                .toLowerCase()
+                .replace(/\s+/g, "-")}`,
             },
             publisher: {
               "@type": "Organization",
-              name: articleData.publisher?.name || siteName,
+              name: siteName,
               logo: {
                 "@type": "ImageObject",
-                url:
-                  articleData.publisher?.logo ||
-                  "https://www.vizepedia.com/logo.png",
+                url: `${BASE_URL}/logo.png`,
+                width: 240,
+                height: 240,
               },
             },
             articleSection: articleData.section || section,
             keywords: articleData.keywords || keywordsString,
             wordCount: articleData.wordCount || wordCount,
             timeRequired: articleData.timeRequired || readingTime,
+            inLanguage: "tr-TR",
+            isPartOf: {
+              "@type": "Blog",
+              "@id": `${BASE_URL}/blog`,
+            },
+            ...(articleBody && { articleBody: articleBody }),
           })}
         </script>
       )}
-      {/* Organization Structured Data */}
+
       {organizationData && (
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
             name: organizationData.name || siteName,
-            url: organizationData.url || "https://www.vizepedia.com",
-            logo: organizationData.logo || "https://www.vizepedia.com/logo.png",
+            url: BASE_URL,
+            logo: {
+              "@type": "ImageObject",
+              url: `${BASE_URL}/logo.png`,
+              width: 240,
+              height: 240,
+            },
             contactPoint: organizationData.contactPoint || {
               "@type": "ContactPoint",
-              telephone: "+90-XXX-XXX-XXXX",
               contactType: "customer service",
+              email: "iletisim@vizepedia.com",
+              availableLanguage: ["Turkish"],
             },
-            sameAs: organizationData.sameAs || [
-              "https://facebook.com/vizepedia",
-              "https://instagram.com/vizepediacom",
-            ],
+            sameAs: organizationData.sameAs || [],
           })}
         </script>
       )}
-      {/* Website Structured Data */}
+
       {websiteData && (
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebSite",
-            name: websiteData.name || siteName,
-            url: websiteData.url || "https://www.vizepedia.com",
+            name: siteName,
+            url: BASE_URL,
             description: websiteData.description || description,
+            inLanguage: "tr-TR",
             publisher: {
               "@type": "Organization",
-              name: websiteData.publisher?.name || siteName,
+              name: siteName,
               logo: {
                 "@type": "ImageObject",
-                url:
-                  websiteData.publisher?.logo ||
-                  "https://www.vizepedia.com/logo.png",
+                url: `${BASE_URL}/logo.png`,
               },
             },
-            potentialAction: websiteData.potentialAction || {
+            potentialAction: {
               "@type": "SearchAction",
-              target: "https://www.vizepedia.com/ara?q={search_term_string}",
+              target: {
+                "@type": "EntryPoint",
+                urlTemplate: `${BASE_URL}/ara?q={search_term_string}`,
+              },
               "query-input": "required name=search_term_string",
             },
           })}
@@ -256,7 +385,7 @@ SEO.propTypes = {
   description: PropTypes.string,
   keywords: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   image: PropTypes.string,
-  url: PropTypes.string.isRequired,
+  url: PropTypes.string,
   noindex: PropTypes.bool,
   prevUrl: PropTypes.string,
   nextUrl: PropTypes.string,
@@ -284,6 +413,8 @@ SEO.propTypes = {
   tags: PropTypes.array,
   wordCount: PropTypes.number,
   readingTime: PropTypes.string,
+  estimatedReadingTime: PropTypes.string,
+  articleBody: PropTypes.string,
   twitterCard: PropTypes.string,
   twitterSite: PropTypes.string,
   twitterCreator: PropTypes.string,

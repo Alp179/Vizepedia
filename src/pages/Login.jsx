@@ -26,13 +26,12 @@ function Login() {
   return (
     <>
       <SEO
-        title="Giriş Yap – Vizepedia"
-        description="Vizepedia hesabınıza giriş yapın."
-        keywords="giriş, login, hesap"
-        url="https://www.vizepedia.com/login"
-        image="/logo.png"
-        noindex={true}
-      />
+  title="Giriş Yap – Vizepedia"
+  description="Vizepedia hesabınıza giriş yapın."
+  keywords="giriş, login, oturum aç, Vizepedia"
+  url="/login" // ✓ Relative - normalizeUrl düzeltecek
+  noindex={true} // ✓ Login sayfası indekslenmesin
+/>
       <LoginLayout>
         <Container>
           <Logo variant="login" />

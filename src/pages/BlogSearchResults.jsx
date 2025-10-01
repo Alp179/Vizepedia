@@ -462,12 +462,12 @@ function BlogSearchResults({ blogs, query, latestBlogs }) {
   return (
     <>
       <SEO
-        title={`"${query}" Arama Sonuçları - Vizepedia Blog`}
-        description={`"${query}" için arama sonuçları. Vize başvurusu süreçleri, seyahat ipuçları ve güncel vize haberleri.`}
-        keywords={`blog, arama, ${query}, vize blog, seyahat ipuçları, vize haberleri, Vizepedia`}
-        url={`https://www.vizepedia.com/blog?q=${encodeURIComponent(query)}`}
-        noindex={true}
-      />
+  title={`"${query}" Arama Sonuçları - Vizepedia Blog`}
+  description={`"${query}" için arama sonuçları. Vize başvurusu süreçleri, seyahat ipuçları ve güncel vize haberleri.`}
+  keywords={`blog, arama, ${query}, vize blog, seyahat ipuçları, vize haberleri, Vizepedia`}
+  url={`/blog?q=${encodeURIComponent(query)}`} // ✓ Relative
+  noindex={true} // ✓ Arama sonuçları indekslenmesin
+/>
 
       <JsonLd
         data={{

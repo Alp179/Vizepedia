@@ -206,7 +206,8 @@ export default function Disclaimer() {
         title="Yasal Uyarı – Vizepedia"
         description="Vizepedia platformunun kullanım şartları ve sorumluluk reddi beyanını okuyun. Hizmet kapsamı, bilgi doğruluğu ve kullanıcı yükümlülükleri hakkında detaylı bilgi edinin."
         keywords="sorumluluk reddi, yasal uyarı, Vizepedia, hukuki sorumluluk"
-        url="https://www.vizepedia.com/yasal-uyari"
+        url="/yasal-uyari"
+        noindex={false}
       />
       <FullPage>
         <ScrollIndicator ref={scrollIndicatorRef} />

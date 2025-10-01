@@ -462,7 +462,7 @@ function AccountPage() {
         title="Hesabım – Vizepedia"
         description="Hesap ayarlarınızı yönetin. E-posta ve şifre güncelleme, hesap pasifleştirme seçenekleri."
         keywords="hesap ayarları, profil, güvenlik, Vizepedia"
-        url="https://www.vizepedia.com/account"
+        url="/account"
         image="logo.png"
         noindex={true}
       />

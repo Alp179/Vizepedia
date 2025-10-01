@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState, useLayoutEffect, useMemo } from "react"; // useMemo eklendi
+import { useEffect, useState, useLayoutEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUser } from "../services/apiAuth";
 import { fetchUserSelectionsDash } from "../utils/userSelectionsFetch";
@@ -26,7 +26,7 @@ import StaticDashboardContent from "../ui/StaticDashboardContent";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import SEO from "../components/SEO";
 
-// Styled components (tümü aynı kalıyor)
+// Styled components
 const CreatedAtContainer = styled.div`
   font-size: 1.5rem;
   color: var(--color-grey-700);
@@ -275,10 +275,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 710);
 
-  // User authentication state
   const { user, isLoading: isUserLoading } = useUser();
 
-  // Determine user type safely
   const [userType, setUserType] = useState("loading");
   const isAnonymous =
     applicationId?.startsWith("anonymous-") ||
@@ -301,14 +299,9 @@ const Dashboard = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Enhanced user type detection with priority for authenticated users
   useEffect(() => {
     async function determineUserType() {
       console.log("🔍 Determining user type...");
-      console.log("isBot:", isBot);
-      console.log("isAnonymous:", isAnonymous);
-      console.log("user:", user);
-      console.log("applicationId:", applicationId);
 
       if (isBot) {
         console.log("👤 User type: bot");
@@ -350,17 +343,9 @@ const Dashboard = () => {
     }
   }, [user, isUserLoading, isAnonymous, isBot, applicationId]);
 
-  // YENI: Anonim kullanıcı için otomatik URL yönlendirmesi
   useEffect(() => {
     console.log("🔍 Checking URL redirect for anonymous user...");
-    console.log("userType:", userType);
-    console.log("applicationId:", applicationId);
-    console.log(
-      "hasCompletedOnboarding:",
-      AnonymousDataService.hasCompletedOnboarding()
-    );
 
-    // Anonim kullanıcı ve URL'de applicationId yoksa yönlendir
     if (
       userType === "anonymous" &&
       !applicationId &&
@@ -376,28 +361,20 @@ const Dashboard = () => {
   }, [userType, applicationId, navigate]);
 
   const handleUserConversion = async () => {
-    console.log("🔄 User conversion started - forcing authenticated state");
-
+    console.log("🔄 User conversion started");
     setUserType("authenticated");
 
     try {
       const currentUser = await getCurrentUser();
       if (currentUser && currentUser.id) {
         setUserId(currentUser.id);
-        console.log("✅ User conversion complete:", currentUser.email);
 
-        // ENHANCED: Try multiple strategies to find the application
         let newApplicationId = null;
         let retryCount = 0;
         const maxRetries = 5;
 
         while (!newApplicationId && retryCount < maxRetries) {
           try {
-            console.log(
-              `🔍 Attempt ${retryCount + 1}: Fetching user applications...`
-            );
-
-            // Strategy 1: Check for very recent applications (last 10 seconds)
             const { data: recentApps, error: recentError } = await supabase
               .from("userAnswers")
               .select("id, created_at")
@@ -408,11 +385,9 @@ const Dashboard = () => {
 
             if (!recentError && recentApps && recentApps.length > 0) {
               newApplicationId = recentApps[0].id;
-              console.log("✅ Found recent application:", newApplicationId);
               break;
             }
 
-            // Strategy 2: Get latest application overall
             const { data: latestApps, error: latestError } = await supabase
               .from("userAnswers")
               .select("id, created_at")
@@ -422,24 +397,16 @@ const Dashboard = () => {
 
             if (!latestError && latestApps && latestApps.length > 0) {
               newApplicationId = latestApps[0].id;
-              console.log("✅ Found latest application:", newApplicationId);
               break;
             }
 
-            // Wait before retry
             if (retryCount < maxRetries - 1) {
-              console.log(
-                `⏳ No application found, waiting 1s before retry...`
-              );
               await new Promise((resolve) => setTimeout(resolve, 1000));
             }
 
             retryCount++;
           } catch (fetchError) {
-            console.error(
-              `❌ Fetch attempt ${retryCount + 1} failed:`,
-              fetchError
-            );
+            console.error(`❌ Fetch attempt ${retryCount + 1} failed:`, fetchError);
             retryCount++;
             if (retryCount < maxRetries) {
               await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -448,9 +415,6 @@ const Dashboard = () => {
         }
 
         if (newApplicationId) {
-          console.log("🎯 Navigating to application:", newApplicationId);
-
-          // Load completed documents for the new application
           try {
             const completedDocs = await fetchCompletedDocuments(
               currentUser.id,
@@ -474,16 +438,11 @@ const Dashboard = () => {
             console.error("⚠️ Error loading completed documents:", docsError);
           }
 
-          // Navigate with application ID
           window.location.href = `/dashboard/${newApplicationId}`;
         } else {
-          console.log(
-            "⚠️ No application found after migration, redirecting to general dashboard"
-          );
           navigate("/dashboard");
         }
       } else {
-        console.log("❌ User conversion failed - no user found");
         navigate("/dashboard");
       }
     } catch (error) {
@@ -501,25 +460,12 @@ const Dashboard = () => {
   } = useQuery({
     queryKey: ["userSelections", userId, applicationId, userType],
     queryFn: () => {
-      console.log("🔄 Query function called for user selections");
-      console.log(
-        "userType:",
-        userType,
-        "userId:",
-        userId,
-        "applicationId:",
-        applicationId
-      );
-
       if (userType === "anonymous") {
         const anonymousData = AnonymousDataService.convertToSupabaseFormat();
-        console.log("Anonymous user selections for documents:", anonymousData);
         return anonymousData;
       } else if (userType === "authenticated" && userId) {
-        console.log("Fetching authenticated user selections");
         return fetchUserSelectionsDash(userId, applicationId);
       }
-      console.log("❌ No query needed, returning null");
       return null;
     },
     enabled:
@@ -534,7 +480,6 @@ const Dashboard = () => {
 
   const ansCountry = userSelections?.[0]?.ans_country;
 
-  // Supabase queries - only for authenticated users
   async function fetchFirmLocation(country) {
     const { data, error } = await supabase
       .from("visa_firm_locations")
@@ -581,30 +526,12 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    console.log("🔄 Completed documents useEffect triggered");
-    console.log(
-      "userType:",
-      userType,
-      "userId:",
-      userId,
-      "applicationId:",
-      applicationId
-    );
-    console.log("userSelections:", userSelections);
-
     if (userType === "authenticated" && userId) {
-      // FIXED: Use real application ID from userSelections
       const realApplicationId = userSelections?.[0]?.id;
 
       if (realApplicationId) {
-        console.log(
-          "🔄 Fetching completed documents with real ID:",
-          realApplicationId
-        );
         fetchCompletedDocuments(userId, realApplicationId)
           .then((data) => {
-            console.log("📋 Raw completed documents from Supabase:", data);
-
             if (data && data.length > 0) {
               const completedDocsMap = data.reduce((acc, doc) => {
                 if (!acc[realApplicationId]) {
@@ -614,48 +541,24 @@ const Dashboard = () => {
                 return acc;
               }, {});
 
-              console.log(
-                "✅ Formatted completed documents map:",
-                completedDocsMap
-              );
-
               dispatch({
                 type: "SET_COMPLETED_DOCUMENTS",
                 payload: completedDocsMap,
               });
-              console.log(
-                "✅ Context updated with completed documents for real ID:",
-                realApplicationId
-              );
             } else {
-              console.log(
-                "⚠️ No completed documents found in Supabase for application:",
-                realApplicationId
-              );
-
-              // ENHANCED: Check if this is a fresh migration - clear old anonymous data from context
               dispatch({
                 type: "SET_COMPLETED_DOCUMENTS",
-                payload: {}, // Clear any stale anonymous data
+                payload: {},
               });
             }
           })
           .catch((error) => {
             console.error("❌ Error fetching completed documents:", error);
           });
-      } else {
-        console.log("⚠️ No real application ID found in userSelections");
       }
     } else if (userType === "anonymous" && applicationId) {
-      console.log(
-        "🔄 Loading anonymous completed documents for:",
-        applicationId
-      );
-
-      // Anonymous user logic (unchanged)
       const anonymousCompletedDocs =
         AnonymousDataService.fetchCompletedDocuments(applicationId);
-      console.log("📋 Anonymous completed documents:", anonymousCompletedDocs);
 
       const completedDocsMap = anonymousCompletedDocs.reduce((acc, doc) => {
         if (!acc[applicationId]) {
@@ -665,33 +568,12 @@ const Dashboard = () => {
         return acc;
       }, {});
 
-      console.log("✅ Anonymous completed documents map:", completedDocsMap);
-
       dispatch({
         type: "SET_COMPLETED_DOCUMENTS",
         payload: completedDocsMap,
       });
-    } else {
-      console.log(
-        "⚠️ No valid user type or application ID for completed documents"
-      );
     }
   }, [userType, userId, userSelections, applicationId, dispatch]);
-
-  // ENHANCED: Add separate debug effect to monitor context changes
-  useEffect(() => {
-    console.log("🔍 Completed documents context changed:");
-    console.log("Current completedDocuments:", completedDocuments);
-
-    if (userSelections && userSelections.length > 0) {
-      const realAppId = userSelections[0].id;
-      console.log("Real application ID:", realAppId);
-      console.log(
-        "Completed docs for real app ID:",
-        completedDocuments[realAppId]
-      );
-    }
-  }, [completedDocuments, userSelections]);
 
   useEffect(() => {
     if (isUserSelectionsSuccess && userSelections?.length > 0) {
@@ -749,28 +631,11 @@ const Dashboard = () => {
     }
   }, [userSelections, isUserSelectionsSuccess, ansCountry]);
 
-  // Check user state
   const hasCompletedOnboarding = userSelections && userSelections.length > 0;
 
-  // FIXED: Use useMemo for documentNames to prevent unnecessary re-renders
   const documentNames = useMemo(() => {
     return userSelections ? getDocumentsForSelections(userSelections) : [];
   }, [userSelections]);
-
-  // ENHANCED DEBUG: Show user type in debug logs
-  useEffect(() => {
-    if (userSelections) {
-      console.log(`=== DOCUMENT DEBUG FOR ${userType.toUpperCase()} USER ===`);
-      console.log("User selections:", userSelections);
-      console.log(
-        "Document names from getDocumentsForSelections:",
-        documentNames
-      );
-      console.log("User type:", userType);
-      console.log("User ID:", userId);
-      console.log("==========================================");
-    }
-  }, [userType, userSelections, documentNames, userId]);
 
   const {
     data: documents,
@@ -790,7 +655,10 @@ const Dashboard = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Early returns based on user type - HER BİRİNE SEO EKLENDİ
+  // ============================================
+  // EARLY RETURNS - HER BİRİNDE SEO VAR
+  // ============================================
+
   if (userType === "loading" || isUserLoading) {
     return <Spinner />;
   }
@@ -802,7 +670,8 @@ const Dashboard = () => {
           title="Kontrol Paneli – Vizepedia"
           description="Vize başvurularınızı ve belgelerinizi tek bir yerden yönetin."
           keywords="kontrol paneli, vize başvuru, vize belgeleri, Vizepedia"
-          url="https://www.vizepedia.com/dashboard"
+          url="/dashboard" // Relative - normalizeUrl düzeltecek
+          noindex={false} 
         />
         <DashboardContainer>
           <StaticDashboardContent />
@@ -825,7 +694,8 @@ const Dashboard = () => {
           title="Kontrol Paneli – Vizepedia"
           description="Vize başvurularınızı ve belgelerinizi tek bir yerden yönetin."
           keywords="kontrol paneli, vize başvuru, vize belgeleri, Vizepedia"
-          url="https://www.vizepedia.com/dashboard"
+          url="/dashboard"
+          noindex={false} // ✗ Onboarding tamamlanmamış
         />
         <DashboardContainer>
           <StaticDashboardContent />
@@ -841,7 +711,8 @@ const Dashboard = () => {
           title="Kontrol Paneli – Vizepedia"
           description="Vize başvurularınızı ve belgelerinizi tek bir yerden yönetin."
           keywords="kontrol paneli, vize başvuru, vize belgeleri, Vizepedia"
-          url="https://www.vizepedia.com/dashboard"
+          url="/dashboard"
+          noindex={true} // ✗ Hata sayfası indekslenmesin
         />
         <DashboardContainer>
           <div
@@ -864,17 +735,30 @@ const Dashboard = () => {
   }
 
   if (isDocumentsError) {
-    return <div>Error loading data.</div>;
+    return (
+      <>
+        <SEO
+          title="Kontrol Paneli – Vizepedia"
+          description="Vize başvurularınızı ve belgelerinizi tek bir yerden yönetin."
+          url="/dashboard"
+          noindex={true}
+        />
+        <div>Error loading data.</div>
+      </>
+    );
   }
 
-  // ANA DASHBOARD RETURN - SEO EKLENDİ
+  // ============================================
+  // ANA DASHBOARD RETURN - AUTHENTICATED USER
+  // ============================================
   return (
     <>
       <SEO
         title="Kontrol Paneli – Vizepedia"
         description="Vize başvurularınızı ve belgelerinizi tek bir yerden yönetin."
         keywords="kontrol paneli, vize başvuru, vize belgeleri, Vizepedia"
-        url="https://www.vizepedia.com/dashboard"
+        url="/dashboard" // Relative - normalizeUrl düzeltecek
+        noindex={true} // ✗ Kullanıcı paneli Google'da görünmesin
       />
       <DashboardContainer>
         {isUserSelectionsSuccess &&
@@ -947,14 +831,12 @@ const Dashboard = () => {
             </>
           )}
 
-          {/* Mobile carousel view */}
           {isMobile && (
             <MobileCarousel
               completedDocuments={completedDocuments}
               documents={documents}
               firmLocation={firmLocation}
               isFirmLocationSuccess={isFirmLocationSuccess}
-              // FIXED: Added missing props for authenticated users
               applicationId={applicationId}
               userSelections={userSelections}
               userType={userType}
@@ -964,7 +846,6 @@ const Dashboard = () => {
           )}
         </DashboardItems>
 
-        {/* Show signup button for anonymous users */}
         {userType === "anonymous" && (
           <div
             style={{
@@ -986,7 +867,6 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Show VisaCheckModal only for authenticated users */}
         {userType === "authenticated" && userId && applicationId && (
           <VisaCheckModal userId={userId} applicationId={applicationId} />
         )}

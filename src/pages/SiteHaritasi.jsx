@@ -14,6 +14,7 @@ import {
   FadeInSection
 } from "./Kvkk";
 import styled from "styled-components";
+import SEO from "../components/SEO";
 
 // Function to fetch all documents and blog categories
 const fetchSitemapData = async () => {
@@ -383,6 +384,14 @@ export default function SiteHaritasi() {
   }
 
   return (
+    <>
+    <SEO
+  title="Site Haritası – Vizepedia"
+  description="Vizepedia site haritası. Tüm sayfalara hızlı erişim."
+  keywords="site haritası, sitemap, sayfa listesi, site yapısı"
+  url="/site-haritasi"
+  noindex={false}
+/>
     <FullPage>
       <ScrollIndicator ref={scrollIndicatorRef} />
       <MainPageHeader />
@@ -483,5 +492,6 @@ export default function SiteHaritasi() {
       </Main>
       <Footer />
     </FullPage>
+    </>
   );
 }

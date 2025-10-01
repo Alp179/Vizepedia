@@ -319,7 +319,8 @@ export default function AboutPage() {
         title="Hakkımızda – Vizepedia"
         description="Vizepedia’nın misyonu, vizyonu ve sunduğu hizmetler hakkında bilgi edinin. Vize başvuru süreçlerini kolaylaştıran rehberimiz."
         keywords="hakkımızda, misyon, vizyon, vize rehberi, Vizepedia"
-        url="https://www.vizepedia.com/hakkimizda"
+        url="/hakkimizda"
+        noindex={false}
       />
       <FullPage>
         <ScrollIndicator ref={scrollIndicatorRef} />

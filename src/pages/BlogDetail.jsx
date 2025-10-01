@@ -644,7 +644,6 @@ function BlogDetail() {
     );
 
   const readingTime = calculateReadingTime(blog);
-
   // SEO için gerekli verileri hazırla
   const plain = (html = "") =>
     html
@@ -656,6 +655,7 @@ function BlogDetail() {
       blog.section3_content || ""
     }`
   );
+
   const wordCount = bodyText.split(/\s+/).filter(Boolean).length;
   const timeRequired = `PT${Math.max(1, Math.ceil(wordCount / 200))}M`; // ISO8601 süre
   const published = new Date(blog.created_at).toISOString();
@@ -664,18 +664,30 @@ function BlogDetail() {
     ? blog.tags
     : blog.tags?.split(",") || [];
 
+    const readingTimeFormatted = `${readingTime} dakika`;
+const articleBody = bodyText.slice(0, 5000);
   return (
     <PageContainer>
       {blog && (
         <>
           {/* SIMPLIFIED SEO COMPONENT - This is the main change */}
           <SEO
-            title={`${blog.title} – Vizepedia`}
-            description={blog.excerpt ?? bodyText.slice(0, 150)}
-            keywords={Array.isArray(blog.tags) ? blog.tags.join(", ") : blog.tags || "vize rehberi, Vizepedia"}
-            image={blog.cover_image || "/logo.png"}
-            url={`https://www.vizepedia.com/blog/${slug}`}
-            noindex={false}
+              title={`${blog.title} – Vizepedia`}
+        description={blog.excerpt ?? bodyText.slice(0, 150)}
+        keywords={tags}
+        image={blog.cover_image}
+        url={`/blog/${slug}`} // Relative URL - normalizeUrl düzeltecek
+        noindex={false} // ✓ Blog yazıları indekslensin
+        openGraphType="article"
+        publishedTime={published}
+        modifiedTime={modified}
+        author={blog.author || "Vizepedia"}
+        section={blog.category}
+        tags={tags}
+        wordCount={wordCount}
+        readingTime={timeRequired}
+        estimatedReadingTime={readingTimeFormatted}
+        articleBody={articleBody}
           />
 
           {/* Hero image preload - kept for performance */}

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import SEO from "../components/SEO";
 import Logo from "../ui/Logo";
 import SignupForm from "../features/authentication/SignupForm";
 
@@ -25,13 +25,21 @@ const Container = styled.div`
 
 function SignUp() {
   return (
+    <>
+    <SEO
+        title="Kayıt Ol – Vizepedia"
+        description="Vizepedia'ya ücretsiz kayıt olun ve vize başvurunuzu başlatın."
+        keywords="kayıt ol, üye ol, hesap oluştur, sign up, Vizepedia"
+        url="/sign-up"
+        noindex={false} // ✓ Kayıt sayfası indekslenebilir (yeni kullanıcılar için)
+      />
     <LoginLayout>
       <Container>
         <Logo variant="login" />
         <SignupForm />
       </Container>
     </LoginLayout>
-  );
+  </>);
 }
 
 export default SignUp;

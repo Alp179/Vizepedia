@@ -427,11 +427,12 @@ function BlogCategory() {
   return (
     <>
       <SEO
-        title={`${decodedCategory} Kategorisi - Vizepedia Blog`}
-        description={description}
-        keywords={`blog, ${decodedCategory}, vize blog, seyahat ipuçları, Vizepedia`}
-        url={`https://www.vizepedia.com/blog/kategori/${encodeURIComponent(category)}`}
-      />
+  title={`${decodedCategory} Kategorisi - Vizepedia Blog`}
+  description={description}
+  keywords={`blog, ${decodedCategory}, vize blog, seyahat ipuçları, Vizepedia`}
+  url={`/blog/kategori/${encodeURIComponent(category)}`} // ✓ Relative
+  noindex={false} // ✓ Kategori sayfaları indekslensin (EKLENMELİ!)
+/>
 
       <JsonLd
         data={{

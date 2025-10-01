@@ -50,14 +50,14 @@ const ComponentSkeleton = styled.div`
 const MainContainer = styled.div`
   position: relative;
   width: 100%;
-  contain: layout; /* CSS containment for better performance */
+  contain: layout;
 `;
 
 const PremiumSectionContainer = styled.div`
   position: relative;
   width: 100%;
   margin-bottom: 100px;
-  contain: layout style; /* CSS containment */
+  contain: layout style;
 
   @media (max-width: 768px) {
     margin-bottom: 80px;
@@ -74,7 +74,7 @@ const FadeInSection = styled.div`
   &.visible {
     opacity: 1;
     transform: translateY(0);
-    will-change: auto; /* Reset will-change after animation */
+    will-change: auto;
   }
 `;
 
@@ -87,7 +87,7 @@ const ScrollIndicator = styled.div`
   height: 4px;
   background: linear-gradient(90deg, #6366f1, #10b981, #ec4899);
   transform-origin: 0 0;
-  transform: translate3d(0, 0, 0) scaleX(0); /* GPU acceleration */
+  transform: translate3d(0, 0, 0) scaleX(0);
   z-index: 1000;
   will-change: transform;
 
@@ -117,10 +117,8 @@ const useScrollProgress = () => {
       }
     };
 
-    // Use passive listener for better performance
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Cleanup
     return () => {
       window.removeEventListener("scroll", handleScroll);
       if (rafRef.current) {
@@ -132,7 +130,7 @@ const useScrollProgress = () => {
   return progress;
 };
 
-// FIXED: Intersection observer hook with correct visibility logic
+// Intersection observer hook
 const useIntersectionObserver = (options = {}) => {
   const [visibleElements, setVisibleElements] = useState(new Set());
   const elementsRef = useRef(new Map());
@@ -147,12 +145,8 @@ const useIntersectionObserver = (options = {}) => {
           entries.forEach((entry) => {
             const index = elementsRef.current.get(entry.target);
             if (entry.isIntersecting) {
-              // Element is visible - ADD it to visible set
               updates.add(index);
             } else {
-              // Element is not visible - REMOVE it from visible set
-              // BUT keep it visible once it's been shown (for fade-in animations)
-              // Don't remove it unless you want it to fade out when scrolling away
               if (!options.keepVisible) {
                 updates.delete(index);
               }
@@ -163,7 +157,7 @@ const useIntersectionObserver = (options = {}) => {
         });
       },
       {
-        rootMargin: "50px", // Start animation 50px before entering viewport
+        rootMargin: "50px",
         threshold: 0.1,
         ...options,
       }
@@ -190,12 +184,12 @@ const useIntersectionObserver = (options = {}) => {
 function MainPage() {
   const scrollProgress = useScrollProgress();
   const [visibleSections, setElementRef] = useIntersectionObserver({
-    unobserveOnIntersect: true, // One-time animations
+    unobserveOnIntersect: true,
   });
   const scrollIndicatorRef = useRef(null);
   const location = useLocation();
 
-  // Memoized SEO data to prevent unnecessary re-renders (REMOVED faqData)
+  // Memoized SEO data
   const seoData = useMemo(
     () => ({
       title: "Vizepedia – Türkiye'nin Vize Başvuru Rehberi",
@@ -219,13 +213,13 @@ function MainPage() {
         "vize süresi",
         "vize başvuru takibi",
       ],
-      url: "https://www.vizepedia.com/",
-      image: "https://www.vizepedia.com/og-image.jpg",
+      url: "/", // ✓ Relative URL - normalizeUrl düzeltecek
+      image: "/og-image.jpg", // ✓ Relative - normalizeUrl düzeltecek
     }),
     []
   );
 
-  // Structured data for the main page (REMOVED FAQ structured data)
+  // Structured data for the main page
   const structuredData = useMemo(
     () => ({
       "@context": "https://schema.org",
@@ -233,9 +227,13 @@ function MainPage() {
       name: "Vizepedia",
       url: "https://www.vizepedia.com",
       description: "Türkiye'nin Vize Başvuru Rehberi",
+      inLanguage: "tr-TR",
       potentialAction: {
         "@type": "SearchAction",
-        target: "https://www.vizepedia.com/ara?q={search_term_string}",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: "https://www.vizepedia.com/ara?q={search_term_string}",
+        },
         "query-input": "required name=search_term_string",
       },
       publisher: {
@@ -245,13 +243,14 @@ function MainPage() {
         logo: {
           "@type": "ImageObject",
           url: "https://www.vizepedia.com/logo.png",
-          width: 512,
-          height: 512,
+          width: 240,
+          height: 240,
         },
         contactPoint: {
           "@type": "ContactPoint",
-          telephone: "+90-XXX-XXX-XXXX",
           contactType: "customer service",
+          email: "iletisim@vizepedia.com",
+          availableLanguage: ["Turkish"],
         },
         sameAs: [
           "https://facebook.com/vizepedia",
@@ -273,8 +272,6 @@ function MainPage() {
     []
   );
 
-  // REMOVED: FAQ structured data for main page - let FaqSectionComponent handle it
-
   // Optimized scroll indicator update
   useEffect(() => {
     if (scrollIndicatorRef.current) {
@@ -282,10 +279,9 @@ function MainPage() {
     }
   }, [scrollProgress]);
 
-  // Optimized FAQ section scrolling with better performance
+  // FAQ section scrolling
   useEffect(() => {
     if (location.hash === "#faq-section") {
-      // Use setTimeout to ensure DOM is ready
       const timer = setTimeout(() => {
         const faqSection = document.getElementById("faq-section");
         if (faqSection) {
@@ -295,13 +291,12 @@ function MainPage() {
             faqSection.getBoundingClientRect().top + window.pageYOffset;
           const offsetPosition = elementTop - headerHeight - 70;
 
-          // Smooth scroll with proper timing
           window.scrollTo({
             top: offsetPosition,
             behavior: "smooth",
           });
         }
-      }, 150); // Slightly longer delay to ensure all components are mounted
+      }, 150);
 
       return () => clearTimeout(timer);
     }
@@ -309,20 +304,23 @@ function MainPage() {
 
   return (
     <MainContainer>
-      {/* SEO Component with comprehensive structured data (REMOVED faqData prop) */}
+      {/* ============================================ */}
+      {/* SEO COMPONENT - ANA SAYFA */}
+      {/* ============================================ */}
       <SEO
         title={seoData.title}
         description={seoData.description}
         keywords={seoData.keywords}
-        url={seoData.url}
+        url={seoData.url} // Relative URL - normalizeUrl otomatik düzeltecek
         image={seoData.image}
-        websiteData={structuredData}
-        breadcrumbs={breadcrumbData}
+        noindex={false} // ✓ Ana sayfa indekslensin
         openGraphType="website"
         twitterCard="summary_large_image"
+        websiteData={structuredData}
+        breadcrumbs={breadcrumbData}
       />
 
-      {/* Structured Data as JSON-LD */}
+      {/* WebSite Structured Data as JSON-LD */}
       <JsonLd data={structuredData} />
 
       {/* Scroll Progress Indicator */}
@@ -349,7 +347,6 @@ function MainPage() {
             <ComponentSkeleton>Premium bölüm yükleniyor...</ComponentSkeleton>
           }
         >
-          {/* FIXED: Added overrideTitle prop to prevent child component from changing the page title */}
           <CustomPremiumSections overrideTitle={true} />
         </Suspense>
       </PremiumSectionContainer>
@@ -395,7 +392,6 @@ function MainPage() {
       </FadeInSection>
 
       {/* FAQ Section - Important for SEO and user support */}
-      {/* This component will handle its own FAQ structured data */}
       <FadeInSection
         ref={setElementRef(4)}
         className={visibleSections.has(4) ? "visible" : ""}
@@ -406,7 +402,6 @@ function MainPage() {
             <ComponentSkeleton>SSS bölümü yükleniyor...</ComponentSkeleton>
           }
         >
-          {/* FIXED: Added overrideTitle prop to prevent child component from changing the page title */}
           <FaqSectionComponent overrideTitle={true} />
         </Suspense>
       </FadeInSection>
@@ -425,5 +420,4 @@ function MainPage() {
   );
 }
 
-// Memoize the component to prevent unnecessary re-renders
 export default memo(MainPage);

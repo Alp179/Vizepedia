@@ -967,6 +967,7 @@ const ReadyDocumentDetail = () => {
         url={seoUrl}
         {...(!isDetail && { prevUrl })}
         {...(!isDetail && { nextUrl })}
+        noindex={false}
       />
 
       {/* ItemList sadece liste görünümünde (slug yokken) */}

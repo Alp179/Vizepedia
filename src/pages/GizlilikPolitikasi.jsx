@@ -293,7 +293,8 @@ export default function PrivacyPolicy() {
         title="Gizlilik Politikası – Vizepedia"
         description="Vizepedia’nın gizlilik politikası; kişisel verilerin nasıl toplandığı, işlendiği ve korunduğu hakkında ayrıntılı bilgi edinmek için bu sayfayı okuyun."
         keywords="gizlilik politikası, privacy policy, kişisel veriler, Vizepedia"
-        url="https://www.vizepedia.com/gizlilik-politikasi"
+        url="/gizlilik-politikasi"
+        noindex={false}
       />
       <FullPage>
         <ScrollIndicator ref={scrollIndicatorRef} />

@@ -837,6 +837,7 @@ const PlannedDocumentDetail = () => {
         description={seoDesc}
         keywords={docKeywords}
         url={seoUrl}
+        noindex={false}
       />
 
       <JsonLd

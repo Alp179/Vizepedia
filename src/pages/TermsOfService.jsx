@@ -18,6 +18,7 @@ import {
   ForContactInfo,
   formatContent
 } from "./Kvkk"; // Import styled components from KVKK page
+import SEO from "../components/SEO";
 
 // Sections data for Terms of Service
 const sectionsData = [
@@ -256,6 +257,14 @@ export default function TermsOfService() {
   };
 
   return (
+    <>
+    <SEO
+  title="Kullanım Şartları – Vizepedia"
+  description="Vizepedia kullanım şartları ve hizmet koşulları."
+  keywords="kullanım şartları, terms of service, hizmet koşulları, üyelik şartları"
+  url="/kullanim-sartlari"
+  noindex={false}
+/>
     <FullPage>
       <ScrollIndicator ref={scrollIndicatorRef} />
       <MainPageHeader />
@@ -302,5 +311,6 @@ export default function TermsOfService() {
       </Main>
       <Footer />
     </FullPage>
+    </>
   );
 }

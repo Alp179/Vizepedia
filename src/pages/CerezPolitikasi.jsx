@@ -300,7 +300,8 @@ export default function CerezPolitikasi() {
         title="Çerez Politikası – Vizepedia"
         description="Vizepedia’nın çerez kullanım politikasını öğrenin; çerezlerin ne olduğu, nasıl kullanıldığı ve tercihlerinizi nasıl yönetebileceğiniz hakkında bilgi edinin."
         keywords="çerez politikası, cookie policy, Vizepedia"
-        url="https://www.vizepedia.com/cerez-politikasi"
+        url="/cerez-politikasi"
+        noindex={false}
       />
       <FullPage>
         <ScrollIndicator ref={scrollIndicatorRef} />

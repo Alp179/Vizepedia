@@ -306,7 +306,7 @@ function BlogHome() {
         title="Vizepedia Blog – Güncel Vize Rehberi Yazıları"
         description="Vize başvurusu süreçleri, seyahat ipuçları ve güncel vize haberlerini bulabileceğiniz Vizepedia blog sayfası."
         keywords="blog, vize blog, seyahat ipuçları, vize haberleri, Vizepedia"
-        url="https://www.vizepedia.com/blog"
+        url="/blog"
         noindex={Boolean(q)} // q varsa noindex
         image="/logo.png"
       />

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useMoveBack } from "../hooks/useMoveBack";
 import MainPageHeader from "../ui/MainPageHeader";
+import SEO from "../components/SEO";
 
 const StyledPageNotFound = styled.main`
   min-height: 100vh;
@@ -109,6 +110,14 @@ function PageNotFound() {
   };
 
   return (
+    <>
+   <SEO
+        title="Sayfa Bulunamadı (404) – Vizepedia"
+        description="Aradığınız sayfa bulunamadı. Ana sayfaya dönün."
+        keywords="404, sayfa bulunamadı, hata"
+        url={typeof window !== 'undefined' ? window.location.pathname : '/404'}
+        noindex={true} // ✗ 404 sayfası indekslenmesin
+      />
     <StyledPageNotFound>
       <MainPageHeader />
       
@@ -141,6 +150,7 @@ function PageNotFound() {
       </ContentContainer>
      
     </StyledPageNotFound>
+    </>
   );
 }
 
