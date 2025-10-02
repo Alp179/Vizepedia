@@ -768,7 +768,7 @@ const StaticDashboardContent = () => {
           </InfoText>
           
           <CTABox>
-            <h3>🔑 Hemen Başlatın ve Kişiselleştirilmiş Belgelere Ulaşın</h3>
+            <h3>🔑 Hemen Başlayın ve Kişiselleştirilmiş Belgelerinize Ulaşın</h3>
             <p>
               Başvuru sürecinizi tamamladığınızda, size özel belge listeniz birkaç dakika içinde hazır olacak!
             </p>
