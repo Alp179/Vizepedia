@@ -268,6 +268,136 @@ const DashboardItems = styled.div`
   }
 `;
 
+const DashboardInfoSection = styled.div`
+  max-width: 900px;
+  margin: 50px 0 50px 50px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 10;
+  
+  @media (max-width: 1550px) {
+    margin-left: -80px;
+  }
+  
+  @media (max-width: 1000px) {
+  margin: 100px 0px 100px -150px;
+  }
+  
+  @media (max-width: 710px) {
+    margin: 100px 16px 24px;
+    padding: 0;
+  }
+`;
+
+const InfoCard = styled.div`
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 28px 32px;
+  border: 1px solid rgba(0, 68, 102, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 68, 102, 0.08);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #004466 0%, #00ffa2 100%);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 20px 24px;
+    border-radius: 16px;
+  }
+`;
+
+const InfoGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+`;
+
+const InfoBox = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(0, 68, 102, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 68, 102, 0.08);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(0, 68, 102, 0.05);
+    border-color: rgba(0, 255, 162, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+`;
+
+const InfoIcon = styled.div`
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  background: linear-gradient(135deg, #004466 0%, #00ffa2 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(0, 255, 162, 0.2);
+  
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 20px;
+  }
+`;
+
+const InfoContent = styled.div`
+  flex: 1;
+`;
+
+const InfoTitle = styled.h4`
+  font-size: 17px;
+  font-weight: 700;
+  color: #004466;
+  margin: 0 0 8px 0;
+  
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+`;
+
+const InfoText = styled.p`
+  font-size: 14px;
+  line-height: 1.6;
+  color: #6b7280;
+  margin: 0;
+  
+  strong {
+    color: #004466;
+    font-weight: 600;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+`;
+
 const Dashboard = () => {
   const { id: applicationId } = useParams();
   const [userId, setUserId] = useState(null);
@@ -787,6 +917,7 @@ const Dashboard = () => {
           )}
 
         <AnimatedFlag countryCode={countryCode} />
+        
 
         <CustomRow type="horizontal">
           {createdAt && (
@@ -846,6 +977,8 @@ const Dashboard = () => {
           )}
         </DashboardItems>
 
+        
+
         {userType === "anonymous" && (
           <div
             style={{
@@ -866,6 +999,37 @@ const Dashboard = () => {
             </ModalSignup>
           </div>
         )}
+
+        {(userType === "authenticated" || userType === "anonymous") && 
+ hasCompletedOnboarding && documents?.length > 0 && (
+  <DashboardInfoSection>
+    <InfoCard>
+      <InfoGrid>
+        <InfoBox>
+          <InfoIcon>📋</InfoIcon>
+          <InfoContent>
+            <InfoTitle>Belgelerinizi Hazırlayın</InfoTitle>
+            <InfoText>
+              Vize başvurunuz için <strong>{documents.length} belge</strong> gerekiyor. 
+              Her belgeyi hazırladığınızda işaretleyin ve ilerlemenizi takip edin.
+            </InfoText>
+          </InfoContent>
+        </InfoBox>
+        
+        <InfoBox>
+          <InfoIcon>📍</InfoIcon>
+          <InfoContent>
+            <InfoTitle>Başvuru Merkezine Gidin</InfoTitle>
+            <InfoText>
+              Tüm belgeleri topladıktan sonra, aşağıdaki haritada gösterilen{" "}
+              <strong>başvuru merkezine</strong> randevunuzla gidin.
+            </InfoText>
+          </InfoContent>
+        </InfoBox>
+      </InfoGrid>
+    </InfoCard>
+  </DashboardInfoSection>
+)}
 
         {userType === "authenticated" && userId && applicationId && (
           <VisaCheckModal userId={userId} applicationId={applicationId} />

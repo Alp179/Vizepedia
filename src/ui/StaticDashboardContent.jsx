@@ -10,8 +10,8 @@ import StepIndicator from "../ui/StepIndicator";
 import FirmMap from "../ui/FirmMap";
 import MobileCarousel from "../ui/MobileCarousel";
 import Spinner from "../ui/Spinner";
-import JsonLd from "../components/JsonLd"; // YENİ: JSON-LD import
-import SEO from "../components/SEO"; // YENİ: SEO import
+import JsonLd from "../components/JsonLd";
+import SEO from "../components/SEO";
 
 // Function to fetch ALL documents from Supabase
 const fetchAllDocuments = async () => {
@@ -69,11 +69,10 @@ const DEMO_COMPLETED_DOCUMENTS = {
     Pasaport: true,
     "Uçak Rezervasyonu": true,
     "Otel Rezervasyonu": true,
-    // Other documents intentionally left incomplete for realistic demo
   },
 };
 
-// YENİ: Yapısal veri oluşturma fonksiyonları
+// Yapısal veri oluşturma fonksiyonları
 const generateWebPageStructuredData = (country) => {
   return {
     "@context": "https://schema.org",
@@ -121,7 +120,7 @@ const generateOrganizationStructuredData = () => {
   };
 };
 
-// Styled components (same as original Dashboard)
+// Styled components
 const CreatedAtContainer = styled.div`
   font-size: 1.5rem;
   color: var(--color-grey-700);
@@ -240,6 +239,331 @@ const DashboardItems = styled.div`
   }
 `;
 
+const InfoSection = styled.div`
+  max-width: 1000px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 1550px) {
+    margin-left: -100px;
+  }
+
+  @media (max-width: 1050px) {
+    margin-right: 50px;
+  }
+
+  @media (max-width: 710px) {
+    margin-top: 60px;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+  }
+`;
+
+const NoticeCard = styled.div`
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 40px;
+  border: 1px solid rgba(0, 68, 102, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 68, 102, 0.08);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #004466 0%, #00ffa2 100%);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 28px 24px;
+    border-radius: 16px;
+  }
+`;
+
+const InfoTitle = styled.h2`
+  font-size: 24px;
+  color: #004466;
+  margin-bottom: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  line-height: 1.3;
+  
+  span {
+    font-size: 32px;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 22px;
+    margin-bottom: 16px;
+    
+    span {
+      font-size: 26px;
+    }
+  }
+`;
+
+const InfoText = styled.p`
+  font-size: 16px;
+  line-height: 1.8;
+  color: #4b5563;
+  margin-bottom: 16px;
+  
+  strong {
+    color: #004466;
+    font-weight: 600;
+  }
+  
+  &:last-of-type {
+    margin-bottom: 24px;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+`;
+
+const CTABox = styled.div`
+  background: linear-gradient(135deg, #004466 0%, #00ffa2 100%);
+  padding: 32px;
+  border-radius: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 255, 162, 0.2);
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    pointer-events: none;
+  }
+  
+  h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    color: white;
+    position: relative;
+    z-index: 1;
+  }
+  
+  p {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.6;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 24px 20px;
+    border-radius: 12px;
+    
+    h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    
+    p {
+      font-size: 14px;
+    }
+  }
+`;
+
+const HowItWorksSection = styled.div`
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 10;
+
+  @media (max-width: 1550px) {
+  margin-left: -150px;
+  }
+  
+  @media (max-width: 710px) {
+    margin: 40px 16px;
+    padding: 0;
+  }
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 40px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #004466, #00ffa2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
+`;
+
+const SectionSubtitle = styled.p`
+  font-size: 18px;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 60px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @media (max-width: 768px) {
+    font-size: 16px;
+    margin-bottom: 40px;
+  }
+`;
+
+const StepsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  position: relative;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 80px;
+    left: 16.66%;
+    right: 16.66%;
+    height: 2px;
+    background: linear-gradient(90deg, #004466 0%, #00ffa2 50%, #004466 100%);
+    z-index: -1;
+  }
+  
+  @media (max-width: 1000px) {
+  gap: 8px;
+    
+  @media (max-width: 710px) {
+  grid-template-columns: 1fr;}
+    &::before {
+      display: none;
+    }
+  }
+`;
+
+const StepCard = styled.div`
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 32px 24px;
+  border: 1px solid rgba(0, 68, 102, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 68, 102, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+  text-align: center;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 68, 102, 0.12);
+    border-color: rgba(0, 255, 162, 0.3);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 24px 20px;
+  }
+`;
+
+const StepNumber = styled.div`
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: linear-gradient(135deg, #004466 0%, #00ffa2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 255, 162, 0.3);
+  
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #004466, #00ffa2);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.3;
+  }
+
+  @media (max-width: 1300px) {
+  width: 60px;
+  height: 60px;}
+
+  @media (max-width: 1000px) {
+   width: 40px;
+   height: 40px;
+   font-size: 22px;
+  }
+  
+  @media (max-width: 768px) {
+    
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+`;
+
+const StepIcon = styled.div`
+  font-size: 48px;
+  margin-bottom: 20px;
+  @media (max-width: 1000px) {
+    font-size: 32px;
+  }
+  @media (max-width: 768px) {
+    font-size: 40px;
+    margin-bottom: 16px;
+  }
+`;
+
+const StepTitle = styled.h3`
+  font-size: 22px;
+  font-weight: 700;
+  color: #004466;
+  margin-bottom: 12px;
+  
+  @media (max-width: 1000px) {
+  font-size: 20px;}
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+`;
+
+const StepDescription = styled.p`
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.7;
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+`;
+
+
 const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -270,14 +594,8 @@ const StaticDashboardContent = () => {
   } = useQuery({
     queryKey: ["allDocuments"],
     queryFn: fetchAllDocuments,
-    staleTime: 10 * 60 * 1000, // Cache for 10 minutes
+    staleTime: 10 * 60 * 1000,
     retry: 3,
-    onSuccess: (data) => {
-      console.log("✅ All documents query success:", data?.length, "documents");
-    },
-    onError: (error) => {
-      console.error("❌ All documents query error:", error);
-    },
   });
 
   useLayoutEffect(() => {
@@ -340,7 +658,7 @@ const StaticDashboardContent = () => {
     return countryToCode[DEMO_USER_DATA.ans_country] || "de";
   }, []);
 
-  // YENİ: SEO optimize edilmiş meta veriler
+  // SEO optimize edilmiş meta veriler
   const seoData = useMemo(
     () => ({
       title: `${DEMO_USER_DATA.ans_country} Vize Başvuru Kontrol Paneli - Vizepedia`,
@@ -357,7 +675,7 @@ const StaticDashboardContent = () => {
       ],
       url: "https://www.vizepedia.com/dashboard",
     }),
-    [DEMO_USER_DATA.ans_country]
+    []
   );
 
   // Loading state
@@ -414,21 +732,15 @@ const StaticDashboardContent = () => {
     );
   }
 
-  console.log(
-    "📊 StaticDashboardContent - All documents from Supabase:",
-    allDocuments?.length
-  );
-
-  // YENİ: Yapısal veriler
+  // Yapısal veriler
   const webPageStructuredData = generateWebPageStructuredData(
-    DEMO_USER_DATA.ans_country,
-    DEMO_FIRM_LOCATION.firm_name
+    DEMO_USER_DATA.ans_country
   );
   const organizationStructuredData = generateOrganizationStructuredData();
 
   return (
     <DashboardContainer>
-      {/* YENİ: SEO ve Yapısal Veriler */}
+      {/* SEO ve Yapısal Veriler */}
       <SEO
         title={seoData.title}
         description={seoData.description}
@@ -438,6 +750,34 @@ const StaticDashboardContent = () => {
 
       <JsonLd data={webPageStructuredData} />
       <JsonLd data={organizationStructuredData} />
+
+      {/* Bilgilendirme Section */}
+      <InfoSection>
+        <NoticeCard>
+          <InfoTitle>
+            <span>📄</span>
+            Tüm Belgeleri Görüntülüyorsunuz
+          </InfoTitle>
+          
+          <InfoText>
+            Bu sayfa, Vizepedia&apos;daki <strong>tüm belge havuzunu</strong> örnek olarak göstermek için demo olarak hazırlanmıştır.
+          </InfoText>
+          
+          <InfoText>
+            👉 <strong>Başvuru sürecinizi başlattığınızda</strong>, verdiğiniz cevaplara göre <strong>sadece sizin başvurunuza özel belgeler</strong> listelenecek. Böylece vakit kaybetmeden ihtiyacınız olan adımları takip edebileceksiniz.
+          </InfoText>
+          
+          <CTABox>
+            <h3>🔑 Hemen Başlatın ve Kişiselleştirilmiş Belgelere Ulaşın</h3>
+            <p>
+              Başvuru sürecinizi tamamladığınızda, size özel belge listeniz birkaç dakika içinde hazır olacak!
+            </p>
+          </CTABox>
+        </NoticeCard>
+      </InfoSection>
+
+
+
 
       <AnimatedFlag countryCode={countryCode} />
 
@@ -461,12 +801,10 @@ const StaticDashboardContent = () => {
         {!isMobile && (
           <>
             <StepIndicatorWrapper>
-              <Heading as="h14">
-                {DEMO_USER_DATA.ans_country} - Tüm Belgeler
-              </Heading>
+              <Heading as="h14">Tüm Belgeler</Heading>
 
               <StepIndicator
-                documents={allDocuments || []} // Pass ALL documents from Supabase
+                documents={allDocuments || []}
                 completedDocuments={DEMO_COMPLETED_DOCUMENTS}
                 applicationId={DEMO_USER_DATA.id}
                 userSelections={[DEMO_USER_DATA]}
@@ -477,10 +815,12 @@ const StaticDashboardContent = () => {
             </StepIndicatorWrapper>
 
             <InfoContainerWrapper>
-              <Heading as="h14">Başvuru adresi</Heading>
+              <Heading as="h14">Örnek Başvuru Adresi - Almanya</Heading>
 
               <FirmMap firmLocation={DEMO_FIRM_LOCATION} />
             </InfoContainerWrapper>
+
+            
           </>
         )}
 
@@ -488,7 +828,7 @@ const StaticDashboardContent = () => {
         {isMobile && (
           <MobileCarousel
             completedDocuments={DEMO_COMPLETED_DOCUMENTS}
-            documents={allDocuments || []} // Pass ALL documents from Supabase
+            documents={allDocuments || []}
             firmLocation={DEMO_FIRM_LOCATION}
             isFirmLocationSuccess={true}
             applicationId={DEMO_USER_DATA.id}
@@ -499,6 +839,44 @@ const StaticDashboardContent = () => {
           />
         )}
       </DashboardItems>
+      <HowItWorksSection>
+        <SectionTitle>Vizepedia Nasıl Çalışır?</SectionTitle>
+        <SectionSubtitle>
+          Vize başvurunuzu 3 basit adımda tamamlayın. Her adımda size rehberlik ediyoruz!
+        </SectionSubtitle>
+        
+        <StepsContainer>
+          <StepCard>
+            <StepNumber>1</StepNumber>
+            <StepIcon>📝</StepIcon>
+            <StepTitle>Bilgilerinizi Girin</StepTitle>
+            <StepDescription>
+              Gideceğiniz ülke, vize türü, mesleğiniz ve seyahat detaylarınızı girin. 
+              Size özel belge listesi otomatik olarak oluşturulur.
+            </StepDescription>
+          </StepCard>
+          
+          <StepCard>
+            <StepNumber>2</StepNumber>
+            <StepIcon>✅</StepIcon>
+            <StepTitle>Belgelerinizi Toplayın</StepTitle>
+            <StepDescription>
+              Kişiselleştirilmiş belge listenizi görün. Her belgeyi hazırladıkça işaretleyin 
+              ve ilerlemenizi takip edin. Tüm belgeler detaylı açıklamalarla!
+            </StepDescription>
+          </StepCard>
+          
+          <StepCard>
+            <StepNumber>3</StepNumber>
+            <StepIcon>📍</StepIcon>
+            <StepTitle>Başvurunuzu Yapın</StepTitle>
+            <StepDescription>
+              En yakın başvuru merkezini harita üzerinde görün. Randevu alın ve 
+              belgelerinizle başvuru merkezine gidin. Vize süreciniz başladı!
+            </StepDescription>
+          </StepCard>
+        </StepsContainer>
+      </HowItWorksSection>
     </DashboardContainer>
   );
 };

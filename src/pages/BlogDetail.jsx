@@ -688,6 +688,8 @@ const articleBody = bodyText.slice(0, 5000);
         readingTime={timeRequired}
         estimatedReadingTime={readingTimeFormatted}
         articleBody={articleBody}
+        articlePublisher="https://www.facebook.com/vizepedia" // Facebook sayfanız varsa
+  siteName="Vizepedia" // Zaten var ama explicit olarak geçin
           />
 
           {/* Hero image preload - kept for performance */}

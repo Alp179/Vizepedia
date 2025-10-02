@@ -25,6 +25,7 @@ export default function SEO({
   wordCount,
   readingTime,
   estimatedReadingTime,
+  articlePublisher,
   articleBody,
   twitterCard = "summary_large_image",
   twitterSite = "@vizepedia",
@@ -33,6 +34,7 @@ export default function SEO({
   siteName = "Vizepedia",
   themeColor = "#004466",
   appleStatusBarStyle = "default",
+  
 }) {
   // ============================================
   // URL NORMALIZATION - SINGLE SOURCE OF TRUTH
@@ -154,6 +156,9 @@ export default function SEO({
       <meta property="og:image:alt" content={title || "Vizepedia"} />
       <meta property="og:site_name" content={siteName} />
       <meta property="og:locale" content="tr_TR" />
+      <meta property="og:image:type" content="image/jpeg" />
+      <meta property="og:image:secure_url" content={absoluteImageUrl} />
+      <meta name="twitter:image:alt" content={title || "Vizepedia"} />
 
       {/* ============================================ */}
       {/* ARTICLE-SPECIFIC OG TAGS */}
@@ -170,11 +175,18 @@ export default function SEO({
             </>
           )}
           {modifiedTime && (
-            <>
-              <meta property="article:modified_time" content={modifiedTime} />
-              <meta name="last-modified" content={modifiedTime} />
-            </>
-          )}
+  <>
+    {/* Open Graph - Article için */}
+    <meta property="article:modified_time" content={modifiedTime} />
+    
+    {/* HTTP Header Simulation */}
+    <meta httpEquiv="last-modified" content={modifiedTime} />
+    
+    {/* General SEO */}
+    <meta name="last-modified" content={modifiedTime} />
+    <meta name="revised" content={modifiedTime} />
+  </>
+)}
           {author && <meta property="article:author" content={author} />}
           {section && <meta property="article:section" content={section} />}
           {tags &&
@@ -376,6 +388,9 @@ export default function SEO({
           })}
         </script>
       )}
+      {openGraphType === "article" && articlePublisher && (
+        <meta property="article:publisher" content={articlePublisher} />
+      )}
     </Helmet>
   );
 }
@@ -387,6 +402,7 @@ SEO.propTypes = {
   image: PropTypes.string,
   url: PropTypes.string,
   noindex: PropTypes.bool,
+  articlePublisher: PropTypes.string,
   prevUrl: PropTypes.string,
   nextUrl: PropTypes.string,
   structuredData: PropTypes.object,

@@ -64,7 +64,6 @@ export default async function handler(req, res) {
     // Static routes
     const staticRoutes = [
       { path: "", priority: "1.0", changefreq: "weekly", lastmod: today },
-      { path: "/mainpage", priority: "0.9", changefreq: "weekly", lastmod: today },
       { path: "/dashboard", priority: "0.8", changefreq: "daily", lastmod: today },
       { path: "/ready-documents", priority: "0.8", changefreq: "weekly", lastmod: today },
       { path: "/planned-documents", priority: "0.8", changefreq: "weekly", lastmod: today },

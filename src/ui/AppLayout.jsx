@@ -525,6 +525,7 @@ function AppLayout() {
         <Main>
           <Container>
             <Outlet />
+            
           </Container>
           <CountriesMarquee />
           <SlideShowWrapper>
