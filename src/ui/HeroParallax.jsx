@@ -81,14 +81,14 @@ const HeaderDescription = styled.p`
   -webkit-hyphens: none;
   -moz-hyphens: none;
   hyphens: none;
-  font-size: 1.5rem;
+  font-size: 20px;
   margin-top: 2rem;
   color: var(--color-grey-700);
   text-align: center;
   margin: 2rem auto 0;
 
   @media (min-width: 768px) {
-    font-size: 2rem;
+    font-size: 24px;
   }
 `;
 

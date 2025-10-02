@@ -262,11 +262,11 @@ const CTAButton = styled(motion.button)`
   display: inline-flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.5rem 3rem;
+  padding: 2rem 3rem;
   background: linear-gradient(135deg, #004466, #00ffa2);
   color: white;
   border-radius: 50px;
-  font-size: 1.3rem;
+  font-size: 2rem;
   font-weight: 600;
   cursor: pointer;
   border: none;
@@ -296,8 +296,8 @@ const CTAButton = styled(motion.button)`
   }
 
   @media (max-width: 480px) {
-    padding: 1.25rem 2.5rem;
-    font-size: 1.1rem;
+    padding: 1.75rem 2.5rem;
+    font-size: 1.8rem;
   }
 `;
 
