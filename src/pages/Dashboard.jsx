@@ -127,59 +127,6 @@ const BannersContainer = styled.div`
   }
 `;
 
-const Ceper = styled.div`
-  margin-top: 20px;
-  margin-left: 20vw;
-  margin-right: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 283px;
-  height: 127px;
-  border: 3px solid #00ffa2;
-  filter: drop-shadow(0px 20px 40px rgba(0, 0, 0, 0.11));
-  border-radius: 82px;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 10;
-
-  @media (max-width: 1300px) {
-    margin-left: 12vw;
-  }
-
-  @media (max-width: 900px) {
-    margin-left: 1vw;
-  }
-
-  @media (max-width: 710px) {
-    position: relative;
-    margin: 0 auto;
-    margin-top: 10px;
-    transform: scale(0.85);
-    height: 110px;
-    width: 260px;
-  }
-
-  @media (max-width: 450px) {
-    transform: scale(0.75);
-    height: 100px;
-    width: 240px;
-  }
-
-  &:hover {
-    border-color: #004466;
-    transform: scale(1.03);
-
-    @media (max-width: 710px) {
-      transform: scale(0.9);
-    }
-
-    @media (max-width: 450px) {
-      transform: scale(0.8);
-    }
-  }
-`;
-
 const UyeDevam = styled.button`
   cursor: pointer;
   display: flex;
@@ -189,14 +136,15 @@ const UyeDevam = styled.button`
   height: 89px;
   background: #004466;
   box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.11);
-  border-radius: 49px;
+  border-radius: 24px;
+  border: 2px solid #00ffa2;
   font-weight: 700;
   font-size: 18px;
   text-align: center;
   color: white;
   transition: all 0.3s ease;
-  border: none;
   outline: none;
+  margin: 10px auto 0 auto;
 
   @media (max-width: 710px) {
     width: 220px;
@@ -396,6 +344,125 @@ const InfoText = styled.p`
   @media (max-width: 768px) {
     font-size: 13px;
   }
+`;
+
+const AnonymousWarning = styled.div`
+  max-width: 900px;
+  margin: 0 0 32px 50px;
+  padding: 0 20px;
+  position: relative;
+  z-index: 10;
+  
+  @media (max-width: 1550px) {
+    margin-left: -80px;
+  }
+  
+  @media (max-width: 1000px) {
+    margin-left: -150px;
+  }
+  
+  @media (max-width: 710px) {
+    margin: 0 16px 24px;
+    padding: 0;
+  }
+`;
+
+const WarningCard = styled.div`
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 152, 0, 0.05) 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 24px 28px;
+  border: 2px solid rgba(255, 193, 7, 0.3);
+  box-shadow: 0 4px 20px rgba(255, 193, 7, 0.1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #FFC107 0%, #FF9800 100%);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 20px 24px;
+    border-radius: 12px;
+    flex-direction: column;
+    gap: 12px;
+  }
+`;
+
+const WarningIcon = styled.div`
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 4px 16px rgba(255, 193, 7, 0.3);
+  
+  @media (max-width: 768px) {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    font-size: 24px;
+  }
+`;
+
+const WarningContent = styled.div`
+  flex: 1;
+`;
+
+const WarningTitle = styled.h4`
+  font-size: 18px;
+  font-weight: 700;
+  color: #D97706;
+  margin: 0 0 8px 0;
+  
+  @media (max-width: 768px) {
+    font-size: 17px;
+  }
+`;
+
+const WarningText = styled.p`
+  font-size: 15px;
+  line-height: 1.7;
+  color: #92400E;
+  margin: 0;
+  
+  strong {
+    color: #B45309;
+    font-weight: 600;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+`;
+
+const WhatToDo = styled.h4`
+
+  font-size: 40px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 16px;
+ 
+  
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
+`;
+
+const Section3 = styled.div`
 `;
 
 const Dashboard = () => {
@@ -940,6 +1007,7 @@ const Dashboard = () => {
         <DashboardItems>
           {!isMobile && (
             <>
+            
               <StepIndicatorWrapper>
                 <Heading as="h14">Ülke adı</Heading>
                 <StepIndicator
@@ -987,22 +1055,42 @@ const Dashboard = () => {
               marginTop: isMobile ? "-20px" : "20px",
             }}
           >
-            <ModalSignup>
+            {/* Anonim Kullanıcı Uyarısı - Sadece anonymous user için */}
+{userType === "anonymous" && hasCompletedOnboarding && (
+  <AnonymousWarning>
+    <WarningCard>
+      <WarningIcon>⚠️</WarningIcon>
+      <WarningContent>
+        <WarningTitle>Seçimleriniz Kaydedilmedi</WarningTitle>
+        <WarningText>
+          Misafir olarak devam ediyorsunuz. Seçimleriniz ve ilerlemeniz <strong>tarayıcınızda geçici olarak</strong> saklanıyor. 
+          Tarayıcı geçmişini temizlerseniz veya farklı bir cihazdan erişirseniz <strong>tüm verileriniz kaybolacak</strong>. 
+          Üye olun ve başvuru sürecinize her zaman her yerden erişin!
+        </WarningText>
+        <ModalSignup>
               <ModalSignup.Open opens="signUpForm">
-                <Ceper>
+               
                   <UyeDevam>Üye Olarak Devam et</UyeDevam>
-                </Ceper>
+                
               </ModalSignup.Open>
               <ModalSignup.Window name="signUpForm">
                 <SignupForm onSuccess={handleUserConversion} />
               </ModalSignup.Window>
             </ModalSignup>
+      </WarningContent>
+    </WarningCard>
+  </AnonymousWarning>
+)}
+            
           </div>
         )}
 
         {(userType === "authenticated" || userType === "anonymous") && 
  hasCompletedOnboarding && documents?.length > 0 && (
+  
   <DashboardInfoSection>
+    <Section3>
+    <WhatToDo>Şimdi Ne Yapacağım?</WhatToDo>
     <InfoCard>
       <InfoGrid>
         <InfoBox>
@@ -1028,6 +1116,7 @@ const Dashboard = () => {
         </InfoBox>
       </InfoGrid>
     </InfoCard>
+    </Section3>
   </DashboardInfoSection>
 )}
 
