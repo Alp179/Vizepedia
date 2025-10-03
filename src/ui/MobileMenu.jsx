@@ -1,5 +1,7 @@
 // MobileMenu.jsx - Updated with MultiStepOnboardingModal
+import PropTypes from 'prop-types';
 import { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
 import { HiDocument, HiPlus } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +17,6 @@ import toast, { Toaster } from "react-hot-toast";
 import { deleteVisaApplication } from "../services/apiDeleteVisaApp";
 import { useUser } from "../features/authentication/useUser";
 import DarkModeToggle from "./DarkModeToggle";
-// NEW: Import MultiStepOnboardingModal instead of ModalSignup
 import MultiStepOnboardingModal from "../ui/MultiStepOnboardingModal";
 
 // İkon ve Animasyonlar
@@ -58,8 +59,166 @@ import {
   DeleteButton,
 } from "./MobileMenuStyles";
 
+const AccordionContent = styled.div`
+  max-height: ${props => props.isOpen ? '500px' : '0'};
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding-left: 20px;
+  margin-top: ${props => props.isOpen ? '8px' : '0'};
+  margin-bottom: ${props => props.isOpen ? '8px' : '0'};
+  border-left: 2px solid rgba(0, 255, 162, 0.3);
+`;
+
+const SubNavButton = styled(NavButton)`
+  font-size: 14px;
+  padding: 10px 16px;
+  opacity: 0.9;
+  
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+// Icon Components
+const IconSettings = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>
+);
+
+const IconChevron = ({ isOpen }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    style={{
+      transform: isOpen ? 'rotate(180deg)' : 'rotate(0)',
+      transition: 'transform 0.3s ease'
+    }}
+  >
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>
+);
+
+IconChevron.propTypes = {
+  isOpen: PropTypes.bool
+};
+
+const IconPages = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+    <polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+);
+
+const IconHome = () => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="20" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+  </svg>
+);
+
+const IconBlog = () => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="20" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+    <polyline points="14 2 14 8 20 8"></polyline>
+  </svg>
+);
+
+const IconInfo = () => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="20" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="16" x2="12" y2="12"></line>
+    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+  </svg>
+);
+
+const IconMessage = () => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="20" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+  </svg>
+);
+
+const IconLock = () => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="20" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+  </svg>
+);
+
 const MobileMenu = () => {
-  // PRESERVED: All existing state
   const [isOpen, setIsOpen] = useState(false);
   const [hasTransitionEnded, setHasTransitionEnded] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -67,20 +226,18 @@ const MobileMenu = () => {
   const [isDocsModalOpen, setIsDocsModalOpen] = useState(false);
   const [isDocsModalClosing, setIsDocsModalClosing] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
-  // NEW: Multi-step onboarding modal state
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
+  const [isPagesOpen, setIsPagesOpen] = useState(false);
 
   const navigate = useNavigate();
   const { logout } = useLogout();
-  const { applications, dispatch: applicationsDispatch } =
-    useVisaApplications();
+  const { applications, dispatch: applicationsDispatch } = useVisaApplications();
 
   const [userId, setUserId] = useState(null);
   const menuRef = useRef();
   const iconRef = useRef();
   const { user, userType } = useUser();
 
-  // PRESERVED: All existing useEffect hooks
   useEffect(() => {
     getCurrentUser().then((user) => {
       if (user) {
@@ -109,23 +266,14 @@ const MobileMenu = () => {
   }, []);
 
   useEffect(() => {
-    if (!isOpen) {
-      const timeout = setTimeout(() => {
-        setHasTransitionEnded(true);
-      }, 400);
-      return () => clearTimeout(timeout);
-    } else {
-      setHasTransitionEnded(false);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape") {
         if (isDocsModalOpen) {
           closeDocsModal();
         } else if (showOnboardingModal) {
           setShowOnboardingModal(false);
+        } else if (isPagesOpen) {
+          setIsPagesOpen(false);
         } else if (isOpen) {
           setIsOpen(false);
         }
@@ -136,9 +284,19 @@ const MobileMenu = () => {
     return () => {
       window.removeEventListener("keydown", handleEscape);
     };
-  }, [isDocsModalOpen, showOnboardingModal, isOpen]);
+  }, [isDocsModalOpen, showOnboardingModal, isPagesOpen, isOpen]);
 
-  // PRESERVED: All existing queries
+  useEffect(() => {
+    if (!isOpen) {
+      const timeout = setTimeout(() => {
+        setHasTransitionEnded(true);
+      }, 400);
+      return () => clearTimeout(timeout);
+    } else {
+      setHasTransitionEnded(false);
+    }
+  }, [isOpen]);
+
   const userSelectionsQuery = useQuery({
     queryKey: ["userSelectionsNav", userId],
     queryFn: () => fetchUserSelectionsDash(userId),
@@ -155,7 +313,6 @@ const MobileMenu = () => {
     enabled: !!documentNames.length,
   });
 
-  // PRESERVED: All existing handlers
   const handleProfileClick = () => {
     navigate("/account");
     setIsOpen(false);
@@ -252,17 +409,13 @@ const MobileMenu = () => {
     setIsOpen(false);
   };
 
-  // UPDATED: Use MultiStepOnboardingModal for all "get started" actions
   const handleGetStarted = () => {
     setShowOnboardingModal(true);
-    setIsOpen(false); // Close mobile menu
+    setIsOpen(false);
   };
 
-  // NEW: Handle onboarding completion - same as MainNav.jsx
   const handleOnboardingComplete = () => {
     setShowOnboardingModal(false);
-
-    // Force page refresh to update dashboard
     console.log("Onboarding completed, refreshing page to update dashboard");
     window.location.reload();
   };
@@ -272,25 +425,9 @@ const MobileMenu = () => {
     setIsOpen(false);
   };
 
-  // NEW: Handlers for new visitors (non-breaking additions)
   const getNewVisitorInitial = () => "👋";
   const getNewVisitorName = () => "Hoş Geldiniz!";
   const getNewVisitorEmail = () => "Vize başvuru sürecinizi başlatın";
-
-  const IconSettings = () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-      <circle cx="12" cy="12" r="3"></circle>
-    </svg>
-  );
 
   if (userSelectionsQuery.isLoading || documentsQuery.isLoading) {
     return <div>Loading...</div>;
@@ -300,7 +437,6 @@ const MobileMenu = () => {
     return <div>Error loading data.</div>;
   }
 
-  // NEW: Check for new visitors (ADDITIVE logic)
   const isNewVisitor = userType === "new_visitor" && !isAnonymous;
 
   return (
@@ -328,7 +464,6 @@ const MobileMenu = () => {
       >
         <MenuContents>
           <div className="top-section">
-            {/* NEW: Special profile section for new visitors */}
             {isNewVisitor ? (
               <>
                 <ProfileInfoContainer>
@@ -341,7 +476,6 @@ const MobileMenu = () => {
                   </ProfileHeader>
                 </ProfileInfoContainer>
 
-                {/* UPDATED: Use handleGetStarted instead of ModalSignup */}
                 <CreateAccountButton onClick={handleGetStarted}>
                   <IconUpgrade />
                   Hemen Başlayın
@@ -356,7 +490,6 @@ const MobileMenu = () => {
               </>
             ) : (
               <>
-                {/* PRESERVED: Existing profile section for other users */}
                 <ProfileInfoContainer>
                   <ProfileHeader>
                     <Avatar isAnonymous={isAnonymous}>{getInitial()}</Avatar>
@@ -367,13 +500,80 @@ const MobileMenu = () => {
                   </ProfileHeader>
                 </ProfileInfoContainer>
 
-                {/* UPDATED: Anonymous user account creation with MultiStepOnboardingModal */}
                 {isAnonymous && (
                   <CreateAccountButton onClick={handleGetStarted}>
                     <IconUpgrade />
                     Hesap Oluştur
                   </CreateAccountButton>
                 )}
+
+                <NavButton 
+                  onClick={() => setIsPagesOpen(!isPagesOpen)}
+                  style={{ justifyContent: 'space-between' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <IconPages />
+                    <span>Sayfalar</span>
+                  </div>
+                  <IconChevron isOpen={isPagesOpen} />
+                </NavButton>
+
+                <AccordionContent isOpen={isPagesOpen}>
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconHome />
+                    <span>Ana Sayfa</span>
+                  </SubNavButton>
+                  
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/blog');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconBlog />
+                    <span>Blog</span>
+                  </SubNavButton>
+                  
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/hakkimizda');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconInfo />
+                    <span>Hakkımızda</span>
+                  </SubNavButton>
+                  
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/iletisim');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconMessage />
+                    <span>İletişim</span>
+                  </SubNavButton>
+                  
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/gizlilik-politikasi');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconLock />
+                    <span>Yasal & Gizlilik</span>
+                  </SubNavButton>
+                </AccordionContent>
 
                 <NavButton onClick={openDocsModal}>
                   <HiDocument size={22} />
@@ -382,7 +582,6 @@ const MobileMenu = () => {
 
                 <Divider />
 
-                {/* PRESERVED: Applications section */}
                 <div className="applications-section">
                   {applications.map((app) => (
                     <ApplicationLink
@@ -410,7 +609,6 @@ const MobileMenu = () => {
                   ))}
                 </div>
 
-                {/* UPDATED: New application button uses MultiStepOnboardingModal */}
                 <NavButton onClick={handleGetStarted}>
                   <HiPlus size={22} />
                   <span>Yeni Başvuru</span>
@@ -422,7 +620,6 @@ const MobileMenu = () => {
           <div className="bottom-section">
             <Divider />
 
-            {/* PRESERVED: Profile settings for non-anonymous users */}
             {!isAnonymous && !isNewVisitor && (
               <NavButton onClick={handleProfileClick}>
                 <IconSettings />
@@ -430,7 +627,6 @@ const MobileMenu = () => {
               </NavButton>
             )}
 
-            {/* PRESERVED: Logout button (hidden for new visitors) */}
             {!isNewVisitor && (
               <NavButton onClick={handleLogout} style={{ color: "#e74c3c" }}>
                 <IconLogout />
@@ -440,13 +636,11 @@ const MobileMenu = () => {
 
             <Divider />
 
-            {/* PRESERVED: Dark Mode Toggle */}
             <DarkModeToggle />
           </div>
         </MenuContents>
       </MenuContainer>
 
-      {/* PRESERVED: Delete confirmation modal */}
       {showDeleteModal && (
         <ModalOverlay onClick={closeDeleteModal}>
           <ConfirmationModal onClick={(e) => e.stopPropagation()}>
@@ -466,7 +660,6 @@ const MobileMenu = () => {
         </ModalOverlay>
       )}
 
-      {/* PRESERVED: Documents modal */}
       {isDocsModalOpen && (
         <DocsModalOverlay
           isClosing={isDocsModalClosing}
@@ -485,7 +678,6 @@ const MobileMenu = () => {
         </DocsModalOverlay>
       )}
 
-      {/* NEW: Multi-step onboarding modal - replaces ModalSignup */}
       <MultiStepOnboardingModal
         isOpen={showOnboardingModal}
         onClose={handleOnboardingComplete}
