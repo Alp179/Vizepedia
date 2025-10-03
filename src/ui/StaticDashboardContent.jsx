@@ -763,9 +763,6 @@ const StaticDashboardContent = () => {
             Bu sayfa, Vizepedia&apos;daki <strong>tüm belge havuzunu</strong> örnek olarak göstermek için demo olarak hazırlanmıştır.
           </InfoText>
           
-          <InfoText>
-            👉 <strong>Başvuru sürecinizi başlattığınızda</strong>, verdiğiniz cevaplara göre <strong>sadece sizin başvurunuza özel belgeler</strong> listelenecek. Böylece vakit kaybetmeden ihtiyacınız olan adımları takip edebileceksiniz.
-          </InfoText>
           
           <CTABox>
             <h3>🔑 Hemen Başlayın ve Kişiselleştirilmiş Belgelerinize Ulaşın</h3>

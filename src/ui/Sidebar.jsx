@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import Logo from "./Logo";
 import MainNav from "./MainNav";
 import BlogLogo from "./BlogLogo";
+import DarkModeToggle from "./DarkModeToggle"
 // import Uploader from "../data/Uploader";
 
 const StyledSidebar = styled.aside`
@@ -19,15 +20,17 @@ const StyledSidebar = styled.aside`
   }
 `;
 
-const Divider = styled.div`
-  height: 1px;
-  width: 80%;
-  margin: 20px auto 10px auto;
-  background: var(--color-grey-600);
-  @media (max-height: 800px) {
-    margin: 10px auto 0 auto;
-  }
+const BottomSection = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+border-top: 1px solid var(--color-grey-600);
+padding-top: 12px;
+margin-top: auto;
+margin-bottom: 12px;
 `;
+
 
 function Sidebar() {
   return (
@@ -35,8 +38,10 @@ function Sidebar() {
       <Logo variant="dash" />
       <MainNav />
       {/* <Uploader /> */}
-      <Divider />
+      <BottomSection>
+      <DarkModeToggle />
       <BlogLogo variant="sidebar"/>
+      </BottomSection>
     </StyledSidebar>
   );
 }
