@@ -254,11 +254,13 @@ const InfoSection = styled.div`
   }
 
   @media (max-width: 710px) {
-    margin-top: 60px;
+    margin-top: 80px;
     margin-left: 0;
     margin-right: 0;
     padding: 0;
   }
+  
+  @media ()
 `;
 
 const NoticeCard = styled.div`
@@ -302,11 +304,11 @@ const InfoTitle = styled.h2`
   }
   
   @media (max-width: 768px) {
-    font-size: 22px;
+    font-size: 20px;
     margin-bottom: 16px;
     
     span {
-      font-size: 26px;
+      font-size: 24px;
     }
   }
 `;

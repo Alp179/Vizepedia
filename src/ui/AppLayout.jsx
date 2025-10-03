@@ -48,7 +48,7 @@ const Main = styled.main`
 
   @media (max-width: 710px) {
     /* Mobilde padding'i azalt ve height'i serbest bırak */
-    padding-top: 3rem; /* 4rem -> 3rem */
+    padding-top: 0; 
     min-height: auto; /* min-height kaldır */
     height: auto; /* İçeriğe göre height */
   }
@@ -100,12 +100,12 @@ const Container = styled.div`
     margin-left: auto;
     margin-right: auto;
     gap: 2rem; /* Gap azalt: 3.2rem -> 2rem */
-    padding: 0 10px; /* Yan padding ekle */
+    padding: 0; /* Yan padding ekle */
   }
 
   @media (max-width: 450px) {
     gap: 1.5rem; /* Daha da azalt */
-    padding: 0 5px;
+    padding: 0;
   }
 `;
 

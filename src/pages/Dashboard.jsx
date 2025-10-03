@@ -63,7 +63,7 @@ const CustomRow = styled(Row)`
   }
   padding: 0;
   @media (max-width: 710px) {
-    margin: 60px auto 10px auto;
+    margin: 100px auto 10px auto;
     justify-content: center;
   }
 `;
@@ -86,7 +86,6 @@ const DashboardContainer = styled.div`
     flex-flow: column;
     justify-content: flex-start;
     margin-right: auto;
-    padding-top: 10px;
     background: linear-gradient(
       rgba(0, 0, 0, 0.4) 0%,
       rgba(0, 0, 0, 0.1) 40%,
@@ -119,10 +118,11 @@ const BannersContainer = styled.div`
   }
 
   @media (max-width: 710px) {
-    margin: 60px auto 0 auto;
+    margin: 100px auto -100px auto;
     width: 450px;
   }
   @media (max-width: 500px) {
+  margin-top: 80px;
     width: 100%;
   }
 `;
