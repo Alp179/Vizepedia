@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import styled from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react"; // ✅ useCallback eklendi
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
@@ -16,7 +16,7 @@ import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
-import supabase from "../services/supabase"; // ADDED: Import supabase
+import supabase from "../services/supabase";
 import SEO from "../components/SEO";
 import JsonLd from "../components/JsonLd";
 
@@ -28,31 +28,6 @@ import {
   buildPaginatedUrl,
   getPageFromSearch,
 } from "../utils/seoHelpers";
-
-// Demo documents for fallback
-const DEMO_PLANNED_DOCUMENTS = [
-  {
-    id: 74,
-    docName: "SGK İşe Giriş Belgesi",
-    docDescription:
-      "Başvuru sahibinin mevcut işine başlangıç tarihini gösteren resmi belge.",
-    docImage:
-      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/isegiris.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9pc2VnaXJpcy5wbmciLCJpYXQiOjE3NDg3ODY1MzAsImV4cCI6MTE",
-    docType: "İş Belgesi",
-    docStage: "planla",
-    docSource: "e-Devlet / SGK",
-    docSourceLink:
-      "https://www.turkiye.gov.tr/sgk-esgkuyg-esgksifre-ise-giris-isten-ayrilis",
-    referenceLinks: "https://www.turkiye.gov.tr/sgk-ise-giris-bildirgesi",
-    referenceName: "e-Devlet – SGK İşe Giriş Bildirgesi",
-    docImportant:
-      "\n- İşe giriş tarihi açıkça görünmeli.\n- Başvuru sahibine ait olmalı.\n- Barkodlu olmalı.",
-    docWhere: "e-Devlet üzerinden alınabilir.",
-    is_required: true,
-    order_index: 4,
-    estimatedCompletionTime: "1-2 gün",
-  },
-];
 
 const DEMO_USER_DATA = {
   id: 405,
@@ -66,7 +41,7 @@ const DEMO_COMPLETED_DOCUMENTS = {
   },
 };
 
-// NEW: Function to fetch ALL documents from Supabase for demo mode
+// Function to fetch ALL documents from Supabase for demo mode
 const fetchAllDocumentsForDemo = async () => {
   console.log("🔄 Fetching all documents from Supabase for demo mode...");
   
@@ -84,7 +59,7 @@ const fetchAllDocumentsForDemo = async () => {
   return data || [];
 };
 
-// Styled components (keeping all existing styles - same as ReadyDocumentDetail)
+// Styled components (keeping all existing styles)
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -319,6 +294,7 @@ const DocProgress = styled.div`
   z-index: 10;
 
   @media (max-width: 680px) {
+  flex-wrap: wrap;
     position: static;
     transform: none;
     margin: 10px auto;
@@ -398,7 +374,6 @@ const ButtonsContainer = styled.div`
   display: flex;
   gap: 15px;
   margin-top: 5px;
-  justify-content: center;
 
   @media (max-width: 680px) {
     flex-direction: column;
@@ -412,7 +387,6 @@ const StyledButtonsContainer = styled(ButtonsContainer)`
     order: 4;
   }
 `;
-
 
 const SourceButton = styled.button`
   display: flex;
@@ -513,13 +487,18 @@ const PlannedDocumentDetail = () => {
   const description =
     "Vize başvurunuz için önceden planlamanız gereken belgeleri keşfedin. Hazırlık süreçleri ve ipuçlarıyla başvurunuzu güçlendirin.";
 
-  // NEW: Query to fetch all documents for demo mode
+  // Query to fetch all documents for demo mode
   const { data: allDocumentsForDemo } = useQuery({
     queryKey: ["allDocumentsForDemo"],
     queryFn: fetchAllDocumentsForDemo,
     enabled: isBotOrNewVisitor,
     staleTime: 10 * 60 * 1000,
   });
+
+
+  useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
 
   // Bot/new visitor URL handling
   useEffect(() => {
@@ -556,13 +535,13 @@ const PlannedDocumentDetail = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // NEW: Function to get documents to use
-  const getDocumentsToUse = () => {
+  // ✅ Memoized function with useCallback
+  const getDocumentsToUse = useCallback(() => {
     if (isBotOrNewVisitor) {
-      return allDocumentsForDemo || DEMO_PLANNED_DOCUMENTS;
+      return allDocumentsForDemo;
     }
     return documents;
-  };
+  }, [isBotOrNewVisitor, allDocumentsForDemo, documents]);
 
   // User detection
   useEffect(() => {
@@ -583,7 +562,7 @@ const PlannedDocumentDetail = () => {
     }
   }, [isBotOrNewVisitor, isAnonymous, dispatch]);
 
-  // UPDATED: Document initialization with real documents
+  // ✅ Document initialization with proper dependencies
   useEffect(() => {
     const docs = getDocumentsToUse();
     if (!docs) return;
@@ -614,9 +593,7 @@ const PlannedDocumentDetail = () => {
       }
     }
   }, [
-    isBotOrNewVisitor,
-    documents,
-    allDocumentsForDemo,
+    getDocumentsToUse, // ✅ Now properly memoized
     slugParam,
     setSelectedDocument,
     selectedDocument,
@@ -624,7 +601,7 @@ const PlannedDocumentDetail = () => {
     navigate,
   ]);
 
-  // UPDATED: Current document index effect
+  // ✅ Current document index effect with proper dependencies
   useEffect(() => {
     if (selectedDocument) {
       const documentsToUse = getDocumentsToUse();
@@ -638,7 +615,7 @@ const PlannedDocumentDetail = () => {
         setCurrentDocumentIndex(index);
       }
     }
-  }, [selectedDocument, documents, allDocumentsForDemo, isBotOrNewVisitor]);
+  }, [selectedDocument, getDocumentsToUse]); // ✅ Simplified dependencies
 
   if (!selectedDocument) {
     return <Spinner />;
@@ -781,7 +758,7 @@ const PlannedDocumentDetail = () => {
     }
   };
 
-  // UPDATED: Navigation handler with real documents
+  // Navigation handler
   const handleNavigation = (direction) => {
     const docsToUse = getDocumentsToUse();
     if (!docsToUse) return;
@@ -815,7 +792,7 @@ const PlannedDocumentDetail = () => {
     }
   };
 
-  // UPDATED: Get planned documents with real documents
+  // Get planned documents
   const plannedDocuments = (() => {
     const documentsToUse = getDocumentsToUse();
     return documentsToUse
@@ -989,6 +966,7 @@ const PlannedDocumentDetail = () => {
                 <ActionButton
                   onClick={handleAction}
                   isCompleted={isCompleted}
+                    className="action-button"
                 >
                   {isCompleted ? "Tamamlandı" : "Tamamla"}
                 </ActionButton>

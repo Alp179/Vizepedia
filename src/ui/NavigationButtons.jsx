@@ -86,63 +86,67 @@ const NavigationButtons = ({
   useEffect(() => {
     // Butonları konumlandırma fonksiyonu
     const adjustNavigationButtons = () => {
-      const targetButton = document.querySelector(".action-button");
-      const leftButton = document.querySelector(".left");
-      const rightButton = document.querySelector(".right");
-      const container = document.querySelector(".nav-buttons-container");
-      
-      if (!leftButton || !rightButton || !container) return;
+  const targetButton = document.querySelector(".action-button");
+  const leftButton = document.querySelector(".left");
+  const rightButton = document.querySelector(".right");
+  const container = document.querySelector(".nav-buttons-container");
+  
+  if (!leftButton || !rightButton || !container) return;
 
-      // 710px değerine göre farklı konumlandırma
-      if (window.innerWidth > 710) {
-        // Büyük ekranlarda ekranın dikey ortasına hizala
-        container.style.top = "50%";
-        container.style.position = "fixed";
-        container.style.zIndex = "1000";
-        
-        const buttonRadius = window.innerWidth <= 680 ? 22.5 : 25; // Button height / 2
+  // 710px değerine göre farklı konumlandırma
+  if (window.innerWidth > 710) {
+    // Büyük ekranlarda ekranın dikey ortasına hizala
+    container.style.top = "50%";
+    container.style.position = "fixed";
+    container.style.zIndex = "1000";
+    container.style.opacity = "1";
+    
+    const buttonRadius = window.innerWidth <= 680 ? 22.5 : 25;
+
+    leftButton.style.position = "absolute";
+    leftButton.style.top = `${-buttonRadius}px`;
+    leftButton.style.left = window.innerWidth <= 680 ? "10px" : "20px";
+
+    rightButton.style.position = "absolute";
+    rightButton.style.top = `${-buttonRadius}px`;
+    rightButton.style.right = window.innerWidth <= 680 ? "10px" : "20px";
+  } else {
+    // 710px ve altında "Tamamla" butonuyla hizala
+    if (targetButton) {
+      const buttonRect = targetButton.getBoundingClientRect();
+      const verticalCenter = buttonRect.top + buttonRect.height / 2;
+      
+      container.style.top = `${verticalCenter}px`;
+      container.style.position = "fixed";
+      container.style.zIndex = "1000";
+      
+      if (window.innerWidth <= 680) {
+        const buttonRadius = 22.5;
 
         leftButton.style.position = "absolute";
         leftButton.style.top = `${-buttonRadius}px`;
-        leftButton.style.left = window.innerWidth <= 680 ? "10px" : "20px";
+        leftButton.style.left = "10px";
 
         rightButton.style.position = "absolute";
         rightButton.style.top = `${-buttonRadius}px`;
-        rightButton.style.right = window.innerWidth <= 680 ? "10px" : "20px";
+        rightButton.style.right = "10px";
       } else {
-        // 710px ve altında "Tamamla" butonuyla hizala
-        if (targetButton) {
-          const buttonRect = targetButton.getBoundingClientRect();
-          const verticalCenter = buttonRect.top + buttonRect.height / 2;
-          
-          container.style.top = `${verticalCenter}px`;
-          container.style.position = "fixed";
-          container.style.zIndex = "1000";
-          
-          // Mobil görünümde farklı stil
-          if (window.innerWidth <= 680) {
-            const buttonRadius = 22.5; // Button height (45px) / 2
+        leftButton.style.position = "absolute";
+        leftButton.style.top = "-25px";
+        leftButton.style.left = "20px";
 
-            leftButton.style.position = "absolute";
-            leftButton.style.top = `${-buttonRadius}px`;
-            leftButton.style.left = "10px";
-
-            rightButton.style.position = "absolute";
-            rightButton.style.top = `${-buttonRadius}px`;
-            rightButton.style.right = "10px";
-          } else {
-            // 680px ile 710px arası görünümde stiller
-            leftButton.style.position = "absolute";
-            leftButton.style.top = "-25px"; // Button height (50px) / 2
-            leftButton.style.left = "20px";
-
-            rightButton.style.position = "absolute";
-            rightButton.style.top = "-25px"; // Button height (50px) / 2
-            rightButton.style.right = "20px";
-          }
-        }
+        rightButton.style.position = "absolute";
+        rightButton.style.top = "-25px";
+        rightButton.style.right = "20px";
       }
-    };
+    } else {
+      // ✅ targetButton henüz yüklenmemişse geçici olarak gizle
+      container.style.opacity = "0";
+      // 100ms sonra tekrar dene
+      setTimeout(adjustNavigationButtons, 100);
+    }
+  }
+};
 
     // Sayfa yüklendiğinde ve scroll edildiğinde butonları hizala
     const handleScroll = () => {

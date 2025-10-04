@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import styled from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react"; // ✅ useCallback eklendi
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
@@ -16,7 +16,7 @@ import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
-import supabase from "../services/supabase"; // ADDED: Import supabase
+import supabase from "../services/supabase";
 import SEO from "../components/SEO";
 import JsonLd from "../components/JsonLd";
 
@@ -28,50 +28,6 @@ import {
   buildPaginatedUrl,
   getPageFromSearch,
 } from "../utils/seoHelpers";
-
-// Demo documents for fallback
-const DEMO_WITHUS_DOCUMENTS = [
-  {
-    id: 73,
-    docName: "Faaliyet Belgesi",
-    docDescription:
-      "Şirketin yasal olarak faal olduğunu gösteren resmi kayıt belgesi.",
-    docImage:
-      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/faaliyet.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9mYWFsaXlldC5wbmciLCJpYXQiOjE3NDg3ODkyMDUsImV4cCI6NjU0ODc0MTIwNX0.GKB9NBik-KIDZhIAuiYHTU5FEEdiaK5fDdBZnbj7ivk",
-    docType: "Şirket Belgesi",
-    docStage: "bizimle",
-    docSource: "Ticaret Odası",
-    docSourceLink: null,
-    referenceLinks: "https://idata.com.tr/tr/",
-    referenceName: "iDATA – Şirket Belgeleri",
-    docImportant:
-      "\n- Ticaret Odası tarafından düzenlenmiş olmalı.\n- Şirket adı, faaliyet alanı ve sicil numarası yer almalı.\n- Son 6 ay içinde alınmış olmalı.",
-    docWhere: "İlgili Ticaret Odası'ndan alınabilir.",
-    is_required: true,
-    order_index: 8,
-    estimatedCompletionTime: "Vizepedia ile",
-  },
-  {
-    id: 90,
-    docName: "Seyahat Sağlık Sigortası",
-    docDescription:
-      "Seyahat süresince yurt dışında geçerli, zorunlu seyahat sağlık sigortası poliçesi.",
-    docImage:
-      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/sigorta.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9zaWdvcnRhLnBuZyIsImlhdCI6MTc0ODc4OTIwNSwiZXhwIjo2NTQ4NzQxMjA1fQ.j2i7Wl6vZaRfDhkEWgA_M3WqHvJdHsDTmPV2e-8cDwE",
-    docType: "Sigorta Belgesi",
-    docStage: "bizimle",
-    docSource: "Sigorta Şirketi",
-    docSourceLink: null,
-    referenceLinks: "https://idata.com.tr/tr/",
-    referenceName: "iDATA – Sigorta Rehberi",
-    docImportant:
-      "\n- Minimum 30.000 Euro teminat tutarı.\n- Seyahat tarihlerini tam kapsamalı.\n- Shengen ülkelerinde geçerli olmalı.",
-    docWhere: "Vizepedia ile hızlı ve güvenli temin edilir.",
-    is_required: true,
-    order_index: 9,
-    estimatedCompletionTime: "Vizepedia ile",
-  },
-];
 
 const DEMO_USER_DATA = {
   id: 405,
@@ -85,7 +41,7 @@ const DEMO_COMPLETED_DOCUMENTS = {
   },
 };
 
-// NEW: Function to fetch ALL documents from Supabase for demo mode
+// Function to fetch ALL documents from Supabase for demo mode
 const fetchAllDocumentsForDemo = async () => {
   console.log("🔄 Fetching all documents from Supabase for demo mode...");
   
@@ -341,6 +297,7 @@ const DocProgress = styled.div`
     position: static;
     transform: none;
     margin: 10px auto;
+    flex-wrap: wrap;
   }
 `;
 
@@ -417,7 +374,6 @@ const ButtonsContainer = styled.div`
   display: flex;
   gap: 15px;
   margin-top: 5px;
-  justify-content: center;
 
   @media (max-width: 680px) {
     flex-direction: column;
@@ -531,13 +487,17 @@ const WithUsDocumentDetail = () => {
   const description =
     "Uzman ekibimizle birlikte hazırlayabileceğiniz belgeleri keşfedin. Profesyonel destek alarak başvurunuzu güçlendirin.";
 
-  // NEW: Query to fetch all documents for demo mode
+  // Query to fetch all documents for demo mode
   const { data: allDocumentsForDemo } = useQuery({
     queryKey: ["allDocumentsForDemo"],
     queryFn: fetchAllDocumentsForDemo,
     enabled: isBotOrNewVisitor,
     staleTime: 10 * 60 * 1000,
   });
+
+  useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
 
   // Bot/new visitor URL handling
   useEffect(() => {
@@ -574,13 +534,13 @@ const WithUsDocumentDetail = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // NEW: Function to get documents to use
-  const getDocumentsToUse = () => {
+  // ✅ Memoized function with useCallback
+  const getDocumentsToUse = useCallback(() => {
     if (isBotOrNewVisitor) {
-      return allDocumentsForDemo || DEMO_WITHUS_DOCUMENTS;
+      return allDocumentsForDemo;
     }
     return documents;
-  };
+  }, [isBotOrNewVisitor, allDocumentsForDemo, documents]);
 
   // User detection
   useEffect(() => {
@@ -601,7 +561,7 @@ const WithUsDocumentDetail = () => {
     }
   }, [isBotOrNewVisitor, isAnonymous, dispatch]);
 
-  // UPDATED: Document initialization with real documents
+  // ✅ Document initialization with proper dependencies
   useEffect(() => {
     const docs = getDocumentsToUse();
     if (!docs) return;
@@ -632,9 +592,7 @@ const WithUsDocumentDetail = () => {
       }
     }
   }, [
-    isBotOrNewVisitor,
-    documents,
-    allDocumentsForDemo,
+    getDocumentsToUse, // ✅ Now properly memoized
     slugParam,
     setSelectedDocument,
     selectedDocument,
@@ -642,7 +600,7 @@ const WithUsDocumentDetail = () => {
     navigate,
   ]);
 
-  // UPDATED: Current document index effect
+  // ✅ Current document index effect with proper dependencies
   useEffect(() => {
     if (selectedDocument) {
       const documentsToUse = getDocumentsToUse();
@@ -656,7 +614,7 @@ const WithUsDocumentDetail = () => {
         setCurrentDocumentIndex(index);
       }
     }
-  }, [selectedDocument, documents, allDocumentsForDemo, isBotOrNewVisitor]);
+  }, [selectedDocument, getDocumentsToUse]); // ✅ Simplified dependencies
 
   if (!selectedDocument) {
     return <Spinner />;
@@ -799,7 +757,7 @@ const WithUsDocumentDetail = () => {
     }
   };
 
-  // UPDATED: Navigation handler with real documents
+  // Navigation handler
   const handleNavigation = (direction) => {
     const docsToUse = getDocumentsToUse();
     if (!docsToUse) return;
@@ -833,7 +791,7 @@ const WithUsDocumentDetail = () => {
     }
   };
 
-  // UPDATED: Get withus documents with real documents
+  // Get withus documents
   const withUsDocuments = (() => {
     const documentsToUse = getDocumentsToUse();
     return documentsToUse
@@ -1007,6 +965,7 @@ const WithUsDocumentDetail = () => {
                 <ActionButton
                   onClick={handleAction}
                   isCompleted={isCompleted}
+                    className="action-button"
                 >
                   {isCompleted ? "Tamamlandı" : "Tamamla"}
                 </ActionButton>

@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
-
 import styled from "styled-components";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react"; // ✅ useCallback eklendi
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { getCurrentUser } from "../services/apiAuth";
 import { useSelectedDocument } from "../context/SelectedDocumentContext";
@@ -16,8 +15,7 @@ import NavigationButtons from "../ui/NavigationButtons";
 import ImageViewer from "../ui/ImageViewer";
 import { AnonymousDataService } from "../utils/anonymousDataService";
 import { useUser } from "../features/authentication/useUser";
-import supabase from "../services/supabase"; // ADDED: Import supabase
-// Adding the required imports
+import supabase from "../services/supabase";
 import SEO from "../components/SEO";
 import JsonLd from "../components/JsonLd";
 
@@ -29,127 +27,6 @@ import {
   buildPaginatedUrl,
   getPageFromSearch,
 } from "../utils/seoHelpers";
-
-// Real demo data from your system (kept as fallback)
-const DEMO_DOCUMENTS = [
-  {
-    id: 70,
-    docName: "Biyometrik Fotoğraf",
-    docDescription:
-      "Uluslararası standartlara uygun, nötr yüz ifadesiyle çekilmiş ve arka fonu beyaz olan biyometrik fotoğraftır. Son 6 ay içinde çekilmiş olsa bile daha önceki bir Schengen vize başvurusunda kullanıldıysa yenisi gereklidir.",
-    docImage: "https://i.imgur.com/JXQjue1.png",
-    docType: "Kimlik Belgesi",
-    docStage: "hazir",
-    docSource: "Fotoğraf Stüdyosu",
-    docSourceLink: null,
-    referenceLinks:
-      "https://tuerkei.diplo.de/tr-tr/service/05-VisaEinreise/merkblatt-foto/2458222",
-    referenceName: "Almanya Konsolosluğu – Fotoğraf Kriterleri",
-    docImportant:
-      "\n- Son 6 ay içinde çekilmiş olmalı.\n- 35x45 mm ölçülerinde.\n- Gözlük, şapka, filtre kullanılmamalı.",
-    docWhere: "Fotoğraf stüdyolarında çekilir.",
-    is_required: true,
-    order_index: 1,
-  },
-  {
-    id: 75,
-    docName: "Kimlik Fotokopisi",
-    docDescription:
-      "Başvuru sahibinin kimliğini doğrulamak amacıyla kullanılan resmi bir belgedir. Nüfus cüzdanının veya yeni tip Türkiye Cumhuriyeti kimlik kartının önlü arkalı fotokopisi sunulmalıdır.",
-    docImage:
-      "https://cdn1.ntv.com.tr/gorsel/ASNCXnWfxUOSE9tPS9ti6Q.jpg?width=1000&mode=both&scale=both&v=1457001462520",
-    docType: "Kimlik Belgesi",
-    docStage: "hazir",
-    docSource: "Başvuru Sahibi",
-    docSourceLink: null,
-    referenceLinks: "https://idata.com.tr/tr/",
-    referenceName: "iDATA – Kimlik Belgeleri",
-    docImportant:
-      "\n- Bilgiler okunaklı ve tam olmalı.\n- Yeni tip çipli kimlik önerilir.\n- Tüm kenarları görünür şekilde taranmalı.",
-    docWhere: "Kimlik kartınızdan veya fotokopi cihazından temin edilir.",
-    is_required: true,
-    order_index: 2,
-  },
-  {
-    id: 67,
-    docName: "Pasaport",
-    docDescription:
-      "Geçerli, okunaklı ve yıpranmamış, uluslararası geçerliliği olan seyahat belgesi.",
-    docImage:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Turkish_Passport.svg/1024px-Turkish_Passport.svg.png",
-    docType: "Seyahat Belgesi",
-    docStage: "hazir",
-    docSource: "Nüfus Müdürlüğü",
-    docSourceLink: null,
-    referenceLinks: "https://visa.vfsglobal.com/tur/tr/deu/what-to-submit",
-    referenceName: "VFS Global – Gerekli Evraklar",
-    docImportant:
-      "\n- Başvuru bitiş tarihinden sonra en az 6 ay geçerlilik süresi olmalı.\n- En az 2 boş vize sayfası bulunmalı.\n- Son 10 yıl içinde düzenlenmiş olmalı.",
-    docWhere: "Nüfus ve Vatandaşlık İşleri Müdürlüklerinden alınır.",
-    is_required: true,
-    order_index: 6,
-  },
-  {
-    id: 77,
-    docName: "Nüfus Kayıt Örneği",
-    docDescription:
-      "Nüfus kayıt örneği, başvuru sahibinin kendisiyle birlikte aile bireylerini de gösteren resmi belgedir. E-Devlet üzerinden vukuatlı (detaylı) olarak alınmalı ve belgenin alt kısmındaki Düşünceler bölümü mutlaka görünür olmalıdır.",
-    docImage:
-      "https://online.fliphtml5.com/qatuj/hzjy/files/large/1.webp?1616318917&1616318917",
-    docType: "Kimlik Belgesi",
-    docStage: "hazir",
-    docSource: "e-Devlet",
-    docSourceLink:
-      "https://www.turkiye.gov.tr/nvi-nufus-kayit-ornegi-belgesi-sorgulama",
-    referenceLinks:
-      "https://www.turkiye.gov.tr/nvi-nufus-kayit-ornegi-belgesi-sorgulama",
-    referenceName: "e-Devlet – Nüfus Kayıt Örneği Sorgulama",
-    docImportant:
-      "\n- Düşünceler bölümü görünür olmalı.\n- Başvuru sahibine ait olmalı.\n- Son 6 ay içinde alınmış olmalı.",
-    docWhere: "e-Devlet üzerinden alınabilir.",
-    is_required: true,
-    order_index: 7,
-  },
-  {
-    id: 69,
-    docName: "İkametgah Belgesi",
-    docDescription:
-      "İkamet edilen adresin resmi kayıtlardaki karşılığını gösteren belgedir. Başvuru sahibinin güncel ve e-Devlet üzerinden alınmış ikamet bilgilerini içermelidir.",
-    docImage:
-      "https://imgv2-2-f.scribdassets.com/img/document/674042573/original/98365b2eef/1?v=1",
-    docType: "İkamet Belgesi",
-    docStage: "hazir",
-    docSource: "e-Devlet",
-    docSourceLink:
-      "https://www.turkiye.gov.tr/nvi-yerlesim-yeri-ve-diger-adres-belgesi-sorgulama",
-    referenceLinks: "https://idata.com.tr/tr/",
-    referenceName: "iDATA – Belgeler Listesi",
-    docImportant:
-      "\n- Son 6 ay içinde alınmış olmalı.\n- Başvuru sahibine ait olmalı.",
-    docWhere: "e-Devlet üzerinden alınabilir.",
-    is_required: true,
-    order_index: 9,
-  },
-  {
-    id: 88,
-    docName: "Otel Rezervasyonu",
-    docDescription:
-      "Seyahat süresince konaklama yapılacak yerleri gösteren otel veya konaklama rezervasyonudur. Tüm konaklama tarihleri başvuru formundaki tarihlerle uyumlu olmalıdır.",
-    docImage:
-      "https://ibygzkntdaljyduuhivj.supabase.co/storage/v1/object/sign/docphoto/otel%20rez.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InN0b3JhZ2UtdXJsLXNpZ25pbmcta2V5XzYwNGI3M2Y4LWUxMjEtNDU0ZS1iNTgyLWY3OWE0MGVhNzkyYyJ9.eyJ1cmwiOiJkb2NwaG90by9vdGVsIHJlei5wbmciLCJpYXQiOjE3NDg3ODM3MTIsImV4cCI6MjQyMDcxNjUxMn0.q3i2Cl3BAsfQbn7ULYcv3UNgvJq15b0TJLJboJvg1XA",
-    docType: "Konaklama Belgesi",
-    docStage: "hazir",
-    docSource: "Otel / Online Platform",
-    docSourceLink: null,
-    referenceLinks: "https://visa.vfsglobal.com/tur/tr/deu/what-to-submit",
-    referenceName: "VFS Global – Konaklama Belgeleri",
-    docImportant:
-      "\n- Konaklama tarihleri seyahati tam olarak kapsamalı.\n- Başvuru sahibinin adı rezervasyonda yer almalı.\n- Rezervasyon onaylı olmalı.",
-    docWhere: "Otel web siteleri veya online platformlardan alınabilir.",
-    is_required: true,
-    order_index: 8,
-  },
-];
 
 // Demo user data for bot/new visitors
 const DEMO_USER_DATA = {
@@ -165,11 +42,10 @@ const DEMO_COMPLETED_DOCUMENTS = {
     Pasaport: true,
     "Otel Rezervasyonu": true,
     "İkametgah Belgesi": true,
-    // Others intentionally left incomplete
   },
 };
 
-// NEW: Function to fetch ALL documents from Supabase for demo mode
+// Function to fetch ALL documents from Supabase for demo mode
 const fetchAllDocumentsForDemo = async () => {
   console.log("🔄 Fetching all documents from Supabase for demo mode...");
   
@@ -496,6 +372,7 @@ const DocProgress = styled.div`
     position: static;
     transform: none;
     margin: 10px auto;
+    flex-wrap: wrap;
   }
 `;
 
@@ -575,7 +452,6 @@ const StyledButtonsContainer = styled(ButtonsContainer)`
 `;
 
 const ReadyDocumentDetail = () => {
-  // All hooks at the top
   const params = useParams();
   const location = useLocation();
 
@@ -594,7 +470,6 @@ const ReadyDocumentDetail = () => {
     dispatch,
   } = useContext(DocumentsContext);
 
-  // User type detection
   const { user, userType } = useUser();
   const isAnonymous =
     userType === "anonymous" ||
@@ -621,19 +496,18 @@ const ReadyDocumentDetail = () => {
   const description =
     "Vize başvurunuz için gerekli tüm hazır belgeleri keşfedin. Doldurma ipuçları ve kritik alanlarla eksiksiz başvuru yapın.";
 
-  // NEW: Query to fetch all documents for demo mode
+  // Query to fetch all documents for demo mode
   const { data: allDocumentsForDemo } = useQuery({
     queryKey: ["allDocumentsForDemo"],
     queryFn: fetchAllDocumentsForDemo,
-    enabled: isBotOrNewVisitor, // Only fetch when in demo mode
-    staleTime: 10 * 60 * 1000, // Cache for 10 minutes
-    onSuccess: (data) => {
-      console.log("✅ All documents for demo query success:", data?.length, "documents");
-    },
-    onError: (error) => {
-      console.error("❌ All documents for demo query error:", error);
-    },
+    enabled: isBotOrNewVisitor,
+    staleTime: 10 * 60 * 1000,
   });
+
+
+  useEffect(() => {
+  window.scrollTo(0, 0);
+}, []);
 
   // Bot/new visitor URL handling
   useEffect(() => {
@@ -644,7 +518,7 @@ const ReadyDocumentDetail = () => {
     }
   }, [isBotOrNewVisitor, paramApplicationId, slugParam, navigate]);
 
-  // Query for real users (not bot/new visitors)
+  // Query for real users
   const { data: userSelections } = useQuery({
     queryKey: ["userSelections", userId, applicationId, userType],
     queryFn: () => {
@@ -670,14 +544,13 @@ const ReadyDocumentDetail = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // NEW: Function to get documents to use
-  const getDocumentsToUse = () => {
+  // ✅ Memoized function with useCallback
+  const getDocumentsToUse = useCallback(() => {
     if (isBotOrNewVisitor) {
-      // Use real documents from Supabase instead of hardcoded DEMO_DOCUMENTS
-      return allDocumentsForDemo || DEMO_DOCUMENTS; // Fallback to demo if Supabase fails
+      return allDocumentsForDemo;
     }
-    return documents; // Use regular documents for authenticated users
-  };
+    return documents;
+  }, [isBotOrNewVisitor, allDocumentsForDemo, documents]);
 
   // User detection
   useEffect(() => {
@@ -698,9 +571,9 @@ const ReadyDocumentDetail = () => {
     }
   }, [isBotOrNewVisitor, isAnonymous, dispatch]);
 
-  // UPDATED: Document initialization with real documents
+  // ✅ Document initialization with proper dependencies
   useEffect(() => {
-    const docs = getDocumentsToUse(); // CHANGED: Use real documents
+    const docs = getDocumentsToUse();
     if (!docs) return;
 
     const readyDocs = docs.filter((d) => d.docStage === "hazir");
@@ -729,9 +602,7 @@ const ReadyDocumentDetail = () => {
       }
     }
   }, [
-    isBotOrNewVisitor,
-    documents,
-    allDocumentsForDemo, // NEW: Added dependency
+    getDocumentsToUse, // ✅ Now properly memoized
     slugParam,
     setSelectedDocument,
     selectedDocument,
@@ -739,10 +610,10 @@ const ReadyDocumentDetail = () => {
     navigate,
   ]);
 
-  // UPDATED: Current document index effect
+  // ✅ Current document index effect with proper dependencies
   useEffect(() => {
     if (selectedDocument) {
-      const documentsToUse = getDocumentsToUse(); // CHANGED: Use real documents
+      const documentsToUse = getDocumentsToUse();
       if (documentsToUse) {
         const readyDocuments = documentsToUse.filter(
           (doc) => doc.docStage === "hazir"
@@ -753,7 +624,7 @@ const ReadyDocumentDetail = () => {
         setCurrentDocumentIndex(index);
       }
     }
-  }, [selectedDocument, documents, allDocumentsForDemo, isBotOrNewVisitor]); // UPDATED: Added dependencies
+  }, [selectedDocument, getDocumentsToUse]); // ✅ Simplified dependencies
 
   if (!selectedDocument) {
     return <Spinner />;
@@ -770,7 +641,7 @@ const ReadyDocumentDetail = () => {
     ? summarize(selectedDocument.benefits, 160)
     : "Belgenizi uzman ekibimizle hızlı ve eksiksiz hazırlayın.";
   const docKeywords = keywordize(
-    selectedDocument?.tags || [], // Boş array fallback ekledik
+    selectedDocument?.tags || [],
     `${docName}, hazır belge, şablon, Vizepedia`
   );
 
@@ -803,10 +674,8 @@ const ReadyDocumentDetail = () => {
 
     try {
       if (isBotOrNewVisitor) {
-        // Demo action for bot/new visitors
         const newStatus = !isCompleted;
 
-        // Update demo completed documents in context
         const updatedDemoCompleted = {
           ...DEMO_COMPLETED_DOCUMENTS,
           [DEMO_USER_DATA.id]: {
@@ -820,12 +689,10 @@ const ReadyDocumentDetail = () => {
           payload: updatedDemoCompleted,
         });
 
-        // Navigate back to demo dashboard
         navigate("/dashboard");
         return;
       }
 
-      // Real action logic for authenticated/anonymous users
       if (isAnonymous) {
         const correctApplicationId =
           AnonymousDataService.getConsistentApplicationId();
@@ -856,7 +723,6 @@ const ReadyDocumentDetail = () => {
           });
         }
       } else {
-        // Authenticated user logic
         if (!userId || !userSelections || userSelections.length === 0) return;
 
         const realApplicationId = userSelections[0].id;
@@ -890,7 +756,6 @@ const ReadyDocumentDetail = () => {
         }
       }
 
-      // Navigation logic
       if (user && userType === "authenticated") {
         navigate("/dashboard");
       } else if (applicationId && !applicationId.startsWith("anonymous-")) {
@@ -904,9 +769,9 @@ const ReadyDocumentDetail = () => {
     }
   };
 
-  // UPDATED: Navigation handler with real documents
+  // Navigation handler
   const handleNavigation = (direction) => {
-    const docsToUse = getDocumentsToUse(); // CHANGED: Use real documents
+    const docsToUse = getDocumentsToUse();
     if (!docsToUse) return;
 
     const readyDocs = docsToUse.filter((d) => d.docStage === "hazir");
@@ -938,25 +803,24 @@ const ReadyDocumentDetail = () => {
     }
   };
 
-  // UPDATED: Get ready documents with real documents
+  // Get ready documents
   const readyDocuments = (() => {
-    const documentsToUse = getDocumentsToUse(); // CHANGED: Use real documents
+    const documentsToUse = getDocumentsToUse();
     return documentsToUse
       ? documentsToUse.filter((doc) => doc.docStage === "hazir")
       : [];
   })();
 
-  // Pagination info
   const pageSize = 10;
   const currentPageDocs = readyDocuments;
 
-  // SEO for detail/list distinction
   const isDetail = !!selectedDocument;
   const seoTitle = isDetail
     ? `${docName} – Hazır Belge Şablonu | Vizepedia`
     : title;
   const seoDesc = isDetail ? docDescription : description;
   const seoUrl = isDetail ? docCanonical : canonical;
+
 
   return (
     <>
