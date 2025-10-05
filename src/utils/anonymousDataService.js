@@ -406,17 +406,31 @@ export class AnonymousDataService {
 
   // Check if this is a bot (no sessionStorage interactions for bots)
   static isBotUser() {
-    if (typeof window === 'undefined') return false;
+  if (typeof window === 'undefined') return false;
+  
+  const userAgent = navigator.userAgent.toLowerCase();
+  const botPatterns = [
+    // Search engine bots
+    'googlebot', 'bingbot', 'slurp', 'duckduckbot', 
+    'baiduspider', 'yandexbot',
     
-    const userAgent = navigator.userAgent.toLowerCase();
-    const botPatterns = [
-      'googlebot', 'bingbot', 'slurp', 'duckduckbot', 
-      'baiduspider', 'yandexbot', 'facebookexternalhit', 
-      'twitterbot', 'linkedinbot', 'whatsapp'
-    ];
+    // Social media bots
+    'facebookexternalhit', 'twitterbot', 'linkedinbot', 'whatsapp',
     
-    return botPatterns.some(pattern => userAgent.includes(pattern));
-  }
+    // CRITICAL: AdSense bots
+    'mediapartners-google',  // AdSense crawler
+    'adsbot-google',         // AdSense verification
+    'googlebot-image',
+    'googlebot-news',
+    'googlebot-video',
+    
+    // Other important crawlers
+    'crawler', 'spider', 'bot', 'scraper',
+    'check', 'monitor', 'validator'
+  ];
+  
+  return botPatterns.some(pattern => userAgent.includes(pattern));
+}
 
   // Get demo dashboard data for anonymous users
   static getDemoDashboardData() {
