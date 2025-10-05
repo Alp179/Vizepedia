@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useMemo } from "react";
-import Head from "next/head";
+import { useMemo, useEffect } from "react";
 
 export default function JsonLd({ data, id = null }) {
   // Her zaman çalışacak useMemo hook
@@ -22,7 +21,9 @@ export default function JsonLd({ data, id = null }) {
         typeof window !== "undefined" &&
         window.location?.hostname === "localhost"
       ) {
-        console.warn("JsonLd: Missing required @context or @type");
+        console.warn(
+          "JsonLd: JSON-LD verisi eksik: @context veya @type bulunamadı"
+        );
       }
     }
 
@@ -33,22 +34,40 @@ export default function JsonLd({ data, id = null }) {
         typeof window !== "undefined" &&
         window.location?.hostname === "localhost"
       ) {
-        console.error("JsonLd: Error stringifying data:", error);
+        console.error("JsonLd: JSON string oluşturma hatası:", error);
       }
       return null;
     }
   }, [data]);
 
+  // Script'i DOM'e eklemek
+  useEffect(() => {
+    if (!jsonLdString) return;
+
+    // Eğer zaten aynı ID'ye sahip bir script varsa, onu öncekini kaldır
+    const existingScript = document.getElementById(id);
+    if (existingScript) {
+      existingScript.remove();
+    }
+
+    // Yeni script oluştur ve ekle
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.id = id;
+    script.textContent = jsonLdString;
+
+    document.head.appendChild(script);
+
+    // Cleanup function (isteğe bağlı)
+    return () => {
+      const scriptToRemove = document.getElementById(id);
+      if (scriptToRemove) {
+        scriptToRemove.remove();
+      }
+    };
+  }, [jsonLdString, id]);
+
   if (!jsonLdString) return null;
 
-  return (
-    <Head>
-      <script
-        type="application/ld+json"
-        id={id}
-        dangerouslySetInnerHTML={{ __html: jsonLdString }}
-        key={id || `json-ld-${jsonLdString.slice(0, 50)}`}
-      />
-    </Head>
-  );
+  return null;
 }

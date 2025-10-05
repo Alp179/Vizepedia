@@ -482,8 +482,7 @@ function BlogDetail() {
       blog.section3_content || "",
     ].join(" ");
 
-    combinedText = combinedText.replace(/<[^>]*>/g, "");
-
+    combinedText = combinedText.replace(/<[^>]*>/g, " ");
     const wordsPerMinute = 200;
     const numberOfWords = combinedText.split(/\s/g).length;
     return Math.ceil(numberOfWords / wordsPerMinute);
@@ -721,7 +720,7 @@ function BlogDetail() {
       "@type": "Organization",
       name: "Vizepedia",
       logo: {
-        "@type": "ImageObject",
+        "@type": "imageObject",
         url: "https://www.vizepedia.com/logo-512.png",
       },
     },
