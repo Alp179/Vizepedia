@@ -816,23 +816,94 @@ const WithUsDocumentDetail = () => {
         noindex={false}
       />
 
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "Service",
-          name: `${docName} – Bizimle Belge`,
-          description: docDescription,
-          provider: {
-            "@type": "Organization",
-            name: "Vizepedia",
-            url: base,
-          },
-          areaServed: "TR",
-        }}
-      />
+      {/* ItemList sadece liste görünümünde (slug yokken) */}
+{!slugParam && (
+  <JsonLd
+    data={{
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: (withUsDocuments || []).map((doc, idx) => ({
+        "@type": "ListItem",
+        position: idx + 1,
+        name: doc.docName,
+        url: `${base}${path}/${toSlug(doc.docName)}`,
+      })),
+    }}
+  />
+)}
+
+{/* Breadcrumb sadece liste için */}
+{!selectedDocument && (
+  <JsonLd
+    data={{
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Ana Sayfa",
+          item: `${base}/`,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Bizimle Belgeler",
+          item: `${base}${path}`,
+        },
+      ],
+    }}
+  />
+)}
+
+{/* Breadcrumb sadece detay için */}
+{selectedDocument && (
+  <JsonLd
+    data={{
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Ana Sayfa",
+          item: `${base}/`,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Bizimle Belgeler",
+          item: `${base}/withus-documents`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: docName,
+          item: docCanonical,
+        },
+      ],
+    }}
+  />
+)}
+
+<JsonLd
+  data={{
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: `${docName} – Bizimle Belge`,
+    description: docDescription,
+    provider: {
+      "@type": "Organization",
+      name: "Vizepedia",
+      url: base,
+    },
+    areaServed: "TR",
+  }}
+/>
 
       <PageContainer>
         <NavigationButtons
+        aria-label={"navigasyon-butonları"}
           onPrevClick={() => handleNavigation("prev")}
           onNextClick={() => handleNavigation("next")}
           isPrevDisabled={currentDocumentIndex === 0}
@@ -963,6 +1034,7 @@ const WithUsDocumentDetail = () => {
                 )}
 
                 <ActionButton
+                aria-label={isCompleted ? "Belgeyi tamamlanmadı olarak işaretle" : "Belgeyi tamamlandı olarak işaretle"}
                   onClick={handleAction}
                   isCompleted={isCompleted}
                     className="action-button"

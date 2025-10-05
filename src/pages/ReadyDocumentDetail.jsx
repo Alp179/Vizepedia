@@ -931,6 +931,7 @@ const ReadyDocumentDetail = () => {
 
       <PageContainer>
         <NavigationButtons
+        aria-label={"navigasyon-butonları"}
           onPrevClick={() => handleNavigation("prev")}
           onNextClick={() => handleNavigation("next")}
           isPrevDisabled={currentDocumentIndex === 0}
@@ -1061,6 +1062,7 @@ const ReadyDocumentDetail = () => {
                 )}
 
                 <ActionButton
+                aria-label={isCompleted ? "Belgeyi tamamlanmadı olarak işaretle" : "Belgeyi tamamlandı olarak işaretle"}
                   onClick={handleAction}
                   isCompleted={isCompleted}
                   className="action-button"
