@@ -25,7 +25,6 @@ export default function SEO({
   wordCount,
   readingTime,
   estimatedReadingTime,
-  articlePublisher,
   articleBody,
   twitterCard = "summary_large_image",
   twitterSite = "@vizepedia",
@@ -34,7 +33,6 @@ export default function SEO({
   siteName = "Vizepedia",
   themeColor = "#004466",
   appleStatusBarStyle = "default",
-  
 }) {
   // ============================================
   // URL NORMALIZATION - SINGLE SOURCE OF TRUTH
@@ -42,7 +40,6 @@ export default function SEO({
   const BASE_URL = "https://www.vizepedia.com";
 
   const normalizeUrl = (rawUrl) => {
-    // If no URL provided, use current page pathname
     if (!rawUrl) {
       if (typeof window !== "undefined") {
         const pathname = window.location.pathname;
@@ -51,24 +48,20 @@ export default function SEO({
       return BASE_URL;
     }
 
-    // Already absolute and has www - return as is
     if (rawUrl.startsWith(BASE_URL)) {
       return rawUrl;
     }
 
-    // Absolute without www - fix it
     if (rawUrl.startsWith("https://vizepedia.com")) {
       return rawUrl.replace("https://vizepedia.com", BASE_URL);
     }
 
-    // Has http instead of https - fix it
     if (rawUrl.startsWith("http://")) {
       return rawUrl
         .replace("http://", "https://")
         .replace("vizepedia.com", "www.vizepedia.com");
     }
 
-    // Relative URL - make it absolute
     const cleanPath = rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`;
     return `${BASE_URL}${cleanPath}`;
   };
@@ -102,17 +95,34 @@ export default function SEO({
     ? "noindex,nofollow"
     : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1";
 
+  // ============================================
+  // PUBLISHED TIME FORMATTING
+  // ============================================
+  const formatPublishedTime = (time) => {
+    if (!time) return null;
+    const date = new Date(time);
+    return date.toISOString();
+  };
+
+  const formatModifiedTime = (time) => {
+    if (!time) return null;
+    const date = new Date(time);
+    return date.toISOString();
+  };
+
   return (
     <Helmet>
       {/* ============================================ */}
       {/* BASIC META TAGS */}
       {/* ============================================ */}
+      <meta charSet="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
       {title && <title>{title}</title>}
       {description && <meta name="description" content={description} />}
       <meta name="keywords" content={keywordsString} />
       <meta name="robots" content={robots} />
       <meta name="author" content={author} />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta name="theme-color" content={themeColor} />
       <meta name="msapplication-TileColor" content={themeColor} />
 
@@ -138,10 +148,9 @@ export default function SEO({
       {/* ============================================ */}
       {/* FAVICON & APP ICONS */}
       {/* ============================================ */}
-      <link rel="icon" href="/favicon.ico" sizes="any" />
-      <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+      <link rel="icon" href="/favicon.ico" />
+      <link rel="icon" type="image/svg+xml" href="/logo.png" />
       <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-      <link rel="manifest" href="/manifest.json" />
 
       {/* ============================================ */}
       {/* OPEN GRAPH TAGS */}
@@ -169,24 +178,31 @@ export default function SEO({
             <>
               <meta
                 property="article:published_time"
-                content={publishedTime}
+                content={formatPublishedTime(publishedTime)}
               />
-              <meta name="publish_date" content={publishedTime} />
+              <meta
+                name="publish_date"
+                content={formatPublishedTime(publishedTime)}
+              />
             </>
           )}
           {modifiedTime && (
-  <>
-    {/* Open Graph - Article için */}
-    <meta property="article:modified_time" content={modifiedTime} />
-    
-    {/* HTTP Header Simulation */}
-    <meta httpEquiv="last-modified" content={modifiedTime} />
-    
-    {/* General SEO */}
-    <meta name="last-modified" content={modifiedTime} />
-    <meta name="revised" content={modifiedTime} />
-  </>
-)}
+            <>
+              <meta
+                property="article:modified_time"
+                content={formatModifiedTime(modifiedTime)}
+              />
+              <meta
+                httpEquiv="last-modified"
+                content={formatModifiedTime(modifiedTime)}
+              />
+              <meta
+                name="last-modified"
+                content={formatModifiedTime(modifiedTime)}
+              />
+              <meta name="revised" content={formatModifiedTime(modifiedTime)} />
+            </>
+          )}
           {author && <meta property="article:author" content={author} />}
           {section && <meta property="article:section" content={section} />}
           {tags &&
@@ -202,9 +218,7 @@ export default function SEO({
       {/* ============================================ */}
       <meta name="twitter:card" content={twitterCard} />
       {title && <meta name="twitter:title" content={title} />}
-      {description && (
-        <meta name="twitter:description" content={description} />
-      )}
+      {description && <meta name="twitter:description" content={description} />}
       <meta name="twitter:image" content={absoluteImageUrl} />
       {twitterSite && <meta name="twitter:site" content={twitterSite} />}
       {twitterCreator && (
@@ -303,8 +317,12 @@ export default function SEO({
               width: 1200,
               height: 630,
             },
-            datePublished: articleData.datePublished || publishedTime,
-            dateModified: articleData.dateModified || modifiedTime,
+            datePublished: formatPublishedTime(
+              articleData.datePublished || publishedTime
+            ),
+            dateModified: formatModifiedTime(
+              articleData.dateModified || modifiedTime
+            ),
             author: {
               "@type": "Person",
               name: articleData.author || author,
@@ -388,8 +406,12 @@ export default function SEO({
           })}
         </script>
       )}
-      {openGraphType === "article" && articlePublisher && (
-        <meta property="article:publisher" content={articlePublisher} />
+
+      {openGraphType === "article" && (
+        <meta
+          property="article:publisher"
+          content="https://www.facebook.com/vizepedia"
+        />
       )}
     </Helmet>
   );

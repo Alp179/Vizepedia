@@ -617,12 +617,12 @@ function BlogDetail() {
   if (isError)
     return (
       <>
-        <SEO 
-          title="İçerik bulunamadı – Vizepedia" 
+        <SEO
+          title="İçerik bulunamadı – Vizepedia"
           description="Aradığınız blog yazısı bulunamadı."
           keywords="hata, sayfa bulunamadı"
           url={`https://www.vizepedia.com/blog/${slug}`}
-          noindex={true} 
+          noindex={true}
         />
         <div
           style={{
@@ -664,35 +664,119 @@ function BlogDetail() {
     ? blog.tags
     : blog.tags?.split(",") || [];
 
-    const readingTimeFormatted = `${readingTime} dakika`;
-const articleBody = bodyText.slice(0, 5000);
+  const readingTimeFormatted = `${readingTime} dakika`;
+  const articleBody = bodyText.slice(0, 5000);
+
+  // Schema verilerini oluştur
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Ana Sayfa",
+        item: "https://www.vizepedia.com/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog",
+        item: "https://www.vizepedia.com/blog",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: blog.category,
+        item: `https://www.vizepedia.com/blog/kategori/${encodeURIComponent(
+          blog.category
+        )}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: blog.title,
+        item: `https://www.vizepedia.com/blog/${slug}`,
+      },
+    ],
+  };
+
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://www.vizepedia.com/blog/${slug}`,
+    },
+    headline: blog.title,
+    description: blog.excerpt || bodyText.slice(0, 160),
+    image: [blog.cover_image].filter(Boolean),
+    datePublished: published,
+    dateModified: modified,
+    author: {
+      "@type": "Person",
+      name: blog.author || "Vizepedia Editör",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Vizepedia",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.vizepedia.com/logo-512.png",
+      },
+    },
+    articleSection: blog.category,
+    keywords: tags,
+    wordCount: wordCount,
+    timeRequired: timeRequired,
+  };
+
+  // FAQ Schema (eğer blog yazısında SSS varsa)
+  const faqSchema = blog.faqs
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: blog.faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      }
+    : null;
+
   return (
     <PageContainer>
       {blog && (
         <>
-          {/* SIMPLIFIED SEO COMPONENT - This is the main change */}
+          {/* OPTIMIZED SEO COMPONENT */}
           <SEO
-              title={`${blog.title} – Vizepedia`}
-        description={blog.excerpt ?? bodyText.slice(0, 150)}
-        keywords={tags}
-        image={blog.cover_image}
-        url={`/blog/${slug}`} // Relative URL - normalizeUrl düzeltecek
-        noindex={false} // ✓ Blog yazıları indekslensin
-        openGraphType="article"
-        publishedTime={published}
-        modifiedTime={modified}
-        author={blog.author || "Vizepedia"}
-        section={blog.category}
-        tags={tags}
-        wordCount={wordCount}
-        readingTime={timeRequired}
-        estimatedReadingTime={readingTimeFormatted}
-        articleBody={articleBody}
-        articlePublisher="https://www.facebook.com/vizepedia" // Facebook sayfanız varsa
-  siteName="Vizepedia" // Zaten var ama explicit olarak geçin
+            title={`${blog.title} – Vizepedia`}
+            description={blog.excerpt || bodyText.slice(0, 150)}
+            keywords={tags}
+            image={blog.cover_image}
+            url={`/blog/${slug}`}
+            noindex={false}
+            openGraphType="article"
+            publishedTime={published}
+            modifiedTime={modified}
+            author={blog.author || "Vizepedia"}
+            section={blog.category}
+            tags={tags}
+            wordCount={wordCount}
+            readingTime={timeRequired}
+            estimatedReadingTime={readingTimeFormatted}
+            articleBody={articleBody}
+            articlePublisher="https://www.facebook.com/vizepedia"
+            siteName="Vizepedia"
+            locale="tr"
+            themeColor="#004466"
+            appleStatusBarStyle="default"
           />
 
-          {/* Hero image preload - kept for performance */}
+          {/* Hero image preload - optimized for performance */}
           {blog.cover_image && (
             <link
               rel="preload"
@@ -712,79 +796,18 @@ const articleBody = bodyText.slice(0, 5000);
 
       <ReadingProgress progress={readingProgress} />
 
-      {/* All your existing JsonLd components remain unchanged - they're good */}
-      {/* Breadcrumbs JSON-LD */}
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            {
-              "@type": "ListItem",
-              position: 1,
-              name: "Ana Sayfa",
-              item: "https://www.vizepedia.com/",
-            },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: "Blog",
-              item: "https://www.vizepedia.com/blog",
-            },
-            {
-              "@type": "ListItem",
-              position: 3,
-              name: blog.category,
-              item: `https://www.vizepedia.com/blog/kategori/${encodeURIComponent(
-                blog.category
-              )}`,
-            },
-            {
-              "@type": "ListItem",
-              position: 4,
-              name: blog.title,
-              item: `https://www.vizepedia.com/blog/${slug}`,
-            },
-          ],
-        }}
-      />
+      {/* Breadcrumbs JSON-LD - Güncellenmiş */}
+      <JsonLd data={breadcrumbSchema} id="breadcrumb-schema" />
 
-      {/* Article/BlogPosting JSON-LD */}
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "BlogPosting",
-          mainEntityOfPage: {
-            "@type": "WebPage",
-            "@id": `https://www.vizepedia.com/blog/${slug}`,
-          },
-          headline: blog.title,
-          description: blog.excerpt || bodyText.slice(0, 160),
-          image: [blog.cover_image].filter(Boolean),
-          datePublished: published,
-          dateModified: modified,
-          author: {
-            "@type": "Person",
-            name: blog.author || "Vizepedia Editör",
-          },
-          publisher: {
-            "@type": "Organization",
-            name: "Vizepedia",
-            logo: {
-              "@type": "ImageObject",
-              url: "https://www.vizepedia.com/logo-512.png",
-            },
-          },
-          articleSection: blog.category,
-          keywords: tags,
-          wordCount: wordCount,
-          timeRequired: timeRequired,
-        }}
-      />
+      {/* Article/BlogPosting JSON-LD - Güncellenmiş */}
+      <JsonLd data={articleSchema} id="article-schema" priority={true} />
+
+      {/* FAQ Schema - Eğer varsa */}
+      {faqSchema && <JsonLd data={faqSchema} id="faq-schema" />}
 
       <HeroSection>
-        {/* Hero görseli için eski çalışan koddaki gibi background-image kullanımı */}
-        <HeroImage src={blog.cover_image} alt="hero-image" />
+        {/* Hero görseli için background-image kullanımı */}
+        <HeroImage src={blog.cover_image} alt={blog.title} />
         <HeroContent>
           {/* Breadcrumbs */}
           <Crumbs aria-label="breadcrumb">
