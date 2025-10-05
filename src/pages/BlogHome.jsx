@@ -5,20 +5,17 @@ import { fetchAllBlogs } from "../services/apiBlogs";
 import styled from "styled-components";
 import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useMemo } from "react";
 import VectorOk from "../ui/VectorOk";
 import BlogCardsMain from "../ui/BlogCardsMain";
 import SearchBar from "../ui/SearchBar";
 import SEO from "../components/SEO";
-import JsonLd from "../components/JsonLd";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useMemo } from "react";
 import BlogSearchResults from "./BlogSearchResults";
 
 // Lazy load SlideShow
 const SlideShow = lazy(() => import("../ui/SlideShow"));
 
-// All your existing styled components remain the same...
 const BlogContainer = styled.div`
   width: 100%;
   max-width: 1300px;
@@ -231,7 +228,6 @@ const ErrorMessage = styled.div`
 `;
 
 function BlogHome() {
-  console.log("BlogHome rendered");
   const navigate = useNavigate();
   const { search } = useLocation();
   const q = useMemo(() => new URLSearchParams(search).get("q") || "", [search]);
@@ -252,14 +248,12 @@ function BlogHome() {
     if (!needle) return blogs;
 
     return blogs.filter((b) => {
-      // Tags alanını güvenli bir şekilde işle
       const tagsText = Array.isArray(b.tags)
         ? b.tags.join(" ")
         : typeof b.tags === "string"
         ? b.tags
         : "";
 
-      // Aranacak alanları birleştir
       const searchableText = [b.title || "", b.summary || "", tagsText]
         .join(" ")
         .toLowerCase();
@@ -267,9 +261,6 @@ function BlogHome() {
       return searchableText.includes(needle);
     });
   }, [blogs, q]);
-
-  // Determine which list to use for ItemList schema
-  const listForSchema = q ? filtered : blogs;
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -286,9 +277,8 @@ function BlogHome() {
     );
   }
 
-  // Eğer arama parametresi varsa, BlogSearchResults bileşenini göster
+  // Arama sonuçları sayfası
   if (q) {
-    // En güncel blogları tarihe göre sırala
     const latestBlogs = [...blogs].sort(
       (a, b) => new Date(b.created_at) - new Date(a.created_at)
     );
@@ -301,57 +291,53 @@ function BlogHome() {
   // Normal blog ana sayfası
   return (
     <>
-      {/* UPDATED SEO COMPONENT - Always uses canonical /blog URL */}
+      {/* ============================================ */}
+      {/* SEO COMPONENT - BLOG ANA SAYFASI */}
+      {/* ============================================ */}
       <SEO
-        title="Vizepedia Blog – Güncel Vize Rehberi Yazıları"
-        description="Vize başvurusu süreçleri, seyahat ipuçları ve güncel vize haberlerini bulabileceğiniz Vizepedia blog sayfası."
-        keywords="blog, vize blog, seyahat ipuçları, vize haberleri, Vizepedia"
+        title="Vizepedia Blog - Güncel Vize Rehberi Yazıları ve Seyahat İpuçları | Vize Blog 2025 "
+        description="Vize başvuruları, green card çekilişi, seyahat ipuçları ve daha fazlası hakkında güncel blog yazıları. 2025'in en kapsamlı vize rehberi blogu ile vize süreçlerinizi kolaylaştırın."
+        keywords={[
+          "vize blog",
+          "vize rehberi 2025",
+          "green card blog",
+          "schengen vize blog",
+          "amerika vize blog",
+          "seyahat blog",
+          "vize başvuru ipuçları",
+          "vize haberleri",
+          "güncel vize bilgileri",
+          "vize süreci",
+          "turistik vize blog",
+          "öğrenci vizesi blog",
+        ]}
         url="/blog"
-        noindex={Boolean(q)} // q varsa noindex
-        image="/logo.png"
-      />
-
-      {/* WebSite + SearchAction */}
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          url: "https://www.vizepedia.com/",
-          potentialAction: {
-            "@type": "SearchAction",
-            target: "https://www.vizepedia.com/blog?q={search_term_string}",
-            "query-input": "required name=search_term_string",
-          },
+        image="/og-blog.jpg"
+        openGraphType="website"
+        websiteData={{
+          description:
+            "Vize başvuruları, green card, seyahat ipuçları ve güncel vize haberleri için Vizepedia Blog.",
         }}
-      />
-
-      {/* Blog schema */}
-      <JsonLd
-        data={{
+        structuredData={{
           "@context": "https://schema.org",
           "@type": "Blog",
           name: "Vizepedia Blog",
           url: "https://www.vizepedia.com/blog",
           description:
             "Vize başvuruları, seyahat ipuçları ve güncel vize haberleri.",
+          blogPost: blogs?.slice(0, 10).map((post) => ({
+            "@type": "BlogPosting",
+            headline: post.title,
+            url: `https://www.vizepedia.com/blog/${post.slug}`,
+            datePublished: post.created_at,
+            image: post.cover_image,
+            author: {
+              "@type": "Person",
+              name: post.author || "Vizepedia Editör",
+            },
+          })),
         }}
       />
-
-      {/* ItemList schema - sadece arama yokken göster */}
-      {!q && Array.isArray(listForSchema) && listForSchema.length > 0 && (
-        <JsonLd
-          data={{
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            itemListElement: listForSchema.map((post, i) => ({
-              "@type": "ListItem",
-              position: i + 1,
-              url: `https://www.vizepedia.com/blog/${post.slug}`,
-              name: post.title,
-            })),
-          }}
-        />
-      )}
 
       <BlogContainer>
         <HeaderveOk>
@@ -380,7 +366,6 @@ function BlogHome() {
 
       <Divider />
 
-      {/* Lazy loaded SlideShow */}
       <Suspense fallback={null}>
         <SlideShow />
       </Suspense>
