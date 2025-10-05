@@ -1,18 +1,9 @@
-import {
-  useState,
-  useEffect,
-  useRef,
-  memo,
-  useMemo,
-  lazy,
-  Suspense,
-} from "react";
+import { useState, useEffect, useRef, memo, lazy, Suspense } from "react";
 import styled from "styled-components";
 import Footer from "../ui/Footer";
 import MailerLiteForm from "../ui/MailerLiteForm";
 import { useLocation } from "react-router-dom";
 import SEO from "../components/SEO";
-import JsonLd from "../components/JsonLd";
 
 // Lazy load heavy components to improve initial page load
 const SlideShow = lazy(() => import("../ui/SlideShow"));
@@ -189,89 +180,6 @@ function MainPage() {
   const scrollIndicatorRef = useRef(null);
   const location = useLocation();
 
-  // Memoized SEO data
-  const seoData = useMemo(
-    () => ({
-      title: "Vizepedia – Türkiye'nin Vize Başvuru Rehberi",
-      description:
-        "Vizepedia, vize başvurularında gereken belgeleri ve seyahat ipuçlarını adım adım anlatan kapsamlı bir rehberdir. Schengen, Amerika, İngiltere ve diğer ülkeler için vize başvuru süreçleri.",
-      keywords: [
-        "vize",
-        "vize başvurusu",
-        "vize rehberi",
-        "seyahat rehberi",
-        "belgeler",
-        "Vizepedia",
-        "Schengen vizesi",
-        "Amerika vizesi",
-        "İngiltere vizesi",
-        "vize türleri",
-        "vize başvuru formu",
-        "vize randevu",
-        "vize harç ücreti",
-        "vize gerekli belgeler",
-        "vize süresi",
-        "vize başvuru takibi",
-      ],
-      url: "/", // ✓ Relative URL - normalizeUrl düzeltecek
-      image: "/og-image.jpg", // ✓ Relative - normalizeUrl düzeltecek
-    }),
-    []
-  );
-
-  // Structured data for the main page
-  const structuredData = useMemo(
-    () => ({
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      name: "Vizepedia",
-      url: "https://www.vizepedia.com",
-      description: "Türkiye'nin Vize Başvuru Rehberi",
-      inLanguage: "tr-TR",
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: "https://www.vizepedia.com/ara?q={search_term_string}",
-        },
-        "query-input": "required name=search_term_string",
-      },
-      publisher: {
-        "@type": "Organization",
-        name: "Vizepedia",
-        url: "https://www.vizepedia.com",
-        logo: {
-          "@type": "ImageObject",
-          url: "https://www.vizepedia.com/logo.png",
-          width: 240,
-          height: 240,
-        },
-        contactPoint: {
-          "@type": "ContactPoint",
-          contactType: "customer service",
-          email: "iletisim@vizepedia.com",
-          availableLanguage: ["Turkish"],
-        },
-        sameAs: [
-          "https://facebook.com/vizepedia",
-          "https://instagram.com/vizepediacom",
-        ],
-      },
-    }),
-    []
-  );
-
-  // Breadcrumb structured data
-  const breadcrumbData = useMemo(
-    () => [
-      {
-        name: "Ana Sayfa",
-        url: "https://www.vizepedia.com/",
-      },
-    ],
-    []
-  );
-
   // Optimized scroll indicator update
   useEffect(() => {
     if (scrollIndicatorRef.current) {
@@ -305,23 +213,51 @@ function MainPage() {
   return (
     <MainContainer>
       {/* ============================================ */}
-      {/* SEO COMPONENT - ANA SAYFA */}
+      {/* SEO COMPONENT - ANA SAYFA (HOME PAGE) */}
       {/* ============================================ */}
       <SEO
-        title={seoData.title}
-        description={seoData.description}
-        keywords={seoData.keywords}
-        url={seoData.url} // Relative URL - normalizeUrl otomatik düzeltecek
-        image={seoData.image}
-        noindex={false} // ✓ Ana sayfa indekslensin
+        title="Vizepedia - Kapsamlı Vize Başvuru Rehberi | 50+ Ülke İçin Güncel Bilgiler"
+        description="2025'in en güncel vize başvuru rehberi. Amerika, İngiltere, Schengen, Kanada ve 50+ ülke için vize işlemleri, gerekli belgeler ve başvuru süreçleri hakkında detaylı bilgiler."
+        keywords={[
+          "vize başvurusu",
+          "vize rehberi",
+          "schengen vizesi",
+          "amerika vizesi",
+          "İngiltere vizesi",
+          "kanada vizesi",
+          "vize belgeleri",
+          "seyahat rehberi",
+          "vize türleri",
+          "vize randevusu",
+          "vize ücreti",
+          "vize başvuru formu",
+          "turistik vize",
+          "öğrenci vizesi",
+          "iş vizesi",
+        ]}
+        url="/"
+        image="/og-homepage.jpg"
         openGraphType="website"
         twitterCard="summary_large_image"
-        websiteData={structuredData}
-        breadcrumbs={breadcrumbData}
+        websiteData={{
+          description:
+            "Türkiye'nin en kapsamlı vize başvuru rehberi platformu. 50+ ülke için güncel vize bilgileri, başvuru süreçleri ve uzman tavsiyeleri.",
+        }}
+        organizationData={{
+          name: "Vizepedia",
+          contactPoint: {
+            "@type": "ContactPoint",
+            contactType: "customer service",
+            email: "iletisim@vizepedia.com",
+            availableLanguage: ["Turkish"],
+          },
+          sameAs: [
+            "https://www.facebook.com/vizepedia",
+            "https://www.instagram.com/vizepedia",
+            "https://twitter.com/vizepedia",
+          ],
+        }}
       />
-
-      {/* WebSite Structured Data as JSON-LD */}
-      <JsonLd data={structuredData} />
 
       {/* Scroll Progress Indicator */}
       <ScrollIndicator

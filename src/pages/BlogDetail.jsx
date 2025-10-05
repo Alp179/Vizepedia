@@ -14,7 +14,6 @@ import BlogContentSection from "../ui/BlogContentSection";
 import BlogSources from "../ui/BlogSources";
 import RecentBlogs from "../ui/RecentBlogs";
 import SEO from "../components/SEO";
-import JsonLd from "../components/JsonLd";
 
 // Animasyonlar
 const fadeIn = keyframes`
@@ -76,7 +75,6 @@ const HeroSection = styled.div`
   }
 `;
 
-// Hero görseli için eski çalışan koddaki gibi background-image kullanımı
 const HeroImage = styled.div`
   position: absolute;
   top: 0;
@@ -123,7 +121,6 @@ const HeroContent = styled.div`
   }
 `;
 
-// Breadcrumbs için stil
 const Crumbs = styled.nav`
   position: relative;
   z-index: 2;
@@ -250,7 +247,6 @@ const Title = styled.h1`
   }
 `;
 
-// İçerik Bölümü
 const ContentSection = styled.div`
   display: flex;
   justify-content: space-between;
@@ -281,7 +277,6 @@ const ContentSection = styled.div`
   }
 `;
 
-// Sidebar Container - İki sidebar'ı yan yana yerleştirmek için
 const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -303,7 +298,6 @@ const SidebarContainer = styled.div`
   }
 `;
 
-// Mobile Sources Container - Blog içeriğinden hemen sonra
 const MobileSourcesContainer = styled.div`
   display: none;
 
@@ -314,7 +308,6 @@ const MobileSourcesContainer = styled.div`
   }
 `;
 
-// Desktop Sources Container - Sadece desktop'ta görünür
 const DesktopSourcesContainer = styled.div`
   display: block;
 
@@ -323,7 +316,6 @@ const DesktopSourcesContainer = styled.div`
   }
 `;
 
-// Yukarı Kaydırma Butonu
 const ScrollToTop = styled.button`
   position: fixed;
   bottom: 3.5rem;
@@ -373,7 +365,6 @@ const ScrollToTop = styled.button`
   }
 `;
 
-// İlerleme Göstergesi
 const ReadingProgress = styled.div`
   position: fixed;
   top: 0;
@@ -385,7 +376,6 @@ const ReadingProgress = styled.div`
   transition: width 0.2s ease;
 `;
 
-// İç linkler için stil
 const TagsContainer = styled.div`
   margin-top: 2rem;
   strong {
@@ -406,61 +396,6 @@ const CategoryLinkContainer = styled.div`
     &:hover {
       color: var(--color-brand-700);
       text-decoration: underline;
-    }
-  }
-`;
-
-// Önceki/Sonraki yazı navigasyonu
-const PrevNextNav = styled.div`
-  margin-top: 3rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-
-  a {
-    flex: 1;
-    max-width: 48%;
-    padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 0.8rem;
-    color: var(--color-grey-600);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-3px);
-    }
-
-    &.prev {
-      text-align: left;
-    }
-
-    &.next {
-      text-align: right;
-    }
-
-    span {
-      display: block;
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-bottom: 0.5rem;
-    }
-
-    strong {
-      display: block;
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
-
-    a {
-      max-width: 100%;
     }
   }
 `;
@@ -571,10 +506,6 @@ function BlogDetail() {
   } = useQuery({
     queryKey: ["blog", slug],
     queryFn: () => fetchBlogBySlug(slug),
-    onSuccess: (data) => {
-      console.log("Blog verisi:", data);
-      console.log("Cover image:", data?.cover_image);
-    },
   });
 
   // Blog içeriği yüklendiğinde başlıkları çıkar
@@ -617,7 +548,7 @@ function BlogDetail() {
     return (
       <>
         <SEO
-          title="İçerik bulunamadı – Vizepedia"
+          title="İçerik Bulunamadı – Vizepedia"
           description="Aradığınız blog yazısı bulunamadı."
           keywords="hata, sayfa bulunamadı"
           url={`https://www.vizepedia.com/blog/${slug}`}
@@ -643,172 +574,84 @@ function BlogDetail() {
     );
 
   const readingTime = calculateReadingTime(blog);
+
   // SEO için gerekli verileri hazırla
-  const plain = (html = "") =>
+  const cleanText = (html = "") =>
     html
       .replace(/<[^>]*>/g, " ")
       .replace(/\s+/g, " ")
       .trim();
-  const bodyText = plain(
+
+  const bodyText = cleanText(
     `${blog.section1_content || ""} ${blog.section2_content || ""} ${
       blog.section3_content || ""
     }`
   );
 
   const wordCount = bodyText.split(/\s+/).filter(Boolean).length;
-  const timeRequired = `PT${Math.max(1, Math.ceil(wordCount / 200))}M`; // ISO8601 süre
-  const published = new Date(blog.created_at).toISOString();
-  const modified = new Date(blog.updated_at || blog.created_at).toISOString();
+
+  // Tags normalization
   const tags = Array.isArray(blog.tags)
     ? blog.tags
-    : blog.tags?.split(",") || [];
+    : typeof blog.tags === "string"
+    ? blog.tags.split(",").map((t) => t.trim())
+    : [];
 
-  const readingTimeFormatted = `${readingTime} dakika`;
-  const articleBody = bodyText.slice(0, 5000);
+  // Meta description - 155 karakter optimize
+  const metaDescription =
+    blog.excerpt ||
+    bodyText.slice(0, 155) + (bodyText.length > 155 ? "..." : "");
 
-  // Schema verilerini oluştur
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Ana Sayfa",
-        item: "https://www.vizepedia.com/",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Blog",
-        item: "https://www.vizepedia.com/blog",
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: blog.category,
-        item: `https://www.vizepedia.com/blog/kategori/${encodeURIComponent(
-          blog.category
-        )}`,
-      },
-      {
-        "@type": "ListItem",
-        position: 4,
-        name: blog.title,
-        item: `https://www.vizepedia.com/blog/${slug}`,
-      },
-    ],
-  };
-
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `https://www.vizepedia.com/blog/${slug}`,
+  // Breadcrumbs array
+  const breadcrumbs = [
+    { name: "Ana Sayfa", url: "/" },
+    { name: "Blog", url: "/blog" },
+    {
+      name: blog.category,
+      url: `/blog/kategori/${encodeURIComponent(blog.category)}`,
     },
-    headline: blog.title,
-    description: blog.excerpt || bodyText.slice(0, 160),
-    image: [blog.cover_image].filter(Boolean),
-    datePublished: published,
-    dateModified: modified,
-    author: {
-      "@type": "Person",
-      name: blog.author || "Vizepedia Editör",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Vizepedia",
-      logo: {
-        "@type": "imageObject",
-        url: "https://www.vizepedia.com/logo-512.png",
-      },
-    },
-    articleSection: blog.category,
-    keywords: tags,
-    wordCount: wordCount,
-    timeRequired: timeRequired,
-  };
-
-  // FAQ Schema (eğer blog yazısında SSS varsa)
-  const faqSchema = blog.faqs
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: blog.faqs.map((faq) => ({
-          "@type": "Question",
-          name: faq.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: faq.answer,
-          },
-        })),
-      }
-    : null;
+  ];
 
   return (
     <PageContainer>
       {blog && (
         <>
-          {/* OPTIMIZED SEO COMPONENT */}
           <SEO
-            title={`${blog.title} – Vizepedia`}
-            description={blog.excerpt || bodyText.slice(0, 150)}
+            title={`${blog.title} | Vizepedia Blog`}
+            description={metaDescription}
             keywords={tags}
             image={blog.cover_image}
             url={`/blog/${slug}`}
-            noindex={false}
             openGraphType="article"
-            publishedTime={published}
-            modifiedTime={modified}
-            author={blog.author || "Vizepedia"}
-            section={blog.category}
+            author={blog.author || "Vizepedia Editör"}
+            publishedTime={blog.created_at}
+            modifiedTime={blog.updated_at}
+            category={blog.category}
             tags={tags}
             wordCount={wordCount}
-            readingTime={timeRequired}
-            estimatedReadingTime={readingTimeFormatted}
-            articleBody={articleBody}
-            articlePublisher="https://www.facebook.com/vizepedia"
-            siteName="Vizepedia"
-            locale="tr"
-            themeColor="#004466"
-            appleStatusBarStyle="default"
+            estimatedReadingTime={`${readingTime} dakika`}
+            breadcrumbs={breadcrumbs}
+            articleData={{
+              headline: blog.title,
+              description: metaDescription,
+              image: blog.cover_image,
+              datePublished: blog.created_at,
+              dateModified: blog.updated_at || blog.created_at,
+              author: blog.author || "Vizepedia Editör",
+              section: blog.category,
+              keywords: tags.join(", "),
+              wordCount: wordCount,
+              timeRequired: `PT${readingTime}M`,
+            }}
           />
-
-          {/* Hero image preload - optimized for performance */}
-          {blog.cover_image && (
-            <link
-              rel="preload"
-              as="image"
-              href={blog.cover_image}
-              imageSrcSet={`
-                ${blog.cover_image}?w=640 640w,
-                ${blog.cover_image}?w=960 960w,
-                ${blog.cover_image}?w=1280 1280w,
-                ${blog.cover_image}?w=1600 1600w
-              `}
-              imageSizes="(max-width: 768px) 100vw, 100vw"
-            />
-          )}
         </>
       )}
 
       <ReadingProgress progress={readingProgress} />
 
-      {/* Breadcrumbs JSON-LD - Güncellenmiş */}
-      <JsonLd data={breadcrumbSchema} id="breadcrumb-schema" />
-
-      {/* Article/BlogPosting JSON-LD - Güncellenmiş */}
-      <JsonLd data={articleSchema} id="article-schema" priority={true} />
-
-      {/* FAQ Schema - Eğer varsa */}
-      {faqSchema && <JsonLd data={faqSchema} id="faq-schema" />}
-
       <HeroSection>
-        {/* Hero görseli için background-image kullanımı */}
         <HeroImage src={blog.cover_image} alt={blog.title} />
         <HeroContent>
-          {/* Breadcrumbs */}
           <Crumbs aria-label="breadcrumb">
             <Link to="/">Ana Sayfa</Link>
             <span className="sep">/</span>
@@ -865,7 +708,6 @@ function BlogDetail() {
       </HeroSection>
 
       <ContentSection>
-        {/* Ana İçerik Kolonu */}
         <div style={{ flex: 1 }}>
           <BlogContentSection
             blog={blog}
@@ -873,59 +715,23 @@ function BlogDetail() {
             activeHeading={activeHeading}
             setActiveHeading={setActiveHeading}
             hideTableOfContents={false}
-            // Analytics event handlers
-            onCopy={() => {
-              // Kopyalama olayı analizi
-              if (typeof window !== "undefined" && window.gtag) {
-                window.gtag("event", "copy_content", {
-                  event_category: "engagement",
-                  event_label: blog.title,
-                });
-              }
-            }}
-            onTocClick={(headingId) => {
-              // TOC tıklama analizi
-              if (typeof window !== "undefined" && window.gtag) {
-                window.gtag("event", "toc_click", {
-                  event_category: "navigation",
-                  event_label: headingId,
-                });
-              }
-            }}
-            onSourceClick={(sourceUrl) => {
-              // Kaynak tıklama analizi
-              if (typeof window !== "undefined" && window.gtag) {
-                window.gtag("event", "source_click", {
-                  event_category: "outbound",
-                  event_label: sourceUrl,
-                });
-              }
-            }}
           />
 
-          {/* Önceki/Sonraki yazı navigasyonu */}
-          <PrevNextNav>
-            {/* API'den önceki/sonraki yazıları alabilirsiniz */}
-            {/* Şimdilik boş bırakıyorum */}
-          </PrevNextNav>
-
-          {/* Etiketler - İç linkleme */}
           {Array.isArray(tags) && tags.length > 0 && (
             <TagsContainer>
               <strong>Etiketler: </strong>
               {tags.map((t, i) => (
                 <Link
                   key={i}
-                  to={`/blog/etiket/${encodeURIComponent(t.trim())}`}
+                  to={`/blog/etiket/${encodeURIComponent(t)}`}
                   style={{ marginRight: 8 }}
                 >
-                  #{t.trim()}
+                  #{t}
                 </Link>
               ))}
             </TagsContainer>
           )}
 
-          {/* Kategoriye dönüş linki */}
           <CategoryLinkContainer>
             <Link
               to={`/blog/kategori/${encodeURIComponent(blog.category)}`}
@@ -935,15 +741,12 @@ function BlogDetail() {
             </Link>
           </CategoryLinkContainer>
 
-          {/* Mobile'da Kaynaklar - Blog içeriğinden hemen sonra */}
           <MobileSourcesContainer>
             <BlogSources sourcesString={blog?.sources} />
           </MobileSourcesContainer>
         </div>
 
-        {/* İki Sidebar Yan Yana */}
         <SidebarContainer>
-          {/* İlgili Bloglar Sidebar'ı */}
           <SidebarBlogList
             blogs={relatedBlogs}
             title={`${blog.category} Kategorisi`}
@@ -953,7 +756,6 @@ function BlogDetail() {
             showCategory={false}
           />
 
-          {/* En Yeni Bloglar Sidebar'ı */}
           <RecentBlogs
             blogs={recentBlogs}
             title="En Yeni Yazılar"
@@ -965,7 +767,6 @@ function BlogDetail() {
         </SidebarContainer>
       </ContentSection>
 
-      {/* Desktop'ta Kaynaklar - Orijinal konumda */}
       <DesktopSourcesContainer>
         <BlogSources sourcesString={blog?.sources} />
       </DesktopSourcesContainer>

@@ -17,7 +17,7 @@ export default function SEO({
   organizationData,
   websiteData,
   locale = "tr",
-  author = "Vizepedia",
+  author = "Vizepedia Editör",
   publishedTime,
   modifiedTime,
   section,
@@ -33,6 +33,7 @@ export default function SEO({
   siteName = "Vizepedia",
   themeColor = "#004466",
   appleStatusBarStyle = "default",
+  category,
 }) {
   // ============================================
   // URL NORMALIZATION - SINGLE SOURCE OF TRUTH
@@ -89,14 +90,14 @@ export default function SEO({
       "vize, vize başvurusu, vize rehberi, seyahat rehberi, belgeler, Vizepedia";
 
   // ============================================
-  // ROBOTS META
+  // ROBOTS META - ENHANCED
   // ============================================
   const robots = noindex
     ? "noindex,nofollow"
     : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1";
 
   // ============================================
-  // PUBLISHED TIME FORMATTING
+  // TIME FORMATTING
   // ============================================
   const formatPublishedTime = (time) => {
     if (!time) return null;
@@ -109,6 +110,65 @@ export default function SEO({
     const date = new Date(time);
     return date.toISOString();
   };
+
+  // ============================================
+  // AUTO-GENERATE BREADCRUMBS FROM URL
+  // ============================================
+  const autoGenerateBreadcrumbs = () => {
+    if (breadcrumbs) return breadcrumbs;
+
+    const urlParts = canonicalUrl
+      .replace(BASE_URL, "")
+      .split("/")
+      .filter(Boolean);
+
+    const crumbs = [
+      {
+        name: "Ana Sayfa",
+        url: BASE_URL,
+      },
+    ];
+
+    let currentPath = BASE_URL;
+    urlParts.forEach((part, index) => {
+      currentPath += `/${part}`;
+      const isLast = index === urlParts.length - 1;
+
+      // Skip adding the last breadcrumb if it's too long (article slug)
+      if (isLast && part.length > 50) return;
+
+      let name = part;
+      if (part === "blog") name = "Blog";
+      else if (part === "seyahat") name = "Seyahat";
+      else if (part === "vize") name = "Vize";
+      else if (part === "gocmenlik") name = "Göçmenlik";
+      else name = part.replace(/-/g, " ");
+
+      crumbs.push({
+        name: name.charAt(0).toUpperCase() + name.slice(1),
+        url: currentPath,
+      });
+    });
+
+    return crumbs;
+  };
+
+  const finalBreadcrumbs = autoGenerateBreadcrumbs();
+
+  // ============================================
+  // AUTO-GENERATE READING TIME
+  // ============================================
+  const calculateReadingTime = () => {
+    if (estimatedReadingTime) return estimatedReadingTime;
+    if (readingTime) return readingTime;
+    if (wordCount) {
+      const minutes = Math.ceil(wordCount / 200);
+      return `${minutes} dakika`;
+    }
+    return null;
+  };
+
+  const finalReadingTime = calculateReadingTime();
 
   return (
     <Helmet>
@@ -167,7 +227,6 @@ export default function SEO({
       <meta property="og:locale" content="tr_TR" />
       <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:image:secure_url" content={absoluteImageUrl} />
-      <meta name="twitter:image:alt" content={title || "Vizepedia"} />
 
       {/* ============================================ */}
       {/* ARTICLE-SPECIFIC OG TAGS */}
@@ -204,12 +263,18 @@ export default function SEO({
             </>
           )}
           {author && <meta property="article:author" content={author} />}
-          {section && <meta property="article:section" content={section} />}
+          {(section || category) && (
+            <meta property="article:section" content={section || category} />
+          )}
           {tags &&
             Array.isArray(tags) &&
             tags.map((tag, index) => (
               <meta key={index} property="article:tag" content={tag} />
             ))}
+          <meta
+            property="article:publisher"
+            content="https://www.facebook.com/vizepedia"
+          />
         </>
       )}
 
@@ -220,16 +285,17 @@ export default function SEO({
       {title && <meta name="twitter:title" content={title} />}
       {description && <meta name="twitter:description" content={description} />}
       <meta name="twitter:image" content={absoluteImageUrl} />
+      <meta name="twitter:image:alt" content={title || "Vizepedia"} />
       {twitterSite && <meta name="twitter:site" content={twitterSite} />}
       {twitterCreator && (
         <meta name="twitter:creator" content={twitterCreator} />
       )}
 
       {/* Twitter Reading Labels (article only) */}
-      {openGraphType === "article" && estimatedReadingTime && (
+      {openGraphType === "article" && finalReadingTime && (
         <>
           <meta name="twitter:label1" content="Okuma süresi" />
-          <meta name="twitter:data1" content={estimatedReadingTime} />
+          <meta name="twitter:data1" content={finalReadingTime} />
           {author && (
             <>
               <meta name="twitter:label2" content="Yazar" />
@@ -262,27 +328,58 @@ export default function SEO({
       {/* ============================================ */}
       {/* STRUCTURED DATA (JSON-LD) */}
       {/* ============================================ */}
+
+      {/* BREADCRUMB SCHEMA - Always included */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: finalBreadcrumbs.map((item, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: item.name,
+            item: normalizeUrl(item.url),
+          })),
+        })}
+      </script>
+
+      {/* ORGANIZATION SCHEMA - Always included */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: organizationData?.name || siteName,
+          url: BASE_URL,
+          logo: {
+            "@type": "ImageObject",
+            url: `${BASE_URL}/logo.png`,
+            width: 240,
+            height: 240,
+          },
+          description:
+            "Kapsamlı vize başvuru rehberi ve güncel seyahat bilgileri platformu",
+          contactPoint: organizationData?.contactPoint || {
+            "@type": "ContactPoint",
+            contactType: "customer service",
+            email: "iletisim@vizepedia.com",
+            availableLanguage: ["Turkish"],
+          },
+          sameAs: organizationData?.sameAs || [
+            "https://www.facebook.com/vizepedia",
+            "https://www.instagram.com/vizepedia",
+            "https://twitter.com/vizepedia",
+          ],
+        })}
+      </script>
+
+      {/* CUSTOM STRUCTURED DATA */}
       {structuredData && (
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
       )}
 
-      {breadcrumbs && (
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: breadcrumbs.map((item, index) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              name: item.name,
-              item: normalizeUrl(item.url),
-            })),
-          })}
-        </script>
-      )}
-
+      {/* FAQ SCHEMA */}
       {faqData && faqData.length > 0 && (
         <script type="application/ld+json">
           {JSON.stringify({
@@ -300,7 +397,8 @@ export default function SEO({
         </script>
       )}
 
-      {articleData && (
+      {/* ARTICLE/BLOG POSTING SCHEMA */}
+      {(openGraphType === "article" || articleData) && (
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -309,26 +407,27 @@ export default function SEO({
               "@type": "WebPage",
               "@id": canonicalUrl,
             },
-            headline: articleData.headline || title,
-            description: articleData.description || description,
+            headline: articleData?.headline || title,
+            description: articleData?.description || description,
             image: {
               "@type": "ImageObject",
-              url: normalizeImageUrl(articleData.image || image),
+              url: normalizeImageUrl(articleData?.image || image),
               width: 1200,
               height: 630,
             },
             datePublished: formatPublishedTime(
-              articleData.datePublished || publishedTime
+              articleData?.datePublished || publishedTime
             ),
             dateModified: formatModifiedTime(
-              articleData.dateModified || modifiedTime
+              articleData?.dateModified || modifiedTime || publishedTime
             ),
             author: {
               "@type": "Person",
-              name: articleData.author || author,
-              url: `${BASE_URL}/yazar/${(articleData.author || author)
+              name: articleData?.author || author,
+              url: `${BASE_URL}/yazar/${(articleData?.author || author)
                 .toLowerCase()
-                .replace(/\s+/g, "-")}`,
+                .replace(/\s+/g, "-")
+                .replace(/[^a-z0-9-]/g, "")}`,
             },
             publisher: {
               "@type": "Organization",
@@ -340,44 +439,24 @@ export default function SEO({
                 height: 240,
               },
             },
-            articleSection: articleData.section || section,
-            keywords: articleData.keywords || keywordsString,
-            wordCount: articleData.wordCount || wordCount,
-            timeRequired: articleData.timeRequired || readingTime,
+            articleSection: articleData?.section || section || category,
+            keywords: articleData?.keywords || keywordsString,
+            wordCount: articleData?.wordCount || wordCount,
+            timeRequired:
+              articleData?.timeRequired ||
+              (finalReadingTime ? `PT${parseInt(finalReadingTime)}M` : "PT5M"),
             inLanguage: "tr-TR",
             isPartOf: {
               "@type": "Blog",
               "@id": `${BASE_URL}/blog`,
+              name: "Vizepedia Blog",
             },
             ...(articleBody && { articleBody: articleBody }),
           })}
         </script>
       )}
 
-      {organizationData && (
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            name: organizationData.name || siteName,
-            url: BASE_URL,
-            logo: {
-              "@type": "ImageObject",
-              url: `${BASE_URL}/logo.png`,
-              width: 240,
-              height: 240,
-            },
-            contactPoint: organizationData.contactPoint || {
-              "@type": "ContactPoint",
-              contactType: "customer service",
-              email: "iletisim@vizepedia.com",
-              availableLanguage: ["Turkish"],
-            },
-            sameAs: organizationData.sameAs || [],
-          })}
-        </script>
-      )}
-
+      {/* WEBSITE SCHEMA */}
       {websiteData && (
         <script type="application/ld+json">
           {JSON.stringify({
@@ -406,13 +485,6 @@ export default function SEO({
           })}
         </script>
       )}
-
-      {openGraphType === "article" && (
-        <meta
-          property="article:publisher"
-          content="https://www.facebook.com/vizepedia"
-        />
-      )}
     </Helmet>
   );
 }
@@ -424,7 +496,6 @@ SEO.propTypes = {
   image: PropTypes.string,
   url: PropTypes.string,
   noindex: PropTypes.bool,
-  articlePublisher: PropTypes.string,
   prevUrl: PropTypes.string,
   nextUrl: PropTypes.string,
   structuredData: PropTypes.object,
@@ -448,6 +519,7 @@ SEO.propTypes = {
   publishedTime: PropTypes.string,
   modifiedTime: PropTypes.string,
   section: PropTypes.string,
+  category: PropTypes.string,
   tags: PropTypes.array,
   wordCount: PropTypes.number,
   readingTime: PropTypes.string,
