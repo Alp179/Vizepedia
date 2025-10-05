@@ -43,4 +43,4 @@ Allow: /davetiye-olustur
 Allow: /site-haritasi
 
 # Sitemap location
-Sitemap: https://www.vizepedia.com/api/generate-sitemap
+Sitemap: https://www.vizepedia.com/sitemap.xml
