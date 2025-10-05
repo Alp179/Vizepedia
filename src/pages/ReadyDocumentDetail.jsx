@@ -451,6 +451,258 @@ const StyledButtonsContainer = styled(ButtonsContainer)`
   }
 `;
 
+const DetailedContentSection = styled.div`
+  width: 100vw;
+  max-width: 100vw;
+  margin: 80px 0 0 0;
+  padding: 60px 32px;
+  background: linear-gradient(180deg, rgba(0, 20, 40, 0.3) 0%, rgba(0, 40, 60, 0.2) 100%);
+  border-top: 1px solid rgba(0, 255, 162, 0.1);
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  box-sizing: border-box; /* ✅ Bu çok önemli */
+
+  @media (max-width: 680px) {
+    padding: 40px 16px;
+    margin-top: 50px;
+  }
+
+  /* İçeriği merkezliyoruz */
+  & > * {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .content-section {
+    margin-bottom: 56px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 680px) {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-size: 32px;
+      color: var(--color-grey-52);
+      margin-bottom: 24px;
+      font-weight: 700;
+      line-height: 1.3;
+
+      @media (max-width: 680px) {
+        font-size: 26px;
+        margin-bottom: 20px;
+      }
+    }
+
+    h3 {
+      font-size: 22px;
+      color: var(--color-grey-52);
+      margin: 28px 0 16px;
+      font-weight: 600;
+      line-height: 1.4;
+
+      @media (max-width: 680px) {
+        font-size: 20px;
+        margin: 24px 0 12px;
+      }
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: var(--color-grey-53);
+      margin-bottom: 20px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      @media (max-width: 680px) {
+        font-size: 17px;
+        line-height: 1.7;
+      }
+
+      strong {
+        color: var(--color-grey-52);
+        font-weight: 600;
+      }
+    }
+
+    ul, ol {
+      margin: 20px 0;
+      padding-left: 28px;
+
+      @media (max-width: 680px) {
+        padding-left: 20px;
+      }
+
+      li {
+        font-size: 18px;
+        line-height: 1.75;
+        color: var(--color-grey-53);
+        margin-bottom: 14px;
+
+        @media (max-width: 680px) {
+          font-size: 17px;
+          margin-bottom: 12px;
+        }
+
+        &::marker {
+          color: #00ffa2;
+        }
+
+        strong {
+          color: var(--color-grey-52);
+          font-weight: 600;
+        }
+      }
+    }
+
+    ol {
+      counter-reset: item;
+      list-style-type: none;
+      padding-left: 0;
+
+      li {
+        counter-increment: item;
+        padding-left: 40px;
+        position: relative;
+
+        &:before {
+          content: counter(item) ".";
+          position: absolute;
+          left: 0;
+          color: #00ffa2;
+          font-weight: 700;
+          font-size: 18px;
+        }
+      }
+    }
+
+    .warning {
+      background: rgba(231, 76, 60, 0.08);
+      padding: 20px 24px;
+      border-radius: 8px;
+      margin: 24px 0;
+      border-left: 3px solid #e74c3c;
+
+      @media (max-width: 680px) {
+        padding: 16px 18px;
+      }
+    }
+
+    .link-box {
+      background: rgba(0, 68, 102, 0.15);
+      padding: 20px 24px;
+      border-radius: 8px;
+      margin: 24px 0;
+      border-left: 3px solid #00ffa2;
+
+      @media (max-width: 680px) {
+        padding: 16px 18px;
+      }
+
+      a {
+        color: #00ffa2;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          color: #00d488;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .faq-section {
+    .faq-item {
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+      &:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      @media (max-width: 680px) {
+        margin-bottom: 28px;
+        padding-bottom: 28px;
+      }
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 12px;
+      }
+    }
+  }
+
+  .tags-section {
+    h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      span {
+        background: rgba(0, 255, 162, 0.1);
+        color: #00ffa2;
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: default;
+
+        &:hover {
+          background: rgba(0, 255, 162, 0.15);
+          transform: translateY(-2px);
+        }
+
+        @media (max-width: 680px) {
+          font-size: 13px;
+          padding: 6px 14px;
+        }
+      }
+    }
+  }
+
+  .sources-section {
+    ul {
+      list-style: none;
+      padding-left: 0;
+
+      li {
+        padding-left: 32px;
+        position: relative;
+
+        &:before {
+          content: "→";
+          position: absolute;
+          left: 0;
+          color: #00ffa2;
+          font-weight: 700;
+          font-size: 20px;
+        }
+      }
+    }
+  }
+`;
+
 const ReadyDocumentDetail = () => {
   const params = useParams();
   const location = useLocation();
@@ -1073,7 +1325,13 @@ const ReadyDocumentDetail = () => {
             </DescriptionLayout>
           </DocumentDescription>
         </InfoContainer>
+       
       </PageContainer>
+       {selectedDocument?.detailedContent && (
+  <DetailedContentSection 
+    dangerouslySetInnerHTML={{ __html: selectedDocument.detailedContent }}
+  />
+)}
     </>
   );
 };
