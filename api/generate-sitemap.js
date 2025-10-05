@@ -65,9 +65,9 @@ export default async function handler(req, res) {
     const staticRoutes = [
       { path: "", priority: "1.0", changefreq: "weekly", lastmod: today },
       { path: "/dashboard", priority: "0.8", changefreq: "daily", lastmod: today },
-      { path: "/ready-documents", priority: "0.8", changefreq: "weekly", lastmod: today },
-      { path: "/planned-documents", priority: "0.8", changefreq: "weekly", lastmod: today },
-      { path: "/withus-documents", priority: "0.8", changefreq: "weekly", lastmod: today },
+      //{ path: "/ready-documents", priority: "0.8", changefreq: "weekly", lastmod: today },
+      //{ path: "/planned-documents", priority: "0.8", changefreq: "weekly", lastmod: today },
+      //{ path: "/withus-documents", priority: "0.8", changefreq: "weekly", lastmod: today },
       { path: "/blog", priority: "0.8", changefreq: "daily", lastmod: today },
       { path: "/davetiye-olustur", priority: "0.7", changefreq: "monthly", lastmod: today },
       { path: "/site-haritasi", priority: "0.5", changefreq: "monthly", lastmod: today },
