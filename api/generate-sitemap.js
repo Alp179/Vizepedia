@@ -95,25 +95,6 @@ export default async function handler(req, res) {
       sitemap += `  </url>\n`;
     }
 
-    console.log("🏷️ Adding blog category pages...");
-    // Add blog category pages
-    if (categories && categories.length > 0) {
-      for (const category of categories) {
-        try {
-          const encodedCategory = encodeURIComponent(category);
-          console.log(`  Adding category: ${category} → ${encodedCategory}`);
-          
-          sitemap += `  <url>\n`;
-          sitemap += `    <loc>${baseUrl}/blog/kategori/${encodedCategory}</loc>\n`;
-          sitemap += `    <lastmod>${today}</lastmod>\n`;
-          sitemap += `    <changefreq>weekly</changefreq>\n`;
-          sitemap += `    <priority>0.7</priority>\n`;
-          sitemap += `  </url>\n`;
-        } catch (err) {
-          console.error(`Error adding category ${category}:`, err);
-        }
-      }
-    }
 
     console.log("📝 Adding blog posts...");
     // Add blog posts

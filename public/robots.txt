@@ -24,6 +24,9 @@ Allow: /withus-documents
 Disallow: /blog?*
 Disallow: /blog/*?*
 
+# Block blog category pages
+Disallow: /blog/kategori/
+
 # Block API endpoints and internal files
 Disallow: /api/
 Disallow: /_next/

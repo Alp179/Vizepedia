@@ -106,7 +106,7 @@ function PageNotFound() {
   
   const handleGoHome = () => {
     window.scrollTo(0, 0);
-    navigate("/mainpage");
+    navigate("/");
   };
 
   return (
