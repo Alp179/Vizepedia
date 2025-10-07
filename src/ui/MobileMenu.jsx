@@ -476,6 +476,74 @@ const MobileMenu = () => {
                   </ProfileHeader>
                 </ProfileInfoContainer>
 
+                <NavButton 
+                  onClick={() => setIsPagesOpen(!isPagesOpen)}
+                  style={{ justifyContent: 'space-between' }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <IconPages />
+                    <span>Sayfalar</span>
+                  </div>
+                  <IconChevron isOpen={isPagesOpen} />
+                </NavButton>
+
+                <AccordionContent isOpen={isPagesOpen}>
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconHome />
+                    <span>Ana Sayfa</span>
+                  </SubNavButton>
+                  
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/blog');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconBlog />
+                    <span>Blog</span>
+                  </SubNavButton>
+                  
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/hakkimizda');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconInfo />
+                    <span>Hakkımızda</span>
+                  </SubNavButton>
+                  
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/iletisim');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconMessage />
+                    <span>İletişim</span>
+                  </SubNavButton>
+                  
+                  <SubNavButton 
+                    onClick={() => {
+                      navigate('/gizlilik-politikasi');
+                      setIsOpen(false);
+                      setIsPagesOpen(false);
+                    }}
+                  >
+                    <IconLock />
+                    <span>Yasal & Gizlilik</span>
+                  </SubNavButton>
+                </AccordionContent>
+
                 <CreateAccountButton onClick={handleGetStarted}>
                   <IconUpgrade />
                   Hemen Başlayın
