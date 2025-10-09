@@ -155,7 +155,7 @@ const Dot = styled.div`
   }
 `;
 
-// ContentPanel - Z-index değeri 10'dan 20'ye yükseltildi, mobilde yazı kısmının daha önde görünmesi için
+
 const ContentPanel = styled.div`
   position: absolute;
   width: ${(props) => (props.isMobile ? "90%" : "40%")};
@@ -259,10 +259,7 @@ const Description = styled.p`
   line-height: 1.6;
   position: relative;
   max-width: 95%;
-  color: ${(props) =>
-    props.isDarkMode
-      ? props.color || "rgba(255, 255, 255, 0.8)"
-      : props.lightColor || "rgba(0, 0, 0, 0.7)"};
+  mix-blend-mode: difference;
 
   @media (max-width: 768px) {
     font-size: 1.75rem; // %15 küçültüldü (önceki: 1.95rem)

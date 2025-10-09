@@ -447,18 +447,70 @@ const FeatureItem = styled.div`
   }
 `;
 
+// Function to detect if the visitor is a bot
+const isBot = () => {
+  const botPatterns = [
+    /googlebot/i,
+    /bingbot/i,
+    /slurp/i,
+    /duckduckbot/i,
+    /baiduspider/i,
+    /yandexbot/i,
+    /facebookexternalhit/i,
+    /twitterbot/i,
+    /rogerbot/i,
+    /linkedinbot/i,
+    /embedly/i,
+    /quora link preview/i,
+    /showyoubot/i,
+    /outbrain/i,
+    /pinterest/i,
+    /developers\.google\.com\/\+\/web\/snippet/i,
+    /slackbot/i,
+    /vkshare/i,
+    /W3C_Validator/i,
+    /validator\.w3\.org/i,
+    /http:\/\/www\.google\.com\/webmasters\/tools/i,
+    /google\.com\/webmasters\/tools/i
+  ];
+  
+  const userAgent = navigator.userAgent;
+
+
+  const hasCookies = navigator.cookieEnabled;
+
+   // Additional check: bots often have specific window properties missing
+  const hasWindowProperties = typeof window !== 'undefined' && 
+                              typeof window.document !== 'undefined' &&
+                              typeof window.setTimeout !== 'undefined';
+  
+  return botPatterns.some(pattern => pattern.test(userAgent)) ||
+         !hasCookies || 
+         !hasWindowProperties;
+};
+
+
 function AppLayout() {
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const { userType } = useUser();
 
-  // Check if we should show welcome modal for bot/new visitors
+  // Check if we should show welcome modal for new visitors
   useEffect(() => {
-    const shouldShowModal = userType === "bot" || userType === "new_visitor";
-
-    if (shouldShowModal) {
+    // Don't show modal to bots
+    if (isBot()) {
+      return;
+    }
+    
+    // Check if user has already seen the modal
+    const hasSeenModal = localStorage.getItem('hasSeenWelcomeModal');
+    
+    // Only show modal to new visitors who haven't seen it yet
+    if (userType === "new_visitor" && !hasSeenModal) {
       // Small delay to ensure page is loaded
       const timer = setTimeout(() => {
         setShowWelcomeModal(true);
+        // Mark that the user has seen the modal
+        localStorage.setItem('hasSeenWelcomeModal', 'true');
       }, 500);
 
       return () => clearTimeout(timer);
