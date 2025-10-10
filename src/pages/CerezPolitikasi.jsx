@@ -26,84 +26,128 @@ const sectionsData = [
   {
     id: 1,
     title: "1. Çerez (Cookie) Nedir?",
-    content: `Çerezler, bir web sitesini ziyaret ettiğinizde tarayıcınız aracılığıyla bilgisayarınıza veya mobil cihazınıza kaydedilen küçük metin dosyalarıdır. Bu dosyalar sayesinde sizi tanıyabilir, tercihlerinizi hatırlayabilir ve size daha iyi bir kullanıcı deneyimi sunabiliriz.`,
+    content: `Çerezler, bir web sitesini ziyaret ettiğinizde tarayıcınız aracılığıyla cihazınıza kaydedilen küçük metin dosyalarıdır. 
+    Çerezler sayesinde sizi tanıyabilir, tercihlerinizi hatırlayabilir ve daha iyi bir kullanıcı deneyimi sunabiliriz. 
+    Çerezler yürütülebilir kod içermez ve cihazınıza zarar vermez.`,
   },
   {
     id: 2,
     title: "2. Hangi Çerezleri Kullanıyoruz?",
     content: `Zorunlu (Temel) Çerezler:
-    Web sitesinin düzgün çalışması için gereklidir. Kullanıcı oturumunu yönetmek, sayfalar arası geçişte bilgileri korumak gibi işlevleri yerine getirir.
-    
+    Web sitesinin temel işlevleri için gereklidir (oturum yönetimi, güvenlik, sayfalar arası geçiş).
+
     İşlevsel Çerezler:
-    Kullanıcının tercihlerini (örneğin: seçilen ülke, vize türü, seyahat şekli vb.) hatırlayarak deneyimi kişiselleştirir.
+    Tercihlerinizi (örn. dil, ülke, tema) hatırlayarak deneyimi kişiselleştirir.
 
     Performans ve Analiz Çerezleri:
-    Google Analytics gibi hizmetler üzerinden site trafiğini analiz etmek için kullanılır.
+    Google Analytics gibi hizmetler üzerinden site trafiğini ve etkileşimi ölçümlemek için kullanılır.
 
     Reklam ve Hedefleme Çerezleri:
-    Google AdSense tarafından yerleştirilen bu çerezler, kişiselleştirilmiş reklamlar göstermek için kullanılır.`,
+    Google AdSense tarafından yerleştirilebilen çerezler, (rıza verilmişse) kişiselleştirilmiş reklam göstermek ve reklam performansını ölçmek için kullanılır.
+
+    Not:
+    Zorunlu olmayan çerezler yalnızca açık rızanızla etkinleştirilir.`,
   },
   {
     id: 3,
-    title: "3. Çerezler Yoluyla Toplanan Veriler Nelerdir?",
-    content: `- IP adresi
-    - Tarayıcı türü ve dili
-    - İşletim sistemi
-    - Ziyaret zamanı ve süresi
-    - Tercih ettiğiniz vize türü ve ülke gibi seçimler
-    - Tıklanan sayfalar ve bağlantılar`,
+    title: "3. Çerezler ve Tarayıcı Depolaması Yoluyla İşlenen Veriler",
+    content: `Çerezler veya benzer teknolojiler aracılığıyla işlenebilen veriler:
+    IP adresi, yaklaşık konum, tarayıcı türü ve dili, işletim sistemi, ziyaret zamanı/süresi, ziyaret edilen sayfalar ve tıklamalar.
+
+    Tarayıcı depolaması (çerez değildir):
+    localStorage (örn. tema tercihi isDarkMode, belirli bildirim/popup durumu)
+    sessionStorage (örn. anonim akış bilgileri isAnonymous, anonymousCreatedAt; geçici başvuru/yanıt verileri userAnswers, userSelections; ilerleme bilgileri wellcomesAnswered)
+    Bu veriler, deneyimi sürdürmek ve tekrar eden bildirimleri önlemek için kullanılır; üçüncü taraflarla paylaşılmaz. 
+    sessionStorage verileri sekme/oturum kapanınca silinir; localStorage verileri tarayıcı ayarlarından temizlenebilir.`,
   },
   {
     id: 4,
-    title: "4. Çerezlerin Yönetimi ve Devre Dışı Bırakılması",
-    content: `Çerezlerin kullanılmasını tarayıcı ayarlarınızdan silebilir veya engelleyebilirsiniz. Ancak bazı çerezlerin devre dışı bırakılması, web sitemizin bazı bölümlerinin düzgün çalışmasını engelleyebilir.
-    Tarayıcı ayarları için örnek bağlantılar:
+    title: "4. Rıza Yönetimi (CMP) ve Google Consent Mode v2",
+    content: `Rıza:
+    Zorunlu olmayan çerezler (analiz ve reklam) yalnızca açık rızanızla etkinleştirilir. Rızanızı dilediğiniz an geri çekebilir veya güncelleyebilirsiniz.
 
-      
+    Consent Mode v2:
+    Avrupa Ekonomik Alanı ve Birleşik Krallık kullanıcıları için Google Consent Mode v2 uygulanır.
+    ad_storage, analytics_storage, ad_user_data ve ad_personalization sinyalleri rıza durumunuza göre güncellenir.
+
+    Çerez Tercihleri Paneli:
+    Sitemizdeki "Çerez Tercihleri" bağlantısı üzerinden kategori bazında onay/ret tercihlerinizi yönetebilirsiniz.`,
+  },
+  {
+    id: 5,
+    title: "5. Çerezlerin Yönetimi ve Devre Dışı Bırakılması",
+    content: `Tarayıcı ayarlarından çerezleri silebilir veya engelleyebilirsiniz. 
+    Bazı çerezlerin devre dışı bırakılması, sitenin belirli bölümlerinin düzgün çalışmamasına yol açabilir. 
+    Ayrıca sitemizdeki Çerez Tercihleri paneli üzerinden onaylarınızı istediğiniz zaman güncelleyebilirsiniz.
+
+    Tarayıcı ayarlarına ilişkin bağlantılar:
     - Google Chrome: https://support.google.com/accounts/answer/61416
     - Mozilla Firefox: https://support.mozilla.org/tr/kb/cerezleri-silme
     - Safari: https://support.apple.com/tr-tr/guide/safari/sfri11471/mac
     - Microsoft Edge: https://support.microsoft.com/tr-tr/help/4027947`,
   },
   {
-    id: 5,
-    title: "5. Üçüncü Taraf Çerezler",
-    content: `Web sitemiz, Google AdSense gibi üçüncü taraf hizmet sağlayıcılarının çerezlerini kullanabilir. Bu çerezler, kullanıcıların reklam deneyimini kişiselleştirmek ve kampanya verimliliğini ölçmek amacıyla kullanılır.
+    id: 6,
+    title: "6. Üçüncü Taraf Çerezler (Google vb.)",
+    content: `Sitemizde Google AdSense ve Google Analytics gibi üçüncü taraf hizmet sağlayıcılarının çerezleri kullanılabilir.
+    Bu çerezler, reklamların sunulması/ölçümlenmesi ve site performansının analiz edilmesi amacıyla (rıza verilmişse) kullanılabilir.
 
-    Daha fazla bilgi: https://policies.google.com/technologies/cookies`,
+    Daha fazla bilgi:
+    - Google Çerezler: https://policies.google.com/technologies/cookies
+    - Google Gizlilik Politikası: https://policies.google.com/privacy
+    - My Ad Center (reklam tercihleri): https://myadcenter.google.com/
+    - Ads Settings: https://adssettings.google.com
+
+    Not:
+    Üçüncü taraf çerezlerinin kullanımında ilgili sağlayıcıların politika ve saklama süreleri geçerlidir.`,
   },
   {
-    id: 6,
-    title: "6. Politika Değişiklikleri",
-    content: `Bu çerez politikası, zaman zaman güncellenebilir. Değişiklikler bu sayfa üzerinden yayınlanacaktır. Güncel tarih yukarıda belirtilmiştir.`,
+    id: 7,
+    title: "7. Saklama Süreleri ve Örnek Çerezler",
+    content: `Saklama:
+    Oturum çerezleri tarayıcı kapatıldığında silinir.
+    Kalıcı çerezler, amacı doğrultusunda genellikle 13 aya kadar saklanır (bölge ve sağlayıcıya göre değişebilir).
+
+    Örnekler (bilgilendirme amaçlıdır):
+    Google Analytics (_ga): 2 yıla kadar (site trafiği analizi)
+    Google AdSense/DoubleClick (IDE): genellikle 13 aya kadar (reklam ölçümü/kişiselleştirme)
+    Not: Bu liste örnektir; kullanılan çerezler zaman içinde güncellenebilir. Güncel liste için Çerez Tercihleri panelini kontrol edebilirsiniz.`,
+  },
+  {
+    id: 8,
+    title: "8. KVKK Kapsamındaki Haklarınız",
+    content: `KVKK’nın 11. maddesi uyarınca kişisel verilerinize ilişkin olarak erişim, düzeltme, silme, işlemeyi kısıtlama ve itiraz haklarına sahipsiniz.
+    Bu haklarınızı kullanmak veya çerez tercihlerinizi sormak için: iletisim@vizepedia.com adresi üzerinden bize ulaşabilirsiniz.
+    Çerezler ve kişisel verilerin işlenmesine ilişkin ayrıntılar için Gizlilik Politikamıza bakınız.`,
+  },
+  {
+    id: 9,
+    title: "9. Politika Değişiklikleri",
+    content: `Bu Çerez Politikası zaman zaman güncellenebilir. Değişiklikler bu sayfada yayımlanır ve yürürlük tarihi belirtilir. 
+    Önemli değişiklikler, mümkün olduğunca e-posta veya site içi bildirim/banner ile duyurulur.`,
   },
 ];
 
+// Local formatter (links, bullet lists, subheaders)
 export const formatContent = (content) => {
   if (!content) return null;
 
-  // Split content into paragraphs
   const paragraphs = content.split(/\n\n+/).filter((p) => p.trim());
   const elements = [];
 
-  // URL pattern to detect links
   const urlPattern = /(https?:\/\/[^\s]+)/g;
 
   paragraphs.forEach((paragraph, pIndex) => {
     const lines = paragraph.split(/\n+/).filter((line) => line.trim());
 
-    // Check if paragraph contains bullet points (starting with "- ")
     if (lines.some((line) => line.trim().startsWith("- "))) {
-      // This is a bullet list
       const listItems = lines.map((line, lIndex) => {
         const cleanLine = line.trim().startsWith("- ")
           ? line.trim().substring(2)
           : line.trim();
 
-        // Convert URLs to clickable links
         const parts = cleanLine.split(urlPattern);
         const content = parts.map((part, partIndex) => {
-          // Check if this part is a URL
           if (part.match(urlPattern)) {
             return (
               <a
@@ -124,22 +168,14 @@ export const formatContent = (content) => {
       });
 
       elements.push(<ul key={`list-${pIndex}`}>{listItems}</ul>);
-    }
-    // Check if paragraph contains section headers (ending with colon)
-    else if (
-      lines.length > 1 &&
-      lines.some((line) => line.trim().endsWith(":"))
-    ) {
-      // Process each line
+    } else if (lines.length > 1 && lines.some((line) => line.trim().endsWith(":"))) {
       let currentList = [];
       let inList = false;
 
       lines.forEach((line, lIndex) => {
         const trimmedLine = line.trim();
 
-        // Line is a header (ends with colon)
         if (trimmedLine.endsWith(":")) {
-          // If we were in a list, close it
           if (inList && currentList.length > 0) {
             elements.push(
               <ul key={`sublist-${pIndex}-${lIndex}`}>{currentList}</ul>
@@ -147,21 +183,16 @@ export const formatContent = (content) => {
             currentList = [];
           }
 
-          // Add the header as strong text
           elements.push(
             <p key={`header-${pIndex}-${lIndex}`}>
-              <strong>{trimmedLine}</strong>
+              <strong>{trimmedLine.replace(/:$/, "")}</strong>
             </p>
           );
 
           inList = true;
-        }
-        // Regular list item
-        else if (inList) {
-          // Convert URLs to clickable links
+        } else if (inList) {
           const parts = trimmedLine.split(urlPattern);
           const content = parts.map((part, partIndex) => {
-            // Check if this part is a URL
             if (part.match(urlPattern)) {
               return (
                 <a
@@ -181,13 +212,9 @@ export const formatContent = (content) => {
           currentList.push(
             <li key={`subitem-${pIndex}-${lIndex}`}>{content}</li>
           );
-        }
-        // Regular paragraph
-        else {
-          // Handle URLs in regular paragraphs
+        } else {
           const parts = trimmedLine.split(urlPattern);
           const content = parts.map((part, partIndex) => {
-            // Check if this part is a URL
             if (part.match(urlPattern)) {
               return (
                 <a
@@ -208,17 +235,12 @@ export const formatContent = (content) => {
         }
       });
 
-      // If we ended with an open list, close it
       if (currentList.length > 0) {
         elements.push(<ul key={`final-sublist-${pIndex}`}>{currentList}</ul>);
       }
-    }
-    // Regular paragraph
-    else {
-      // Handle URLs in regular paragraphs
+    } else {
       const parts = paragraph.trim().split(urlPattern);
       const content = parts.map((part, partIndex) => {
-        // Check if this part is a URL
         if (part.match(urlPattern)) {
           return (
             <a
@@ -251,9 +273,10 @@ export default function CerezPolitikasi() {
     const handleScroll = () => {
       const totalHeight =
         document.documentElement.scrollHeight - window.innerHeight;
-      const progress = window.scrollY / totalHeight;
+      const progress = totalHeight > 0 ? window.scrollY / totalHeight : 0;
       if (scrollIndicatorRef.current) {
-        scrollIndicatorRef.current.style.transform = `scaleX(${progress})`;
+        const clamped = Math.min(Math.max(progress, 0), 1);
+        scrollIndicatorRef.current.style.transform = `scaleX(${clamped})`;
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -298,8 +321,8 @@ export default function CerezPolitikasi() {
     <>
       <SEO
         title="Çerez Politikası – Vizepedia"
-        description="Vizepedia’nın çerez kullanım politikasını öğrenin; çerezlerin ne olduğu, nasıl kullanıldığı ve tercihlerinizi nasıl yönetebileceğiniz hakkında bilgi edinin."
-        keywords="çerez politikası, cookie policy, Vizepedia"
+        description="Vizepedia’nın çerez kullanım politikası: çerez türleri, rıza yönetimi (CMP), Google Consent Mode v2, saklama süreleri ve haklarınız."
+        keywords="çerez politikası, cookie policy, Vizepedia, Consent Mode v2, CMP"
         url="/cerez-politikasi"
         noindex={false}
       />
@@ -308,11 +331,12 @@ export default function CerezPolitikasi() {
         <MainPageHeader />
         <Main>
           <Heading>Vizepedia – Çerez Politikası</Heading>
-          <LastUpdate>Son Güncelleme: 10.05.2025</LastUpdate>
+          <LastUpdate>Son Güncelleme: 10 Ekim 2025</LastUpdate>
           <SubText>
-            Bu sayfa, Vizepedia web sitesinin çerez kullanımına ilişkin bilgi
-            vermek amacıyla hazırlanmıştır. Web sitemizi kullanarak çerez
-            politikamızı kabul etmiş olursunuz.
+            Bu sayfa, Vizepedia web sitesinin çerez kullanımına ilişkin
+            bilgilendirme sağlar. Rıza gerektiren çerezler yalnızca açık
+            onayınızla etkinleştirilir; tercihlerinizi dilediğiniz zaman
+            güncelleyebilirsiniz.
           </SubText>
 
           <ContentContainer>
@@ -324,9 +348,7 @@ export default function CerezPolitikasi() {
               >
                 <Section>
                   <SectionHeader>{section.title}</SectionHeader>
-                  <SectionContent>
-                    {formatContent(section.content)}
-                  </SectionContent>
+                  <SectionContent>{formatContent(section.content)}</SectionContent>
                 </Section>
               </FadeInSection>
             ))}
@@ -353,6 +375,10 @@ export default function CerezPolitikasi() {
                 >
                   www.vizepedia.com
                 </a>
+              </ForContactInfo>
+              <ForContactInfo>
+                <a href="/gizlilik-politikasi">Gizlilik Politikası</a> •{" "}
+                <a href="/kullanim-sartlari">Kullanım Şartları</a>
               </ForContactInfo>
             </ForContactContainer>
           </FadeInSection>

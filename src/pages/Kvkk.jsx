@@ -191,181 +191,165 @@ export const ForContactInfo = styled.p`
 const sectionsData = [
   {
     id: 1,
-    title: "1. Hangi Verileri Topluyoruz?",
-    content: `Ziyaretçi (Anonim Kullanıcı) Olarak:
-    Ülke tercihi, vize türü, meslek bilgisi, ulaşım ve konaklama tercihleriniz (tarayıcınızın çerezlerinde saklanır)
-    IP adresiniz ve genel konum bilginiz
-    Tarayıcı türü, dili, işletim sistemi ve cihaz bilgileri
-    Web sitesi üzerindeki gezinme davranışınız (hangi sayfaları ziyaret ettiğiniz, ne kadar süre kaldığınız)
-    Çerez ve benzeri teknolojiler üzerinden toplanan analitik veriler
-    
-    Üye Kullanıcı Olarak:
-    E-posta adresiniz (hesap oluşturma ve iletişim için)
-    Şifreniz (güvenli şekilde şifrelenmiş olarak saklanır)
-    Profil tercihleri ve kişiselleştirme ayarları
-    Üyelik işlemleriyle bağlantılı IP ve oturum verileri
-    Vize başvuru geçmişi ve belgelerinizin durumu`,
+    title: "1) Veri Sorumlusu, Kapsam ve Tanımlar",
+    content: `Bu "KVKK Aydınlatma Metni", 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) uyarınca Vizepedia tarafından
+    gerçekleştirilen kişisel veri işleme faaliyetlerine ilişkindir. Vizepedia, veri sorumlusu sıfatıyla; kişisel verilerinizi KVKK, ikincil mevzuat
+    ve Kurul kararlarına uygun biçimde işler. Bu metin; yalnızca çerezleri değil, localStorage, sessionStorage ve benzeri tarayıcı depolama
+    teknolojilerini de kapsar.
+
+    Tanımlar (özet):
+    Veri Sorumlusu: Vizepedia
+    İlgili Kişi: Vizepedia kullanıcıları/ziyaretçileri
+    Kişisel Veri: Kimliği belirli veya belirlenebilir gerçek kişiye ilişkin her türlü bilgi
+    Veri İşleyen: Vizepedia adına veri işleyen hizmet sağlayıcılar (ör. Supabase)`,
   },
   {
     id: 2,
-    title: "2. Verilerinizi Hangi Amaçlarla İşliyoruz?",
-    content: `Hizmet sağlama amaçları:
-    Size özelleştirilmiş vize rehberliği ve belge listeleri sunmak
-    Kullanıcı hesabınızı yönetmek ve güvenliğini sağlamak
-    Şifre sıfırlama ve hesap kurtarma işlemlerini gerçekleştirmek
-    Müşteri destek hizmetleri sağlamak
-    
-    Site geliştirme ve analiz:
-    Site kullanım deneyiminizi kişiselleştirmek ve sürekli iyileştirmek
-    Teknik sorunları tespit etmek ve çözmek
-    Web sitesi performansını analiz etmek ve optimize etmek
-    
-    Reklam ve pazarlama:
-    Google AdSense ve diğer reklam ağları aracılığıyla size uygun reklamlar göstermek
-    Reklam performansını ölçmek ve reklam deneyimini iyileştirmek
-    Blog içerikleri ve güncellemeler ile sizi bilgilendirmek
-    
-    Yasal yükümlülükler:
-    KVKK, GDPR ve diğer yasal gereklilikleri yerine getirmek`,
+    title: "2) Hangi Verileri Topluyoruz?",
+    content: `Ziyaretçi (Anonim Kullanıcı) Olarak:
+     Ülke tercihi, vize türü, meslek/ulaşım/konaklama tercihleri (tarayıcı depolamasında)
+     IP adresi ve yaklaşık konum bilgisi
+     Tarayıcı/dil/işletim sistemi/cihaz bilgileri
+     Ziyaret edilen sayfalar, etkileşim ve süre bilgileri
+     Çerez ve benzeri teknolojilerden elde edilen analitik-veri
+
+    Üye Kullanıcı Olarak:
+     E-posta adresi (hesap oluşturma/iletişim)
+     Şifre (güvenli olarak saklanır, düz metin tutulmaz)
+     Profil/tercih bilgileri ve kişiselleştirme ayarları
+     Üyelik işlemleriyle bağlantılı IP ve oturum verileri
+     Vize başvuru geçmişi ve belge durumları
+
+    Tarayıcı Depolaması (çerez dışı):
+     localStorage: tema tercihi (ör. isDarkMode), bildirim/popup durumları (ör. hasSeenWelcomeModal) gibi tercih verileri
+     sessionStorage: anonim akış verileri (isAnonymous, anonymousCreatedAt), geçici başvuru/yanıt verileri (userAnswers, userSelections), ilerleme bilgileri (wellcomesAnswered)
+    Not: sessionStorage verileri sekme/oturum kapandığında kendiliğinden temizlenir; localStorage verileri kullanıcı tarafından silinebilir.`,
   },
   {
     id: 3,
-    title: "3. Çerez (Cookie) ve Reklam Teknolojileri",
-    content: `Web sitemiz, kullanıcı deneyimini iyileştirmek ve hizmetlerimizi kişiselleştirmek amacıyla çeşitli türde çerezler kullanır:
+    title: "3) Verilerinizi Hangi Amaçlarla İşliyoruz?",
+    content: `Hizmet Sağlama:
+     Özelleştirilmiş vize rehberliği ve belge listeleri sunmak
+     Kullanıcı hesabını yönetmek, kimlik doğrulamak ve güvenliği sağlamak
+     Şifre sıfırlama ve hesap kurtarma işlemlerini yürütmek
+     Müşteri destek süreçlerini yürütmek
 
-    Zorunlu çerezler:
-    Site işlevselliği için gerekli temel çerezler
-    Kullanıcı oturum yönetimi ve güvenlik çerezleri
-    
-    İşlevsel çerezler:
-    Tercihlerinizi hatırlayan çerezler (dil, ülke seçimi vb.)
-    Site deneyimini kişiselleştiren çerezler
-    
-    Analitik çerezler:
-    Google Analytics çerezleri (site kullanım analizi için)
-    Performans ölçümü ve iyileştirme çerezleri
-    
-    Reklam çerezleri:
-    Google AdSense ve diğer reklam ağlarının çerezleri
-    Kişiselleştirilmiş reklam gösterimi için kullanılan çerezler
-    Reklam performansını ölçen çerezler
-    
-    Çerez yönetimi: Tarayıcı ayarlarınızdan çerezleri silebilir veya engelleyebilirsiniz. Ancak bazı çerezlerin devre dışı bırakılması, web sitemizin bazı özelliklerinin düzgün çalışmamasına neden olabilir.`,
+    Site Geliştirme ve Analiz:
+     Deneyimi kişiselleştirmek ve sürekli iyileştirmek
+     Teknik sorunları tespit/çözmek, performansı optimize etmek
+     Kullanım istatistikleri üretmek (toplulaştırılmış/anonimleştirilmiş)
+
+    Reklam ve Pazarlama:
+     Google AdSense ve benzeri ağlar üzerinden reklam göstermek (kişiselleştirme rızaya tabidir)
+     Reklam ve kampanya performansını ölçmek
+
+    Tarayıcı Depolaması:
+     localStorage/sessionStorage verileri; akışı sürdürmek, tekrar eden bildirimleri önlemek ve sayfalar arası tutarlılığı sağlamak için kullanılır; üçüncü taraflarla paylaşılmaz.`,
   },
   {
     id: 4,
-    title: "4. Verilerin Üçüncü Taraflarla Paylaşımı",
-    content: `Reklam ortakları:
-    Google AdSense: Kişiselleştirilmiş reklamlar göstermek için IP adresiniz, çerez verileri ve ilgi alanlarınız Google ile paylaşılır
-    Diğer reklam ağları: Benzer şekilde reklam gösterimi için gerekli veriler paylaşılabilir
-    Bu veriler ilgili şirketlerin gizlilik politikaları çerçevesinde işlenir
-    
-    Analiz ve hizmet sağlayıcıları:
-    Google Analytics: Web sitesi performansını analiz etmek için anonim kullanım verileri
-    Supabase: Güvenli veri depolama ve hesap yönetimi hizmetleri
-    CDN hizmetleri: Site hızını artırmak için teknik veriler
-    
-    Yasal gereklilikler:
-    Mahkeme kararları ve yasal süreçler kapsamında
-    Kamu güvenliği ve ulusal güvenlik gereklilikleri
-    Kullanıcı güvenliğini korumak için gerekli durumlarda
-    
-    Önemli not: Hiçbir koşulda kişisel verilerinizi ticari amaçlarla üçüncü taraflara satmayız veya kiralamayız.`,
+    title: "4) Çerezler, Consent Mode ve Tercih Yönetimi",
+    content: `Çerez Türleri:
+     Zorunlu: Temel işlevsellik ve güvenlik
+     İşlevsel: Dil/ülke/tema gibi tercihlerin hatırlanması
+     Analitik: Google Analytics performans/ölçüm çerezleri
+     Reklam: Google AdSense ve benzeri ağların çerezleri
+
+    Rıza ve Consent Mode v2:
+     EEA/UK kullanıcıları için Google Consent Mode v2 uygulanır; ad_storage, analytics_storage, ad_user_data, ad_personalization sinyalleri rıza durumuna göre güncellenir.
+     Türkiye mevzuatı kapsamında zorunlu olmayan çerezler açık rızaya tabidir.
+     Çerez ve rıza tercihleri sitemizdeki tercih aracı (CMP) üzerinden yönetilebilir.
+
+    Yönetim:
+     Tarayıcı ayarlarından çerezleri silebilir/engelleyebilirsiniz.
+     Site verilerini temizleyerek localStorage/sessionStorage kayıtlarını da silebilirsiniz.
+     Reklam tercihleri: https://adssettings.google.com`,
   },
   {
     id: 5,
-    title: "5. Veri Güvenliği ve Saklama",
-    content: `Güvenlik önlemleri:
-    Tüm veri transferleri HTTPS protokolü ile şifrelenir
-    Supabase altyapısında endüstri standardı güvenlik önlemleri
-    Düzenli güvenlik güncellemeleri ve yamalar
-    Erişim kontrolü ve yetkilendirme sistemleri
-    Veri yedekleme ve felaket kurtarma planları
-    
-    Saklama süreleri:
-    Anonim kullanıcı verileri: Tarayıcı çerezlerinde geçici olarak
-    Kayıtlı kullanıcı verileri: Hesap aktif olduğu sürece
-    İletişim kayıtları: 3 yıl süreyle
-    Yasal gereklilik durumunda: İlgili yasaların öngördüğü süre
-    
-    Veri silme: Hesabınızı sildiğinizde, kişisel verileriniz 30 gün içinde sistemlerimizden tamamen kaldırılır (yasal saklama gereklilikleri hariç).`,
+    title: "5) Verilerin Üçüncü Taraflarla Paylaşımı (Alıcı Grupları)",
+    content: `Reklam Ortakları:
+     Google AdSense: Reklam gösterimi ve, rıza varsa, kişiselleştirme
+     Benzer ağlar: Reklam sunumu/ölçümü (varsa)
+
+    Analiz ve Hizmet Sağlayıcıları:
+     Google Analytics: Site kullanım analizi (toplulaştırılmış/anonimleştirilmiş)
+     Supabase (Veri İşleyen): Hesap ve içerik verilerinin güvenli barındırılması
+     CDN/Altyapı sağlayıcıları: İçerik dağıtımı/performans
+
+    Yasal Paylaşımlar:
+     Mahkeme kararları ve yasal süreçler kapsamında
+     Kamu güvenliği/ulusal güvenlik gerekleri
+     Kullanıcı güvenliğini korumaya yönelik durumlar
+
+    İlke:
+     Kişisel verilerinizi hiçbir koşulda ticari amaçla üçüncü kişilere satmayız veya kiralamayız.`,
   },
   {
     id: 6,
-    title: "6. KVKK Kapsamındaki Haklarınız",
-    content: `KVKK'nın 11. maddesi gereğince sahip olduğunuz haklar:
-    Kişisel verilerinizin işlenip işlenmediğini öğrenme hakkı
-    İşlenmişse bu konuda bilgi talep etme hakkı
-    Kişisel verilerinizin işlenme amaçlarını öğrenme hakkı
-    Yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme hakkı
-    Eksik veya yanlış işlenmiş olması halinde düzeltilmesini isteme hakkı
-    Belirli koşullar altında silinmesini veya yok edilmesini isteme hakkı
-    Düzeltme, silme veya yok etme işlemlerinin paylaşıldığı üçüncü taraflara bildirilmesini isteme hakkı
-    İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi halinde aleyhinize bir sonuç doğması durumunda buna itiraz etme hakkı
-    Kişisel verilerinizin kanuna aykırı işlenmesi sebebiyle zarara uğramanız halinde zararın giderilmesini talep etme hakkı
-    
-    Bu haklarınızı kullanmak için iletisim@vizepedia.com adresine "KVKK Başvurusu" konulu e-posta gönderebilirsiniz. Başvurularınız en geç 30 gün içinde yanıtlanır.`,
+    title: "6) Uluslararası Veri Aktarımları",
+    content: ` Bazı hizmet sağlayıcılar (Google, Supabase, CDN) verileri ülke dışında işleyebilir.
+     Aktarımlar; KVKK, GDPR ve ilgili düzenlemelere uygun şekilde; yeterli korumanın bulunduğu ülkelere, Kurul’ca ilan edilen güvencelere veya açık rızanıza dayanılarak gerçekleştirilir.
+     Standart sözleşme hükümleri, şifreleme ve erişim kontrolleri gibi ek teknik/idari önlemler uygulanır.`,
   },
   {
     id: 7,
-    title: "7. Şifre Güvenliği ve Hesap Koruması",
-    content: `Şifre güvenliği:
-    Şifreleriniz Supabase tarafından endüstri standardı algoritmalarla şifrelenir ve saklanır
-    Hiçbir durumda şifrelerinizi düz metin olarak göremez veya saklayamayız
-    Güçlü şifre kullanmanızı önemle tavsiye ederiz (en az 8 karakter, büyük-küçük harf, rakam ve özel karakter)
-    
-    Şifre sıfırlama süreci:
-    E-posta adresiniz üzerinden güvenli bir bağlantı gönderilir
-    Her bağlantı tek kullanımlık ve zaman sınırlıdır (24 saat)
-    Bağlantı kullanıldıktan sonra otomatik olarak geçersiz hale gelir
-    Şifre sıfırlama işlemi sadece sizin taleplerinizle başlatılır
-    
-    Hesap güvenliği ipuçları:
-    Şifrenizi kimseyle paylaşmayın
-    Düzenli olarak şifrenizi güncelleyin
-    Şüpheli aktivite durumunda derhal iletişime geçin
-    Güvenli ağlardan giriş yapın`,
+    title: "7) Hukuki Sebepler (KVKK m.5–6)",
+    content: ` Sözleşmenin kurulması/ifası (üyelik, hizmet sunumu)
+     Açık rıza (zorunlu olmayan çerezler, pazarlama iletişimi vb.)
+     Veri sorumlusunun meşru menfaati (güvenlik/iyileştirme, kötüye kullanımın önlenmesi)
+     Hukuki yükümlülüklerin yerine getirilmesi
+     Hakkın tesisi, kullanılması veya korunması`,
   },
   {
     id: 8,
-    title: "8. Kişisel Verilerin Korunması ve Uluslararası Transferler",
-    content: `Veri koruma önlemleri:
-    HTTPS protokolü ile güvenli veri iletimi
-    Supabase altyapısında gelişmiş şifreleme teknolojileri
-    Düzenli güvenlik denetimleri ve güncellemeleri
-    Erişim logları tutulması ve düzenli izleme
-    
-    Uluslararası veri transferleri:
-    Bazı hizmet sağlayıcılarımız (Google, Supabase) verileri uluslararası sunucularda işleyebilir
-    Bu transferler GDPR ve KVKK gerekliliklerine uygun şekilde gerçekleştirilir
-    Yeterli veri koruma seviyesi sağlayan ülkeler tercih edilir
-    Veri işleme anlaşmaları ile ek güvenceler alınır
-    
-    Tarayıcı çerezlerinde saklanan bilgiler:
-    Anonim tercihleriniz (ülke, vize türü vb.) sadece sizin cihazınızda kalır
-    Bu bilgiler Vizepedia sunucularına aktarılmaz
-    İstediğiniz zaman tarayıcı ayarlarından silebilirsiniz`,
+    title: "8) Saklama Süreleri, İmha ve Güvenlik",
+    content: `Güvenlik Önlemleri:
+     HTTPS/TLS, erişim kontrolü, yetkilendirme
+     Supabase üzerinde endüstri standardı güvenlik
+     Loglama, düzenli güncelleme ve denetimler
+     İhlal müdahale planları
+
+    Saklama Süreleri (özet):
+     Anonim tarayıcı verileri (sessionStorage): sekme/oturum kapanınca silinir
+     localStorage tercih verileri: kullanıcı silene kadar (maks. makul periyodik temizlik uygulanır)
+     Kayıtlı kullanıcı verileri: hesap aktif olduğu sürece
+     İletişim kayıtları: 3 yıl
+     Yasal saklama: ilgili mevzuatın öngördüğü süre
+
+    İmha:
+     Hesabınızı sildiğinizde, kişisel verileriniz yasal zorunluluklar hariç en geç 30 gün içinde sistemlerimizden silinir veya anonim hale getirilir.`,
   },
   {
     id: 9,
-    title: "9. Veri İşleme Yasal Dayanakları ve Politika Değişiklikleri",
-    content: `Veri işleme yasal dayanakları:
-    Açık rızanız (hizmet kullanımı için)
-    Sözleşmenin ifası (üyelik hizmetleri için)
-    Meşru menfaat (site güvenliği ve iyileştirme için)
-    Yasal yükümlülük (KVKK, vergi mevzuatı vb.)
-    
-    Politika değişiklikleri:
-    Bu metin, yasal mevzuat değişiklikleri veya hizmetlerimizde yapılacak güncellemeler doğrultusunda revize edilebilir
-    Önemli değişiklikler kayıtlı kullanıcılara e-posta ile bildirilir
-    Değişiklikler bu sayfa üzerinden duyurulur ve yürürlük tarihi belirtilir
-    Güncel tarih her zaman sayfa üst kısmında gösterilir
-    
-    İletişim kanalları:
-    E-posta: iletisim@vizepedia.com
-    Konu başlığı: "KVKK" veya "Veri Koruma"
-    Yanıt süresi: En geç 30 gün
-    Şikayet hakkı: Veri Koruma Kurulu'na başvurabilirsiniz`,
+    title: "9) KVKK Kapsamındaki Haklarınız (m.11) ve Başvuru Usulü",
+    content: `Haklar:
+     Kişisel verilerin işlenip işlenmediğini öğrenme
+     İşlenmişse buna ilişkin bilgi talep etme
+     Amacına uygun kullanılıp kullanılmadığını öğrenme
+     Yurt içinde/dışında aktarıldığı üçüncü kişileri bilme
+     Eksik/yanlış işlenmişse düzeltilmesini isteme
+     Kanuni şartlarda silinmesini/yok edilmesini isteme
+     Yapılan işlemlerin aktarıldığı kişilere bildirilmesini isteme
+     Münhasıran otomatik sistemlerle analiz sonucu aleyhinize bir durum doğmasına itiraz
+     Kanuna aykırı işleme nedeniyle zararın giderilmesini talep
+
+    Başvuru:
+     E-posta: iletisim@vizepedia.com (Konu: "KVKK Başvurusu")
+     Kimlik doğrulaması gerekebilir; talepleriniz en geç 30 gün içinde yanıtlanır.
+     Şikayet hakkı: Kişisel Verileri Koruma Kurumu’na başvurabilirsiniz.`,
+  },
+  {
+    id: 10,
+    title: "10) Politika Değişiklikleri ve İletişim",
+    content: `Değişiklik:
+     Mevzuat veya hizmetlerimizdeki değişikliklere göre bu metin güncellenebilir.
+     Önemli değişiklikler kayıtlı kullanıcılara e-posta ile bildirilir ve bu sayfada yürürlük tarihiyle yayımlanır.
+
+    İletişim:
+     E-posta: iletisim@vizepedia.com
+     Konu: "KVKK" veya "Veri Koruma"
+     Yanıt süresi: En geç 30 gün`,
   },
 ];
 
